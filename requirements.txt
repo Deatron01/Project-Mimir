@@ -1,0 +1,10 @@
+transformers
+datasets
+peft
+evaluate
+accelerate
+bitsandbytes
+trl
+openpyxl
+pandas
+matplotlib

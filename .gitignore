@@ -1,0 +1,7 @@
+# Python és virtuális környezet
+venv/
+__pycache__/
+*.pyc
+
+# Környezeti változók (Biztonság miatt)
+.env
