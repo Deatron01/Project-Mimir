@@ -1,0 +1,49 @@
+name: Mimir CI Pipeline
+
+on:
+  # Akkor fut le, ha valaki PR-t nyit a main vagy develop ágakra
+  pull_request:
+    branches: [ "main", "develop" ]
+  # Vagy ha közvetlenül a main ágra kerül kód (pl. merge után)
+  push:
+    branches: [ "main" ]
+
+jobs:
+  lint-and-test-python:
+    name: Python Kódminőség és Tesztek
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Kód letöltése (Checkout)
+      uses: actions/checkout@v4
+
+    - name: Python 3.11 beállítása
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip' # Gyorsítja a futást a letöltött csomagok cache-elésével
+
+    - name: Függőségek és Linterek telepítése
+      run: |
+        python -m pip install --upgrade pip
+        # Telepítjük a Black formázót, a Flake8 lintert és a Pytest-et
+        pip install black flake8 pytest
+
+    - name: Kódformázás ellenőrzése (Black)
+      run: |
+        # A --check flag miatt nem módosítja a fájlokat, csak hibát dob, ha valami nincs jól formázva
+        black --check .
+
+    - name: Kódminőség ellenőrzése (Flake8)
+      run: |
+        # 1. lépés: Csak a kritikus szintaktikai hibákat keresi (pl. nem definiált változók)
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # 2. lépés: Stilisztikai ellenőrzés (A Black alapértelmezetten 88 karakteres sorhosszt használ, ehhez igazítjuk)
+        flake8 . --count --max-complexity=10 --max-line-length=88 --statistics
+
+    - name: Egységtesztek futtatása (Pytest) - Előkészítés
+      run: |
+        # Jelenleg ez csak egy placeholder. 
+        # Amikor megírjuk az első teszteket a szolgáltatásokhoz, ez a parancs fogja lefuttatni őket.
+        echo "A tesztek futtatása előkészítve. (Később: pytest services/)"
+        # pytest services/
