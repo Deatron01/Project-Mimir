@@ -1,7 +1,39 @@
-# Python és virtuális környezet
+# === Python (Wellspring, RuneCarver, The Forge, stb.) ===
 venv/
 __pycache__/
 *.pyc
-squad_local_dataset
-# Környezeti változók (Biztonság miatt)
+*.pyo
+*.pyd
+.Python
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+squad_local_dataset/
+
+# === Node.js (API Gateway, Skald export stb.) ===
+node_modules/
+npm-debug.log
+yarn-error.log
+.pnp.*
+
+# === Környezeti változók és Titkok ===
 .env
+.env.local
+*.pem
+secrets/
+
+# === Adatbázisok és Docker (Lokális perzisztencia) ===
+# Ne kerüljön be a Gitbe a lokális PostgreSQL, Redis vagy MinIO adata!
+infrastructure/data/
+infrastructure/pgdata/
+infrastructure/minio_data/
+infrastructure/redis_data/
+
+# === OS generált fájlok ===
+.DS_Store
+Thumbs.db
+
+# === IDE konfigurációk ===
+.idea/
+.vscode/
+*.swp
