@@ -1,0 +1,181 @@
+version: '3.8'
+
+# Hálózat, hogy a konténerek név alapján lássák egymást
+networks:
+  mimir_network:
+    driver: bridge
+
+services:
+  # ==========================================
+  # 1. INFRASTRUKTÚRA (Adatbázisok & Tárolók)
+  # ==========================================
+  
+  postgres:
+    image: postgres:15-alpine
+    container_name: mimir-postgres
+    environment:
+      POSTGRES_USER: mimir_user
+      POSTGRES_PASSWORD: mimir_password
+      POSTGRES_DB: mimir_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - mimir_network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: mimir-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - mimir_network
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio
+    container_name: mimir-minio
+    environment:
+      MINIO_ROOT_USER: minio_admin
+      MINIO_ROOT_PASSWORD: minio_password123
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000" # API port
+      - "9001:9001" # Webes admin felület portja
+    volumes:
+      - miniodata:/data
+    networks:
+      - mimir_network
+    restart: unless-stopped
+
+  # ==========================================
+  # 2. BELÉPÉSI PONT (API Gateway)
+  # ==========================================
+
+  api-gateway:
+    container_name: mimir-api-gateway
+    image: nginx:alpine
+    # Később ide jöhet egy saját Dockerfile, ha egyedi Kong/Nginx konfigot írunk:
+    # build:
+    #   context: ./api-gateway
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - mimir_network
+    depends_on:
+      - wellspring
+      - skald
+    restart: unless-stopped
+
+  # ==========================================
+  # 3. MIMIR MIKROSZOLGÁLTATÁSOK
+  # ==========================================
+
+  wellspring:
+    container_name: mimir-wellspring
+    build:
+      context: ./services/wellspring
+      dockerfile: Docker/Dockerfile
+    ports:
+      - "8001:8000"
+    environment:
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minio_admin
+      - MINIO_SECRET_KEY=minio_password123
+      - RUNECARVER_URL=http://runecarver:8000
+    networks:
+      - mimir_network
+    depends_on:
+      - minio
+    restart: unless-stopped
+
+  runecarver:
+    container_name: mimir-runecarver
+    build:
+      context: ./services/runecarver
+      dockerfile: Docker/Dockerfile
+    ports:
+      - "8002:8000"
+    environment:
+      - POSTGRES_URL=postgresql://mimir_user:mimir_password@postgres:5432/mimir_db
+    networks:
+      - mimir_network
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  bifrost:
+    container_name: mimir-bifrost
+    build:
+      context: ./services/bifrost
+      dockerfile: Docker/Dockerfile
+    ports:
+      - "8003:8000"
+    environment:
+      - POSTGRES_URL=postgresql://mimir_user:mimir_password@postgres:5432/mimir_db
+      - REDIS_URL=redis://redis:6379/0
+      - HEIMDALL_URL=http://heimdall:8000
+      # LLM API kulcsokat itt érdemes átadni (később .env fájlból)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    networks:
+      - mimir_network
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+
+  heimdall:
+    container_name: mimir-heimdall
+    build:
+      context: ./services/heimdall
+      dockerfile: Docker/Dockerfile
+    ports:
+      - "8004:8000"
+    networks:
+      - mimir_network
+    restart: unless-stopped
+
+  the-forge:
+    container_name: mimir-the-forge
+    build:
+      context: ./services/the-forge
+      dockerfile: Docker/Dockerfile
+    # Nem feltétlenül kell nyitott port, ha csak az adatbázist pásztázza (worker)
+    environment:
+      - POSTGRES_URL=postgresql://mimir_user:mimir_password@postgres:5432/mimir_db
+      - BIFROST_URL=http://bifrost:8000
+    networks:
+      - mimir_network
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  skald:
+    container_name: mimir-skald
+    build:
+      context: ./services/skald
+      dockerfile: Docker/Dockerfile
+    ports:
+      - "8005:8000"
+    environment:
+      - POSTGRES_URL=postgresql://mimir_user:mimir_password@postgres:5432/mimir_db
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minio_admin
+      - MINIO_SECRET_KEY=minio_password123
+    networks:
+      - mimir_network
+    depends_on:
+      - postgres
+      - minio
+    restart: unless-stopped
+
+# Lokális perzisztencia (kötetek) definiálása
+volumes:
+  pgdata:
+  redisdata:
+  miniodata:
