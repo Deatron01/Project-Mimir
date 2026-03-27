@@ -1,0 +1,28 @@
+{
+    "title": "Mimir AI Teszt",
+    "format": "pdf",
+    "questions": [
+        {
+            "type": "mcq",
+            "text": "Ki volt a parancsnok az Apollo-11 küldetés során?",
+            "answers": [
+                {
+                    "text": "Neil Armstrong",
+                    "is_correct": true
+                },
+                {
+                    "text": "Buzz Aldrin",
+                    "is_correct": false
+                },
+                {
+                    "text": "Michael Collins",
+                    "is_correct": false
+                },
+                {
+                    "text": "Yuri Gagarin",
+                    "is_correct": false
+                }
+            ]
+        }
+    ]
+}

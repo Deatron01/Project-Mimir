@@ -17,7 +17,11 @@ class RAGVectorStore:
         self.collection_name = "knowledge_base"
         
         # Létrehozzuk a kollekciót, ha még nem létezik
-        if not self.client.collection_exists(self.collection_name):
+        collections_response = self.client.get_collections()
+        collection_names = [c.name for c in collections_response.collections]
+        
+        # Létrehozzuk a kollekciót, ha még nincs a listában
+        if self.collection_name not in collection_names:
             self.client.create_collection(
                 collection_name=self.collection_name,
                 vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE),
