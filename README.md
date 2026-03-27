@@ -38,3 +38,58 @@ A rendszer lazán csatolt, skálázható mikroszolgáltatásokból áll. A modul
 * **Gyorsítótár:** Redis a gyakori lekérdezések és session-ök tárolására, optimalizálva a költségeket.
 * **Biztonság:** JWT (JSON Web Token) alapú autentikáció és TLS titkosítás.
 * **Infrastruktúra:** Docker konténerizáció és Kubernetes (HPA) a felhős skálázhatóságért.
+
+
+## 🚀 Telepítés és Indítás (Getting Started)
+
+A Projekt Mimir mikroszolgáltatás-architektúrára épül, amelynek gerincét Docker konténerek adják, a "valódi intelligenciát" pedig egy lokálisan futtatott Nagy Nyelvi Modell (LLM) biztosítja a maximális adatvédelem érdekében.
+
+### 📋 Előfeltételek
+Mielőtt elindítanád a rendszert, győződj meg róla, hogy az alábbiak telepítve vannak a gépeden:
+* **Docker Desktop** (a mikroszolgáltatások futtatásához)
+* **Python 3.10+** (a teszt-keretrendszerhez)
+* **Ollama** (a lokális LLM futtatásához - [ollama.com](https://ollama.com/))
+* *Hardverigény:* Legalább 8GB VRAM-mal rendelkező dedikált videókártya (pl. RTX 3070 Ti) az AI gördülékeny futtatásához.
+
+---
+
+### 🧠 1. Lépés: A Lokális AI (Qwen) beüzemelése
+A Mimir jelenleg a hiper-optimalizált `qwen2.5:7b` modellt használja a vizsgakérdések generálására.
+
+1. Nyiss egy terminált a gazdagépen (Windows/Mac/Linux).
+2. Futtasd le az alábbi parancsot a modell letöltéséhez és elindításához:
+```bash
+ollama run qwen2.5:7b
+```
+3. Miután a modell betöltött (megjelenik a `>>>` prompt), kiléphetsz a terminálból. **A lényeg, hogy az Ollama a háttérben továbbra is fusson!** (A Docker konténerek a `host.docker.internal:11434` címen fognak kommunikálni vele).
+
+---
+
+### 🐳 2. Lépés: A Mikroszolgáltatások indítása (Docker)
+Miután az "agy" (Ollama) készen áll, elindíthatjuk a Mimir testét alkotó mikroszolgáltatásokat.
+
+1. Lépj be a projekt gyökérmappájába a terminálban.
+2. Építsd fel és indítsd el a konténereket a háttérben:
+```bash
+docker-compose up -d --build
+```
+3. *Várakozás:* Az első építés eltarthat néhány percig, amíg a Docker letölti a Python image-eket, a FastAPI függőségeket, és a Bifrost vektorizáló (RAG) modelljét. 
+
+---
+
+### 🧪 3. Lépés: A Rendszer tesztelése (E2E Test)
+Ha minden konténer fut (ezt a Docker Desktopban vagy a `docker ps` paranccsal ellenőrizheted), jöhet a rendszer integrációs tesztje!
+
+1. Hozz létre egy virtuális környezetet (opcionális, de ajánlott), és telepítsd a tesztelő függőségeit:
+```bash
+pip install requests pandas matplotlib tabulate
+```
+2. Futtasd le az átfogó végpontok-közötti (End-to-End) tesztelőt:
+```bash
+python tests/tester.py
+```
+3. **Eredmények:** A szkript automatikusan végigfuttat egy komplex szöveget a rendszeren. A teszt végén a `tests/Test_Result_[időbélyeg]/` mappában találsz egy:
+   * 📊 Színkódolt teljesítmény (Latency) grafikont.
+   * 📝 Részletes Markdown jelentést (Audit Log).
+   * 🤖 A Qwen által generált nyers JSON fájlt.
+   * 📜 A nyomtatásra kész, végleges PDF vizsgalapot.
