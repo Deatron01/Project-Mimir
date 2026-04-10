@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Paperclip, Loader2, FileText, Download, Bot, User } from 'lucide-react';
+import { Send, Paperclip, Loader2, FileText, Download, Bot, User, X } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 export default function Chat() {
@@ -16,10 +16,9 @@ export default function Chat() {
   const [isLoading, setIsLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState('');
   
-  // A teljes chat görgethető dobozának referenciája
   const chatContainerRef = useRef(null);
 
-  // Biztonságos görgetés, ami csak a doboz belsejét mozgatja, nem rántja le az egész weblapot
+  // Sima és biztonságos görgetés a doboz aljára
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
@@ -29,7 +28,6 @@ export default function Chat() {
     }
   };
 
-  // Minden új üzenetnél vagy státuszváltásnál legörgetünk
   useEffect(() => { 
     scrollToBottom(); 
   }, [messages, isLoading, statusMsg]);
@@ -54,7 +52,6 @@ export default function Chat() {
         throw new Error("Kérlek, csatolj egy dokumentumot is a tesztgeneráláshoz!");
       }
 
-      // 1. Wellspring (Kinyerés)
       setStatusMsg("Szöveg kinyerése a dokumentumból...");
       const formData = new FormData();
       formData.append("file", file);
@@ -62,7 +59,6 @@ export default function Chat() {
       if (!wellRes.ok) throw new Error("Hiba a szöveg kinyerése közben");
       const wellData = await wellRes.json();
 
-      // 2. RuneCarver (Darabolás)
       setStatusMsg("Szövegrészek elemzése és darabolása...");
       const runeRes = await fetch(import.meta.env.VITE_RUNECARVER_URL, {
         method: "POST",
@@ -72,7 +68,6 @@ export default function Chat() {
       if (!runeRes.ok) throw new Error("Hiba a szöveg feldolgozása közben");
       const runeData = await runeRes.json();
 
-      // 3. Bifrost (Indexelés)
       setStatusMsg("Tudásbázis építése (Vektorizálás)...");
       await fetch(import.meta.env.VITE_BIFROST_INGEST_URL, {
         method: "POST",
@@ -80,7 +75,6 @@ export default function Chat() {
         body: JSON.stringify({ chunks: runeData.chunks })
       });
 
-      // 4. Bifrost (Generálás)
       setStatusMsg("A mesterséges intelligencia írja a kérdéseket...");
       const genRes = await fetch(import.meta.env.VITE_BIFROST_GENERATE_URL, {
         method: "POST",
@@ -90,7 +84,6 @@ export default function Chat() {
       if (!genRes.ok) throw new Error("Hiba a kérdések generálása közben");
       const genData = await genRes.json();
 
-      // 5. Skald (PDF)
       setStatusMsg("PDF dokumentum szerkesztése...");
       const skaldRes = await fetch(import.meta.env.VITE_SKALD_URL, {
         method: "POST",
@@ -102,7 +95,6 @@ export default function Chat() {
       const pdfBlob = await skaldRes.blob();
       const pdfUrl = URL.createObjectURL(pdfBlob);
 
-      // Siker! AI válasz hozzáadása
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
         role: 'ai',
@@ -126,12 +118,12 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)] max-w-5xl mx-auto px-4 md:px-6 py-6">
+    <div className="flex flex-col h-[calc(100vh-80px)] max-w-4xl mx-auto px-4 md:px-6 py-6">
       
-      {/* Chat üzenetek területe (A ref ide került a belső görgetéshez) */}
+      {/* --- CHAT ÜZENETEK TARTOMÁNYA --- */}
       <div 
         ref={chatContainerRef} 
-        className="flex-1 overflow-y-auto mb-6 pr-2 space-y-6 scrollbar-thin scrollbar-thumb-surface scrollbar-track-transparent"
+        className="flex-1 overflow-y-auto mb-4 pr-2 space-y-6 scrollbar-thin scrollbar-thumb-surface scrollbar-track-transparent"
       >
         {messages.map((msg) => (
           <motion.div 
@@ -143,36 +135,32 @@ export default function Chat() {
               msg.role === 'user' ? "ml-auto flex-row-reverse" : ""
             )}
           >
-            {/* Avatar */}
             <div className={cn(
-              "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center",
-              msg.role === 'ai' ? "bg-primary/20 text-accent" : "bg-surface/50 text-textMain"
+              "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-sm",
+              msg.role === 'ai' ? "bg-primary/20 text-accent border border-primary/30" : "bg-surface text-textMain border border-border"
             )}>
               {msg.role === 'ai' ? <Bot size={20} /> : <User size={20} />}
             </div>
 
-            {/* Bubble */}
             <div className={cn(
-              "p-4 rounded-2xl shadow-sm",
+              "p-4 rounded-2xl shadow-md",
               msg.role === 'user' 
-                ? "bg-surface text-textMain rounded-tr-none border border-border/30" 
+                ? "bg-surface text-textMain rounded-tr-none border border-border/50" 
                 : msg.isError 
                   ? "bg-red-500/10 text-red-200 border border-red-500/30 rounded-tl-none" 
-                  : "bg-background/80 border border-primary/20 rounded-tl-none"
+                  : "bg-surface/50 backdrop-blur-md border border-border/50 rounded-tl-none"
             )}>
-              {/* User csatolt fájl jelzése */}
               {msg.attachedFile && (
-                <div className="flex items-center gap-2 mb-2 p-2 bg-background/50 rounded-lg text-xs text-textMain/70 border border-border/50">
+                <div className="flex items-center gap-2 mb-3 p-2 bg-background/60 rounded-lg text-xs text-textMain/80 border border-border/50 w-max">
                   <FileText size={14} className="text-accent"/> <span>{msg.attachedFile}</span>
                 </div>
               )}
               
               <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{msg.content}</p>
               
-              {/* AI Generált Eredmény megtekintése */}
               {msg.pdfUrl && (
                 <div className="mt-4 pt-4 border-t border-border/30">
-                  <a href={msg.pdfUrl} download="mimir_vizsga.pdf" className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-background rounded-lg font-medium hover:bg-white transition-colors text-sm">
+                  <a href={msg.pdfUrl} download="mimir_vizsga.pdf" className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-background rounded-xl font-medium hover:bg-white transition-colors text-sm shadow-lg shadow-accent/20">
                     <Download size={16} /> Eredmény Letöltése (PDF)
                   </a>
                 </div>
@@ -181,33 +169,47 @@ export default function Chat() {
           </motion.div>
         ))}
 
-        {/* Loading Indikátor */}
         {isLoading && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-4 max-w-[85%]">
-            <div className="w-10 h-10 rounded-full bg-primary/20 text-accent flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-primary/20 text-accent border border-primary/30 flex items-center justify-center">
               <Loader2 size={20} className="animate-spin" />
             </div>
-            <div className="p-4 rounded-2xl bg-background/80 border border-primary/20 rounded-tl-none flex items-center gap-3">
+            <div className="p-4 rounded-2xl bg-surface/50 backdrop-blur-md border border-border/50 rounded-tl-none flex items-center gap-3 shadow-md">
               <span className="text-sm text-textMain/70 animate-pulse">{statusMsg || 'Gondolkodom...'}</span>
             </div>
           </motion.div>
         )}
       </div>
 
-      {/* Input Szekció (Bottom Bar) */}
-      <div className="relative bg-surface/40 backdrop-blur-xl border border-border/50 rounded-3xl p-2 shadow-2xl shrink-0">
-        {/* Fájl preview */}
+      {/* --- ALSÓ BEVITELI MEZŐ (INPUT AREA) --- */}
+      <div className="shrink-0 w-full flex flex-col items-center gap-3 mt-2">
+        
+        {/* Lebegő fájl címke */}
         {file && (
-          <div className="absolute -top-12 left-4 flex items-center gap-2 bg-surface border border-border/50 px-3 py-1.5 rounded-lg text-sm shadow-lg">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="self-start ml-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border/60 bg-surface/80 backdrop-blur-md text-sm shadow-sm"
+          >
             <FileText size={14} className="text-accent" />
-            <span className="truncate max-w-[200px] text-textMain/80">{file.name}</span>
-            <button onClick={() => setFile(null)} className="ml-2 text-textMain/40 hover:text-red-400">✕</button>
-          </div>
+            <span className="truncate max-w-[200px] text-textMain/90 font-medium">{file.name}</span>
+            <button 
+              type="button" 
+              onClick={() => setFile(null)} 
+              className="ml-1 text-textMain/50 hover:text-red-400 transition-colors"
+            >
+              <X size={14} />
+            </button>
+          </motion.div>
         )}
 
-        <form onSubmit={handleSend} className="flex items-end gap-2">
-          {/* Fájl csatolás gomb */}
-          <label className="p-3 text-textMain/50 hover:text-accent hover:bg-background/50 rounded-full cursor-pointer transition-colors shrink-0 mb-1 ml-1">
+        {/* Kapszula alakú beviteli mező - A KÉPED ALAPJÁN */}
+        <form 
+          onSubmit={handleSend} 
+          className="w-full flex items-center gap-2 bg-transparent border border-border/80 rounded-full pl-2 pr-2 py-1.5 shadow-sm focus-within:border-accent/60 transition-colors backdrop-blur-md"
+        >
+          {/* Fájl csatolás gomb - Tökéletesen középre igazítva */}
+          <label className="flex items-center justify-center w-10 h-10 text-textMain/60 hover:text-accent cursor-pointer transition-colors shrink-0 rounded-full hover:bg-surface/50">
             <input type="file" className="hidden" accept=".pdf,.txt" onChange={(e) => setFile(e.target.files[0])} disabled={isLoading} />
             <Paperclip size={20} />
           </label>
@@ -218,16 +220,17 @@ export default function Chat() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(e); } }}
             placeholder="Írd le, milyen vizsgát szeretnél..."
-            className="flex-1 bg-transparent border-none focus:ring-0 resize-none py-3.5 px-2 max-h-32 text-textMain placeholder:text-textMain/30 text-sm md:text-base outline-none scrollbar-thin"
+            className="flex-1 bg-transparent border-none focus:ring-0 resize-none py-2.5 px-2 text-textMain placeholder:text-textMain/40 text-[15px] outline-none scrollbar-none"
             rows="1"
+            style={{ minHeight: '44px', maxHeight: '120px' }}
             disabled={isLoading}
           />
 
-          {/* Küldés gomb - Minden extra eltolás eltávolítva, tiszta Flexbox center */}
+          {/* Küldés gomb - Halványabb háttérrel a képed szerint, ikon teljesen középen */}
           <button 
             type="submit" 
             disabled={isLoading || (!input.trim() && !file)}
-            className="flex items-center justify-center w-10 h-10 bg-accent text-background hover:bg-white disabled:opacity-50 disabled:hover:bg-accent rounded-full transition-all shrink-0 shadow-md mr-1"
+            className="flex items-center justify-center w-10 h-10 bg-textMain/10 hover:bg-accent text-textMain/80 hover:text-background disabled:opacity-50 disabled:hover:bg-textMain/10 rounded-full transition-all shrink-0"
           >
             {isLoading ? (
               <Loader2 size={18} className="animate-spin" />
@@ -236,10 +239,12 @@ export default function Chat() {
             )}
           </button>
         </form>
+
+        <div className="text-[11px] text-textMain/40 tracking-wide text-center">
+          A Mimir AI hibázhat. Kérjük, vizsgáztatás előtt ellenőrizze a generált tartalmat.
+        </div>
       </div>
-      <div className="text-center mt-3 text-xs text-textMain/40 shrink-0">
-        A Mimir AI hibázhat. Kérjük, vizsgáztatás előtt ellenőrizze a generált tartalmat.
-      </div>
+      
     </div>
   );
 }
