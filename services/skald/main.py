@@ -4,9 +4,19 @@ from pydantic import BaseModel
 from typing import List, Dict, Any
 from moodle_xml import MoodleXMLExporter
 from pdf_drawer import NativePDFDrawer
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="📜 Skald Service", description="Teszt Exportáló Motor (PDF, XML, JSON)")
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://mimir-ai.hu",
+        "https://www.mimir-ai.hu"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 xml_exporter = MoodleXMLExporter()
 pdf_drawer = NativePDFDrawer()
 

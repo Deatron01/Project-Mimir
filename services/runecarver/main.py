@@ -1,14 +1,25 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from chunker import ContextualChunker
 import re
 import ast
 
+
 app = FastAPI(title="ᛋ RuneCarver Service", description="Szemantikai daraboló modul")
 
 # Inicializáljuk a darabolót (Kezdetben CPU-n futtatjuk a Docker kompatibilitás miatt)
 chunker = ContextualChunker(device='cpu')
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://mimir-ai.hu",
+        "https://www.mimir-ai.hu"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 class DocumentRequest(BaseModel):
     filename: str
     extension: str

@@ -1,9 +1,21 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pdf_processor import PDFProcessor
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="🌊 Wellspring Service", description="Bináris fájlfeldolgozó és szövegkinyerő")
-pdf_processor = PDFProcessor()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://mimir-ai.hu",
+        "https://www.mimir-ai.hu"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+pdf_processor = PDFProcessor()
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "service": "wellspring"}

@@ -1,9 +1,19 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from judge import LLMJudge
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="👁️ Heimdall Service", description="AI Cenzor és Validációs Réteg")
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://mimir-ai.hu",
+        "https://www.mimir-ai.hu"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # Inicializáljuk a minőségbiztosító motort
 judge_engine = LLMJudge(model_name="qwen2:7b")
 

@@ -7,6 +7,7 @@ WORKDIR /app
 # Rendszer szintű függőségek telepítése (ha kell pl. a PDF feldolgozáshoz)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    fonts-dejavu \
     && rm -rf /var/lib/apt/lists/*
 
 # Csak a requirements.txt másolása először (a gyorsabb Docker cache miatt)

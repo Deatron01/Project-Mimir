@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any
 import torch
@@ -8,8 +9,18 @@ import os
 import json
 import httpx
 
-app = FastAPI(title="🌈 Bifrost Service", description="RAG Motor és Vektorkezelő")
 
+app = FastAPI(title="🌈 Bifrost Service", description="RAG Motor és Vektorkezelő")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://mimir-ai.hu",
+        "https://www.mimir-ai.hu"
+    ], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # --- AI Modellek és DB inicializálása ---
 MODEL_NAME = 'intfloat/multilingual-e5-base'
 device = 'cpu' # Docker kompatibilitás miatt CPU

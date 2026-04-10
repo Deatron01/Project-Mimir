@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Default theme fallback (Midnight Theme from Image 1) */
+  :root {
+    --color-bg: #0B1B32;
+    --color-surface: #0D1E4C;
+    --color-primary: #C48CB3;
+    --color-accent: #83A6CE;
+    --color-text: #E5C9D7;
+  }
+
+  body {
+    @apply bg-background text-textMain transition-colors duration-500 ease-in-out;
+  }
+}

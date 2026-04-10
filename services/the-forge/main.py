@@ -4,9 +4,19 @@ import json
 import httpx
 import asyncpg
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="⚒️ The Forge Service", description="Natív aszinkron feladat-orkesztrátor")
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://mimir-ai.hu",
+        "https://www.mimir-ai.hu"
+    ], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # Környezeti változók a Dockerből
 DB_URL = os.getenv("POSTGRES_URL", "postgresql://mimir_user:mimir_password@postgres:5432/mimir_db")
 BIFROST_URL = os.getenv("BIFROST_URL", "http://bifrost:8000")

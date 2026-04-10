@@ -1,6 +1,5 @@
 version: '3.8'
 
-# Hálózat, hogy a konténerek név alapján lássák egymást
 networks:
   mimir_network:
     driver: bridge
@@ -13,9 +12,11 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: mimir-postgres
+    env_file:
+      - .env # A jelszavakat érdemes egy közös .env fájlból behúzni
     environment:
       POSTGRES_USER: mimir_user
-      POSTGRES_PASSWORD: mimir_password
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-mimir_password}
       POSTGRES_DB: mimir_db
     ports:
       - "5432:5432"
@@ -44,8 +45,8 @@ services:
       MINIO_ROOT_PASSWORD: minio_password123
     command: server /data --console-address ":9001"
     ports:
-      - "9000:9000" # API port
-      - "9001:9001" # Webes admin felület portja
+      - "9000:9000"
+      - "9001:9001"
     volumes:
       - miniodata:/data
     networks:
@@ -59,9 +60,6 @@ services:
   api-gateway:
     container_name: mimir-api-gateway
     image: nginx:alpine
-    # Később ide jöhet egy saját Dockerfile, ha egyedi Kong/Nginx konfigot írunk:
-    # build:
-    #   context: ./api-gateway
     ports:
       - "80:80"
       - "443:443"
@@ -116,12 +114,12 @@ services:
       dockerfile: Docker/Dockerfile
     ports:
       - "8003:8000"
+    env_file:
+      - .env # Innen kapja meg az OPENAI_API_KEY-t titkosítva
     environment:
       - POSTGRES_URL=postgresql://mimir_user:mimir_password@postgres:5432/mimir_db
       - REDIS_URL=redis://redis:6379/0
       - HEIMDALL_URL=http://heimdall:8000
-      # LLM API kulcsokat itt érdemes átadni (később .env fájlból)
-      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     networks:
       - mimir_network
     depends_on:
@@ -136,6 +134,8 @@ services:
       dockerfile: Docker/Dockerfile
     ports:
       - "8004:8000"
+    env_file:
+      - .env # IDE kerülnek az SMTP e-mail küldő és JWT authentikációs jelszavak!
     networks:
       - mimir_network
     restart: unless-stopped
@@ -145,7 +145,6 @@ services:
     build:
       context: ./services/the-forge
       dockerfile: Docker/Dockerfile
-    # Nem feltétlenül kell nyitott port, ha csak az adatbázist pásztázza (worker)
     environment:
       - POSTGRES_URL=postgresql://mimir_user:mimir_password@postgres:5432/mimir_db
       - BIFROST_URL=http://bifrost:8000
@@ -174,7 +173,49 @@ services:
       - minio
     restart: unless-stopped
 
-# Lokális perzisztencia (kötetek) definiálása
+  # ==========================================
+  # 4. FRONTEND (React + Vite + Nginx)
+  # ==========================================
+
+  frontend:
+    build: 
+      context: ./frontend
+      args:
+        - VITE_WELLSPRING_URL=https://wellspring.mimir-ai.hu/api/v1/extract
+        - VITE_RUNECARVER_URL=https://runecarver.mimir-ai.hu/api/v1/chunk
+        - VITE_BIFROST_INGEST_URL=https://bifrost.mimir-ai.hu/api/v1/ingest
+        - VITE_BIFROST_GENERATE_URL=https://bifrost.mimir-ai.hu/api/v1/generate
+        - VITE_SKALD_URL=https://skald.mimir-ai.hu/api/v1/export
+    container_name: mimir_frontend
+    ports:
+      - "8501:8501"
+    # A React a build folyamat során olvassa be a frontend/.env fájlt. 
+    # Itt a compose-ban már nincs szükségünk a VITE_ és STREAMLIT_ változókra.
+    depends_on:
+      - wellspring
+      - runecarver
+      - bifrost
+      - skald
+    networks:
+      - mimir_network
+    restart: unless-stopped
+    
+  # ==========================================
+  # 5. CLOUDFLARE TUNNEL
+  # ==========================================
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: mimir_tunnel
+    command: tunnel run
+    env_file:
+      - .env # A tokent érdemes kimenteni egy .env fájlba (TUNNEL_TOKEN=...)
+    restart: unless-stopped
+    networks:
+      - mimir_network
+    depends_on:
+      - frontend
+
 volumes:
   pgdata:
   redisdata:
