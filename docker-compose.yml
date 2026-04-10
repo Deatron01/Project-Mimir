@@ -65,9 +65,13 @@ services:
       - "443:443"
     networks:
       - mimir_network
+    volumes:
+      - ./api-gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - wellspring
       - skald
+    networks:
+      - mimir_network
     restart: unless-stopped
 
   # ==========================================
@@ -177,28 +181,28 @@ services:
   # 4. FRONTEND (React + Vite + Nginx)
   # ==========================================
 
-  frontend:
-    build: 
-      context: ./frontend
-      args:
-        - VITE_WELLSPRING_URL=https://wellspring.mimir-ai.hu/api/v1/extract
-        - VITE_RUNECARVER_URL=https://runecarver.mimir-ai.hu/api/v1/chunk
-        - VITE_BIFROST_INGEST_URL=https://bifrost.mimir-ai.hu/api/v1/ingest
-        - VITE_BIFROST_GENERATE_URL=https://bifrost.mimir-ai.hu/api/v1/generate
-        - VITE_SKALD_URL=https://skald.mimir-ai.hu/api/v1/export
-    container_name: mimir_frontend
-    ports:
-      - "8501:8501"
-    # A React a build folyamat során olvassa be a frontend/.env fájlt. 
-    # Itt a compose-ban már nincs szükségünk a VITE_ és STREAMLIT_ változókra.
-    depends_on:
-      - wellspring
-      - runecarver
-      - bifrost
-      - skald
-    networks:
-      - mimir_network
-    restart: unless-stopped
+  # frontend:
+  #   build: 
+  #     context: ./frontend
+  #     args:
+  #       - VITE_WELLSPRING_URL=https://wellspring.mimir-ai.hu/api/v1/extract
+  #       - VITE_RUNECARVER_URL=https://runecarver.mimir-ai.hu/api/v1/chunk
+  #       - VITE_BIFROST_INGEST_URL=https://bifrost.mimir-ai.hu/api/v1/ingest
+  #       - VITE_BIFROST_GENERATE_URL=https://bifrost.mimir-ai.hu/api/v1/generate
+  #       - VITE_SKALD_URL=https://skald.mimir-ai.hu/api/v1/export
+  #   container_name: mimir_frontend
+  #   ports:
+  #     - "8501:8501"
+  #   # A React a build folyamat során olvassa be a frontend/.env fájlt. 
+  #   # Itt a compose-ban már nincs szükségünk a VITE_ és STREAMLIT_ változókra.
+  #   depends_on:
+  #     - wellspring
+  #     - runecarver
+  #     - bifrost
+  #     - skald
+  #   networks:
+  #     - mimir_network
+  #   restart: unless-stopped
     
   # ==========================================
   # 5. CLOUDFLARE TUNNEL
