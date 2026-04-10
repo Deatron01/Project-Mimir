@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -10,7 +12,8 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -26,9 +29,8 @@ export default function Login() {
       
       // Szimulált válasz
       setSuccessMsg('Sikeres belépés! Átirányítás...');
-      
-      // Itt majd beállítod a tokent/cookie-t és átirányítod a user-t
-      // window.location.href = '/';
+      login({ email });
+      navigate('/chat');
 
     } catch (err) {
       setErrorMsg('Helytelen e-mail vagy jelszó!');
