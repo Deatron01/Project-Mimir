@@ -223,17 +223,16 @@ export default function Chat() {
             disabled={isLoading}
           />
 
-          {/* Küldés gomb (Jobb oldal - Tökéletesen középre igazított ikonnal) */}
+          {/* Küldés gomb - Minden extra eltolás eltávolítva, tiszta Flexbox center */}
           <button 
             type="submit" 
             disabled={isLoading || (!input.trim() && !file)}
-            className="flex items-center justify-center w-10 h-10 bg-accent text-background hover:bg-white disabled:opacity-50 disabled:hover:bg-accent rounded-full transition-all shrink-0 mb-0.5 mr-1 shadow-md"
+            className="flex items-center justify-center w-10 h-10 bg-accent text-background hover:bg-white disabled:opacity-50 disabled:hover:bg-accent rounded-full transition-all shrink-0 shadow-md mr-1"
           >
             {isLoading ? (
               <Loader2 size={18} className="animate-spin" />
             ) : (
-              /* A translate x és y értékek felelnek azért, hogy a nyíl optikailag tökéletesen középen üljön a körben */
-              <Send size={18} className="translate-x-[2px] translate-y-[1px]" /> 
+              <Send size={18} /> 
             )}
           </button>
         </form>
