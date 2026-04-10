@@ -15,13 +15,24 @@ export default function Chat() {
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState('');
-  const messagesEndRef = useRef(null);
+  
+  // A teljes chat görgethető dobozának referenciája
+  const chatContainerRef = useRef(null);
 
-  // Automatikus görgetés az aljára új üzenetnél
+  // Biztonságos görgetés, ami csak a doboz belsejét mozgatja, nem rántja le az egész weblapot
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   };
-  useEffect(() => { scrollToBottom(); }, [messages]);
+
+  // Minden új üzenetnél vagy státuszváltásnál legörgetünk
+  useEffect(() => { 
+    scrollToBottom(); 
+  }, [messages, isLoading, statusMsg]);
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -69,7 +80,7 @@ export default function Chat() {
         body: JSON.stringify({ chunks: runeData.chunks })
       });
 
-      // 4. Bifrost (Generálás - a promptból olvassuk ki a témát)
+      // 4. Bifrost (Generálás)
       setStatusMsg("A mesterséges intelligencia írja a kérdéseket...");
       const genRes = await fetch(import.meta.env.VITE_BIFROST_GENERATE_URL, {
         method: "POST",
@@ -99,7 +110,7 @@ export default function Chat() {
         resultData: genData.data,
         pdfUrl: pdfUrl
       }]);
-      setFile(null); // File törlése a sikeres folyamat után
+      setFile(null);
 
     } catch (err) {
       setMessages(prev => [...prev, {
@@ -117,8 +128,11 @@ export default function Chat() {
   return (
     <div className="flex flex-col h-[calc(100vh-80px)] max-w-5xl mx-auto px-4 md:px-6 py-6">
       
-      {/* Chat üzenetek területe */}
-      <div className="flex-1 overflow-y-auto mb-6 pr-2 space-y-6 scrollbar-thin scrollbar-thumb-surface scrollbar-track-transparent">
+      {/* Chat üzenetek területe (A ref ide került a belső görgetéshez) */}
+      <div 
+        ref={chatContainerRef} 
+        className="flex-1 overflow-y-auto mb-6 pr-2 space-y-6 scrollbar-thin scrollbar-thumb-surface scrollbar-track-transparent"
+      >
         {messages.map((msg) => (
           <motion.div 
             key={msg.id} 
@@ -178,11 +192,10 @@ export default function Chat() {
             </div>
           </motion.div>
         )}
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Input Szekció (Bottom Bar) */}
-      <div className="relative bg-surface/40 backdrop-blur-xl border border-border/50 rounded-3xl p-2 shadow-2xl">
+      <div className="relative bg-surface/40 backdrop-blur-xl border border-border/50 rounded-3xl p-2 shadow-2xl shrink-0">
         {/* Fájl preview */}
         {file && (
           <div className="absolute -top-12 left-4 flex items-center gap-2 bg-surface border border-border/50 px-3 py-1.5 rounded-lg text-sm shadow-lg">
@@ -194,7 +207,7 @@ export default function Chat() {
 
         <form onSubmit={handleSend} className="flex items-end gap-2">
           {/* Fájl csatolás gomb */}
-          <label className="p-3 text-textMain/50 hover:text-accent hover:bg-background/50 rounded-full cursor-pointer transition-colors shrink-0">
+          <label className="p-3 text-textMain/50 hover:text-accent hover:bg-background/50 rounded-full cursor-pointer transition-colors shrink-0 mb-1 ml-1">
             <input type="file" className="hidden" accept=".pdf,.txt" onChange={(e) => setFile(e.target.files[0])} disabled={isLoading} />
             <Paperclip size={20} />
           </label>
@@ -204,24 +217,28 @@ export default function Chat() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(e); } }}
-            placeholder="Írd le, milyen vizsgát szeretnél... (Pl.: Készíts 5 kérdést a biológia anyagból)"
-            className="flex-1 bg-transparent border-none focus:ring-0 resize-none py-3 px-2 max-h-32 text-textMain placeholder:text-textMain/30 text-sm md:text-base outline-none scrollbar-thin"
+            placeholder="Írd le, milyen vizsgát szeretnél..."
+            className="flex-1 bg-transparent border-none focus:ring-0 resize-none py-3.5 px-2 max-h-32 text-textMain placeholder:text-textMain/30 text-sm md:text-base outline-none scrollbar-thin"
             rows="1"
             disabled={isLoading}
           />
 
-          {/* Küldés gomb */}
+          {/* JAVÍTOTT: Küldés gomb flexbox-szal és fix mérettel */}
           <button 
             type="submit" 
             disabled={isLoading || (!input.trim() && !file)}
-            className="p-3 bg-accent text-background hover:bg-white disabled:opacity-50 disabled:hover:bg-accent rounded-full transition-colors shrink-0 m-1"
+            className="relative flex items-center justify-center w-12 h-12 bg-accent text-background hover:bg-white disabled:opacity-50 disabled:hover:bg-accent rounded-full transition-all shrink-0 mb-1 mr-1"
           >
-            <Send size={18} className={cn("transform translate-x-px", isLoading && "opacity-0")} />
-            {isLoading && <Loader2 size={18} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-spin" />}
+            {isLoading ? (
+              <Loader2 size={20} className="animate-spin" />
+            ) : (
+              // A Send ikon vizuálisan kicsit balra tolódik alapból, ezért kapott egy 2px-es korrekciót jobbra
+              <Send size={20} className="translate-x-[2px]" /> 
+            )}
           </button>
         </form>
       </div>
-      <div className="text-center mt-3 text-xs text-textMain/40">
+      <div className="text-center mt-3 text-xs text-textMain/40 shrink-0">
         A Mimir AI hibázhat. Kérjük, vizsgáztatás előtt ellenőrizze a generált tartalmat.
       </div>
     </div>
