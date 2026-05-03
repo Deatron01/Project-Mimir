@@ -1,0 +1,57 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Játékelmélet (Nash-egyensúly és Fogolydilemma)",
+    "nehezseg": "nehez",
+    "nyelv": "hu"
+  },
+  "kerdesek": [
+    {
+      "id": "q_game_001",
+      "bloom_szint": "Analízis",
+      "kerdes": "Miért számít a 'vallomás' (árulás) szigorúan domináns stratégiának az egyén számára a fogolydilemmában?",
+      "helyes_valasz": "Mert a másik fél döntésétől függetlenül mindig rövidebb börtönbüntetést eredményez az adott egyén számára.",
+      "disztraktorok": [
+        "Mert ha mindketten vallanak, akkor kapják együttesen a legkisebb, összesen 2 éves büntetést.",
+        "Mert a vallomás vezet az egyetlen Pareto-optimális kimenetelhez.",
+        "Mert az ügyész csak annak ajánl fel 1 év börtönt, aki elsőként tesz vallomást."
+      ],
+      "magyarazat": "A szöveg harmadik bekezdése vezeti le: ha a másik hallgat, a vallomás 1 év helyett 0 évet jelent; ha a másik vall, a vallomás 3 év helyett 2 évet jelent. Így a vallomás minden esetben racionálisabb az egyén számára."
+    },
+    {
+      "id": "q_game_002",
+      "bloom_szint": "Szintézis / Értékelés",
+      "kerdes": "Mit bizonyít a fogolydilemma a Nash-egyensúly és a Pareto-optimalitás kapcsolatáról?",
+      "helyes_valasz": "Azt, hogy egy játék Nash-egyensúlya nem feltétlenül eredményez Pareto-optimális kimenetelt.",
+      "disztraktorok": [
+        "Azt, hogy a Nash-egyensúly és a Pareto-optimalitás minden stratégiai játékban pontosan ugyanazt a kimenetelt jelenti.",
+        "Azt, hogy a Pareto-optimális kimenetel eléréséhez az egyéneknek mindig a szigorúan domináns stratégiát kell választaniuk.",
+        "Azt, hogy a Nash-egyensúly csak akkor jöhet létre, ha a játékosok tudnak kommunikálni egymással."
+      ],
+      "magyarazat": "A paradoxon lényege (ahogy az utolsó bekezdés is írja), hogy az egyetlen Nash-egyensúly (mindketten vallanak, 2-2 év) rosszabb mindkét félnek, mint a hallgatás (1-1 év), így a Nash-egyensúly itt nem Pareto-optimális."
+    },
+    {
+      "id": "q_game_003",
+      "bloom_szint": "Alkalmazás",
+      "kerdes": "A szöveg alapján, mi történne A-val, ha B racionálisan a domináns stratégiáját követné, A viszont (irracionálisan) úgy döntene, hogy hallgat?",
+      "helyes_valasz": "A 3 év börtönt kapna, B pedig szabadon távozna (0 év).",
+      "disztraktorok": [
+        "A szabadon távozna (0 év), B pedig 3 év börtönt kapna.",
+        "Mindketten 2 év börtönt kapnának.",
+        "Mindketten 1 év börtönt kapnának."
+      ],
+      "magyarazat": "B domináns stratégiája a vallomás. Ha B vall, A pedig hallgat, akkor az ügyészi alku alapján az áruló (B) 0 évet, a hallgató (A) 3 évet kap."
+    },
+    {
+      "id": "q_game_004",
+      "bloom_szint": "Megértés",
+      "kerdes": "Hogyan definiálható a Nash-egyensúly a megadott szöveg alapján?",
+      "helyes_valasz": "Egy olyan állapot, ahol egyik játékos sem tudja növelni a nyereségét pusztán azzal, hogy egyoldalúan stratégiát vált.",
+      "disztraktorok": [
+        "Egy olyan állapot, ahol a résztvevők a lehető legnagyobb közös (kollektív) nyereséget érik el.",
+        "Egy olyan állapot, ahol senki helyzetén nem lehet javítani anélkül, hogy valaki másé ne romlana.",
+        "Egy olyan stratégiai profil, ahol a játékosok titokban tudnak kommunikálni egymással."
+      ],
+      "magyarazat": "Az első bekezdés definíciója szerint a Nash-egyensúly lényege, hogy egyetlen játékosnak sem éri meg *egyoldalúan* megváltoztatni a döntését a jelenlegi állapotban. A kollektív maximumot a Pareto-optimalitás jelöli."
+    }
+  ]
+}

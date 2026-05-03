@@ -1,0 +1,39 @@
+{
+    "chunks": [
+        {
+            "type": "narrative",
+            "content": "1.",
+            "metadata": {
+                "qa_score": 10
+            }
+        },
+        {
+            "type": "narrative",
+            "content": "Bemeneti dokumentum (Nehéz teszt szöveg)",
+            "metadata": {
+                "qa_score": 10
+            }
+        },
+        {
+            "type": "narrative",
+            "content": "Játékelmélet: A Nash-egyensúly és a Fogolydilemma paradoxona A játékelmélet a matematika és a közgazdaságtan azon ága, amely a stratégiai interakciókat vizsgálja olyan helyzetekben, ahol a résztvevők döntéseinek eredménye függ a többi résztvevő döntésétől is. A játékelmélet egyik legfontosabb koncepciója a John Forbes Nash által leírt Nash-egyensúly. Egy stratégiai profil (a játékosok döntéseinek összessége) akkor van Nash-egyensúlyban, ha egyik játékos sem tudja egyoldalúan megváltoztatni a stratégiáját úgy, hogy azzal növelje a saját nyereségét, feltételezve, hogy a többi játékos stratégiája változatlan marad. Bár a Nash-egyensúly stabil állapotot feltételez, nem garantálja a társadalmilag vagy kollektíven optimális kimenetelt, amit a Pareto-optimalitás fogalma ír le. Egy kimenetel Pareto-optimális, ha senki helyzetén nem lehet javítani anélkül, hogy valaki másé ne romlana. Ennek a feszültségnek a legismertebb demonstrációja a „fogolydilemma”. Tegyük fel, hogy két bűnözőt (A-t és B-t) elfog a rendőrség, és elkülönítve hallgatják ki őket, kommunikációra nincs lehetőségük. Az ügyész a következő alkut ajánlja mindkettőjüknek: Ha az egyik vall (elárulja a másikat), a másik pedig hallgat (együttműködik a társával), a vallomást tevő szabadon távozhat (0 év), míg a hallgató 3 év börtönt kap. Ha mindketten hallgatnak, mindketten 1 év börtönt kapnak egy kisebb vétségért. Ha azonban mindketten vallanak egymás ellen, akkor mindketten 2 év börtönt kapnak.",
+            "metadata": {
+                "qa_score": 10
+            }
+        },
+        {
+            "type": "narrative",
+            "content": "A paradoxon a racionális döntéshozatal szintjén jelentkezik. Bármit is tesz a másik fél, az egyén számára a vallomás (árulás) a szigorúan domináns stratégia. Ha B hallgat, A-nak jobb vallani (0 év az 1 év helyett). Ha B vall, A-nak szintén jobb vallani (2 év a 3 év helyett). Mivel mindkét fél racionális, mindketten vallani fognak, így mindketten 2 évet kapnak. Ez az állapot a játék egyetlen Nash-egyensúlya. Ugyanakkor ez a kimenetel nem Pareto-optimális, hiszen ha mindketten hallgattak volna (kollektív racionalitás), csak 1-1 évet kapnának, ami mindkettejük számára szigorúan jobb eredmény lenne.",
+            "metadata": {
+                "qa_score": 10
+            }
+        },
+        {
+            "type": "narrative",
+            "content": "A fogolydilemma így rávilágít arra, hogy a tisztán önérdekkövető, racionális egyéni döntések sorozata hogyan vezethet egy kollektíven irracionális és szuboptimális állapothoz.",
+            "metadata": {
+                "qa_score": 10
+            }
+        }
+    ]
+}

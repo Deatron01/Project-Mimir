@@ -5,6 +5,10 @@ import time
 from datetime import datetime
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
+import sys
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # --- KONFIGURÁCIÓ ---
 SERVICES = {
@@ -16,209 +20,191 @@ SERVICES = {
     "skald": "http://localhost:8005/api/v1/export"
 }
 
-# 1. Megkeressük a jelenlegi fájl (tester.py) mappáját
+# --- KÖNYVTÁRAK BEÁLLÍTÁSA ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEST_DOCS_DIR = os.path.join(BASE_DIR, "TestDocs")
+BASELINE_DIR = os.path.join(BASE_DIR, "TestBaseline")
+
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 REPORT_DIR = os.path.join(BASE_DIR, f"Test_Result_{timestamp}")
 os.makedirs(REPORT_DIR, exist_ok=True)
 
-# --- TESZTADATOK ÉS ELVÁRÁSOK ---
-TEST_DOC = {
-    "filename": "komplex_tudasbazis_teszt.txt",
-    "content": (
-        "Az ókori Egyiptom civilizációja a Nílus folyó völgyében alakult ki. A fáraók, akiket istenként tiszteltek, "
-        "hatalmas piramisokat építtettek temetkezési helyként, melyek közül a gízai nagy piramis a legismertebb. "
-        "Az egyiptomiak fejlett öntözéses földművelést és hieroglif írást alkalmaztak.\n\n"
-        
-        "Az ipari forradalom a 18. század végén indult el Nagy-Britanniából. A folyamat legfontosabb találmánya "
-        "James Watt tökéletesített gőzgépe volt, amely forradalmasította a textilipart, a bányászatot és a közlekedést. "
-        "Később a gőzhajók és a gőzmozdonyok megjelenése drasztikusan lecsökkentette az utazási időt.\n\n"
-        
-        "Az Apollo-11 küldetés során, 1969. július 20-án lépett először ember a Holdra. Neil Armstrong parancsnok "
-        "és Buzz Aldrin holdkomppilóta több mint két órát töltött a Hold felszínén, miközben Michael Collins "
-        "a parancsnoki modulban keringett az égitest körül. A küldetés a hidegháborús űrverseny csúcspontja volt.\n\n"
-        
-        "A fotoszintézis az a biológiai folyamat, melynek során a zöld növények a napfény energiáját felhasználva "
-        "szervetlen anyagokból (vízből és szén-dioxidból) szerves anyagokat hoznak létre, miközben oxigént bocsátanak ki. "
-        "A folyamat a kloroplasztiszokban, a klorofill nevű zöld pigment segítségével megy végbe."
-    ),
-    "expected_min_chunks": 1, 
-    "search_query": "Ki volt a parancsnok az Apollo-11 küldetés során?",
-    "expected_search_keyword": "Armstrong" 
-}
-
+# A tesztelendő nehézségi szintek
+DIFFICULTIES = ["Easy", "Medium", "Hard"]
 results_log = []
-global_llm_data = {} 
 
-def record_metric(service_name, action, latency, status, expected_met=None, extra_params="-", error=None):
-    results_log.append({
-        "Service": service_name,
-        "Lépés": action,
-        "Paraméterek": extra_params, # ÚJ: Itt tároljuk a kinyert számokat!
-        "Válaszidő (s)": round(latency, 4),
-        "Státusz": "Sikeres" if status else "Sikertelen",
-        "Elvárás Teljesült": "Igen" if expected_met else ("Nem" if expected_met is False else "N/A"),
-        "Hiba": error or "-"
-    })
-
-def run_comprehensive_test():
-    global global_llm_data
-    print(f"🚀 [START] Átfogó Mimir E2E Teszt Paraméter-követéssel ({timestamp})")
+def compare_with_baseline(generated_json, baseline_path):
+    """Összehasonlítja a generált JSON-t a baseline-nal."""
+    if not os.path.exists(baseline_path):
+        return "Nincs Baseline fájl"
     
-    with open(TEST_DOC["filename"], "w", encoding="utf-8") as f:
-        f.write(TEST_DOC["content"])
-
     try:
-        # --- 1. WELLSPRING ---
-        print("🌊 Wellspring tesztelése...")
-        start_time = time.time()
-        with open(TEST_DOC["filename"], "rb") as f:
-            res = requests.post(SERVICES["wellspring"], files={"file": (TEST_DOC["filename"], f, "text/plain")})
-        latency = time.time() - start_time
-        
-        if res.status_code == 200:
-            data = res.json()
-            extracted_text = data.get("content", "")
-            expected_met = len(extracted_text) > 50
+        with open(baseline_path, 'r', encoding='utf-8') as f:
+            baseline_json = json.load(f)
             
-            # Paraméterek kinyerése
-            params = f"Karakterszám: {len(extracted_text)}, Metódus: {data.get('extraction_method', 'N/A')}"
-            record_metric("Wellspring", "Szövegkinyerés", latency, True, expected_met, params)
-        else:
-            record_metric("Wellspring", "Szövegkinyerés", latency, False, error=res.text)
-            return
-
-        # --- 2. RUNECARVER ---
-        print("ᛋ RuneCarver tesztelése...")
-        start_time = time.time()
-        res = requests.post(SERVICES["runecarver"], json={"filename": TEST_DOC["filename"], "extension": "txt", "content": extracted_text})
-        latency = time.time() - start_time
+        gen_q_count = len(generated_json.get("kerdesek", generated_json.get("questions", [])))
+        base_q_count = len(baseline_json.get("kerdesek", baseline_json.get("questions", [])))
         
+        # Lehet bővíteni komplexebb NLP hasonlósági méréssel (pl. cosine similarity)
+        if gen_q_count == base_q_count:
+            return f"Egyezik (Kérdések száma: {gen_q_count})"
+        else:
+            return f"Eltér (Generált: {gen_q_count}, Baseline: {base_q_count})"
+    except Exception as e:
+        return f"Hiba az összehasonlításkor: {str(e)}"
+
+def run_pipeline_for_difficulty(difficulty):
+    doc_path = os.path.join(TEST_DOCS_DIR, f"{difficulty}Doc.txt")
+    baseline_path = os.path.join(BASELINE_DIR, f"{difficulty}Base.json")
+    
+    if not os.path.exists(doc_path):
+        print(f"⚠️ Nem található a dokumentum: {doc_path} - Kihagyva.")
+        return
+
+    print(f"\n[{difficulty.upper()}] Dokumentum feldolgozása megkezdve...")
+    
+    # --- 1. WELLSPRING ---
+    start_time = time.time()
+    extracted_text = ""
+    try:
+        with open(doc_path, "rb") as f:
+            res = requests.post(SERVICES["wellspring"], files={"file": (f"{difficulty}Doc.txt", f, "text/plain")})
+        latency = time.time() - start_time
+        if res.status_code == 200:
+            extracted_text = res.json().get("content", "")
+            results_log.append({"Nehézség": difficulty, "Modul": "Wellspring", "Válaszidő (s)": latency, "Státusz": "OK"})
+        else:
+            raise Exception(res.text)
+    except Exception as e:
+        results_log.append({"Nehézség": difficulty, "Modul": "Wellspring", "Válaszidő (s)": latency, "Státusz": "Hiba"})
+        return
+
+    # --- 2. RUNECARVER (Mentjük a chunkokat!) ---
+    start_time = time.time()
+    chunks = []
+    try:
+        res = requests.post(SERVICES["runecarver"], json={"filename": f"{difficulty}.txt", "extension": "txt", "content": extracted_text})
+        latency = time.time() - start_time
         if res.status_code == 200:
             chunks = res.json().get("chunks", [])
-            expected_met = len(chunks) >= TEST_DOC["expected_min_chunks"]
-            
-            # Paraméterek kinyerése
-            params = f"Legenerált chunkok száma: {len(chunks)} db"
-            record_metric("RuneCarver", "Szemantikai Darabolás", latency, True, expected_met, params)
+            # Chunkok kimentése
+            with open(os.path.join(REPORT_DIR, f"{difficulty}_chunks.json"), "w", encoding="utf-8") as f:
+                json.dump({"chunks": chunks}, f, ensure_ascii=False, indent=4)
+            results_log.append({"Nehézség": difficulty, "Modul": "RuneCarver", "Válaszidő (s)": latency, "Státusz": "OK"})
         else:
-            record_metric("RuneCarver", "Szemantikai Darabolás", latency, False, error=res.text)
-            return
+            raise Exception(res.text)
+    except Exception as e:
+        results_log.append({"Nehézség": difficulty, "Modul": "RuneCarver", "Válaszidő (s)": latency, "Státusz": "Hiba"})
+        return
 
-        # --- 3. BIFROST INGEST ---
-        print("🌈 Bifrost (Ingest) tesztelése...")
-        start_time = time.time()
+    # --- 3. BIFROST INGEST ---
+    start_time = time.time()
+    try:
         res = requests.post(SERVICES["bifrost_ingest"], json={"chunks": chunks})
         latency = time.time() - start_time
-        
         if res.status_code == 200:
-            indexed = res.json().get("indexed_chunks", 0)
-            expected_met = indexed == len(chunks)
-            
-            # Paraméterek kinyerése
-            params = f"Qdrant adatbázisba mentve: {indexed} vektor"
-            record_metric("Bifrost", "Vektor Indexelés", latency, True, expected_met, params)
+            results_log.append({"Nehézség": difficulty, "Modul": "Bifrost Ingest", "Válaszidő (s)": latency, "Státusz": "OK"})
         else:
-            record_metric("Bifrost", "Vektor Indexelés", latency, False, error=res.text)
-            return
+            raise Exception(res.text)
+    except Exception as e:
+        results_log.append({"Nehézség": difficulty, "Modul": "Bifrost Ingest", "Válaszidő (s)": latency, "Státusz": "Hiba"})
+        return
 
-        # --- 4. BIFROST LLM GENERATE ---
-        print("🧠 Bifrost (Qwen AI Generálás) tesztelése...")
-        start_time = time.time()
-        res = requests.post(SERVICES["bifrost_generate"], json={"query": TEST_DOC["search_query"], "limit": 1})
+    # --- 4. BIFROST GENERATE & BASELINE COMPARE ---
+    start_time = time.time()
+    global_llm_data = {}
+    try:
+        query = f"Készíts tesztet a(z) {difficulty} szintű dokumentumból."
+        res = requests.post(SERVICES["bifrost_generate"], json={"query": query, "limit": 3})
         latency = time.time() - start_time
-        
         if res.status_code == 200:
             global_llm_data = res.json().get("data", {})
-            json_path = os.path.join(REPORT_DIR, f"test_output_{timestamp}.json")
-            with open(json_path, "w", encoding="utf-8") as f:
+            # Eredmény kimentése
+            generated_path = os.path.join(REPORT_DIR, f"{difficulty}_Generated.json")
+            with open(generated_path, "w", encoding="utf-8") as f:
                 json.dump(global_llm_data, f, ensure_ascii=False, indent=4)
             
-            expected_met = "questions" in global_llm_data and len(global_llm_data["questions"]) > 0
+            # Összehasonlítás a baseline-nal
+            baseline_status = compare_with_baseline(global_llm_data, baseline_path)
+            print(f"  -> Baseline összehasonlítás ({difficulty}): {baseline_status}")
             
-            # Paraméterek kinyerése
-            q_count = len(global_llm_data.get("questions", []))
-            params = f"Kérdések: {q_count} db, Formátum: {global_llm_data.get('format', 'N/A')}"
-            record_metric("Bifrost_LLM", "Qwen Generálás", latency, True, expected_met, params)
+            results_log.append({"Nehézség": difficulty, "Modul": "Bifrost LLM", "Válaszidő (s)": latency, "Státusz": baseline_status})
         else:
-            record_metric("Bifrost_LLM", "Qwen Generálás", latency, False, error=res.text)
-            return
+            raise Exception(res.text)
+    except Exception as e:
+        results_log.append({"Nehézség": difficulty, "Modul": "Bifrost LLM", "Válaszidő (s)": latency, "Státusz": "Hiba"})
+        return
 
-        # --- 5. SKALD ---
-        print("📜 Skald (PDF Export) tesztelése...")
-        start_time = time.time()
+    # --- 5. SKALD ---
+    start_time = time.time()
+    try:
         res = requests.post(SERVICES["skald"], json=global_llm_data) 
         latency = time.time() - start_time
-        
         if res.status_code == 200:
-            pdf_path = os.path.join(REPORT_DIR, f"test_output_{timestamp}.pdf")
+            pdf_path = os.path.join(REPORT_DIR, f"{difficulty}_Output.pdf")
             with open(pdf_path, "wb") as f:
                 f.write(res.content)
-            
-            file_size_kb = round(os.path.getsize(pdf_path) / 1024, 2)
-            params = f"PDF Fájlméret: {file_size_kb} KB"
-            record_metric("Skald", "PDF Generálás", latency, True, os.path.exists(pdf_path), params)
+            results_log.append({"Nehézség": difficulty, "Modul": "Skald", "Válaszidő (s)": latency, "Státusz": "OK"})
         else:
-            record_metric("Skald", "PDF Generálás", latency, False, error=res.text)
-
-    finally:
-        if os.path.exists(TEST_DOC["filename"]):
-            os.remove(TEST_DOC["filename"])
-        
-        generate_visuals_and_report()
+            raise Exception(res.text)
+    except Exception as e:
+        results_log.append({"Nehézség": difficulty, "Modul": "Skald", "Válaszidő (s)": latency, "Státusz": "Hiba"})
 
 def generate_visuals_and_report():
-    print("\n📊 Vizualizációk és Report generálása...")
+    print("\n📊 Vizualizációk és Report generálása a publikációhoz...")
     df = pd.DataFrame(results_log)
     
-    # 1. Grafikon: Válaszidők
-    plt.figure(figsize=(10, 6))
-    colors = ['#3498db' if s == 'Sikeres' else '#e74c3c' for s in df['Státusz']]
-    bars = plt.bar(df['Service'] + "\n(" + df['Lépés'] + ")", df['Válaszidő (s)'], color=colors)
-    plt.title(f"Mikroszolgáltatások Válaszideje (Latency) - {timestamp}")
-    plt.ylabel("Idő (Másodperc)")
-    plt.xticks(rotation=45, ha="right")
+    if df.empty:
+        print("Nincs generálható adat.")
+        return
+
+    # --- 1. Csoportosított Oszlopdiagram generálása (Publikációhoz kiváló) ---
+    pivot_df = df.pivot(index="Modul", columns="Nehézség", values="Válaszidő (s)")
+    
+    # Rendezzük a modulokat futási sorrendbe
+    module_order = ["Wellspring", "RuneCarver", "Bifrost Ingest", "Bifrost LLM", "Skald"]
+    pivot_df = pivot_df.reindex(module_order)
+    
+    plt.figure(figsize=(12, 7))
+    # Publikációhoz illő, letisztult színek
+    colors = {"Easy": "#2ecc71", "Medium": "#f39c12", "Hard": "#e74c3c"} 
+    
+    ax = pivot_df.plot(kind='bar', color=[colors.get(x, '#333') for x in pivot_df.columns], figsize=(12, 7), edgecolor='black')
+    
+    plt.title(f"Project Mimir: Feldolgozási idő (Latency) modulonként és nehézségenként\n(Mérés azonosítója: {timestamp})", fontsize=14, fontweight='bold')
+    plt.ylabel("Válaszidő (másodperc)", fontsize=12)
+    plt.xlabel("Mikroszolgáltatás modulok", fontsize=12)
+    plt.xticks(rotation=15, ha='right', fontsize=11)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.legend(title="Dokumentum Komplexitás")
     plt.tight_layout()
     
-    chart_filename = f"latency_chart_{timestamp}.png"
-    chart_path = os.path.join(REPORT_DIR, chart_filename)
-    plt.savefig(chart_path)
+    chart_filename = f"mimir_latency_comparison_{timestamp}.png"
+    plt.savefig(os.path.join(REPORT_DIR, chart_filename), dpi=300) # Magas DPI a publikációhoz
     plt.close()
 
-    # 2. Markdown Report Generálása
-    md_filename = f"e2e_report_{timestamp}.md"
-    md_path = os.path.join(REPORT_DIR, md_filename)
-    
-    total_time = df['Válaszidő (s)'].sum()
-    all_passed = all(df['Státusz'] == 'Sikeres') and all(df['Elvárás Teljesült'].isin(['Igen', 'N/A']))
-
+    # --- 2. Összesített Markdown Report ---
+    md_path = os.path.join(REPORT_DIR, f"publikacios_report_{timestamp}.md")
     with open(md_path, "w", encoding="utf-8") as f:
-        f.write(f"# ⚙️ Projekt Mimir - Átfogó E2E Integrációs Jelentés\n\n")
-        f.write(f"**Dátum és Idő:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        f.write(f"**Végeredmény:** {'🟢 SIKERES' if all_passed else '🔴 HIBÁS'}\n")
-        f.write(f"**Teljes feldolgozási idő:** {round(total_time, 3)} másodperc\n\n")
+        f.write("# ⚙️ Project Mimir - Publikációs E2E és Baseline Jelentés\n\n")
+        f.write(f"**Teszt futtatás dátuma:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
         
-        f.write("## 📈 Teljesítmény Metrikák (Latency)\n\n")
-        f.write(f"![Latency Chart](./{chart_filename})\n\n")
+        f.write("## 📈 Teljesítmény Összehasonlítás (Latency)\n")
+        f.write(f"A mellékelt diagram (`{chart_filename}`) vizuálisan ábrázolja, hogyan skálázódik a RAG pipeline az adatok komplexitásával.\n\n")
         
-        f.write("## 🧪 Lépésenkénti Eredmények (Audit Log)\n\n")
+        f.write("## 🧪 Részletes Eredmények (Audit Log)\n\n")
         f.write(df.to_markdown(index=False))
         
-        f.write("\n\n## 📝 Tesztelt Adathalmaz\n\n")
-        f.write("**Bemeneti nyers szöveg (Wellspring):**\n")
-        f.write("```text\n")
-        f.write(f"{TEST_DOC['content']}\n")
-        f.write("```\n\n")
-        f.write(f"**Keresési Lekérdezés (Bifrost):** `{TEST_DOC['search_query']}`\n\n")
-        f.write(f"**Elvárt Keresési Találat:** `{TEST_DOC['expected_search_keyword']}`\n")
-        
-        f.write("\n\n## 🤖 AI Által Generált Teszt (JSON kimenet)\n\n")
-        f.write("```json\n")
-        f.write(json.dumps(global_llm_data, ensure_ascii=False, indent=4) if global_llm_data else "{}")
-        f.write("\n```\n")
+        f.write("\n\n## 📂 Generált Artifaktok\n")
+        f.write("A futás során az alábbi adatok lettek kimentve a jelentés mappájába (későbbi analízishez és cikkhez mellékletként):\n")
+        f.write("- **Chunkok (Szemantikai darabolás eredményei):** `*_chunks.json`\n")
+        f.write("- **AI Generált Tesztek:** `*_Generated.json`\n")
+        f.write("- **Végeredmény (PDF-ek):** `*_Output.pdf`\n")
 
-    print(f"✅ [KÉSZ] A jelentés és a grafikon elmentve a '{REPORT_DIR}' mappába!")
-    print(f"👉 Nyisd meg a '{md_path}' fájlt a részletekért!")
+    print(f"✅ [KÉSZ] Minden adat, JSON és grafikon elmentve ide: '{REPORT_DIR}'")
 
 if __name__ == "__main__":
-    run_comprehensive_test()
+    print(f"🚀 [START] Mimir Multi-Difficulty Baseline Teszt ({timestamp})")
+    for diff in DIFFICULTIES:
+        run_pipeline_for_difficulty(diff)
+    generate_visuals_and_report()

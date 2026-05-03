@@ -1,0 +1,57 @@
+{
+  "teszt_metaadatok": {
+    "tema": "A kávé története és típusai",
+    "nehezseg": "konnyu",
+    "nyelv": "hu"
+  },
+  "kerdesek": [
+    {
+      "id": "q_kave_001",
+      "bloom_szint": "Ismeret (Emlékezés)",
+      "kerdes": "A legenda szerint ki fedezte fel a kávét a 9. században?",
+      "helyes_valasz": "Egy Kaldi nevű etióp kecskepásztor.",
+      "disztraktorok": [
+        "Egy velencei kereskedő.",
+        "Egy jemeni szerzetes.",
+        "Egy arab felfedező."
+      ],
+      "magyarazat": "A szöveg első bekezdése szerint a kávé felfedezése egy Kaldi nevű etióp kecskepásztorhoz kötődik, aki észrevette, hogy a kecskéi élénkek lettek a bogyóktól."
+    },
+    {
+      "id": "q_kave_002",
+      "bloom_szint": "Megértés",
+      "kerdes": "Mi a fő különbség az Arabica és a Robusta kávébab termesztési helyszíne között?",
+      "helyes_valasz": "Az Arabica magasabban fekvő területeken terem, míg a Robusta alacsonyabb területeken is megél.",
+      "disztraktorok": [
+        "Az Arabica csak Jemenben, a Robusta pedig csak Etiópiában terem.",
+        "A Robusta igényli a magas, 2000 méter feletti hegyvidéki levegőt.",
+        "Az Arabica kizárólag üvegházakban, a Robusta pedig vadon terem."
+      ],
+      "magyarazat": "A szöveg leírja, hogy az Arabica 600 és 2000 méter közötti, magasabban fekvő területeken terem, ezzel szemben a Robusta alacsonyabb területeken is életképes."
+    },
+    {
+      "id": "q_kave_003",
+      "bloom_szint": "Analízis / Megértés",
+      "kerdes": "Milyen ízvilágot eredményez a világosabb pörkölés a sötét pörköléshez képest?",
+      "helyes_valasz": "Megőrzi a kávébab eredeti, gyümölcsös ízjegyeit.",
+      "disztraktorok": [
+        "Testesebb, füstösebb és keserűbb ízvilágot eredményez.",
+        "Teljesen elveszíti a kávé az ízét, és csak a koffein marad meg.",
+        "Kétszer olyan keserű lesz tőle az ital."
+      ],
+      "magyarazat": "A szöveg utolsó bekezdése szerint a világosabb pörkölés a gyümölcsös ízjegyeket őrzi meg, míg a füstös és keserű íz a sötét pörkölés sajátja."
+    },
+    {
+      "id": "q_kave_004",
+      "bloom_szint": "Ismeret (Emlékezés)",
+      "kerdes": "Milyen színű a nyers kávébab, mielőtt megpörkölnék?",
+      "helyes_valasz": "Zöld.",
+      "disztraktorok": [
+        "Piros.",
+        "Barna.",
+        "Fekete."
+      ],
+      "magyarazat": "Bár a cserjén lévő kávécseresznye piros, és a végeredmény barna, a szöveg egyértelműen leírja, hogy a kiszárított, nyers kávébab zöld színű."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+    "title": "Mimir AI - Generálási Hiba",
+    "format": "pdf",
+    "questions": [
+        {
+            "type": "mcq",
+            "text": "Sajnos az AI modellek túlterheltek, vagy a kérés túl bonyolult volt. Kérlek, próbáld újra rövidebb prompttal!",
+            "answers": [
+                {
+                    "text": "Megértettem, újrapróbálom.",
+                    "is_correct": true
+                },
+                {
+                    "text": "Rendszerhiba",
+                    "is_correct": false
+                }
+            ]
+        }
+    ]
+}

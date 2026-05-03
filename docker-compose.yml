@@ -122,6 +122,7 @@ services:
       - POSTGRES_URL=postgresql://mimir_user:mimir_password@postgres:5432/mimir_db
       - REDIS_URL=redis://redis:6379/0
       - HEIMDALL_URL=http://heimdall:8000
+      - OE_GENAI_API_KEY=${OE_GENAI_API_KEY}
     networks:
       - mimir_network
     depends_on:

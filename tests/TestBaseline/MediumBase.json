@@ -1,0 +1,57 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Az immunrendszer működése",
+    "nehezseg": "kozepes",
+    "nyelv": "hu"
+  },
+  "kerdesek": [
+    {
+      "id": "q_immun_001",
+      "bloom_szint": "Megértés",
+      "kerdes": "Mi a legfőbb különbség a veleszületett és a szerzett immunrendszer között?",
+      "helyes_valasz": "A veleszületett azonnali, de nem specifikus védelmet nyújt, míg a szerzett lassabb, de specifikus és memóriával rendelkezik.",
+      "disztraktorok": [
+        "A veleszületett csak antitesteket termel, míg a szerzett fizikai gátakkal védekezik.",
+        "A veleszületett immunrendszer specifikus memóriával rendelkezik, míg a szerzett azonnal elpusztít minden kórokozót.",
+        "A veleszületett immunrendszert a B-sejtek irányítják, a szerzettet pedig a makrofágok."
+      ],
+      "magyarazat": "A szöveg egyértelműen szembeállítja a két ágat: a veleszületett gyors, de nem specifikus és nincs memóriája, míg a szerzett lassabb, de célzottan támad és memóriasejteket hoz létre."
+    },
+    {
+      "id": "q_immun_002",
+      "bloom_szint": "Ismeret (Emlékezés)",
+      "kerdes": "Mely sejtek felelősek az antitestek termeléséért a szervezetben?",
+      "helyes_valasz": "A B-sejtek.",
+      "disztraktorok": [
+        "A citotoxikus T-sejtek.",
+        "A falósejtek (makrofágok).",
+        "A T-segítő sejtek."
+      ],
+      "magyarazat": "A szöveg harmadik bekezdése konkrétan leírja: 'A B-sejtek feladata az antitestek (ellenanyagok) termelése.'"
+    },
+    {
+      "id": "q_immun_003",
+      "bloom_szint": "Analízis",
+      "kerdes": "Hogyan segíti elő egy védőoltás (vakcina) a betegségek elleni védekezést a szöveg alapján?",
+      "helyes_valasz": "Memóriasejtek kialakulását váltja ki, amelyek egy későbbi fertőzés esetén azonnal felismerik a kórokozót.",
+      "disztraktorok": [
+        "Megerősíti a bőr és a nyálkahártyák fizikai gátjait, megakadályozva a bejutást.",
+        "Azonnal hatalmas mennyiségű falósejtet (makrofágot) juttat a véráramba.",
+        "Közvetlenül elpusztítja az egészséges sejteket, hogy a vírus ne tudjon hol szaporodni."
+      ],
+      "magyarazat": "A védőoltások az immunológiai memórián alapulnak. A vakcina hatására memóriasejtek jönnek létre, amik egy valós támadáskor még a tünetek megjelenése előtt lépnek akcióba."
+    },
+    {
+      "id": "q_immun_004",
+      "bloom_szint": "Alkalmazás",
+      "kerdes": "Ha egy kutató olyan anyagot vizsgál, amely kiváltja a szervezet immunválaszát, de maga az anyag nem antitest, akkor valószínűleg mit vizsgál?",
+      "helyes_valasz": "Egy antigént.",
+      "disztraktorok": [
+        "Egy B-sejtet.",
+        "Egy makrofágot.",
+        "Egy memóriasejtet."
+      ],
+      "magyarazat": "A szöveg definíciója szerint azokat a molekulákat, amelyek kiváltják az immunválaszt (és amelyekre az antitestek rátapadnak), antigéneknek nevezzük."
+    }
+  ]
+}
