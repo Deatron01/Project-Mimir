@@ -75,22 +75,47 @@ export default function Chat() {
         body: JSON.stringify({ chunks: runeData.chunks })
       });
 
-      setStatusMsg("A mesterséges intelligencia írja a kérdéseket...");
+      setStatusMsg("A mesterséges intelligencia dolgozik (ez beletelhet 1-2 percbe)...");
+      
+      // 1. Feladat elindítása (Azonnali válasz a Job ID-val)
       const genRes = await fetch(import.meta.env.VITE_BIFROST_GENERATE_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: userMsg.content, limit: 3 })
       });
-      if (!genRes.ok) throw new Error("Hiba a kérdések generálása közben");
-      const genData = await genRes.json();
+      if (!genRes.ok) throw new Error("Hiba a feladat indítása közben");
+      
+      const genJobData = await genRes.json();
+      const jobId = genJobData.job_id;
+
+      // 2. Polling (Kopogtatás) ciklus: 3 másodpercenként rákérdezünk az állapotra
+      let isFinished = false;
+      let finalAiData = null;
+
+      while (!isFinished) {
+        // Várunk 3 másodpercet a következő lekérdezésig
+        await new Promise(resolve => setTimeout(resolve, 3000)); 
+        
+        const statusRes = await fetch(`https://api.mimir-ai.hu/api/v1/status/${jobId}`);
+        
+        if (!statusRes.ok) continue;
+        
+        const statusData = await statusRes.json();
+        
+        if (statusData.status === "completed") {
+          finalAiData = statusData.data;
+          isFinished = true;
+        } else if (statusData.status === "failed") {
+          throw new Error(statusData.error || "Hiba az AI generálás során.");
+        }
+      }
 
       setStatusMsg("PDF dokumentum szerkesztése...");
       const skaldRes = await fetch(import.meta.env.VITE_SKALD_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(genData.data)
+        body: JSON.stringify(finalAiData) 
       });
-      if (!skaldRes.ok) throw new Error("Hiba a PDF generálása közben");
       
       const pdfBlob = await skaldRes.blob();
       const pdfUrl = URL.createObjectURL(pdfBlob);
