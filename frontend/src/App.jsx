@@ -10,6 +10,7 @@ import Chat from './pages/Chat'; // Az új chat oldal
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import FloatingSettings from './components/settings/FloatingSettings';
+import Tests from './pages/Tests';
 
 // Védett útvonal komponens
 const ProtectedRoute = ({ children }) => {
@@ -30,7 +31,7 @@ function App() {
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              
+              <Route path="/tests" element={<Tests />} />
               {/* Védett Chat útvonal */}
               <Route 
                 path="/chat" 

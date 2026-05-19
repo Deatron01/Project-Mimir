@@ -130,7 +130,7 @@ async def _process_generation(job_id: str, request: GenerateRequest):
         """
         
         # 4. Hívás az Óbudai Egyetem GenAI szerveréhez
-        genai_url = "[https://genai.uni-obuda.hu/api/chat/completions](https://genai.uni-obuda.hu/api/chat/completions)"
+        genai_url = "https://genai.uni-obuda.hu/api/chat/completions"
         api_key = os.getenv("OE_GENAI_API_KEY")
         
         if not api_key:
@@ -146,7 +146,7 @@ async def _process_generation(job_id: str, request: GenerateRequest):
             "qwen3-vl:8b"
         ]
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(proxy=None, trust_env=False) as client:
             for model_name in models_to_try:
                 try:
                     print(f"🔄 Próbálkozás a '{model_name}' modellel (Job ID: {job_id})...")
@@ -191,8 +191,8 @@ async def _process_generation(job_id: str, request: GenerateRequest):
         # 5. Lokális Ollama Fallback
         print("⚠️ Az összes külső API elhasalt. Próbálkozás lokális Ollama-val (qwen2.5:3b)...")
         try:
-            ollama_url = "[http://host.docker.internal:11434/api/generate](http://host.docker.internal:11434/api/generate)"
-            async with httpx.AsyncClient() as client:
+            ollama_url = "http://host.docker.internal:11434/api/generate"
+            async with httpx.AsyncClient(trust_env=False) as client:
                 ollama_response = await client.post(
                     ollama_url,
                     json={

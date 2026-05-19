@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Send, Paperclip, Loader2, FileText, Download, Bot, User, X } from 'lucide-react';
 import { cn } from '../utils/cn';
 
+const { user } = useAuth();
+
 export default function Chat() {
   const [messages, setMessages] = useState([
     {
@@ -114,7 +116,10 @@ export default function Chat() {
       const skaldRes = await fetch(import.meta.env.VITE_SKALD_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(finalAiData) 
+        body: JSON.stringify({
+          ...finalAiData,
+          user_id: user?.email
+        })
       });
       
       const pdfBlob = await skaldRes.blob();
@@ -124,7 +129,7 @@ export default function Chat() {
         id: Date.now() + 1,
         role: 'ai',
         content: 'Elkészült a vizsgaanyagod a megadott dokumentum alapján! Alább letöltheted a kész PDF-et.',
-        resultData: genData.data,
+        resultData: finalAiData,
         pdfUrl: pdfUrl
       }]);
       setFile(null);

@@ -166,6 +166,8 @@ services:
       dockerfile: Docker/Dockerfile
     ports:
       - "8005:8000"
+    volumes:
+      - ./services/skald/storage:/app/storage
     environment:
       - POSTGRES_URL=postgresql://mimir_user:mimir_password@postgres:5432/mimir_db
       - MINIO_ENDPOINT=minio:9000
