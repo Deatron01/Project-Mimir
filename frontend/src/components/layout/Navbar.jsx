@@ -4,7 +4,6 @@ import { Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import Button from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
-import Tests from './pages/Tests';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -43,6 +42,9 @@ export default function Navbar() {
             <>
               <Link to="/chat">
                 <Button variant="primary" size="sm">Ugrás a Chatbe</Button>
+              </Link>
+              <Link to="/tests" className="text-textMain hover:text-accent transition-colors">
+                Tesztek
               </Link>
               <Button variant="ghost" size="sm" onClick={logout}>Kijelentkezés</Button>
             </>
