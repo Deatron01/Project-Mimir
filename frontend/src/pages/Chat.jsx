@@ -3,9 +3,10 @@ import { motion } from 'framer-motion';
 import { Send, Paperclip, Loader2, FileText, Download, Bot, User, X } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { useAuth } from '../context/AuthContext';
-const { user } = useAuth();
+
 
 export default function Chat() {
+  const { user } = useAuth();
   const [messages, setMessages] = useState([
     {
       id: 1,
