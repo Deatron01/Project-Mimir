@@ -40,60 +40,74 @@ async def init_db():
         print(f"Hiba az adatbázis csatlakozáskor: {e}")
 
 async def worker_loop():
-    """A fő aszinkron worker ciklus FOR UPDATE SKIP LOCKED logikával."""
+    """
+    A fő aszinkron worker ciklus javított változata:
+    - Connection Pool a stabil adatbázis-kezeléshez.
+    - Megemelt HTTP timeout a Bifrost hívásokhoz.
+    - Robusztus hibakezelés.
+    """
     print("⚒️ The Forge Worker elindult és figyeli a 'pending' feladatokat...")
     
-    # Kisebb késleltetés induláskor, hogy a Postgres konténer biztosan készen álljon
+    # 1. Késleltetés induláskor az infrastruktúra (Postgres) beállásához
     await asyncio.sleep(5)
     
+    # 2. Connection Pool létrehozása
     try:
-        conn = await asyncpg.connect(DB_URL)
+        pool = await asyncpg.create_pool(
+            DB_URL, 
+            min_size=1, 
+            max_size=10,
+            command_timeout=60
+        )
+        print("⚒️ Adatbázis Pool sikeresen létrehozva.")
     except Exception as e:
-        print(f"Worker nem tudott csatlakozni a DB-hez: {e}")
+        print(f"❌ Kritikus hiba: Nem sikerült csatlakozni az adatbázishoz: {e}")
         return
 
     while True:
         try:
-            # Tranzakció indítása a feladat lefoglalásához
-            async with conn.transaction():
-                # Megkeressük a legrégebbi 'pending' feladatot és ZÁROLJUK, 
-                # de a SKIP LOCKED miatt nem blokkoljuk a többi workert.
-                task = await conn.fetchrow('''
-                    SELECT id, task_type, payload 
-                    FROM task_queue 
-                    WHERE status = 'pending' 
-                    ORDER BY created_at ASC
-                    FOR UPDATE SKIP LOCKED 
-                    LIMIT 1
-                ''')
-                
-                if task:
-                    task_id = task['id']
-                    task_type = task['task_type']
-                    payload = json.loads(task['payload']) if isinstance(task['payload'], str) else task['payload']
+            # 3. Élő kapcsolat kérése a pool-ból minden ciklusban
+            async with pool.acquire() as conn:
+                # Tranzakció indítása a feladat biztonságos lefoglalásához
+                async with conn.transaction():
+                    task = await conn.fetchrow('''
+                        SELECT id, task_type, payload 
+                        FROM task_queue 
+                        WHERE status = 'pending' 
+                        ORDER BY created_at ASC
+                        FOR UPDATE SKIP LOCKED 
+                        LIMIT 1
+                    ''')
                     
-                    print(f"[{task_id}] Feladat lefoglalva. Típus: {task_type}")
+                    if task:
+                        task_id = task['id']
+                        task_type = task['task_type']
+                        # Payload biztonságos betöltése
+                        payload = json.loads(task['payload']) if isinstance(task['payload'], str) else task['payload']
+                        
+                        print(f"[{task_id}] Feladat lefoglalva. Típus: {task_type}")
+                        
+                        # Feldolgozás megkezdése
+                        await conn.execute("UPDATE task_queue SET status = 'processing' WHERE id = $1", task_id)
+                        
+                        # 4. Orkesztráció végrehajtása (Bifrost hívás hosszú timeouttal)
+                        if task_type == 'index_chunks':
+                            # 300 másodperc (5 perc) várakozási idő az AI generálásra
+                            async with httpx.AsyncClient(timeout=300.0) as client:
+                                response = await client.post(f"{BIFROST_URL}/api/v1/ingest", json=payload)
+                                response.raise_for_status()
+                        
+                        # 5. Sikeres befejezés adminisztrálása
+                        await conn.execute("UPDATE task_queue SET status = 'completed' WHERE id = $1", task_id)
+                        print(f"[{task_id}] Feladat sikeresen befejezve!")
                     
-                    # 1. Státusz frissítése: feldolgozás alatt
-                    await conn.execute("UPDATE task_queue SET status = 'processing' WHERE id = $1", task_id)
-                    
-                    # 2. FELADAT VÉGREHAJTÁSA (Orkesztráció)
-                    if task_type == 'index_chunks':
-                        # Ha a feladat a chunkok indexelése, szólunk a Bifrostnak
-                        async with httpx.AsyncClient() as client:
-                            response = await client.post(f"{BIFROST_URL}/api/v1/ingest", json=payload)
-                            response.raise_for_status()
-                    
-                    # (Ide jöhet a többi task_type logika a jövőben, pl. 'generate_test')
-                    
-                    # 3. Státusz frissítése: kész
-                    await conn.execute("UPDATE task_queue SET status = 'completed' WHERE id = $1", task_id)
-                    print(f"[{task_id}] Feladat sikeresen befejezve!")
-                else:
-                    # Nincs új feladat, várunk egy picit, hogy ne pörgessük a CPU-t feleslegesen
-                    await asyncio.sleep(2)
+                    else:
+                        # Nincs új feladat, pihentetjük a ciklust
+                        await asyncio.sleep(2)
+
         except Exception as e:
-            print(f"Hiba a feladat végrehajtása közben: {e}")
+            # Bármilyen hiba (hálózati szakadás, timeout stb.) esetén várakozás, majd újrapróbálkozás
+            print(f"⚠️ Hiba a feladat végrehajtása közben: {e}. Újrapróbálkozás 5 másodperc múlva...")
             await asyncio.sleep(5)
 
 @app.on_event("startup")

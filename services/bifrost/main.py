@@ -119,14 +119,10 @@ async def generate_questions(request: GenerateRequest):
     KÖTELEZŐ SZABÁLYOK, AMIKET SZIGORÚAN BE KELL TARTANOD:
     1. ZÉRÓ HALLUCINÁCIÓ: KIZÁRÓLAG a megadott KONTEXTUS alapján dolgozz! Ha a kontextus nem tartalmazza a választ, ne találj ki semmit!
     2. FELHASZNÁLÓI UTASÍTÁS KÖVETÉSE: Alább a FELADAT részben megkapod a felhasználó pontos kérését. Ebből kell kiolvasnod, hogy HÁNY DARAB és MILYEN TÍPUSÚ (pl. feleletválasztós, igaz-hamis, kifejtős) kérdést kér. Pontosan a kért mennyiséget és típust generáld le!
-    3. DISZTRAKTOROK: Feleletválasztós kérdés esetén a helytelen válaszok legyenek hihetőek, de egyértelműen rosszak.
+    3. DISZTRAKTOROK: Feleletválasztós (mcq) kérdés esetén 1 helyes és 3 hihető, de helytelen válasz legyen.
     4. NO LATEX: Szigorúan TILOS LaTeX formázást vagy dollárjeleket ($) használni!
-    5. META-REFERENCIA TILALOM: Szigorúan TILOS a dokumentum szerkezetére kérdezni! 
-       - NE kérdezz rá fejezetszámokra (pl. "Mi van a 4.3 pontban?").
-       - NE hivatkozz alcímekre vagy felsorolások sorszámaira.
-       - A kérdés ne tartalmazza a "dokumentum alapján", "a megadott szöveg szerint" vagy hasonló fordulatokat. Úgy fogalmazz, mintha egy általános vizsgát írnál.
+    5. META-REFERENCIA TILALOM: Szigorúan TILOS a dokumentum szerkezetére kérdezni (pl. "Mi van a 4.3 pontban?"). Úgy fogalmazz, mintha egy általános vizsgát írnál.
 
-    KONTEXTUS:
     KONTEXTUS:
     {context_text}
 
@@ -134,26 +130,30 @@ async def generate_questions(request: GenerateRequest):
     "{request.query}"
 
     KIMENETI FORMÁTUM:
-    A válaszod KIZÁRÓLAG egy érvényes, nyers JSON objektum lehet! Szigorúan TILOS markdown formázást (pl. ```json) használni!
-    A "questions" tömbbe pontosan annyi és olyan típusú elemet tegyél, amennyit a felhasználó kért:
-
+    A válaszod KIZÁRÓLAG egy tiszta, érvényes JSON objektum lehet! Szigorúan TILOS markdown formázást (```json) és megjegyzéseket (//) használni!
+    
+    A struktúrának pontosan így kell kinéznie:
     {{
         "title": "Mimir AI Vizsga",
         "format": "{request.format}",
         "questions": [
             {{
-                "type": "mcq", // Változtasd a kérés szerint: "mcq" (feleletválasztós), "tf" (igaz-hamis), "open" (kifejtős/rövid válasz)
+                "type": "mcq",
                 "text": "A pontos és egyértelmű kérdés szövege?",
                 "answers": [
-                    // MCQ esetén: 1 helyes és 3 helytelen válasz.
-                    // Igaz/Hamis (tf) esetén: Csak 2 válasz (az egyik true, a másik false).
-                    // Kifejtős (open) esetén: Csak 1 válasz, ami a kulcsszavakat/megoldást tartalmazza (is_correct: true).
-                    {{"text": "Helyes válasz / Igaz / Megoldókulcs", "is_correct": true}},
-                    {{"text": "Helytelen válasz 1 / Hamis", "is_correct": false}}
+                    {{"text": "Helyes válasz", "is_correct": true}},
+                    {{"text": "Helytelen válasz 1", "is_correct": false}},
+                    {{"text": "Helytelen válasz 2", "is_correct": false}},
+                    {{"text": "Helytelen válasz 3", "is_correct": false}}
                 ]
             }}
         ]
     }}
+
+    SZABÁLYOK A VÁLASZOKHOZ:
+    - Ha a típus "mcq" (feleletválasztós): kövesd a fenti példát (1 true, 3 false).
+    - Ha a típus "tf" (igaz-hamis): pontosan 2 válasz legyen (az egyik true, a másik false).
+    - Ha a típus "open" (kifejtős): pontosan 1 válasz legyen (is_correct: true), ami a megoldókulcsot tartalmazza.
     """
     
    # 4. Hívás az Óbudai Egyetem GenAI szerveréhez (Modell Fallback logikával)
@@ -165,9 +165,12 @@ async def generate_questions(request: GenerateRequest):
 
     # A preferált modellek listája sorrendben
     models_to_try = [
-        "qwen3.5:122b",     # 1. Választás (A legnagyobb Qwen)
-        "deepseek-r1:671b", # 2. Választás (A Guide által ajánlott)
-        "gpt-oss:120b"      # 3. Választás (Biztonsági tartalék)
+        "Qwen3.5-122B",          # 1. Választás: 122 milliárd paraméteres Qwen
+        "gpt-oss:120b",          # 2. Választás: 120 milliárd paraméteres GPT-OSS
+        "nemotron-3-super:120b", # 3. Választás: 120 milliárd paraméteres Nemotron
+        "gpt-oss:20b",           # 4. Választás: 20 milliárd paraméteres GPT-OSS
+        "qwen3.5:9b",            # 5. Választás: 9 milliárd paraméteres Qwen
+        "qwen3-vl:8b"            # 6. Választás: Vészhelyzeti tartalék (8 milliárdos Vision-Language modell)
     ]
 
     async with httpx.AsyncClient() as client:
@@ -216,18 +219,60 @@ async def generate_questions(request: GenerateRequest):
                 print(f"⚠️ Hiba a '{model_name}' modellel: {str(e)}. Lépés a következőre...")
                 continue
                 
-    # Ha a ciklus befejeződött, és EGYIK modell sem tudta megcsinálni:
-    print("❌ Az összes modell elhasalt. Biztonsági JSON visszaadása.")
+    print("⚠️ Az összes külső API elhasalt. Próbálkozás lokális Ollama-val (qwen2.5:3b)...")
+    try:
+        # A 'host.docker.internal' a Docker konténerből a Windows host gépre mutat
+        ollama_url = "http://host.docker.internal:11434/api/generate"
+        
+        async with httpx.AsyncClient() as client:
+            ollama_response = await client.post(
+                ollama_url,
+                json={
+                    "model": "qwen2.5:3b",
+                    "prompt": prompt,
+                    "stream": False,
+                    "format": "json", # Az Ollama kényszeríti a JSON kimenetet
+                    "options": {
+                        "num_ctx": 32768, # Megemelt kontextus a PDF feldolgozáshoz
+                        "temperature": 0.1
+                    }
+                },
+                timeout=180.0
+            )
+            
+            if ollama_response.status_code == 200:
+                raw_content = ollama_response.json().get("response", "")
+                
+                # Ugyanaz a tisztító logika, mint a távoli modelleknél
+                cleaned_local = raw_content.replace('```json', '').replace('```', '').strip()
+                start = cleaned_local.find('{')
+                end = cleaned_local.rfind('}')
+                if start != -1 and end != -1:
+                    cleaned_local = cleaned_local[start:end+1]
+                
+                local_json = json.loads(cleaned_local)
+                print("✅ Sikeres generálás lokális Ollama (qwen2.5:3b) modellel!")
+                return {"status": "success", "data": local_json}
+            else:
+                print(f"⚠️ Lokális Ollama hiba: {ollama_response.status_code}")
+                
+    except Exception as e:
+        print(f"❌ Lokális fallback is sikertelen: {str(e)}")
+
+    # ----------------------------------------------------------------------
+    # VÉGSŐ BIZTONSÁGI MEGOLDÁS (Csak ha tényleg semmi nem működött)
+    # ----------------------------------------------------------------------
+    print("❌ Minden lehetőség kimerült. Biztonsági JSON visszaküldése.")
     fallback_json = {
         "title": "Mimir AI - Generálási Hiba",
         "format": request.format,
         "questions": [
             {
                 "type": "mcq",
-                "text": "Sajnos az AI modellek túlterheltek, vagy a kérés túl bonyolult volt. Kérlek, próbáld újra rövidebb prompttal!",
+                "text": "Sajnos az AI modellek túlterheltek, vagy a kérés túl bonyolult volt. Kérlek, próbáld újra!",
                 "answers": [
-                    {"text": "Megértettem, újrapróbálom.", "is_correct": True},
-                    {"text": "Rendszerhiba", "is_correct": False}
+                    {"text": "Megértettem", "is_correct": True},
+                    {"text": "Hiba történt", "is_correct": False}
                 ]
             }
         ]

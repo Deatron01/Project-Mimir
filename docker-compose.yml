@@ -123,6 +123,8 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - HEIMDALL_URL=http://heimdall:8000
       - OE_GENAI_API_KEY=${OE_GENAI_API_KEY}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - mimir_network
     depends_on:
