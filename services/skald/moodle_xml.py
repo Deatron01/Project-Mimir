@@ -12,6 +12,9 @@ class MoodleXMLExporter:
     def generate_mcq(self, question: dict) -> str:
         """Feleletválasztós (Multiple Choice) kérdés XML blokkja."""
         q_text = self._cdata(question.get('text', ''))
+        
+        disclaimer = self._cdata("<p><i>Ez a kérdés mesterséges intelligencia [Mimir AI] felhasználásával készült. Emberi lektorálást igényel.</i></p>")
+        
         xml = f"""
     <question type="multichoice">
         <name>
@@ -20,6 +23,9 @@ class MoodleXMLExporter:
         <questiontext format="html">
             <text>{q_text}</text>
         </questiontext>
+        <generalfeedback format="html">
+            <text>{disclaimer}</text>
+        </generalfeedback>
         <defaultgrade>1.0000000</defaultgrade>
         <single>true</single>
         <shuffleanswers>true</shuffleanswers>

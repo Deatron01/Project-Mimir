@@ -5,6 +5,7 @@ import httpx
 import asyncpg
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 app = FastAPI(title="⚒️ The Forge Service", description="Natív aszinkron feladat-orkesztrátor")
 app.add_middleware(
@@ -22,23 +23,39 @@ DB_URL = os.getenv("POSTGRES_URL", "postgresql://mimir_user:mimir_password@postg
 BIFROST_URL = os.getenv("BIFROST_URL", "http://bifrost:8000")
 
 async def init_db():
-    """Létrehozza a feladatsor táblát, ha még nem létezik."""
     try:
         conn = await asyncpg.connect(DB_URL)
+        # Meglévő task_queue tábla...
         await conn.execute('''
-            CREATE TABLE IF NOT EXISTS task_queue (
+            CREATE TABLE IF NOT EXISTS task_queue ( ... )
+        ''')
+        
+        # ÚJ: Audit Logs tábla az AI Act miatt
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS audit_logs (
                 id SERIAL PRIMARY KEY,
-                task_type VARCHAR(50),
-                payload JSONB,
-                status VARCHAR(20) DEFAULT 'pending',
+                job_id VARCHAR(255),
+                user_query TEXT,
+                used_prompt TEXT,
+                rag_context TEXT,
+                model_name VARCHAR(100),
+                qa_score FLOAT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
         await conn.close()
-        print("Gépterem (DB) inicializálva.")
+        print("Gépterem (DB) és Audit napló inicializálva.")
     except Exception as e:
         print(f"Hiba az adatbázis csatlakozáskor: {e}")
 
+class AuditLogRequest(BaseModel):
+    job_id: str
+    user_query: str
+    used_prompt: str
+    rag_context: str
+    model_name: str
+    qa_score: float = None
+    
 async def worker_loop():
     """
     A fő aszinkron worker ciklus javított változata:
@@ -131,5 +148,18 @@ async def create_task(task_type: str, payload: dict):
         ''', task_type, json.dumps(payload))
         await conn.close()
         return {"status": "success", "message": "Feladat sikeresen beütemezve a Gépterembe."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/api/v1/audit")
+async def create_audit_log(log: AuditLogRequest):
+    try:
+        conn = await asyncpg.connect(DB_URL)
+        await conn.execute('''
+            INSERT INTO audit_logs (job_id, user_query, used_prompt, rag_context, model_name, qa_score)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        ''', log.job_id, log.user_query, log.used_prompt, log.rag_context, log.model_name, log.qa_score)
+        await conn.close()
+        return {"status": "success"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

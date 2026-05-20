@@ -30,9 +30,13 @@ class NativePDFDrawer:
         doc = SimpleDocTemplate(
             buffer, 
             pagesize=A4, 
-            rightMargin=50, leftMargin=50, topMargin=50, bottomMargin=50
+            rightMargin=50, leftMargin=50, topMargin=50, bottomMargin=50,
+            title=title,
+            author="Mimir AI",
+            creator="Mimir AI Generator (EU AI Act Compliant)",
+            subject="MI által generált oktatási anyag"
         )
-        
+            
         styles = getSampleStyleSheet()
         
         # --- EGYEDI STÍLUSOK DEFINIÁLÁSA ---
@@ -60,7 +64,16 @@ class NativePDFDrawer:
             leftIndent=20, # Behúzás a válaszoknak
             spaceAfter=6
         )
-
+        
+        def add_ai_footer(canvas, doc):
+            canvas.saveState()
+            canvas.setFont(self.font_regular, 8)
+            canvas.setFillColor(colors.gray)
+            disclaimer = "Ez a dokumentum mesterséges intelligencia [Mimir AI] felhasználásával készült. Emberi lektorálást igényel."
+            # Középre igazítva az oldal aljától 30 pontra
+            canvas.drawCentredString(A4[0] / 2.0, 30, disclaimer)
+            canvas.restoreState()
+            
         elements = []
 
         # 1. Cím hozzáadása
@@ -88,7 +101,7 @@ class NativePDFDrawer:
                 elements.append(Spacer(1, 10))
 
         # PDF felépítése
-        doc.build(elements)
+        doc.build(elements, onFirstPage=add_ai_footer, onLaterPages=add_ai_footer)
         
         pdf_value = buffer.getvalue()
         buffer.close()

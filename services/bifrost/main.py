@@ -179,8 +179,7 @@ async def _process_generation(job_id: str, request: GenerateRequest):
                     
                     generated_json = json.loads(cleaned_response)
                     print(f"✅ Sikeres generálás a '{model_name}' modellel!")
-                    
-                    # Sikeres befejezés mentése!
+                    await send_audit_log(job_id, request.query, prompt, context_text, model_name)
                     generation_jobs[job_id] = {"status": "completed", "data": generated_json}
                     return
                     
@@ -218,6 +217,7 @@ async def _process_generation(job_id: str, request: GenerateRequest):
                     
                     local_json = json.loads(cleaned_local)
                     print("✅ Sikeres generálás lokális Ollama (qwen2.5:3b) modellel!")
+                    await send_audit_log(job_id, request.query, prompt, context_text, "qwen2.5:3b (local fallback)")
                     generation_jobs[job_id] = {"status": "completed", "data": local_json}
                     return
                 else:
@@ -294,3 +294,23 @@ async def get_generation_status(job_id: str):
     if job_id not in generation_jobs:
         raise HTTPException(status_code=404, detail="Feladat nem található.")
     return generation_jobs[job_id]
+
+async def send_audit_log(job_id: str, user_query: str, prompt: str, context: str, model_name: str):
+    try:
+        forge_url = os.getenv("FORGE_URL", "http://the-forge:8000")
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                f"{forge_url}/api/v1/audit",
+                json={
+                    "job_id": job_id,
+                    "user_query": user_query,
+                    "used_prompt": prompt,
+                    "rag_context": context,
+                    "model_name": model_name,
+                    "qa_score": None # Itt később beköthető a Heimdall score
+                },
+                timeout=5.0
+            )
+            print(f"📝 AI Act Audit log rögzítve (Job ID: {job_id})")
+    except Exception as e:
+        print(f"⚠️ Audit log mentési hiba (a generálás folytatódik): {e}")
