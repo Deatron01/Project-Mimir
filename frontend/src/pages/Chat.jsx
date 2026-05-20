@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Paperclip, Loader2, FileText, Download, Bot, User, X } from 'lucide-react';
+import { Send, Paperclip, Loader2, FileText, Download, Bot, User, X, CheckSquare } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { useAuth } from '../context/AuthContext';
-
+import Button from '../components/ui/Button';
 
 export default function Chat() {
   const { user } = useAuth();
@@ -96,7 +96,6 @@ export default function Chat() {
       let finalAiData = null;
 
       while (!isFinished) {
-        // Várunk 3 másodpercet a következő lekérdezésig
         await new Promise(resolve => setTimeout(resolve, 3000)); 
         
         const statusRes = await fetch(`https://api.mimir-ai.hu/api/v1/status/${jobId}`);
@@ -113,25 +112,14 @@ export default function Chat() {
         }
       }
 
-      setStatusMsg("PDF dokumentum szerkesztése...");
-      const skaldRes = await fetch(import.meta.env.VITE_SKALD_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...finalAiData,
-          user_id: user?.email
-        })
-      });
-      
-      const pdfBlob = await skaldRes.blob();
-      const pdfUrl = URL.createObjectURL(pdfBlob);
-
+      // [MÓDOSÍTÁS] Itt törjük meg a folyamatot a Skald API hívás helyett
+      // Megjelenítjük az interaktív szerkesztőt a Human-in-the-Loop koncepció érvényesítéséhez.
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
         role: 'ai',
-        content: 'Elkészült a vizsgaanyagod a megadott dokumentum alapján! Alább letöltheted a kész PDF-et.',
-        resultData: finalAiData,
-        pdfUrl: pdfUrl
+        content: 'Elkészültek a kérdések! Az EU AI Act 14. cikke értelmében (Human-in-the-Loop) kérlek, ellenőrizd és szerkeszd a tartalmat a véglegesítés és az exportálás előtt.',
+        needsReview: true,
+        resultData: finalAiData
       }]);
       setFile(null);
 
@@ -140,6 +128,52 @@ export default function Chat() {
         id: Date.now() + 1,
         role: 'ai',
         content: `Hiba történt: ${err.message}`,
+        isError: true
+      }]);
+    } finally {
+      setIsLoading(false);
+      setStatusMsg('');
+    }
+  };
+
+  // [ÚJ FÜGGVÉNY] A jóváhagyás utáni Skald (PDF/XML) exportáláshoz
+  const handleApprove = async (messageId, editedData) => {
+    setIsLoading(true);
+    setStatusMsg("Dokumentum szerkesztése és exportálása...");
+    
+    try {
+      const skaldRes = await fetch(import.meta.env.VITE_SKALD_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...editedData,
+          user_id: user?.email
+        })
+      });
+      
+      if (!skaldRes.ok) throw new Error("Hiba a PDF generálása során");
+      
+      const pdfBlob = await skaldRes.blob();
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+
+      // Frissítjük az adott üzenetet: elrejtjük a szerkesztőt és mutatjuk a letöltőgombot
+      setMessages(prev => prev.map(msg => {
+        if (msg.id === messageId) {
+          return {
+            ...msg,
+            needsReview: false,
+            content: 'A vizsgaanyag ellenőrzése megtörtént és véglegesítésre került. Alább letöltheted a kész PDF-et.',
+            resultData: editedData,
+            pdfUrl: pdfUrl
+          };
+        }
+        return msg;
+      }));
+    } catch (err) {
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        role: 'ai',
+        content: `Hiba történt az exportálás során: ${err.message}`,
         isError: true
       }]);
     } finally {
@@ -163,7 +197,7 @@ export default function Chat() {
             animate={{ opacity: 1, y: 0 }}
             className={cn(
               "flex gap-4 max-w-[85%]",
-              msg.role === 'user' ? "ml-auto flex-row-reverse" : ""
+              msg.role === 'user' ? "ml-auto flex-row-reverse" : "flex-col md:flex-row" // Flex-col, hogy az editor rendesen kitöltse a teret mobil/tablet nézetben is
             )}
           >
             <div className={cn(
@@ -174,7 +208,7 @@ export default function Chat() {
             </div>
 
             <div className={cn(
-              "p-4 rounded-2xl shadow-md",
+              "p-4 rounded-2xl shadow-md w-full",
               msg.role === 'user' 
                 ? "bg-surface text-textMain rounded-tr-none border border-border/50" 
                 : msg.isError 
@@ -189,6 +223,37 @@ export default function Chat() {
               
               <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{msg.content}</p>
               
+              {/* [ÚJ] INTERAKTÍV SZERKESZTŐ (Human-in-the-Loop) */}
+              {msg.needsReview && (
+                <div className="mt-4 p-4 border border-accent/40 rounded-xl bg-surface/80 shadow-inner">
+                  <div className="flex items-center gap-2 mb-3 text-accent font-semibold text-sm">
+                    <CheckSquare size={16} />
+                    <span>Interaktív Szerkesztő</span>
+                  </div>
+                  <textarea 
+                    id={`editor-${msg.id}`}
+                    className="w-full h-64 p-3 bg-background/80 text-textMain text-sm font-mono border border-border/50 rounded-lg focus:outline-none focus:border-accent transition-colors scrollbar-thin scrollbar-thumb-surface scrollbar-track-transparent resize-y"
+                    defaultValue={JSON.stringify(msg.resultData, null, 2)}
+                  />
+                  <div className="mt-4 flex justify-end">
+                    <Button 
+                      size="sm" 
+                      onClick={() => {
+                        const editedText = document.getElementById(`editor-${msg.id}`).value;
+                        try {
+                          const editedData = JSON.parse(editedText);
+                          handleApprove(msg.id, editedData);
+                        } catch(e) {
+                          alert("Hibás JSON formátum! Kérlek ellenőrizd a szintaktikát.");
+                        }
+                      }}
+                    >
+                      Ellenőriztem és jóváhagyom a kérdéseket
+                    </Button>
+                  </div>
+                </div>
+              )}
+
               {msg.pdfUrl && (
                 <div className="mt-4 pt-4 border-t border-border/30">
                   <a href={msg.pdfUrl} download="mimir_vizsga.pdf" className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-background rounded-xl font-medium hover:bg-white transition-colors text-sm shadow-lg shadow-accent/20">
@@ -234,12 +299,12 @@ export default function Chat() {
           </motion.div>
         )}
 
-        {/* Kapszula alakú beviteli mező - A KÉPED ALAPJÁN */}
+        {/* Kapszula alakú beviteli mező */}
         <form 
           onSubmit={handleSend} 
           className="w-full flex items-center gap-2 bg-transparent border border-border/80 rounded-full pl-2 pr-2 py-1.5 shadow-sm focus-within:border-accent/60 transition-colors backdrop-blur-md"
         >
-          {/* Fájl csatolás gomb - Tökéletesen középre igazítva */}
+          {/* Fájl csatolás gomb */}
           <label className="flex items-center justify-center w-10 h-10 text-textMain/60 hover:text-accent cursor-pointer transition-colors shrink-0 rounded-full hover:bg-surface/50">
             <input type="file" className="hidden" accept=".pdf,.txt" onChange={(e) => setFile(e.target.files[0])} disabled={isLoading} />
             <Paperclip size={20} />
@@ -257,7 +322,7 @@ export default function Chat() {
             disabled={isLoading}
           />
 
-          {/* Küldés gomb - Halványabb háttérrel a képed szerint, ikon teljesen középen */}
+          {/* Küldés gomb */}
           <button 
             type="submit" 
             disabled={isLoading || (!input.trim() && !file)}

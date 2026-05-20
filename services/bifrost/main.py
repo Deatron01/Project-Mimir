@@ -25,20 +25,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- AI Modellek és DB inicializálása ---
 MODEL_NAME = 'intfloat/multilingual-e5-base'
-device = 'cpu' # Docker kompatibilitás miatt CPU
+device = 'cpu'
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model = AutoModel.from_pretrained(MODEL_NAME).to(device)
 model.eval()
 
-# A vector_db-ben láttuk, hogy az e5-base 768 dimenziós
 vector_store = RAGVectorStore(vector_size=768) 
 
-# Feladatok állapotát tároló szótár (Memóriában)
 generation_jobs = {}
 
-# --- Adatmodellek ---
 class IngestRequest(BaseModel):
     chunks: List[Dict[str, Any]]
 
@@ -51,7 +47,6 @@ class GenerateRequest(BaseModel):
     limit: int = 3
     format: str = "pdf"
 
-# --- Segédfüggvény az embeddinghez ---
 def _get_embeddings(texts: List[str], is_query=False):
     prefix = "query: " if is_query else "passage: "
     prefixed_texts = [prefix + t for t in texts]
@@ -71,7 +66,6 @@ def _get_embeddings(texts: List[str], is_query=False):
         
     return embeddings
 
-# --- HÁTTÉRFOLYAMAT A GENERÁLÁSHOZ ---
 async def _process_generation(job_id: str, request: GenerateRequest):
     """Ez a függvény a háttérben fut, és nem blokkolja a webszervert."""
     try:
@@ -130,7 +124,7 @@ async def _process_generation(job_id: str, request: GenerateRequest):
         """
         
         # 4. Hívás az Óbudai Egyetem GenAI szerveréhez
-        genai_url = "https://genai.uni-obuda.hu/api/chat/completions"
+        genai_url = "[https://genai.uni-obuda.hu/api/chat/completions](https://genai.uni-obuda.hu/api/chat/completions)"
         api_key = os.getenv("OE_GENAI_API_KEY")
         
         if not api_key:
@@ -179,7 +173,9 @@ async def _process_generation(job_id: str, request: GenerateRequest):
                     
                     generated_json = json.loads(cleaned_response)
                     print(f"✅ Sikeres generálás a '{model_name}' modellel!")
-                    await send_audit_log(job_id, request.query, prompt, context_text, model_name)
+                    
+                    await send_audit_log(job_id, request.query, prompt, context_text, model_name, cleaned_response)
+                    
                     generation_jobs[job_id] = {"status": "completed", "data": generated_json}
                     return
                     
@@ -190,12 +186,12 @@ async def _process_generation(job_id: str, request: GenerateRequest):
         # 5. Lokális Ollama Fallback
         print("⚠️ Az összes külső API elhasalt. Próbálkozás lokális Ollama-val (qwen2.5:3b)...")
         try:
-            ollama_url = "http://host.docker.internal:11434/api/generate"
+            ollama_url = "[http://host.docker.internal:11434/api/generate](http://host.docker.internal:11434/api/generate)"
             async with httpx.AsyncClient(trust_env=False) as client:
                 ollama_response = await client.post(
                     ollama_url,
                     json={
-                        "model": "qwen2.5:3b",
+                        "model": "qwen2.5:7b",
                         "prompt": prompt,
                         "stream": False,
                         "format": "json",
@@ -217,7 +213,10 @@ async def _process_generation(job_id: str, request: GenerateRequest):
                     
                     local_json = json.loads(cleaned_local)
                     print("✅ Sikeres generálás lokális Ollama (qwen2.5:3b) modellel!")
-                    await send_audit_log(job_id, request.query, prompt, context_text, "qwen2.5:3b (local fallback)")
+                    
+                    # [MÓDOSÍTVA] Audit Log meghívása lokális generálás esetén
+                    await send_audit_log(job_id, request.query, prompt, context_text, "qwen2.5:3b (local fallback)", cleaned_local)
+                    
                     generation_jobs[job_id] = {"status": "completed", "data": local_json}
                     return
                 else:
@@ -242,6 +241,10 @@ async def _process_generation(job_id: str, request: GenerateRequest):
                 }
             ]
         }
+        
+
+        await send_audit_log(job_id, request.query, prompt, context_text, "fallback_hardcoded", json.dumps(fallback_json))
+        
         generation_jobs[job_id] = {"status": "completed", "data": fallback_json}
 
     except Exception as e:
@@ -295,7 +298,32 @@ async def get_generation_status(job_id: str):
         raise HTTPException(status_code=404, detail="Feladat nem található.")
     return generation_jobs[job_id]
 
-async def send_audit_log(job_id: str, user_query: str, prompt: str, context: str, model_name: str):
+
+async def send_audit_log(job_id: str, user_query: str, prompt: str, context: str, model_name: str, generated_content: str):
+    qa_score = None
+    
+    try:
+        heimdall_url = os.getenv("HEIMDALL_URL", "http://heimdall:8000")
+        async with httpx.AsyncClient() as client:
+            print(f"👁️ Tartalom küldése a Heimdall felé elemzésre (Job ID: {job_id})...")
+            heimdall_res = await client.post(
+                f"{heimdall_url}/api/v1/evaluate",
+                json={
+                    "content": generated_content,
+                    "schema_type": "exam_json"
+                },
+                timeout=60.0
+            )
+            
+            if heimdall_res.status_code == 200:
+                qa_score = heimdall_res.json().get("qa_score")
+                print(f"✅ Heimdall értékelés sikeres (Job ID: {job_id}): {qa_score}/10 pont")
+            else:
+                print(f"⚠️ Heimdall visszautasította a kérést: {heimdall_res.status_code} - {heimdall_res.text}")
+                
+    except Exception as e:
+        print(f"⚠️ Hiba a Heimdall minőségbiztosítóval való kommunikációban: {e}")
+
     try:
         forge_url = os.getenv("FORGE_URL", "http://the-forge:8000")
         async with httpx.AsyncClient() as client:
@@ -307,10 +335,10 @@ async def send_audit_log(job_id: str, user_query: str, prompt: str, context: str
                     "used_prompt": prompt,
                     "rag_context": context,
                     "model_name": model_name,
-                    "qa_score": None # Itt később beköthető a Heimdall score
+                    "qa_score": qa_score
                 },
-                timeout=5.0
+                timeout=10.0
             )
-            print(f"📝 AI Act Audit log rögzítve (Job ID: {job_id})")
+            print(f"📝 AI Act Audit log rögzítve (Job ID: {job_id}, QA Score: {qa_score})")
     except Exception as e:
-        print(f"⚠️ Audit log mentési hiba (a generálás folytatódik): {e}")
+        print(f"⚠️ Audit log mentési hiba (a generálás folytatódik, a log elvész): {e}")
