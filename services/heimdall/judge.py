@@ -8,12 +8,12 @@ class LLMJudge:
         self.genai_url = "https://genai.uni-obuda.hu/api/chat/completions"
         # Ugyanaz a preferált modell lista, mint a Bifrostban
         self.models_to_try = [
-            "Qwen3.5-122B",
-            "gpt-oss:120b",
-            "nemotron-3-super:120b",
-            "gpt-oss:20b",
-            "qwen3.5:9b",
-            "qwen3-vl:8b"
+            # "Qwen3.5-122B",
+            # "gpt-oss:120b",
+            # "nemotron-3-super:120b",
+            # "gpt-oss:20b",
+            # "qwen3.5:9b",
+            # "qwen3-vl:8b"
         ]
 
     async def evaluate_coherence(self, chunk_text: str) -> int:
@@ -90,15 +90,16 @@ class LLMJudge:
                 ollama_response = await client.post(
                     ollama_url,
                     json={
-                        "model": "qwen2.5:3b",
+                        "model": "qwen2.5:14b",
                         "prompt": prompt,
                         "stream": False,
                         "format": "json",
                         "options": {
-                            "temperature": 0.1
+                            "num_ctx": 16384,
+                            "temperature": 0.0
                         }
                     },
-                    timeout=120.0
+                    timeout=300.0
                 )
                 
                 if ollama_response.status_code == 200:

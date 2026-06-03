@@ -132,12 +132,12 @@ async def _process_generation(job_id: str, request: GenerateRequest):
             return
 
         models_to_try = [
-            "Qwen3.5-122B",
-            "gpt-oss:120b",
-            "nemotron-3-super:120b",
-            "gpt-oss:20b",
-            "qwen3.5:9b",
-            "qwen3-vl:8b"
+            # "Qwen3.5-122B",
+            # "gpt-oss:120b",
+            # "nemotron-3-super:120b",
+            # "gpt-oss:20b",
+            # "qwen3.5:9b",
+            # "qwen3-vl:8b"
         ]
 
         async with httpx.AsyncClient(proxy=None, trust_env=False) as client:
@@ -163,8 +163,18 @@ async def _process_generation(job_id: str, request: GenerateRequest):
                     )
                     
                     response.raise_for_status()
-                    llm_response = response.json()["choices"][0]["message"]["content"]
                     
+                    # 1. Kinyerjük a választ, DE lekezeljük azt az esetet is, ha a szerver furcsa struktúrát küld
+                    try:
+                        llm_response = response.json()["choices"][0]["message"]["content"]
+                    except (KeyError, ValueError):
+                        llm_response = ""
+                    
+                    # 2. BIZTONSÁGI ELLENŐRZÉS: Ha a válasz üres vagy "None", ne is próbáljuk JSON-ként olvasni!
+                    if not llm_response or str(llm_response).strip() == "":
+                         raise ValueError("A szerver üres választ küldött (Valószínűleg túlterhelt vagy limitbe ütközött).")
+
+                    # 3. Tisztítás folytatása
                     cleaned_response = llm_response.replace('```json', '').replace('```', '').strip()
                     start = cleaned_response.find('{')
                     end = cleaned_response.rfind('}')
@@ -177,6 +187,12 @@ async def _process_generation(job_id: str, request: GenerateRequest):
                     await send_audit_log(job_id, request.query, prompt, context_text, model_name, cleaned_response)
                     
                     generation_jobs[job_id] = {"status": "completed", "data": generated_json}
+                    generated_json["metadata"] = {
+                        "model_used": model_name,
+                        "tokens_generated": llm_response.get("usage", {}).get("total_tokens", "N/A"),
+                        "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        "system_prompt_version": "v1.0"
+                    }
                     return
                     
                 except Exception as e:
@@ -191,16 +207,20 @@ async def _process_generation(job_id: str, request: GenerateRequest):
                 ollama_response = await client.post(
                     ollama_url,
                     json={
+<<<<<<< Updated upstream
                         "model": "qwen2.5:7b",
+=======
+                        "model": "qwen2.5:14b",
+>>>>>>> Stashed changes
                         "prompt": prompt,
                         "stream": False,
                         "format": "json",
                         "options": {
-                            "num_ctx": 32768,
-                            "temperature": 0.1
+                            "num_ctx": 16384,
+                            "temperature": 0.0
                         }
                     },
-                    timeout=180.0
+                    timeout=300.0
                 )
                 
                 if ollama_response.status_code == 200:
@@ -218,6 +238,12 @@ async def _process_generation(job_id: str, request: GenerateRequest):
                     await send_audit_log(job_id, request.query, prompt, context_text, "qwen2.5:3b (local fallback)", cleaned_local)
                     
                     generation_jobs[job_id] = {"status": "completed", "data": local_json}
+                    generated_json["metadata"] = {
+                        "model_used": model_name,
+                        "tokens_generated": llm_response.get("usage", {}).get("total_tokens", "N/A"),
+                        "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        "system_prompt_version": "v1.0"
+                    }
                     return
                 else:
                     print(f"⚠️ Lokális Ollama hiba: {ollama_response.status_code}")
