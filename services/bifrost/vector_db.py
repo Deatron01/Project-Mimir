@@ -4,8 +4,8 @@ import uuid
 import os
 
 class RAGVectorStore:
-    # A korábbi kódodban 384 dimenziót használtál az e5-base-hez
     def __init__(self, vector_size=384): 
+        self.vector_size = vector_size # Ezt el kell mentenünk a törlés utáni újraalkotáshoz!
         qdrant_url = os.getenv("QDRANT_URL", ":memory:")
         print(f"Bifrost VectorStore csatlakozás: {qdrant_url}")
         
@@ -15,17 +15,24 @@ class RAGVectorStore:
             self.client = QdrantClient(url=qdrant_url)
             
         self.collection_name = "knowledge_base"
-        
-        # Létrehozzuk a kollekciót, ha még nem létezik
+        self._ensure_collection()
+
+    def _ensure_collection(self):
+        """Létrehozza a kollekciót, ha még nem létezik."""
         collections_response = self.client.get_collections()
         collection_names = [c.name for c in collections_response.collections]
         
-        # Létrehozzuk a kollekciót, ha még nincs a listában
         if self.collection_name not in collection_names:
             self.client.create_collection(
                 collection_name=self.collection_name,
-                vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE),
+                vectors_config=VectorParams(size=self.vector_size, distance=Distance.COSINE),
             )
+
+    def clear_database(self):
+        """Teljesen kiüríti a korábbi dokumentumokat a tudásbázisból."""
+        self.client.delete_collection(collection_name=self.collection_name)
+        self._ensure_collection()
+        print("🧹 Qdrant tudásbázis sikeresen kiürítve a korábbi adatoktól!")
 
     def upload_chunks(self, processed_chunks, embeddings):
         """Feltölti a chunkokat és a hozzájuk tartozó vektorokat."""

@@ -71,7 +71,7 @@ class NativePDFDrawer:
             self.font_regular = 'Helvetica'
             self.font_bold = 'Helvetica-Bold'
 
-    def draw_test(self, questions: list, title="Generált Vizsgateszt") -> bytes:
+    def draw_test(self, questions: list, title="Generált Vizsgateszt", metadata: dict = None) -> bytes:
         buffer = io.BytesIO()
         
         doc = SimpleDocTemplate(

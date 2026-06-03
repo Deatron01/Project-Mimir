@@ -10,6 +10,7 @@ import json
 import httpx
 import uuid
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 
@@ -202,16 +203,12 @@ async def _process_generation(job_id: str, request: GenerateRequest):
         # 5. Lokális Ollama Fallback
         print("⚠️ Az összes külső API elhasalt. Próbálkozás lokális Ollama-val (qwen2.5:3b)...")
         try:
-            ollama_url = "[http://host.docker.internal:11434/api/generate](http://host.docker.internal:11434/api/generate)"
+            ollama_url = "http://host.docker.internal:11434/api/generate"
             async with httpx.AsyncClient(trust_env=False) as client:
                 ollama_response = await client.post(
                     ollama_url,
                     json={
-<<<<<<< Updated upstream
-                        "model": "qwen2.5:7b",
-=======
                         "model": "qwen2.5:14b",
->>>>>>> Stashed changes
                         "prompt": prompt,
                         "stream": False,
                         "format": "json",
@@ -232,22 +229,24 @@ async def _process_generation(job_id: str, request: GenerateRequest):
                         cleaned_local = cleaned_local[start:end+1]
                     
                     local_json = json.loads(cleaned_local)
-                    print("✅ Sikeres generálás lokális Ollama (qwen2.5:3b) modellel!")
+                    print("✅ Sikeres generálás lokális Ollama (qwen2.5:14b) modellel!")
                     
-                    # [MÓDOSÍTVA] Audit Log meghívása lokális generálás esetén
-                    await send_audit_log(job_id, request.query, prompt, context_text, "qwen2.5:3b (local fallback)", cleaned_local)
+                    # Audit Log meghívása lokális generálás esetén (csak egyszer!)
+                    await send_audit_log(job_id, request.query, prompt, context_text, "qwen2.5:14b (local fallback)", cleaned_local)
                     
-                    generation_jobs[job_id] = {"status": "completed", "data": local_json}
-                    generated_json["metadata"] = {
-                        "model_used": model_name,
-                        "tokens_generated": llm_response.get("usage", {}).get("total_tokens", "N/A"),
+                    # A metaadatokat a helyes, local_json objektumhoz adjuk hozzá
+                    local_json["metadata"] = {
+                        "model_used": "qwen2.5:14b (local fallback)", 
+                        "tokens_generated": "N/A", 
                         "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                         "system_prompt_version": "v1.0"
                     }
+
+                    # Miután a local_json megkapta a metaadatokat, elmentjük a jobok közé
+                    generation_jobs[job_id] = {"status": "completed", "data": local_json}
                     return
                 else:
                     print(f"⚠️ Lokális Ollama hiba: {ollama_response.status_code}")
-                    
         except Exception as e:
             print(f"❌ Lokális fallback is sikertelen: {str(e)}")
 
@@ -291,11 +290,15 @@ async def ingest_chunks(request: IngestRequest):
             return {"status": "ignored", "message": "Nem érkezett tartalom."}
             
         embeddings = _get_embeddings(texts, is_query=False)
+        
+        # --- ÚJ SOR: Kiürítjük a vektortárat az új dokumentum érkezésekor ---
+        vector_store.clear_database() 
+        
         indexed_count = vector_store.upload_chunks(request.chunks, embeddings)
         return {"status": "success", "indexed_chunks": indexed_count}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ingest hiba: {str(e)}")
-
+    
 @app.post("/api/v1/search")
 async def search_knowledge(request: SearchRequest):
     try:
