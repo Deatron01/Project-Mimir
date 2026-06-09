@@ -88,6 +88,7 @@ services:
       - MINIO_ACCESS_KEY=minio_admin
       - MINIO_SECRET_KEY=minio_password123
       - RUNECARVER_URL=http://runecarver:8000
+      - OE_GENAI_API_KEY=${OE_GENAI_API_KEY}
     networks:
       - mimir_network
     depends_on:

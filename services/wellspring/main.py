@@ -1,21 +1,27 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pdf_processor import PDFProcessor
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.concurrency import run_in_threadpool
+import traceback
 
 app = FastAPI(title="🌊 Wellspring Service", description="Bináris fájlfeldolgozó és szövegkinyerő")
 
+# Dupla CORSMiddleware importálás javítva, localhost hozzáadva a fejlesztéshez
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://mimir-ai.hu",
-        "https://www.mimir-ai.hu"
+        "https://www.mimir-ai.hu",
+        "http://localhost:5173",  # Vite dev server
+        "http://localhost:8501"   # Opcionális teszt port
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 pdf_processor = PDFProcessor()
+
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "service": "wellspring"}
@@ -28,7 +34,11 @@ async def extract_text(file: UploadFile = File(...)):
     if ext == 'pdf':
         try:
             pdf_bytes = await file.read()
-            extracted_text, used_route = pdf_processor.process_pdf_bytes(pdf_bytes)
+            
+            # FONTOS JAVÍTÁS: A CPU-igényes, szinkron feldolgozást külön szálon (threadpool)
+            # futtatjuk, hogy ne okozzon Event Loop Timeoutot (500-as hibát).
+            extracted_text, used_route = await run_in_threadpool(pdf_processor.process_pdf_bytes, pdf_bytes)
+            
             return {
                 "filename": file.filename,
                 "extension": ext,
@@ -36,6 +46,9 @@ async def extract_text(file: UploadFile = File(...)):
                 "content": extracted_text
             }
         except Exception as e:
+            # Részletes hibanaplózás a Docker konzolba, hogy lássuk mi az igazi baj
+            print(f"\n❌ Kritikus hiba a PDF feldolgozásakor ({file.filename}):")
+            traceback.print_exc() 
             raise HTTPException(status_code=500, detail=f"Hiba a PDF feldolgozása közben: {str(e)}")
             
     elif ext in ['md', 'markdown', 'txt', 'py']:
@@ -52,4 +65,4 @@ async def extract_text(file: UploadFile = File(...)):
              raise HTTPException(status_code=400, detail=f"A fájl nem olvasható UTF-8 szövegként: {str(e)}")
              
     else:
-        raise HTTPException(status_code=400, detail=f"Nem támogatott fájlformátum: {ext}")  
+        raise HTTPException(status_code=400, detail=f"Nem támogatott fájlformátum: {ext}")

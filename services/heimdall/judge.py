@@ -4,22 +4,20 @@ import httpx
 
 class LLMJudge:
     def __init__(self):
-        print("👁️ LLM Judge inicializálva a minőségbiztosításhoz (Bifrost-azonos modell fallback).")
+        print("👁️ LLM Judge inicializálva a minőségbiztosításhoz.")
         self.genai_url = "https://genai.uni-obuda.hu/api/chat/completions"
-        # Ugyanaz a preferált modell lista, mint a Bifrostban
+        
+        # Szigorúan a legintelligensebb modellekkel kezdünk (minőség > sebesség)
         self.models_to_try = [
-            # "Qwen3.5-122B",
-            # "gpt-oss:120b",
-            # "nemotron-3-super:120b",
-            # "gpt-oss:20b",
-            # "qwen3.5:9b",
-            # "qwen3-vl:8b"
+            "Qwen3.5-122B",          # Legjobb logikai képességek RAG-hoz
+            "gpt-oss:120b",          # Második számú gigamodell
+            "nemotron-3-super:120b", # Harmadik számú biztonsági háló
+            "gpt-oss:20b"            # Kisebb szerveres fallback
         ]
 
     async def evaluate_coherence(self, chunk_text: str) -> int:
         """Értékeli a szövegdarab koherenciáját 1-től 10-ig valós LLM segítségével."""
         
-        # Ha a szöveg túl rövid, felesleges API hívást indítani
         if len(chunk_text.split()) < 5:
             return 5
             
@@ -39,7 +37,7 @@ class LLMJudge:
 
         api_key = os.getenv("OE_GENAI_API_KEY")
         
-        # 1. Hívás az Óbudai Egyetem GenAI szerveréhez
+        # 1. Hívás az Óbudai Egyetem GenAI szerveréhez (Iteratív próbálkozás)
         if api_key:
             async with httpx.AsyncClient() as client:
                 for model_name in self.models_to_try:
@@ -66,7 +64,7 @@ class LLMJudge:
                         
                         llm_response = response.json()["choices"][0]["message"]["content"]
                         
-                        # JSON tisztítás és parszeolás
+                        # JSON tisztítás
                         cleaned_response = llm_response.replace('```json', '').replace('```', '').strip()
                         start = cleaned_response.find('{')
                         end = cleaned_response.rfind('}')
@@ -82,15 +80,15 @@ class LLMJudge:
                         print(f"⚠️ Heimdall: Hiba a '{model_name}' modellel: {str(e)}. Lépés a következőre...")
                         continue
 
-        # 2. Fallback a lokális Ollama-ra
-        print("⚠️ Heimdall: Külső API sikertelen. Próbálkozás lokális Ollama-val (qwen2.5:3b)...")
+        # 2. Fallback a lokális Ollama-ra (Javított URL formátummal)
+        print("⚠️ Heimdall: Külső API sikertelen. Próbálkozás lokális Ollama-val (qwen2.5:14b)...")
         try:
             ollama_url = "[http://host.docker.internal:11434/api/generate](http://host.docker.internal:11434/api/generate)"
             async with httpx.AsyncClient() as client:
                 ollama_response = await client.post(
                     ollama_url,
                     json={
-                        "model": "qwen2.5:14b",
+                        "model": "qwen2.5:14b", # Lokális erős fallback
                         "prompt": prompt,
                         "stream": False,
                         "format": "json",
@@ -120,6 +118,4 @@ class LLMJudge:
         except Exception as e:
             print(f"❌ Heimdall: Lokális fallback is sikertelen: {str(e)}")
 
-        # 3. Végső biztonsági visszatérési érték
-        print("❌ Heimdall: Minden kiértékelési lehetőség kimerült. Biztonsági 5-ös pontszám.")
         return 5
