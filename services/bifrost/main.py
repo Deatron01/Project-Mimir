@@ -125,81 +125,92 @@ async def _process_generation(job_id: str, request: GenerateRequest):
         """
         
         # 4. Hívás az Óbudai Egyetem GenAI szerveréhez
-        genai_url = "[https://genai.uni-obuda.hu/api/chat/completions](https://genai.uni-obuda.hu/api/chat/completions)"
+        # 4. Hívás az Óbudai Egyetem GenAI szerveréhez (Streamelve, egy modellel)
+        genai_url = "https://genai.uni-obuda.hu/api/chat/completions"
         api_key = os.getenv("OE_GENAI_API_KEY")
         
         if not api_key:
             generation_jobs[job_id] = {"status": "failed", "error": "Hiányzik az OE_GENAI_API_KEY környezeti változó!"}
             return
 
-        models_to_try = [
-            # "Qwen3.5-122B",
-            # "gpt-oss:120b",
-            # "nemotron-3-super:120b",
-            # "gpt-oss:20b",
-            # "qwen3.5:9b",
-            # "qwen3-vl:8b"
-        ]
+        # Tamás kérésének megfelelően: egyetlen, konkrét modell használata
+        model_name = "Qwen3.5-122B"
 
         async with httpx.AsyncClient(proxy=None, trust_env=False) as client:
-            for model_name in models_to_try:
-                try:
-                    print(f"🔄 Próbálkozás a '{model_name}' modellel (Job ID: {job_id})...")
-                    response = await client.post(
-                        genai_url,
-                        headers={
-                            "Authorization": f"Bearer {api_key}",
-                            "Content-Type": "application/json"
-                        },
-                        json={
-                            "model": model_name, 
-                            "messages": [
-                                {"role": "system", "content": "Te egy kiemelkedő tudású oktatásmódszertani szakértő és vizsgakészítő vagy. Kizárólag érvényes JSON formátumban válaszolj, markdown formázás nélkül!"},
-                                {"role": "user", "content": prompt}
-                            ],
-                            "response_format": {"type": "json_object"},
-                            "stream": False
-                        }, 
-                        timeout=180.0
-                    )
+            try:
+                print(f"🔄 Próbálkozás a '{model_name}' modellel (Job ID: {job_id}) STREAMING módban...")
+                
+                llm_response = ""
+                
+                # Streamelt kérés indítása (itt a stream=True oldja meg a timeoutot!)
+                async with client.stream(
+                    "POST",
+                    genai_url,
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model": model_name, 
+                        "messages": [
+                            {"role": "system", "content": "Te egy kiemelkedő tudású oktatásmódszertani szakértő és vizsgakészítő vagy. Kizárólag érvényes JSON formátumban válaszolj, markdown formázás nélkül!"},
+                            {"role": "user", "content": prompt}
+                        ],
+                        # A LiteLLM tudja kezelni a response_format-ot stream mellett is
+                        "response_format": {"type": "json_object"}, 
+                        "stream": True 
+                    }, 
+                    timeout=300.0
+                ) as response:
                     
                     response.raise_for_status()
                     
-                    # 1. Kinyerjük a választ, DE lekezeljük azt az esetet is, ha a szerver furcsa struktúrát küld
-                    try:
-                        llm_response = response.json()["choices"][0]["message"]["content"]
-                    except (KeyError, ValueError):
-                        llm_response = ""
-                    
-                    # 2. BIZTONSÁGI ELLENŐRZÉS: Ha a válasz üres vagy "None", ne is próbáljuk JSON-ként olvasni!
-                    if not llm_response or str(llm_response).strip() == "":
-                         raise ValueError("A szerver üres választ küldött (Valószínűleg túlterhelt vagy limitbe ütközött).")
+                    # Az SSE (Server-Sent Events) feldolgozása tokenenként
+                    async for line in response.aiter_lines():
+                        if line.startswith("data: "):
+                            data_str = line[6:].strip() # Levágjuk a "data: " prefixet
+                            
+                            # A stream végét a [DONE] jelzi
+                            if data_str == "[DONE]":
+                                break
+                            
+                            try:
+                                data_json = json.loads(data_str)
+                                # Kinyerjük a legújabb tokent a chunkból
+                                chunk = data_json.get("choices", [{}])[0].get("delta", {}).get("content", "")
+                                if chunk:
+                                    llm_response += chunk
+                            except json.JSONDecodeError:
+                                continue
 
-                    # 3. Tisztítás folytatása
-                    cleaned_response = llm_response.replace('```json', '').replace('```', '').strip()
-                    start = cleaned_response.find('{')
-                    end = cleaned_response.rfind('}')
-                    if start != -1 and end != -1:
-                        cleaned_response = cleaned_response[start:end+1]
-                    
-                    generated_json = json.loads(cleaned_response)
-                    print(f"✅ Sikeres generálás a '{model_name}' modellel!")
-                    
-                    await send_audit_log(job_id, request.query, prompt, context_text, model_name, cleaned_response)
-                    
-                    generation_jobs[job_id] = {"status": "completed", "data": generated_json}
-                    generated_json["metadata"] = {
-                        "model_used": model_name,
-                        "tokens_generated": llm_response.get("usage", {}).get("total_tokens", "N/A"),
-                        "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        "system_prompt_version": "v1.0"
-                    }
-                    return
-                    
-                except Exception as e:
-                    print(f"⚠️ Hiba a '{model_name}' modellel: {str(e)}. Lépés a következőre...")
-                    continue
-                    
+                # 1. BIZTONSÁGI ELLENŐRZÉS
+                if not llm_response or llm_response.strip() == "":
+                    raise ValueError("A szerver üres választ küldött a stream végén.")
+
+                # 2. Tisztítás folytatása (a JSON kivágása, ha az LLM markdown-t tett köré)
+                cleaned_response = llm_response.replace('```json', '').replace('```', '').strip()
+                start = cleaned_response.find('{')
+                end = cleaned_response.rfind('}')
+                if start != -1 and end != -1:
+                    cleaned_response = cleaned_response[start:end+1]
+                
+                generated_json = json.loads(cleaned_response)
+                print(f"✅ Sikeres generálás a '{model_name}' modellel (Streaming)!")
+                
+                await send_audit_log(job_id, request.query, prompt, context_text, model_name, cleaned_response)
+                
+                generation_jobs[job_id] = {"status": "completed", "data": generated_json}
+                generated_json["metadata"] = {
+                    "model_used": model_name,
+                    "tokens_generated": "Streamed", # Streamelésnél a standard OpenAI formátum nem mindig küld tokentérképet
+                    "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "system_prompt_version": "v1.0"
+                }
+                return
+                
+            except Exception as e:
+                print(f"⚠️ Hiba a '{model_name}' modellel (GenAI API): {str(e)}. Ugrás a lokális Ollamára...")
+                
         # 5. Lokális Ollama Fallback
         print("⚠️ Az összes külső API elhasalt. Próbálkozás lokális Ollama-val (qwen2.5:3b)...")
         try:
