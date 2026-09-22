@@ -11,4 +11,9 @@ export const endpoints = {
   exportPdf: `${API_BASE}/export`,
   tests: (userId) => `${API_BASE}/tests?user_id=${encodeURIComponent(userId)}`,
   download: (testId) => `${API_BASE}/tests/download/${encodeURIComponent(testId)}`,
+  deleteTest: (testId, userId) =>
+    `${API_BASE}/tests/${encodeURIComponent(testId)}?user_id=${encodeURIComponent(userId)}`,
 };
+
+// Contact address for data protection requests (GDPR). Set VITE_PRIVACY_EMAIL at build time.
+export const PRIVACY_EMAIL = import.meta.env.VITE_PRIVACY_EMAIL || '';

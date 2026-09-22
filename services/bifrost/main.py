@@ -9,6 +9,8 @@ import os
 import json
 import httpx
 import uuid
+import time
+import hashlib
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -34,7 +36,34 @@ model.eval()
 
 vector_store = RAGVectorStore(vector_size=768) 
 
+# --- GDPR / zéró megőrzés beállítások ---
+# LOCAL_ONLY=true: a dokumentum szövege nem kerül külső (egyetemi GenAI) API-hoz, csak a helyi Ollamához.
+LOCAL_ONLY = os.getenv("LOCAL_ONLY", "false").strip().lower() in ("1", "true", "yes")
+# A generált tesztek (feladateredmények) legfeljebb ennyi ideig maradnak a memóriában.
+JOB_TTL_SECONDS = int(os.getenv("JOB_TTL_SECONDS", "3600"))
+
 generation_jobs = {}
+_job_created_at = {}
+
+
+def _purge_expired_jobs():
+    """Eldobja a lejárt feladateredményeket (bennük a generált kérdésekkel)."""
+    cutoff = time.time() - JOB_TTL_SECONDS
+    for job_id in [j for j, t in _job_created_at.items() if t < cutoff]:
+        generation_jobs.pop(job_id, None)
+        _job_created_at.pop(job_id, None)
+
+
+def _purge_document_data():
+    """A feladat végén törli a dokumentumból származó chunkokat és vektorokat (zéró megőrzés)."""
+    try:
+        vector_store.clear_database()
+    except Exception as e:
+        print(f"⚠️ Vektortár törlési hiba: {type(e).__name__}")
+
+
+def _sha256(text: str) -> str:
+    return hashlib.sha256((text or "").encode("utf-8")).hexdigest()
 
 class IngestRequest(BaseModel):
     chunks: List[Dict[str, Any]]
@@ -68,6 +97,14 @@ def _get_embeddings(texts: List[str], is_query=False):
     return embeddings
 
 async def _process_generation(job_id: str, request: GenerateRequest):
+    """Háttérfeladat. A végén (sikertől függetlenül) törli a dokumentum adatait a vektortárból."""
+    try:
+        await _run_generation(job_id, request)
+    finally:
+        _purge_document_data()
+
+
+async def _run_generation(job_id: str, request: GenerateRequest):
     """Ez a függvény a háttérben fut, és nem blokkolja a webszervert."""
     try:
         # 1. Keresés a Qdrantban
@@ -136,7 +173,7 @@ async def _process_generation(job_id: str, request: GenerateRequest):
         
         genai_success = False
 
-        if api_key:
+        if api_key and not LOCAL_ONLY:
             async with httpx.AsyncClient(proxy=None, trust_env=False) as client:
                 for model_name in models_to_try:
                     try:
@@ -314,14 +351,17 @@ async def search_knowledge(request: SearchRequest):
 @app.post("/api/v1/generate")
 async def start_generation(request: GenerateRequest, background_tasks: BackgroundTasks):
     """Azonnal visszaad egy Job ID-t, a generálás a háttérben indul."""
+    _purge_expired_jobs()
     job_id = str(uuid.uuid4())
     generation_jobs[job_id] = {"status": "processing"}
+    _job_created_at[job_id] = time.time()
     background_tasks.add_task(_process_generation, job_id, request)
     return {"status": "success", "job_id": job_id}
 
 @app.get("/api/v1/status/{job_id}")
 async def get_generation_status(job_id: str):
     """A frontend ezen a végponton tudja lekérdezni, hogy kész van-e a feladat."""
+    _purge_expired_jobs()
     if job_id not in generation_jobs:
         raise HTTPException(status_code=404, detail="Feladat nem található.")
     return generation_jobs[job_id]
@@ -357,13 +397,17 @@ async def send_audit_log(job_id: str, user_query: str, prompt: str, context: str
         async with httpx.AsyncClient() as client:
             await client.post(
                 f"{forge_url}/api/v1/audit",
+                # GDPR: a naplóba csak metaadat és kriptográfiai lenyomat kerül, a dokumentum szövege nem.
                 json={
                     "job_id": job_id,
-                    "user_query": user_query,
-                    "used_prompt": prompt,
-                    "rag_context": context,
                     "model_name": model_name,
-                    "qa_score": qa_score
+                    "qa_score": qa_score,
+                    "prompt_version": "v1.0",
+                    "query_sha256": _sha256(user_query),
+                    "prompt_sha256": _sha256(prompt),
+                    "context_sha256": _sha256(context),
+                    "query_chars": len(user_query or ""),
+                    "context_chars": len(context or ""),
                 },
                 timeout=10.0
             )

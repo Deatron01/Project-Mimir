@@ -11,8 +11,8 @@ app = FastAPI(title="👁️ Heimdall Service", description="AI Cenzor és Valid
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "[https://mimir-ai.hu](https://mimir-ai.hu)",
-        "[https://www.mimir-ai.hu](https://www.mimir-ai.hu)"
+        "https://mimir-ai.hu",
+        "https://www.mimir-ai.hu"
     ],
     allow_credentials=True,
     allow_methods=["*"],

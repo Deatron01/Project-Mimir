@@ -22,6 +22,9 @@ export default function Footer() {
             <Link to="/terms" className="transition-colors hover:text-accent">
               {t('footer.terms')}
             </Link>
+            <Link to="/data" className="transition-colors hover:text-accent">
+              {t('footer.yourData')}
+            </Link>
           </div>
           <div className="flex flex-col gap-3">
             <Link to="/contact" className="transition-colors hover:text-accent">

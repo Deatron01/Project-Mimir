@@ -1,5 +1,12 @@
 version: '3.8'
 
+# GDPR: naplók méretkorlátos rotációja, hogy a (rövidített IP-t tartalmazó) naplók ne halmozódjanak fel.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 networks:
   mimir_network:
     driver: bridge
@@ -12,6 +19,7 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: mimir-postgres
+    logging: *default-logging
     env_file:
       - .env # A jelszavakat érdemes egy közös .env fájlból behúzni
     environment:
@@ -29,6 +37,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: mimir-redis
+    logging: *default-logging
     ports:
       - "6379:6379"
     volumes:
@@ -40,6 +49,7 @@ services:
   minio:
     image: minio/minio
     container_name: mimir-minio
+    logging: *default-logging
     environment:
       MINIO_ROOT_USER: minio_admin
       MINIO_ROOT_PASSWORD: minio_password123
@@ -59,6 +69,7 @@ services:
 
   api-gateway:
     container_name: mimir-api-gateway
+    logging: *default-logging
     image: nginx:alpine
     ports:
       - "80:80"
@@ -78,6 +89,7 @@ services:
 
   wellspring:
     container_name: mimir-wellspring
+    logging: *default-logging
     build:
       context: ./services/wellspring
       dockerfile: Docker/Dockerfile
@@ -89,6 +101,7 @@ services:
       - MINIO_SECRET_KEY=minio_password123
       - RUNECARVER_URL=http://runecarver:8000
       - OE_GENAI_API_KEY=${OE_GENAI_API_KEY}
+      - LOCAL_ONLY=${LOCAL_ONLY:-false}
     networks:
       - mimir_network
     depends_on:
@@ -97,6 +110,7 @@ services:
 
   runecarver:
     container_name: mimir-runecarver
+    logging: *default-logging
     build:
       context: ./services/runecarver
       dockerfile: Docker/Dockerfile
@@ -112,6 +126,7 @@ services:
 
   bifrost:
     container_name: mimir-bifrost
+    logging: *default-logging
     build:
       context: ./services/bifrost
       dockerfile: Docker/Dockerfile
@@ -124,6 +139,8 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - HEIMDALL_URL=http://heimdall:8000
       - OE_GENAI_API_KEY=${OE_GENAI_API_KEY}
+      - LOCAL_ONLY=${LOCAL_ONLY:-false}
+      - JOB_TTL_SECONDS=${JOB_TTL_SECONDS:-3600}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -135,6 +152,7 @@ services:
 
   heimdall:
     container_name: mimir-heimdall
+    logging: *default-logging
     build:
       context: ./services/heimdall
       dockerfile: Docker/Dockerfile
@@ -142,18 +160,24 @@ services:
       - "8004:8000"
     env_file:
       - .env # IDE kerülnek az SMTP e-mail küldő és JWT authentikációs jelszavak!
+    environment:
+      - LOCAL_ONLY=${LOCAL_ONLY:-false}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - mimir_network
     restart: unless-stopped
 
   the-forge:
     container_name: mimir-the-forge
+    logging: *default-logging
     build:
       context: ./services/the-forge
       dockerfile: Docker/Dockerfile
     environment:
       - POSTGRES_URL=postgresql://mimir_user:mimir_password@postgres:5432/mimir_db
       - BIFROST_URL=http://bifrost:8000
+      - AUDIT_RETENTION_DAYS=${AUDIT_RETENTION_DAYS:-30}
     networks:
       - mimir_network
     depends_on:
@@ -162,6 +186,7 @@ services:
 
   skald:
     container_name: mimir-skald
+    logging: *default-logging
     build:
       context: ./services/skald
       dockerfile: Docker/Dockerfile
@@ -174,6 +199,7 @@ services:
       - MINIO_ENDPOINT=minio:9000
       - MINIO_ACCESS_KEY=minio_admin
       - MINIO_SECRET_KEY=minio_password123
+      - HISTORY_RETENTION_DAYS=${HISTORY_RETENTION_DAYS:-365}
     networks:
       - mimir_network
     depends_on:
@@ -215,6 +241,7 @@ services:
   cloudflared:
     image: cloudflare/cloudflared:latest
     container_name: mimir_tunnel
+    logging: *default-logging
     command: tunnel run
     env_file:
       - .env # A tokent érdemes kimenteni egy .env fájlba (TUNNEL_TOKEN=...)

@@ -35,10 +35,11 @@ const fromDraft = (draft) => ({
  * Structured editor for a generated exam (human-in-the-loop review, EU AI Act art. 14).
  * Replaces the raw JSON textarea. Emits the same exam JSON shape Skald expects.
  */
-export default function QuestionEditor({ initialData, onApprove, disabled }) {
+export default function QuestionEditor({ initialData, onApprove, disabled, canSave = false }) {
   const { t } = useTranslation();
   const [draft, setDraft] = useState(() => toDraft(initialData));
   const [errors, setErrors] = useState([]);
+  const [save, setSave] = useState(false); // opt-in storage (privacy by default)
   const errorRef = useRef(null);
 
   const update = (fn) => setDraft((d) => ({ ...d, questions: fn(d.questions) }));
@@ -111,7 +112,7 @@ export default function QuestionEditor({ initialData, onApprove, disabled }) {
       requestAnimationFrame(() => errorRef.current?.focus());
       return;
     }
-    onApprove(fromDraft(draft));
+    onApprove(fromDraft(draft), { save });
   };
 
   const count = draft.questions.length;
@@ -282,8 +283,25 @@ export default function QuestionEditor({ initialData, onApprove, disabled }) {
         </div>
       )}
 
-      <div className="mt-4 flex justify-end">
-        <Button size="sm" onClick={handleApprove} disabled={disabled}>
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        {canSave ? (
+          <label className="flex max-w-md cursor-pointer items-start gap-2 text-xs text-muted">
+            <input
+              type="checkbox"
+              checked={save}
+              onChange={(e) => setSave(e.target.checked)}
+              disabled={disabled}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-[rgb(var(--c-primary))]"
+            />
+            <span>
+              <span className="block text-sm font-medium text-textMain">{t('editor.save.label')}</span>
+              {t('editor.save.hint')}
+            </span>
+          </label>
+        ) : (
+          <span />
+        )}
+        <Button size="sm" onClick={handleApprove} disabled={disabled} className="shrink-0">
           {t('editor.approve')}
         </Button>
       </div>
