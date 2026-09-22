@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Download, Calendar, HardDrive, Loader2, Inbox } from 'lucide-react';
+import { Download, Calendar, HardDrive, Loader2, Inbox, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
@@ -15,6 +15,9 @@ export default function Tests() {
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const [confirmId, setConfirmId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     async function fetchTests() {
@@ -58,6 +61,28 @@ export default function Tests() {
     }
   };
 
+  // GDPR Art. 17: users can erase their saved tests themselves.
+  const handleDelete = async (testId) => {
+    if (confirmId !== testId) {
+      setConfirmId(testId);
+      return;
+    }
+    setError('');
+    setNotice('');
+    setDeletingId(testId);
+    try {
+      const res = await fetch(endpoints.deleteTest(testId, user.email), { method: 'DELETE' });
+      if (!res.ok) throw new Error();
+      setTests((prev) => prev.filter((x) => x.id !== testId));
+      setNotice(t('tests.deleted'));
+    } catch {
+      setError(t('tests.deleteError'));
+    } finally {
+      setDeletingId(null);
+      setConfirmId(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex h-[calc(100vh-80px)] items-center justify-center" role="status">
@@ -72,7 +97,12 @@ export default function Tests() {
       <div className="mb-10">
         <h1 className="mb-2 text-3xl font-extrabold tracking-tight">{t('tests.title')}</h1>
         <p className="text-sm text-muted">{t('tests.subtitle')}</p>
+        <p className="mt-1 text-xs text-muted">{t('tests.retention')}</p>
       </div>
+
+      <p role="status" aria-live="polite" className="mb-6 rounded-2xl border border-success/40 bg-success/10 p-4 text-sm text-success empty:hidden">
+        {notice}
+      </p>
 
       {error && (
         <div role="alert" className="mb-6 rounded-2xl border border-danger/40 bg-danger/10 p-4 text-sm text-danger">
@@ -127,10 +157,23 @@ export default function Tests() {
                   </td>
                   <td className="whitespace-nowrap p-5 text-muted">{formatDate(test.created_at)}</td>
                   <td className="p-5 font-mono text-xs text-muted">{test.file_size}</td>
-                  <td className="p-5 text-right">
-                    <Button variant="outline" size="sm" onClick={() => handleDownload(test.id, test.title)}>
-                      <Download size={14} aria-hidden="true" /> {t('common.download')}
-                    </Button>
+                  <td className="p-5">
+                    <span className="flex justify-end gap-2">
+                      <Button variant="outline" size="sm" onClick={() => handleDownload(test.id, test.title)}>
+                        <Download size={14} aria-hidden="true" /> {t('common.download')}
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        isLoading={deletingId === test.id}
+                        onClick={() => handleDelete(test.id)}
+                        onBlur={() => confirmId === test.id && setConfirmId(null)}
+                        aria-label={`${t('tests.delete')}: ${test.title}`}
+                      >
+                        {deletingId !== test.id && <Trash2 size={14} aria-hidden="true" />}
+                        {confirmId === test.id ? t('tests.confirmDelete') : t('tests.delete')}
+                      </Button>
+                    </span>
                   </td>
                 </motion.tr>
               ))}

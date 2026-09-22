@@ -36,9 +36,11 @@ class LLMJudge:
         }}"""
 
         api_key = os.getenv("OE_GENAI_API_KEY")
-        
+        # GDPR: LOCAL_ONLY=true esetén a tartalom nem kerül külső API-hoz.
+        local_only = os.getenv("LOCAL_ONLY", "false").strip().lower() in ("1", "true", "yes")
+
         # 1. Hívás az Óbudai Egyetem GenAI szerveréhez (Iteratív próbálkozás)
-        if api_key:
+        if api_key and not local_only:
             async with httpx.AsyncClient() as client:
                 for model_name in self.models_to_try:
                     try:
@@ -83,7 +85,7 @@ class LLMJudge:
         # 2. Fallback a lokális Ollama-ra (Javított URL formátummal)
         print("⚠️ Heimdall: Külső API sikertelen. Próbálkozás lokális Ollama-val (qwen2.5:14b)...")
         try:
-            ollama_url = "[http://host.docker.internal:11434/api/generate](http://host.docker.internal:11434/api/generate)"
+            ollama_url = os.getenv("OLLAMA_URL", "http://host.docker.internal:11434/api/generate")
             async with httpx.AsyncClient() as client:
                 ollama_response = await client.post(
                     ollama_url,

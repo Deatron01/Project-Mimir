@@ -37,3 +37,6 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+# === GDPR: felhasználói adatok soha ne kerüljenek a gitbe ===
+services/skald/storage/
+*.db

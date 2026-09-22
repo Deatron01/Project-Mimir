@@ -7,7 +7,8 @@ import os
 import io
 import uuid
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
+import asyncio
 
 # --- REPORTLAB IMPORTOK A USER KÓDJA ALAPJÁN ---
 from reportlab.lib.pagesizes import A4
@@ -52,6 +53,58 @@ def init_db():
     conn.close()
 
 init_db()
+
+# GDPR: a mentett tesztek legfeljebb ennyi napig maradnak meg (a felhasználó előbb is törölheti őket).
+HISTORY_RETENTION_DAYS = int(os.getenv("HISTORY_RETENTION_DAYS", "365"))
+
+
+def _parse_created(value: str):
+    for fmt in ("%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S"):
+        try:
+            return datetime.strptime(value, fmt)
+        except (TypeError, ValueError):
+            continue
+    return None
+
+
+def _delete_file(path: str):
+    try:
+        if path and os.path.exists(path):
+            os.remove(path)
+    except OSError as e:
+        print(f"⚠️ Fájltörlési hiba: {type(e).__name__}")
+
+
+def purge_expired_tests() -> int:
+    """Törli a megőrzési időn túli mentett teszteket (adatbázissor + PDF fájl)."""
+    cutoff = datetime.now() - timedelta(days=HISTORY_RETENTION_DAYS)
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, file_path, created_at FROM user_tests")
+    expired = [(tid, path) for tid, path, created in cursor.fetchall()
+               if (_parse_created(created) or datetime.min) < cutoff]
+    for tid, path in expired:
+        _delete_file(path)
+        cursor.execute("DELETE FROM user_tests WHERE id = ?", (tid,))
+    conn.commit()
+    conn.close()
+    if expired:
+        print(f"🧹 {len(expired)} lejárt mentett teszt törölve ({HISTORY_RETENTION_DAYS} napos megőrzés).")
+    return len(expired)
+
+
+async def _retention_loop():
+    while True:
+        try:
+            purge_expired_tests()
+        except Exception as e:
+            print(f"⚠️ Megőrzési törlés hiba: {e}")
+        await asyncio.sleep(24 * 3600)
+
+
+@app.on_event("startup")
+async def _start_retention():
+    asyncio.create_task(_retention_loop())
 
 
 # --- A FELHASZNÁLÓ NATIV PDF RAJZOLÓ OSZTÁLYA ---
@@ -152,6 +205,8 @@ class ExportRequest(BaseModel):
     questions: List[Dict[str, Any]]
     user_id: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
+    # GDPR (alapértelmezett adatvédelem): csak akkor mentjük a "Tesztjeim" közé, ha a felhasználó kéri.
+    save: bool = False
 
 
 def format_file_size(num_bytes: int) -> str:
@@ -171,8 +226,8 @@ async def export_pdf(request: ExportRequest):
         drawer = NativePDFDrawer()
         pdf_bytes = drawer.draw_test(questions=request.questions, title=request.title,metadata=metadata)
         
-        # Ha érkezett felhasználói azonosító, elmentjük a perzisztens tárhelyre
-        if request.user_id:
+        # Csak kifejezett kérésre mentjük a perzisztens tárhelyre (opt-in)
+        if request.save and request.user_id:
             job_id = str(uuid.uuid4())
             safe_title = "".join([c if c.isalnum() or c in [' ', '_', '-'] else '' for c in request.title]).replace(' ', '_')
             filename = f"{job_id}_{safe_title}.pdf"
@@ -193,7 +248,7 @@ async def export_pdf(request: ExportRequest):
             )
             conn.commit()
             conn.close()
-            print(f"💾 PDF sikeresen mentve a tárhelyre. Felhasználó: {request.user_id} | Méret: {file_size}")
+            print(f"💾 PDF mentve a tárhelyre (kérésre). Méret: {file_size}")
 
         return Response(content=pdf_bytes, media_type="application/pdf")
     except Exception as e:
@@ -236,3 +291,21 @@ async def download_specific_test(test_id: str):
         return FileResponse(path=file_path, media_type="application/pdf", filename=f"{title}.pdf")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/v1/tests/{test_id}")
+async def delete_test(test_id: str, user_id: str):
+    """Mentett teszt törlése (GDPR 17. cikk). A tulajdonost a user_id-val egyeztetjük,
+    amíg a valódi hitelesítés (GW-01) el nem készül."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT file_path FROM user_tests WHERE id = ? AND user_id = ?", (test_id, user_id))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="A keresett teszt nem található.")
+    _delete_file(row[0])
+    cursor.execute("DELETE FROM user_tests WHERE id = ? AND user_id = ?", (test_id, user_id))
+    conn.commit()
+    conn.close()
+    return {"status": "deleted", "id": test_id}

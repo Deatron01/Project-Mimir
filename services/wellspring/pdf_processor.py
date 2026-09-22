@@ -27,8 +27,10 @@ class PDFProcessor:
     def _extract_via_vlm(self, image_bytes: bytes) -> str:
         """Kép feldolgozása a Qwen3-VL (Vision) modellel a GenAI szerveren."""
         api_key = os.getenv("OE_GENAI_API_KEY")
-        if not api_key:
-            return None # Ha nincs kulcs, egyből menjen az OCR fallback-re
+        # GDPR: LOCAL_ONLY=true esetén az oldalképek nem kerülnek külső API-hoz, csak a helyi OCR fut.
+        local_only = os.getenv("LOCAL_ONLY", "false").strip().lower() in ("1", "true", "yes")
+        if not api_key or local_only:
+            return None # Ha nincs kulcs vagy helyi mód van, egyből menjen az OCR fallback-re
 
         base64_image = base64.b64encode(image_bytes).decode('utf-8')
         genai_url = "https://genai.uni-obuda.hu/api/chat/completions"

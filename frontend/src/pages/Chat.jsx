@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Paperclip, Loader2, FileText, Download, Bot, User, X } from 'lucide-react';
+import { Send, Paperclip, Loader2, FileText, Download, Bot, User, X, ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
 import { useAuth } from '../context/AuthContext';
@@ -32,6 +33,9 @@ export default function Chat() {
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [statusKey, setStatusKey] = useState('');
+  // GDPR: explicit confirmation before a document is uploaded (reset for every new file).
+  const [consent, setConsent] = useState(false);
+  const [consentError, setConsentError] = useState(false);
   const chatContainerRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -47,12 +51,18 @@ export default function Chat() {
 
   const clearFile = () => {
     setFile(null);
+    setConsent(false);
+    setConsentError(false);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSend = async (e) => {
     e.preventDefault();
     if (isLoading || (!input.trim() && !file)) return;
+    if (file && !consent) {
+      setConsentError(true);
+      return;
+    }
 
     const prompt = input;
     addMessage({ role: 'user', content: prompt, attachedFile: file?.name ?? null });
@@ -111,11 +121,11 @@ export default function Chat() {
     }
   };
 
-  const handleApprove = async (messageId, editedData) => {
+  const handleApprove = async (messageId, editedData, { save = false } = {}) => {
     setIsLoading(true);
     setStatusKey('chat.status.exporting');
     try {
-      const skaldRes = await postJson(endpoints.exportPdf, { ...editedData, user_id: user?.email });
+      const skaldRes = await postJson(endpoints.exportPdf, { ...editedData, user_id: user?.email, save });
       if (!skaldRes.ok) throw new ChatError('chat.errors.export');
       const pdfUrl = URL.createObjectURL(await skaldRes.blob());
       setMessages((prev) =>
@@ -180,7 +190,12 @@ export default function Chat() {
                 <p className="whitespace-pre-wrap text-sm leading-relaxed md:text-base">{msg.key ? t(msg.key) : msg.content}</p>
 
                 {msg.needsReview && (
-                  <QuestionEditor initialData={msg.resultData} disabled={isLoading} onApprove={(data) => handleApprove(msg.id, data)} />
+                  <QuestionEditor
+                    initialData={msg.resultData}
+                    disabled={isLoading}
+                    canSave={Boolean(user?.email)}
+                    onApprove={(data, opts) => handleApprove(msg.id, data, opts)}
+                  />
                 )}
 
                 {msg.pdfUrl && (
@@ -226,6 +241,43 @@ export default function Chat() {
           </motion.div>
         )}
 
+        {file && (
+          <div
+            className={cn(
+              'w-full rounded-2xl border bg-surface/70 p-3 text-xs text-muted backdrop-blur-md',
+              consentError ? 'border-danger/60' : 'border-border/50',
+            )}
+          >
+            <label className="flex cursor-pointer items-start gap-2">
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => {
+                  setConsent(e.target.checked);
+                  setConsentError(false);
+                }}
+                aria-describedby="consent-details"
+                className="mt-0.5 h-4 w-4 shrink-0 accent-[rgb(var(--c-primary))]"
+              />
+              <span className="text-sm text-textMain">{t('chat.consent.label')}</span>
+            </label>
+            <p id="consent-details" className="mt-2 flex items-start gap-2 pl-6">
+              <ShieldCheck size={14} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
+              <span>
+                {t('chat.consent.details')}{' '}
+                <Link to="/privacy" className="font-medium text-accent underline-offset-2 hover:underline">
+                  {t('chat.consent.more')}
+                </Link>
+              </span>
+            </p>
+            {consentError && (
+              <p role="alert" className="mt-2 pl-6 font-medium text-danger">
+                {t('chat.consent.required')}
+              </p>
+            )}
+          </div>
+        )}
+
         <form
           onSubmit={handleSend}
           className="flex w-full items-center gap-2 rounded-full border border-border/80 bg-background/40 py-1.5 pl-2 pr-2 shadow-sm backdrop-blur-md transition-colors focus-within:border-accent/60"
@@ -239,7 +291,11 @@ export default function Chat() {
               type="file"
               className="sr-only"
               accept=".pdf,.txt,.md"
-              onChange={(e) => setFile(e.target.files[0] ?? null)}
+              onChange={(e) => {
+                setFile(e.target.files[0] ?? null);
+                setConsent(false);
+                setConsentError(false);
+              }}
               disabled={isLoading}
               aria-label={t('chat.attach')}
             />
