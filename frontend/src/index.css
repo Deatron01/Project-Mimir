@@ -1,18 +1,40 @@
+@import './theme/themes.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  /* Default theme fallback (Midnight Theme from Image 1) */
-  :root {
-    --color-bg: #0B1B32;
-    --color-surface: #0D1E4C;
-    --color-primary: #C48CB3;
-    --color-accent: #83A6CE;
-    --color-text: #E5C9D7;
+  body {
+    @apply bg-background text-textMain antialiased;
+    transition:
+      background-color 400ms ease-in-out,
+      color 400ms ease-in-out;
   }
 
-  body {
-    @apply bg-background text-textMain transition-colors duration-500 ease-in-out;
+  /* Visible keyboard focus everywhere, in every palette. */
+  :focus-visible {
+    outline: 2px solid rgb(var(--c-accent));
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .field {
+    @apply w-full rounded-xl border border-border/60 bg-surface/40 py-3 px-4 text-textMain placeholder:text-muted/70 transition-all focus:outline-none focus:ring-2 focus:ring-accent/60;
+  }
+  .card {
+    @apply rounded-3xl border border-border/40 bg-background/60 backdrop-blur-xl shadow-2xl;
   }
 }

@@ -1,88 +1,159 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
+import SettingsMenu, { SettingsPanelContent } from '../settings/SettingsMenu';
+import ModeToggle from '../settings/ModeToggle';
+import LanguageSwitcher from '../settings/LanguageSwitcher';
+import { cn } from '../../utils/cn';
+
+const linkClass = ({ isActive }) =>
+  cn('text-sm font-medium transition-colors', isActive ? 'text-accent' : 'text-textMain/80 hover:text-accent');
 
 export default function Navbar() {
+  const { t } = useTranslation();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation(); // Hogy tudjuk, melyik oldalon vagyunk épp
+  const [mobileOpen, setMobileOpen] = useState(false);
   const { user, logout } = useAuth();
-  
+  const location = useLocation();
+
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Segédfüggvény az aktív linkek stílusához
-  const isActive = (path) => location.pathname === path;
+  // Close the mobile menu on navigation.
+  useEffect(() => setMobileOpen(false), [location.pathname]);
+
+  const links = [
+    { to: '/', label: t('nav.home'), end: true },
+    { to: '/about', label: t('nav.about') },
+    { to: '/pricing', label: t('nav.pricing') },
+    ...(user ? [{ to: '/tests', label: t('nav.tests') }] : []),
+  ];
 
   return (
-    <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-background/80 backdrop-blur-md border-b border-border/50 shadow-lg' : 'bg-transparent'
-      }`}>
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-accent" />
-          <span className="font-bold text-xl tracking-tight text-textMain">Mimir</span>
+    <header
+      className={cn(
+        'fixed top-0 z-50 w-full transition-all duration-300',
+        isScrolled || mobileOpen ? 'border-b border-border/40 bg-background/85 shadow-lg backdrop-blur-md' : 'bg-transparent',
+      )}
+    >
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-6">
+        <Link to="/" className="flex items-center gap-2" aria-label={t('common.appName')}>
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-primary to-accent" aria-hidden="true" />
+          <span className="text-xl font-bold tracking-tight text-textMain">Mimir</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
-          <Link to="/" className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-accent' : 'text-textMain/80 hover:text-accent'}`}>Főoldal</Link>
-          <Link to="/about" className={`text-sm font-medium transition-colors ${isActive('/about') ? 'text-accent' : 'text-textMain/80 hover:text-accent'}`}>Rólunk</Link>
-          <Link to="/pricing" className={`text-sm font-medium transition-colors ${isActive('/pricing') ? 'text-accent' : 'text-textMain/80 hover:text-accent'}`}>Árazás</Link>
+        <nav aria-label={t('nav.main')} className="hidden items-center gap-8 md:flex">
+          {links.map((l) => (
+            <NavLink key={l.to} to={l.to} end={l.end} className={linkClass}>
+              {l.label}
+            </NavLink>
+          ))}
         </nav>
-        
-        {/* Asztali gombok */}
-        <div className="hidden md:flex items-center gap-4">
+
+        <div className="hidden items-center gap-2 md:flex">
+          <LanguageSwitcher />
+          <ModeToggle />
+          <SettingsMenu />
+          <span className="mx-1 h-6 w-px bg-border/50" aria-hidden="true" />
           {user ? (
             <>
               <Link to="/chat">
-                <Button variant="primary" size="sm">Ugrás a Chatbe</Button>
+                <Button size="sm">{t('nav.openApp')}</Button>
               </Link>
-              <Link to="/tests" className="text-textMain hover:text-accent transition-colors">
-                Tesztek
-              </Link>
-              <Button variant="ghost" size="sm" onClick={logout}>Kijelentkezés</Button>
+              <Button variant="ghost" size="sm" onClick={logout}>
+                {t('nav.logout')}
+              </Button>
             </>
           ) : (
             <>
               <Link to="/login">
-                <Button variant="ghost" size="sm">Bejelentkezés</Button>
+                <Button variant="ghost" size="sm">
+                  {t('nav.login')}
+                </Button>
               </Link>
               <Link to="/register">
-                <Button size="sm">Regisztráció</Button>
+                <Button size="sm">{t('nav.register')}</Button>
               </Link>
             </>
           )}
         </div>
 
-        <button className="md:hidden text-textMain p-2" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-1 md:hidden">
+          <ModeToggle />
+          <button
+            type="button"
+            className="p-2 text-textMain"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
+            aria-label={mobileOpen ? t('nav.closeMenu') : t('nav.openMenu')}
+          >
+            {mobileOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
+          </button>
+        </div>
       </div>
 
-      {/* Mobil menü */}
-      {isMobileMenuOpen && (
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="md:hidden bg-surface border-b border-border px-6 py-4 flex flex-col gap-4 shadow-xl">
-          <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-textMain py-2 border-b border-border/50">Főoldal</Link>
-          <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-textMain py-2 border-b border-border/50">Rólunk</Link>
-          <Link to="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="text-textMain py-2 border-b border-border/50">Árazás</Link>
-          
-          {/* Mobil gombok (Ezek hiányoztak) */}
-          <div className="flex flex-col gap-2 pt-2">
-            <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-              <Button variant="outline" className="w-full">Bejelentkezés</Button>
-            </Link>
-            <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>
-              <Button className="w-full">Regisztráció</Button>
-            </Link>
-          </div>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            id="mobile-menu"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="max-h-[calc(100vh-5rem)] overflow-y-auto border-b border-border/40 bg-background px-6 py-4 shadow-xl md:hidden"
+          >
+            <nav aria-label={t('nav.main')} className="flex flex-col">
+              {links.map((l) => (
+                <NavLink
+                  key={l.to}
+                  to={l.to}
+                  end={l.end}
+                  className={({ isActive }) =>
+                    cn('border-b border-border/30 py-3', isActive ? 'text-accent' : 'text-textMain')
+                  }
+                >
+                  {l.label}
+                </NavLink>
+              ))}
+            </nav>
+
+            <div className="flex flex-col gap-2 pt-4">
+              {user ? (
+                <>
+                  <Link to="/chat">
+                    <Button className="w-full">{t('nav.openApp')}</Button>
+                  </Link>
+                  <Button variant="outline" className="w-full" onClick={logout}>
+                    {t('nav.logout')}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <Button variant="outline" className="w-full">
+                      {t('nav.login')}
+                    </Button>
+                  </Link>
+                  <Link to="/register">
+                    <Button className="w-full">{t('nav.register')}</Button>
+                  </Link>
+                </>
+              )}
+            </div>
+
+            <div className="mt-6 border-t border-border/30 pt-4">
+              <SettingsPanelContent />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

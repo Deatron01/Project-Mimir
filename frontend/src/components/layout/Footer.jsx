@@ -1,31 +1,37 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  const { t } = useTranslation();
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-background py-12 mt-24">
-      <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between gap-6">
+    <footer className="mt-24 border-t border-border/40 bg-background py-12">
+      <div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 px-6 md:flex-row">
         <div className="flex flex-col gap-2">
-          <span className="font-bold text-xl tracking-tight text-textMain">Mimir</span>
-          <p className="text-textMain/60 text-sm max-w-sm leading-relaxed">
-            Mesterséges Intelligenciával támogatott tesztgeneráló webszolgáltatás.
-          </p>
+          <span className="text-xl font-bold tracking-tight text-textMain">Mimir</span>
+          <p className="max-w-sm text-sm leading-relaxed text-muted">{t('footer.tagline')}</p>
         </div>
-        
-        <div className="flex gap-10 text-sm text-textMain/60">
+
+        <nav className="flex gap-10 text-sm text-muted">
           <div className="flex flex-col gap-3">
-            <Link to="/privacy" className="hover:text-accent transition-colors">Adatkezelési Tájékoztató</Link>
-            <Link to="/terms" className="hover:text-accent transition-colors">Felhasználási Feltételek</Link>
+            <Link to="/privacy" className="transition-colors hover:text-accent">
+              {t('footer.privacy')}
+            </Link>
+            <Link to="/terms" className="transition-colors hover:text-accent">
+              {t('footer.terms')}
+            </Link>
           </div>
           <div className="flex flex-col gap-3">
-            <Link to="/contact" className="hover:text-accent transition-colors">Kapcsolat</Link>
+            <Link to="/contact" className="transition-colors hover:text-accent">
+              {t('footer.contact')}
+            </Link>
           </div>
-        </div>
+        </nav>
       </div>
-      <div className="max-w-7xl mx-auto px-6 mt-10 text-xs text-textMain/40 text-center md:text-left">
-        &copy; {currentYear} Mimir Project. Minden jog fenntartva.
+      <div className="mx-auto mt-10 max-w-7xl px-6 text-center text-xs text-muted md:text-left">
+        {t('footer.rights', { year })}
       </div>
     </footer>
   );

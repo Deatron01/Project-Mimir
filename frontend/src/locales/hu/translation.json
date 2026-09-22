@@ -1,0 +1,328 @@
+{
+  "common": {
+    "appName": "Mimir AI",
+    "loading": "Betöltés…",
+    "close": "Bezárás",
+    "download": "Letöltés",
+    "errorPrefix": "Hiba történt: {{message}}"
+  },
+  "meta": {
+    "home": "Mimir AI – Okos vizsgagenerátor",
+    "about": "Rólunk – Mimir AI",
+    "pricing": "Árazás – Mimir AI",
+    "contact": "Kapcsolat – Mimir AI",
+    "login": "Bejelentkezés – Mimir AI",
+    "register": "Regisztráció – Mimir AI",
+    "chat": "Vizsgagenerátor – Mimir AI",
+    "tests": "Tesztjeim – Mimir AI",
+    "privacy": "Adatkezelési tájékoztató – Mimir AI",
+    "terms": "Felhasználási feltételek – Mimir AI",
+    "notFound": "Az oldal nem található – Mimir AI"
+  },
+  "nav": {
+    "skipToContent": "Ugrás a tartalomra",
+    "home": "Főoldal",
+    "about": "Rólunk",
+    "pricing": "Árazás",
+    "tests": "Tesztjeim",
+    "login": "Bejelentkezés",
+    "register": "Regisztráció",
+    "logout": "Kijelentkezés",
+    "openApp": "Vizsgagenerátor",
+    "openMenu": "Menü megnyitása",
+    "closeMenu": "Menü bezárása",
+    "main": "Fő navigáció"
+  },
+  "settings": {
+    "open": "Megjelenési beállítások",
+    "title": "Megjelenés",
+    "language": "Nyelv",
+    "mode": "Mód",
+    "modes": {
+      "system": "Rendszer",
+      "light": "Világos",
+      "dark": "Sötét"
+    },
+    "toggleMode": "Váltás {{mode}} módra",
+    "palette": "Színpaletta",
+    "palettes": {
+      "original": "Mimir Eredeti",
+      "midnight": "Midnight Blossom",
+      "ocean": "Deep Ocean",
+      "sunset": "Sunset Glow",
+      "lavender": "Lavender Dream",
+      "forest": "Forest Whisper"
+    },
+    "selectPalette": "{{name}} paletta kiválasztása"
+  },
+  "footer": {
+    "tagline": "Mesterséges intelligenciával támogatott tesztgeneráló webszolgáltatás.",
+    "privacy": "Adatkezelési tájékoztató",
+    "terms": "Felhasználási feltételek",
+    "contact": "Kapcsolat",
+    "rights": "© {{year}} Mimir Project. Minden jog fenntartva."
+  },
+  "home": {
+    "badge": "Az okos vizsgagenerátor új generációja",
+    "title": "Mímir kútjából fakad a <1>tudás</1>",
+    "subtitle": "Töltsd fel saját oktatási anyagaidat, és a Mimir AI másodpercek alatt professzionális vizsgakérdéseket generál belőlük egy modern, interaktív chat felületen.",
+    "ctaTry": "Próbáld ki ingyen",
+    "ctaApp": "Irány a generátor",
+    "howItWorks": "Hogyan működik?",
+    "mock": {
+      "title": "Mimir AI Chat",
+      "fileName": "biologia_tetelek.pdf",
+      "userMessage": "Kérlek készíts egy 10 kérdéses feleletválasztós (MCQ) vizsgát a csatolt anyagból, kifejezetten a sejtosztódás témakörére fókuszálva!",
+      "aiMessage": "Elkészült a vizsgaanyag! A feltöltött dokumentumból kinyertem a sejtosztódással kapcsolatos legfontosabb fogalmakat (mitózis, meiózis), és legeneráltam a 10 szakmailag lektorált kérdést.",
+      "check": "Hallucináció-szűrés sikeres",
+      "download": "Letöltés (PDF)"
+    },
+    "featuresTitle": "A <1>Mimir</1> architektúra előnyei",
+    "features": {
+      "rag": {
+        "title": "RAG alapú pontosság",
+        "desc": "A rendszer szemantikus darabolást (RuneCarver) használ. Csak a feltöltött dokumentumod tényeire támaszkodik, minimalizálva az AI hallucinációt."
+      },
+      "secure": {
+        "title": "Zárt és biztonságos",
+        "desc": "Az oktatási anyagaid sosem hagyják el a rendszert. Nincs külső OpenAI hívás, a Qwen LLM lokális konténerben, szigorú adatvédelemmel fut."
+      },
+      "export": {
+        "title": "Szupergyors PDF export",
+        "desc": "A Skald engine tipográfiailag helyes, letisztult PDF fájlokat generál, amelyek azonnal nyomtathatók és felhasználhatók vizsgáztatásra."
+      }
+    },
+    "ctaTitle": "Készen állsz az első vizsgád legenerálására?",
+    "ctaSubtitle": "Csatlakozz a platformhoz, és spórolj órákat a vizsgaírásra szánt időből a Mimir AI segítségével.",
+    "ctaStart": "Kezdjük el!",
+    "ctaRegister": "Fiók létrehozása"
+  },
+  "about": {
+    "title": "A <1>Mimir</1> története",
+    "intro": "A skandináv mitológiában Mimir a bölcsesség óriása, a tudás forrásának őrzője. Ebből az inspirációból hoztuk létre ezt a platformot, amely a mesterséges intelligencia segítségével szintetizálja a te tudásbázisodat, és alakítja át strukturált, azonnal használható vizsgaanyagokká.",
+    "items": {
+      "local": {
+        "title": "Lokális architektúra",
+        "desc": "Minden Qwen AI modell és vektoradatbázis nálad fut, maximális adatvédelmet biztosítva."
+      },
+      "engine": {
+        "title": "Modern AI motor",
+        "desc": "A Wellspring, RuneCarver és Bifrost mikroszolgáltatások együttműködve, hallucináció-mentesen dolgoznak."
+      },
+      "teachers": {
+        "title": "Oktatókra szabva",
+        "desc": "Azért hoztuk létre, hogy a tanárok és oktatók órákat spóroljanak a vizsgaírással."
+      }
+    }
+  },
+  "pricing": {
+    "title": "Egyszerű, átlátható árazás",
+    "subtitle": "Mivel a Mimir a te saját hardvereden (lokálisan) fut, nincsenek rejtett felhőköltségek vagy API-díjak. Válassz az igényeidhez illő támogatási csomagok közül.",
+    "free": {
+      "name": "Nyílt forráskód",
+      "price": "0 Ft",
+      "period": "/ örökké",
+      "desc": "Tökéletes diákoknak és hobbistáknak, akik maguk üzemeltetik a rendszert.",
+      "features": [
+        "Teljes lokális hozzáférés",
+        "Korlátlan vizsgagenerálás",
+        "Skald PDF engine"
+      ],
+      "cta": "Letöltés GitHubról",
+      "notIncluded": [
+        "Közösségi Discord-támogatás"
+      ]
+    },
+    "pro": {
+      "badge": "Ajánlott",
+      "name": "Pro támogatás",
+      "price": "15 000 Ft",
+      "period": "/ hó",
+      "desc": "Intézményeknek és tanároknak, akik garantált működést és frissítéseket igényelnek.",
+      "features": [
+        "Minden a nyílt csomagból",
+        "Dedikált technikai beüzemelés",
+        "Prioritásos hibajavítás",
+        "Korai hozzáférés új funkciókhoz"
+      ],
+      "cta": "Előfizetés"
+    },
+    "notIncludedLabel": "nem része a csomagnak"
+  },
+  "contact": {
+    "title": "Lépj velünk kapcsolatba",
+    "subtitle": "Kérdésed van a Mimir működésével vagy a Pro csomaggal kapcsolatban? Írj nekünk!",
+    "name": "Neved",
+    "namePlaceholder": "Kovács János",
+    "email": "E-mail címed",
+    "message": "Üzenet",
+    "messagePlaceholder": "Miben segíthetünk?",
+    "submit": "Üzenet küldése",
+    "success": "Köszönjük megkeresésed! Hamarosan felvesszük veled a kapcsolatot."
+  },
+  "auth": {
+    "email": "E-mail cím",
+    "emailPlaceholder": "pelda@email.com",
+    "password": "Jelszó",
+    "login": {
+      "title": "Üdv újra a Mimirben",
+      "subtitle": "Jelentkezz be a fiókodba a folytatáshoz",
+      "submit": "Bejelentkezés",
+      "noAccount": "Nincs még fiókod?",
+      "registerLink": "Regisztrálj itt",
+      "success": "Sikeres belépés! Átirányítás…",
+      "error": "Helytelen e-mail vagy jelszó!"
+    },
+    "register": {
+      "title": "Új fiók létrehozása",
+      "subtitle": "Csatlakozz a Mimir közösségéhez",
+      "passwordPlaceholder": "Legalább 6 karakter",
+      "confirm": "Jelszó újra",
+      "submit": "Regisztráció",
+      "hasAccount": "Már van fiókod?",
+      "loginLink": "Lépj be itt",
+      "mismatch": "A két jelszó nem egyezik!",
+      "tooShort": "A jelszónak legalább 6 karakternek kell lennie!",
+      "success": "Sikeres regisztráció! Kérlek, erősítsd meg az e-mail címedet a kiküldött linkkel.",
+      "error": "Hiba történt a regisztráció során."
+    }
+  },
+  "chat": {
+    "welcome": "Szia! Én a Mimir AI vagyok. Csatolj egy dokumentumot (PDF/TXT), és írd le, milyen témában, hány kérdéses vizsgát generáljak belőle!",
+    "placeholder": "Írd le, milyen vizsgát szeretnél…",
+    "attach": "Dokumentum csatolása",
+    "removeFile": "Csatolt fájl eltávolítása",
+    "send": "Küldés",
+    "thinking": "Gondolkodom…",
+    "disclaimer": "A Mimir AI hibázhat. Kérjük, vizsgáztatás előtt ellenőrizze a generált tartalmat.",
+    "status": {
+      "extracting": "Szöveg kinyerése a dokumentumból…",
+      "chunking": "Szövegrészek elemzése és darabolása…",
+      "indexing": "Tudásbázis építése (vektorizálás)…",
+      "generating": "A mesterséges intelligencia dolgozik (ez 1–2 percig is tarthat)…",
+      "exporting": "Dokumentum véglegesítése és exportálása…"
+    },
+    "errors": {
+      "noFile": "Kérlek, csatolj egy dokumentumot is a tesztgeneráláshoz!",
+      "extract": "Hiba a szöveg kinyerése közben.",
+      "chunk": "Hiba a szöveg feldolgozása közben.",
+      "ingest": "Hiba a tudásbázis építése közben.",
+      "start": "Hiba a feladat indítása közben.",
+      "generate": "Hiba az AI generálás során.",
+      "export": "Hiba a PDF generálása során.",
+      "exportPrefix": "Hiba történt az exportálás során: {{message}}"
+    },
+    "ready": "Elkészültek a kérdések! Az EU AI Act 14. cikke értelmében (emberi felügyelet) kérlek, ellenőrizd és szerkeszd a tartalmat a véglegesítés és az exportálás előtt.",
+    "approved": "A vizsgaanyag ellenőrzése megtörtént és véglegesítésre került. Alább letöltheted a kész PDF-et.",
+    "downloadPdf": "Eredmény letöltése (PDF)",
+    "you": "Te",
+    "assistant": "Mimir AI"
+  },
+  "editor": {
+    "title": "Kérdésszerkesztő",
+    "hint": "Javítsd a kérdéseket, jelöld meg a helyes választ, majd hagyd jóvá az exportáláshoz.",
+    "examTitle": "Vizsga címe",
+    "questionCount_one": "{{count}} kérdés",
+    "questionCount_other": "{{count}} kérdés",
+    "question": "{{n}}. kérdés",
+    "type": "Típus",
+    "types": {
+      "mcq": "Feleletválasztós",
+      "tf": "Igaz / hamis",
+      "open": "Kifejtős"
+    },
+    "questionText": "Kérdés szövege",
+    "answers": "Válaszok",
+    "correct": "Helyes",
+    "markCorrect": "Megjelölés helyes válaszként: {{n}}. válasz",
+    "answer": "{{n}}. válasz",
+    "answerKey": "Megoldókulcs",
+    "true": "Igaz",
+    "false": "Hamis",
+    "addAnswer": "Válasz hozzáadása",
+    "removeAnswer": "{{n}}. válasz törlése",
+    "moveUp": "Kérdés feljebb",
+    "moveDown": "Kérdés lejjebb",
+    "removeQuestion": "Kérdés törlése",
+    "addQuestion": "Új kérdés",
+    "approve": "Ellenőriztem és jóváhagyom a kérdéseket",
+    "validation": {
+      "title": "Adj címet a vizsgának.",
+      "noQuestions": "Legalább egy kérdés szükséges.",
+      "emptyQuestion": "A(z) {{n}}. kérdés szövege üres.",
+      "emptyAnswer": "A(z) {{n}}. kérdésnél van üres válasz.",
+      "oneCorrect": "A(z) {{n}}. kérdésnél pontosan egy helyes választ jelölj meg.",
+      "minAnswers": "A(z) {{n}}. kérdéshez legalább két válasz kell."
+    }
+  },
+  "tests": {
+    "title": "Generált vizsgaanyagok",
+    "subtitle": "Itt találod az összes korábban elkészített tesztedet, amelyeket bármikor újra letölthetsz.",
+    "loadError": "Nem sikerült betölteni a tesztek előzményeit.",
+    "downloadError": "A letöltés sikertelen.",
+    "emptyTitle": "Nincs még mentett teszted",
+    "emptyDesc": "Tölts fel egy dokumentumot a generátorban, és készíts egy új vizsgát!",
+    "goToApp": "Új vizsga készítése",
+    "columns": {
+      "name": "Teszt megnevezése",
+      "created": "Létrehozva",
+      "size": "Méret",
+      "action": "Művelet"
+    }
+  },
+  "notFound": {
+    "title": "Az oldal nem található",
+    "desc": "A keresett oldal nem létezik vagy át lett helyezve.",
+    "home": "Vissza a főoldalra"
+  },
+  "legal": {
+    "privacy": {
+      "title": "Adatkezelési tájékoztató",
+      "updated": "Utolsó frissítés: 2026. április 4.",
+      "sections": [
+        {
+          "heading": "1. Általános rendelkezések",
+          "body": "A Mimir AI kiemelt figyelmet fordít a személyes adatok védelmére. Mivel szolgáltatásunk alapvetően egy lokálisan futtatható architektúrára épül, a feltöltött oktatási anyagok és vizsgakérdések nem kerülnek felhő alapú külső szerverekre, azokat a saját infrastruktúrája dolgozza fel."
+        },
+        {
+          "heading": "2. Kezelt adatok köre",
+          "list": [
+            "Regisztráció során megadott e-mail cím és titkosított jelszó.",
+            "Kapcsolatfelvételi űrlapon megadott név és e-mail cím.",
+            "A weboldal használata során elmentett munkamenet (cookie) azonosítók."
+          ]
+        },
+        {
+          "heading": "3. Az adatkezelés célja",
+          "body": "A felhasználói fiókok kezelése, a szolgáltatáshoz való hozzáférés biztosítása, valamint a felhasználókkal való kommunikáció (pl. jelszó-visszaállítás, technikai támogatás)."
+        },
+        {
+          "heading": "4. Adatbiztonság",
+          "body": "Az adatbázisban tárolt jelszavakat bcrypt technológiával titkosítjuk. A szolgáltatás kommunikációja titkosított csatornákon keresztül történik."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Felhasználási feltételek",
+      "intro": "Kérjük, figyelmesen olvassa el az alábbi Felhasználási Feltételeket a Mimir AI szolgáltatás használata előtt.",
+      "sections": [
+        {
+          "heading": "1. A szolgáltatás leírása",
+          "body": "A Mimir egy mesterséges intelligenciával támogatott tesztgeneráló platform. A rendszer képes a feltöltött dokumentumokból automatikusan kérdéseket és vizsgaanyagokat generálni a Qwen AI modell segítségével."
+        },
+        {
+          "heading": "2. Felhasználói felelősség",
+          "body": "A felhasználó kizárólag olyan anyagokat tölthet fel a rendszerbe, amelyekhez megfelelő szerzői joggal vagy felhasználási engedéllyel rendelkezik. A generált vizsgaanyagok szakmai ellenőrzése minden esetben a felhasználó felelőssége."
+        },
+        {
+          "heading": "3. Generált tartalom",
+          "body": "Bár a rendszer hallucináció-csökkentő mechanizmusokkal (RAG) dolgozik, a nagy nyelvi modellek természetéből adódóan a Mimir nem vállal garanciát a generált vizsgakérdések 100%-os tényszerű pontosságáért. Az éles vizsgáztatás előtt az anyag emberi lektorálása kötelező."
+        },
+        {
+          "heading": "4. A szolgáltatás elérhetősége",
+          "body": "Ingyenes csomagunk esetében a szolgáltatást „ahogy van” alapon nyújtjuk, garantált rendelkezésre állás (SLA) nélkül. A Pro előfizetők számára a szerződésben foglalt technikai támogatást biztosítjuk."
+        }
+      ]
+    }
+  }
+}

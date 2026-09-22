@@ -1,0 +1,328 @@
+{
+  "common": {
+    "appName": "Mimir AI",
+    "loading": "Loading…",
+    "close": "Close",
+    "download": "Download",
+    "errorPrefix": "Something went wrong: {{message}}"
+  },
+  "meta": {
+    "home": "Mimir AI – Smart exam generator",
+    "about": "About – Mimir AI",
+    "pricing": "Pricing – Mimir AI",
+    "contact": "Contact – Mimir AI",
+    "login": "Sign in – Mimir AI",
+    "register": "Sign up – Mimir AI",
+    "chat": "Exam generator – Mimir AI",
+    "tests": "My tests – Mimir AI",
+    "privacy": "Privacy notice – Mimir AI",
+    "terms": "Terms of use – Mimir AI",
+    "notFound": "Page not found – Mimir AI"
+  },
+  "nav": {
+    "skipToContent": "Skip to content",
+    "home": "Home",
+    "about": "About",
+    "pricing": "Pricing",
+    "tests": "My tests",
+    "login": "Sign in",
+    "register": "Sign up",
+    "logout": "Sign out",
+    "openApp": "Exam generator",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "main": "Main navigation"
+  },
+  "settings": {
+    "open": "Appearance settings",
+    "title": "Appearance",
+    "language": "Language",
+    "mode": "Mode",
+    "modes": {
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "toggleMode": "Switch to {{mode}} mode",
+    "palette": "Colour palette",
+    "palettes": {
+      "original": "Mimir Original",
+      "midnight": "Midnight Blossom",
+      "ocean": "Deep Ocean",
+      "sunset": "Sunset Glow",
+      "lavender": "Lavender Dream",
+      "forest": "Forest Whisper"
+    },
+    "selectPalette": "Select the {{name}} palette"
+  },
+  "footer": {
+    "tagline": "AI-assisted test generation web service.",
+    "privacy": "Privacy notice",
+    "terms": "Terms of use",
+    "contact": "Contact",
+    "rights": "© {{year}} Mimir Project. All rights reserved."
+  },
+  "home": {
+    "badge": "The next generation of smart exam generation",
+    "title": "Knowledge flows from <1>Mímir's well</1>",
+    "subtitle": "Upload your own teaching materials and Mimir AI turns them into professional exam questions in seconds, through a modern, interactive chat interface.",
+    "ctaTry": "Try it for free",
+    "ctaApp": "Open the generator",
+    "howItWorks": "How does it work?",
+    "mock": {
+      "title": "Mimir AI Chat",
+      "fileName": "biology_notes.pdf",
+      "userMessage": "Please create a 10-question multiple-choice (MCQ) exam from the attached material, focusing on cell division.",
+      "aiMessage": "Your exam is ready! I extracted the key concepts of cell division (mitosis, meiosis) from the uploaded document and generated 10 professionally reviewed questions.",
+      "check": "Hallucination check passed",
+      "download": "Download (PDF)"
+    },
+    "featuresTitle": "Why the <1>Mimir</1> architecture",
+    "features": {
+      "rag": {
+        "title": "RAG-based accuracy",
+        "desc": "The system uses semantic chunking (RuneCarver). It relies only on the facts in your uploaded document, keeping AI hallucination to a minimum."
+      },
+      "secure": {
+        "title": "Closed and secure",
+        "desc": "Your teaching materials never leave the system. No external OpenAI calls: the Qwen LLM runs in a local container with strict data protection."
+      },
+      "export": {
+        "title": "Lightning-fast PDF export",
+        "desc": "The Skald engine produces clean, typographically correct PDF files that are ready to print and use in exams straight away."
+      }
+    },
+    "ctaTitle": "Ready to generate your first exam?",
+    "ctaSubtitle": "Join the platform and save hours of exam writing with Mimir AI.",
+    "ctaStart": "Let's start!",
+    "ctaRegister": "Create an account"
+  },
+  "about": {
+    "title": "The story of <1>Mimir</1>",
+    "intro": "In Norse mythology, Mímir is the giant of wisdom and the guardian of the well of knowledge. Inspired by him, we built a platform that uses artificial intelligence to synthesise your knowledge base and turn it into structured, ready-to-use exam material.",
+    "items": {
+      "local": {
+        "title": "Local architecture",
+        "desc": "Every Qwen AI model and the vector database run on your side, for maximum data protection."
+      },
+      "engine": {
+        "title": "Modern AI engine",
+        "desc": "The Wellspring, RuneCarver and Bifrost microservices work together to produce hallucination-free results."
+      },
+      "teachers": {
+        "title": "Built for educators",
+        "desc": "We built it so teachers and instructors can save hours of exam writing."
+      }
+    }
+  },
+  "pricing": {
+    "title": "Simple, transparent pricing",
+    "subtitle": "Because Mimir runs on your own hardware (locally), there are no hidden cloud costs or API fees. Choose the support plan that fits your needs.",
+    "free": {
+      "name": "Open source",
+      "price": "HUF 0",
+      "period": "/ forever",
+      "desc": "Perfect for students and hobbyists who run the system themselves.",
+      "features": [
+        "Full local access",
+        "Unlimited exam generation",
+        "Skald PDF engine"
+      ],
+      "cta": "Download from GitHub",
+      "notIncluded": [
+        "Community Discord support"
+      ]
+    },
+    "pro": {
+      "badge": "Recommended",
+      "name": "Pro support",
+      "price": "HUF 15,000",
+      "period": "/ month",
+      "desc": "For institutions and teachers who need guaranteed operation and updates.",
+      "features": [
+        "Everything in Open source",
+        "Dedicated technical onboarding",
+        "Priority bug fixes",
+        "Early access to new features"
+      ],
+      "cta": "Subscribe"
+    },
+    "notIncludedLabel": "not included"
+  },
+  "contact": {
+    "title": "Get in touch",
+    "subtitle": "Questions about how Mimir works or about the Pro plan? Write to us!",
+    "name": "Your name",
+    "namePlaceholder": "Jane Smith",
+    "email": "Your email",
+    "message": "Message",
+    "messagePlaceholder": "How can we help?",
+    "submit": "Send message",
+    "success": "Thanks for reaching out! We'll get back to you soon."
+  },
+  "auth": {
+    "email": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "login": {
+      "title": "Welcome back to Mimir",
+      "subtitle": "Sign in to your account to continue",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account yet?",
+      "registerLink": "Sign up here",
+      "success": "Signed in! Redirecting…",
+      "error": "Incorrect email or password!"
+    },
+    "register": {
+      "title": "Create a new account",
+      "subtitle": "Join the Mimir community",
+      "passwordPlaceholder": "At least 6 characters",
+      "confirm": "Confirm password",
+      "submit": "Sign up",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Sign in here",
+      "mismatch": "The passwords do not match!",
+      "tooShort": "The password must be at least 6 characters long!",
+      "success": "Registration successful! Please confirm your email address using the link we sent you.",
+      "error": "Something went wrong during registration."
+    }
+  },
+  "chat": {
+    "welcome": "Hi! I'm Mimir AI. Attach a document (PDF/TXT) and tell me what topic and how many questions the exam should have!",
+    "placeholder": "Describe the exam you want…",
+    "attach": "Attach a document",
+    "removeFile": "Remove attached file",
+    "send": "Send",
+    "thinking": "Thinking…",
+    "disclaimer": "Mimir AI can make mistakes. Please check the generated content before using it in an exam.",
+    "status": {
+      "extracting": "Extracting text from the document…",
+      "chunking": "Analysing and splitting the text…",
+      "indexing": "Building the knowledge base (vectorising)…",
+      "generating": "The AI is working (this can take 1–2 minutes)…",
+      "exporting": "Finalising and exporting the document…"
+    },
+    "errors": {
+      "noFile": "Please attach a document to generate a test from!",
+      "extract": "Error while extracting the text.",
+      "chunk": "Error while processing the text.",
+      "ingest": "Error while building the knowledge base.",
+      "start": "Error while starting the job.",
+      "generate": "Error during AI generation.",
+      "export": "Error while generating the PDF.",
+      "exportPrefix": "Export failed: {{message}}"
+    },
+    "ready": "Your questions are ready! Under Article 14 of the EU AI Act (human oversight), please review and edit the content before finalising and exporting it.",
+    "approved": "The exam has been reviewed and finalised. You can download the PDF below.",
+    "downloadPdf": "Download result (PDF)",
+    "you": "You",
+    "assistant": "Mimir AI"
+  },
+  "editor": {
+    "title": "Question editor",
+    "hint": "Fix the questions, mark the correct answers, then approve to export.",
+    "examTitle": "Exam title",
+    "questionCount_one": "{{count}} question",
+    "questionCount_other": "{{count}} questions",
+    "question": "Question {{n}}",
+    "type": "Type",
+    "types": {
+      "mcq": "Multiple choice",
+      "tf": "True / false",
+      "open": "Open-ended"
+    },
+    "questionText": "Question text",
+    "answers": "Answers",
+    "correct": "Correct",
+    "markCorrect": "Mark answer {{n}} as correct",
+    "answer": "Answer {{n}}",
+    "answerKey": "Answer key",
+    "true": "True",
+    "false": "False",
+    "addAnswer": "Add answer",
+    "removeAnswer": "Remove answer {{n}}",
+    "moveUp": "Move question up",
+    "moveDown": "Move question down",
+    "removeQuestion": "Delete question",
+    "addQuestion": "New question",
+    "approve": "I have reviewed and approve these questions",
+    "validation": {
+      "title": "Give the exam a title.",
+      "noQuestions": "At least one question is required.",
+      "emptyQuestion": "Question {{n}} has no text.",
+      "emptyAnswer": "Question {{n}} has an empty answer.",
+      "oneCorrect": "Mark exactly one correct answer for question {{n}}.",
+      "minAnswers": "Question {{n}} needs at least two answers."
+    }
+  },
+  "tests": {
+    "title": "Generated exams",
+    "subtitle": "All the tests you've created so far. You can download them again at any time.",
+    "loadError": "Could not load your test history.",
+    "downloadError": "Download failed.",
+    "emptyTitle": "No saved tests yet",
+    "emptyDesc": "Upload a document in the generator and create a new exam!",
+    "goToApp": "Create a new exam",
+    "columns": {
+      "name": "Test name",
+      "created": "Created",
+      "size": "Size",
+      "action": "Action"
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "desc": "The page you're looking for doesn't exist or has been moved.",
+    "home": "Back to home"
+  },
+  "legal": {
+    "privacy": {
+      "title": "Privacy notice",
+      "updated": "Last updated: 4 April 2026",
+      "sections": [
+        {
+          "heading": "1. General provisions",
+          "body": "Mimir AI pays special attention to protecting personal data. Because our service is built on an architecture that can run locally, uploaded teaching materials and exam questions are not sent to external cloud servers; they are processed on your own infrastructure."
+        },
+        {
+          "heading": "2. Data we process",
+          "list": [
+            "The email address and encrypted password provided during registration.",
+            "The name and email address provided in the contact form.",
+            "Session (cookie) identifiers stored while using the website."
+          ]
+        },
+        {
+          "heading": "3. Purpose of processing",
+          "body": "Managing user accounts, providing access to the service, and communicating with users (for example password resets and technical support)."
+        },
+        {
+          "heading": "4. Data security",
+          "body": "Passwords stored in the database are hashed with bcrypt. All communication with the service takes place over encrypted channels."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms of use",
+      "intro": "Please read these Terms of Use carefully before using the Mimir AI service.",
+      "sections": [
+        {
+          "heading": "1. Description of the service",
+          "body": "Mimir is an AI-assisted test generation platform. It can automatically generate questions and exam material from uploaded documents using the Qwen AI model."
+        },
+        {
+          "heading": "2. User responsibility",
+          "body": "Users may only upload material for which they hold the appropriate copyright or licence. Professional review of the generated exam material is always the user's responsibility."
+        },
+        {
+          "heading": "3. Generated content",
+          "body": "Although the system uses hallucination-reducing mechanisms (RAG), large language models are inherently imperfect, so Mimir does not guarantee that generated exam questions are 100% factually accurate. Human review is mandatory before using the material in a real exam."
+        },
+        {
+          "heading": "4. Service availability",
+          "body": "The free plan is provided \"as is\", without a guaranteed service level (SLA). Pro subscribers receive the technical support set out in their contract."
+        }
+      ]
+    }
+  }
+}

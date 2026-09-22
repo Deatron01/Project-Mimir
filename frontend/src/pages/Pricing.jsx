@@ -1,57 +1,84 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Check, Minus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Button from '../components/ui/Button';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 export default function Pricing() {
-  return (
-    <div className="relative overflow-hidden min-h-[80vh]">
-      <div className="absolute top-[10%] right-[-10%] w-[40rem] h-[40rem] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
+  const { t } = useTranslation();
+  useDocumentTitle('meta.pricing');
+  const list = (key) => t(key, { returnObjects: true });
 
-      <section className="relative max-w-6xl mx-auto px-6 pt-24 pb-16 text-center">
-        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-          Egyszerű, átlátható árazás
+  return (
+    <div className="relative min-h-[80vh] overflow-hidden">
+      <div className="pointer-events-none absolute right-[-10%] top-[10%] h-[40rem] w-[40rem] rounded-full bg-primary/20 blur-[120px]" aria-hidden="true" />
+
+      <section className="relative mx-auto max-w-6xl px-6 pb-16 pt-24 text-center">
+        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 text-4xl font-extrabold tracking-tight md:text-6xl">
+          {t('pricing.title')}
         </motion.h1>
-        <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-lg text-textMain/70 mb-16 max-w-2xl mx-auto">
-          Mivel a Mimir a te saját hardvereden (lokálisan) fut, nincsenek rejtett felhő-költségek vagy API díjak. Válassz az igényeidhez illő támogatási csomagok közül.
+        <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mx-auto mb-16 max-w-2xl text-lg text-muted">
+          {t('pricing.subtitle')}
         </motion.p>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
-          {/* Free Tier */}
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="p-8 rounded-3xl border border-border/50 bg-surface/20 backdrop-blur-sm flex flex-col">
-            <h3 className="text-2xl font-bold mb-2">Nyílt Forráskód</h3>
-            <div className="flex items-baseline gap-2 mb-6">
-              <span className="text-4xl font-extrabold text-white">0 Ft</span>
-              <span className="text-textMain/60">/ örökké</span>
+        <div className="mx-auto grid max-w-4xl gap-8 text-left md:grid-cols-2">
+          {/* Free tier */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-col rounded-3xl border border-border/50 bg-surface/20 p-8 backdrop-blur-sm"
+          >
+            <h2 className="mb-2 text-2xl font-bold">{t('pricing.free.name')}</h2>
+            <div className="mb-6 flex items-baseline gap-2">
+              <span className="text-4xl font-extrabold text-textMain">{t('pricing.free.price')}</span>
+              <span className="text-muted">{t('pricing.free.period')}</span>
             </div>
-            <p className="text-sm text-textMain/70 mb-8 h-10">Tökéletes diákoknak és hobbistáknak, akik maguk üzemeltetik a rendszert.</p>
-            <ul className="flex flex-col gap-4 mb-8 flex-grow">
-              <li className="flex items-center gap-3 text-sm"><Check size={18} className="text-green-400" /> Teljes lokális hozzáférés</li>
-              <li className="flex items-center gap-3 text-sm"><Check size={18} className="text-green-400" /> Végtelen vizsgagenerálás</li>
-              <li className="flex items-center gap-3 text-sm"><Check size={18} className="text-green-400" /> Skald PDF Engine</li>
-              <li className="flex items-center gap-3 text-sm text-textMain/40"><Check size={18} className="opacity-0" /> Közösségi Discord támogatás</li>
+            <p className="mb-8 min-h-10 text-sm text-muted">{t('pricing.free.desc')}</p>
+            <ul className="mb-8 flex flex-grow flex-col gap-4">
+              {list('pricing.free.features').map((f) => (
+                <li key={f} className="flex items-center gap-3 text-sm">
+                  <Check size={18} className="text-success" aria-hidden="true" /> {f}
+                </li>
+              ))}
+              {list('pricing.free.notIncluded').map((f) => (
+                <li key={f} className="flex items-center gap-3 text-sm text-muted line-through decoration-muted/60">
+                  <Minus size={18} aria-hidden="true" /> {f}
+                  <span className="sr-only">({t('pricing.notIncludedLabel')})</span>
+                </li>
+              ))}
             </ul>
-            <Button variant="outline" className="w-full">Letöltés GitHub-ról</Button>
+            <Button variant="outline" className="w-full">
+              {t('pricing.free.cta')}
+            </Button>
           </motion.div>
 
-          {/* Pro Tier */}
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="p-8 rounded-3xl border border-accent bg-gradient-to-b from-surface/40 to-background flex flex-col relative overflow-hidden">
-            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-accent to-primary" />
-            <div className="absolute top-6 right-6 px-3 py-1 bg-accent/20 text-accent text-xs font-bold rounded-full">AJÁNLOTT</div>
-            
-            <h3 className="text-2xl font-bold mb-2">Pro Támogatás</h3>
-            <div className="flex items-baseline gap-2 mb-6">
-              <span className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-accent to-primary">15.000 Ft</span>
-              <span className="text-textMain/60">/ hó</span>
+          {/* Pro tier */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="relative flex flex-col overflow-hidden rounded-3xl border border-accent bg-gradient-to-b from-surface/40 to-background p-8"
+          >
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-accent to-primary" />
+            <div className="absolute right-6 top-6 rounded-full bg-accent/15 px-3 py-1 text-xs font-bold uppercase text-accent">
+              {t('pricing.pro.badge')}
             </div>
-            <p className="text-sm text-textMain/70 mb-8 h-10">Intézményeknek és tanároknak, akik garantált működést és frissítéseket igényelnek.</p>
-            <ul className="flex flex-col gap-4 mb-8 flex-grow">
-              <li className="flex items-center gap-3 text-sm"><Check size={18} className="text-accent" /> Minden a Nyílt csomagból</li>
-              <li className="flex items-center gap-3 text-sm"><Check size={18} className="text-accent" /> Dedikált technikai beüzemelés</li>
-              <li className="flex items-center gap-3 text-sm"><Check size={18} className="text-accent" /> Prioritásos hibajavítás</li>
-              <li className="flex items-center gap-3 text-sm"><Check size={18} className="text-accent" /> Korai hozzáférés új funkciókhoz</li>
+            <h2 className="mb-2 text-2xl font-bold">{t('pricing.pro.name')}</h2>
+            <div className="mb-6 flex items-baseline gap-2">
+              <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-4xl font-extrabold text-transparent">{t('pricing.pro.price')}</span>
+              <span className="text-muted">{t('pricing.pro.period')}</span>
+            </div>
+            <p className="mb-8 min-h-10 text-sm text-muted">{t('pricing.pro.desc')}</p>
+            <ul className="mb-8 flex flex-grow flex-col gap-4">
+              {list('pricing.pro.features').map((f) => (
+                <li key={f} className="flex items-center gap-3 text-sm">
+                  <Check size={18} className="text-accent" aria-hidden="true" /> {f}
+                </li>
+              ))}
             </ul>
-            <Button className="w-full">Előfizetés</Button>
+            <Button className="w-full">{t('pricing.pro.cta')}</Button>
           </motion.div>
         </div>
       </section>
