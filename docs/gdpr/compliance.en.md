@@ -72,7 +72,7 @@ A legitimate interest assessment (balancing test) is required for activities 4, 
 | Data | Retention | Deletion mechanism | Status |
 | --- | --- | --- | --- |
 | Uploaded file bytes | Duration of the request | Never written to disk; freed after extraction | **Implemented** (Wellspring already processes in memory) |
-| Chunks and embeddings | Until the job ends, max 60 min | Bifrost clears the vector store when a job finishes or fails; the next ingest also clears it | **Implemented** in this change; per-session collections are Planned (BIF-01 #25) |
+| Chunks and embeddings | Until the job ends, max 60 min | Bifrost clears the vector store when a job finishes or fails; the next ingest also clears it | **Implemented** in this change; per-topic isolation is Planned (TOP-03 #107) |
 | Job results (exam draft) | 60 min (`JOB_TTL_SECONDS`) | Bifrost drops expired jobs on every request | **Implemented** in this change |
 | Saved tests | Until deleted, max 12 months (`HISTORY_RETENTION_DAYS=365`) | Skald purge at start-up and every 24 h; user delete endpoint; saving is opt-in | **Implemented** in this change |
 | AI audit log | 30 days (`AUDIT_RETENTION_DAYS`) | The Forge purges hourly; stores hashes only; legacy text columns are erased at start-up | **Implemented** in this change |
@@ -81,6 +81,8 @@ A legitimate interest assessment (balancing test) is required for activities 4, 
 | Contact messages | 1 year | Mailbox rule | **Planned** (contact form not connected yet) |
 | Browser storage | Until the user clears it or signs out | "Your data" page deletes all Mimir keys | **Implemented** in this change |
 | Data already in git history (`services/skald/storage`) | Must be removed | Files are untracked in this change; history rewrite with `git filter-repo` | **Partly implemented** (history rewrite: PLT-01 #1) |
+
+**Planned change – Topic workspace ([epic #103](https://github.com/Deatron01/Project-Mimir/issues/103)):** when topics ship, chunks, embeddings, the concept graph and chat history are kept per topic until the user deletes the file or topic, or the topic is inactive for the period decided in [#104](https://github.com/Deatron01/Project-Mimir/issues/104) (proposal: 90 days). Raw files are still never stored. Deleting a topic cascades to all of its data ([#108](https://github.com/Deatron01/Project-Mimir/issues/108)). The privacy notice and this pack must be updated before release ([#121](https://github.com/Deatron01/Project-Mimir/issues/121)); until then the rules above apply.
 
 Backups: account data may be backed up; uploaded documents, chunks and job results must never be included in backups. Backups older than the retention above must be rotated out.
 
@@ -104,7 +106,7 @@ Checklist for every processor: written contract; processing only on instructions
 | TLS for all traffic (Cloudflare Tunnel, HTTPS) | Implemented |
 | Passwords hashed with bcrypt/Argon2 | Planned with the auth service (GW-01 #8) |
 | Real authentication and per-user authorisation on every endpoint | Planned (GW-01 #8, GW-02 #9, SKA-02 #45) — **highest priority**: today `/tests` and downloads trust a `user_id` parameter |
-| Session-isolated processing (no shared vector store) | Planned (BIF-01 #25) |
+| Topic-isolated processing (mandatory `topic_id` filter, no shared search) | Planned (TOP-03 #107) |
 | Automatic purge of processing data, job results, saved tests, audit log | Implemented in this change |
 | No document content in logs or the audit log | Implemented in this change |
 | IP truncation and no query strings in access logs | Implemented in this change |
@@ -142,7 +144,7 @@ Checklist for every processor: written contract; processing only on instructions
 
 | Risk | Likelihood / impact | Mitigation | Status |
 | --- | --- | --- | --- |
-| Another user sees my document or test (shared vector store) | High / high | Session isolation (BIF-01 #25); purge after each job | Partly |
+| Another user sees my document or test (shared vector store) | High / high | Topic isolation (TOP-03 #107, tested by TOP-08 #112); purge after each job | Partly |
 | Unauthorised access to saved tests | High / medium | Real auth and ownership checks (GW-01 #8, SKA-02 #45) | Planned |
 | Document content retained in logs or the audit log | Medium / high | Metadata-only audit log, log redaction | Implemented |
 | Excessive retention | Medium / medium | TTLs and purge jobs | Implemented |
@@ -198,9 +200,15 @@ Example: the unauthenticated `/api/v1/tests` endpoint (see the roadmap audit) wo
 | Stop tracking stored user data in git | `.gitignore`, `git rm --cached` | Implemented | PLT-01 #1 |
 | Rewrite git history to remove old user data | Repository | Planned (needs team coordination and force push) | PLT-01 #1 |
 | Real authentication and ownership checks | Auth service, gateway, Skald | Planned | GW-01 #8, GW-02 #9, SKA-02 #45 |
-| Session isolation of vector data | Bifrost | Planned | BIF-01 #25 |
+| Isolation of vector data | Bifrost | Planned (now per topic) | TOP-03 #107 (supersedes BIF-01 #25) |
 | Account export and deletion | Auth service | Planned | GDPR-07 #79 |
 | Automated zero-retention test in CI | Tests | Planned | GDPR-04 #76 |
+| Topic isolation: hard `topic_id` filtering in Qdrant | Bifrost | Planned | TOP-03 #107 |
+| Topic cascade delete and janitor | Skald, Bifrost, The Forge | Planned | TOP-04 #108 |
+| Topic isolation and zero-residue test suite | Tests | Planned | TOP-08 #112 |
+| Auto-delete inactive topics | The Forge | Planned | TOP-09 #113 |
+| Retention decision and encryption at rest for topic data | Architecture | Planned | TOP-18 #104 |
+| Privacy notice and pack updated for topics | Docs | Planned (before topics ship) | TOP-17 #121 |
 | Processor agreements (hosting, university, email) and institutional DPA template | Legal | Planned | R6 #98, GDPR-08 #80 |
 | Legitimate interest assessment, full DPIA before rollout | Legal | Planned | GDPR-08 #80 |
 | Log rotation | `docker-compose.yml` (10 MB × 3 per container); 14-day time limit on the host | Partly implemented | GDPR-05 #77 |
