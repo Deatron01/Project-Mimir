@@ -1,346 +1,283 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Paperclip, Loader2, FileText, Download, Bot, User, X, CheckSquare } from 'lucide-react';
+import { Send, Paperclip, Loader2, FileText, Download, Bot, User, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
 import { useAuth } from '../context/AuthContext';
-import Button from '../components/ui/Button';
+import { endpoints } from '../config';
+import QuestionEditor from '../components/editor/QuestionEditor';
+import useDocumentTitle from '../hooks/useDocumentTitle';
+
+const POLL_INTERVAL_MS = 3000;
+const POLL_TIMEOUT_MS = 10 * 60 * 1000;
+
+/** Error that carries a translation key, so messages follow the UI language. */
+class ChatError extends Error {
+  constructor(key, detail) {
+    super(detail || key);
+    this.key = key;
+  }
+}
+
+const postJson = (url, body) =>
+  fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
 
 export default function Chat() {
+  const { t } = useTranslation();
+  useDocumentTitle('meta.chat');
   const { user } = useAuth();
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      role: 'ai',
-      content: 'Szia! Én a Mimir AI vagyok. Kérlek csatolj egy dokumentumot (PDF/TXT), és írd le, hogy milyen témában, hány kérdéses vizsgát generáljak belőle!'
-    }
-  ]);
+  // AI messages store translation keys (not text) so switching language re-renders them.
+  const [messages, setMessages] = useState([{ id: 1, role: 'ai', key: 'chat.welcome' }]);
   const [input, setInput] = useState('');
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [statusMsg, setStatusMsg] = useState('');
-  
+  const [statusKey, setStatusKey] = useState('');
   const chatContainerRef = useRef(null);
+  const fileInputRef = useRef(null);
 
-  // Sima és biztonságos görgetés a doboz aljára
-  const scrollToBottom = () => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight,
-        behavior: 'smooth'
-      });
-    }
+  useEffect(() => {
+    const el = chatContainerRef.current;
+    el?.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+  }, [messages, isLoading, statusKey]);
+
+  const addMessage = (msg) => setMessages((prev) => [...prev, { id: Date.now() + Math.random(), ...msg }]);
+
+  const errorText = (err, prefixKey = 'common.errorPrefix') =>
+    t(prefixKey, { message: err instanceof ChatError && err.key.includes('.') ? t(err.key) : err.message });
+
+  const clearFile = () => {
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
-
-  useEffect(() => { 
-    scrollToBottom(); 
-  }, [messages, isLoading, statusMsg]);
 
   const handleSend = async (e) => {
     e.preventDefault();
-    if (!input.trim() && !file) return;
+    if (isLoading || (!input.trim() && !file)) return;
 
-    const userMsg = {
-      id: Date.now(),
-      role: 'user',
-      content: input,
-      attachedFile: file ? file.name : null
-    };
-
-    setMessages(prev => [...prev, userMsg]);
+    const prompt = input;
+    addMessage({ role: 'user', content: prompt, attachedFile: file?.name ?? null });
     setInput('');
     setIsLoading(true);
 
     try {
-      if (!file) {
-        throw new Error("Kérlek, csatolj egy dokumentumot is a tesztgeneráláshoz!");
-      }
+      if (!file) throw new ChatError('chat.errors.noFile');
 
-      setStatusMsg("Szöveg kinyerése a dokumentumból...");
+      setStatusKey('chat.status.extracting');
       const formData = new FormData();
-      formData.append("file", file);
-      const wellRes = await fetch(import.meta.env.VITE_WELLSPRING_URL, { method: "POST", body: formData });
-      if (!wellRes.ok) throw new Error("Hiba a szöveg kinyerése közben");
+      formData.append('file', file);
+      const wellRes = await fetch(endpoints.extract, { method: 'POST', body: formData });
+      if (!wellRes.ok) throw new ChatError('chat.errors.extract');
       const wellData = await wellRes.json();
 
-      setStatusMsg("Szövegrészek elemzése és darabolása...");
-      const runeRes = await fetch(import.meta.env.VITE_RUNECARVER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filename: file.name, extension: file.name.split('.').pop(), content: wellData.content })
+      setStatusKey('chat.status.chunking');
+      const runeRes = await postJson(endpoints.chunk, {
+        filename: file.name,
+        extension: file.name.split('.').pop(),
+        content: wellData.content,
       });
-      if (!runeRes.ok) throw new Error("Hiba a szöveg feldolgozása közben");
+      if (!runeRes.ok) throw new ChatError('chat.errors.chunk');
       const runeData = await runeRes.json();
 
-      setStatusMsg("Tudásbázis építése (Vektorizálás)...");
-      await fetch(import.meta.env.VITE_BIFROST_INGEST_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chunks: runeData.chunks })
-      });
+      setStatusKey('chat.status.indexing');
+      const ingestRes = await postJson(endpoints.ingest, { chunks: runeData.chunks });
+      if (!ingestRes.ok) throw new ChatError('chat.errors.ingest');
 
-      setStatusMsg("A mesterséges intelligencia dolgozik (ez beletelhet 1-2 percbe)...");
-      
-      // 1. Feladat elindítása (Azonnali válasz a Job ID-val)
-      const genRes = await fetch(import.meta.env.VITE_BIFROST_GENERATE_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: userMsg.content, limit: 3 })
-      });
-      if (!genRes.ok) throw new Error("Hiba a feladat indítása közben");
-      
-      const genJobData = await genRes.json();
-      const jobId = genJobData.job_id;
+      setStatusKey('chat.status.generating');
+      const genRes = await postJson(endpoints.generate, { query: prompt, limit: 3 });
+      if (!genRes.ok) throw new ChatError('chat.errors.start');
+      const { job_id: jobId } = await genRes.json();
 
-      // 2. Polling (Kopogtatás) ciklus: 3 másodpercenként rákérdezünk az állapotra
-      let isFinished = false;
-      let finalAiData = null;
-
-      while (!isFinished) {
-        await new Promise(resolve => setTimeout(resolve, 3000)); 
-        
-        const statusRes = await fetch(`https://api.mimir-ai.hu/api/v1/status/${jobId}`);
-        
+      // Poll the job until it completes, fails or times out.
+      const started = Date.now();
+      let result = null;
+      while (!result) {
+        if (Date.now() - started > POLL_TIMEOUT_MS) throw new ChatError('chat.errors.generate');
+        await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+        const statusRes = await fetch(endpoints.status(jobId));
         if (!statusRes.ok) continue;
-        
         const statusData = await statusRes.json();
-        
-        if (statusData.status === "completed") {
-          finalAiData = statusData.data;
-          isFinished = true;
-        } else if (statusData.status === "failed") {
-          throw new Error(statusData.error || "Hiba az AI generálás során.");
-        }
+        if (statusData.status === 'completed') result = statusData.data;
+        else if (statusData.status === 'failed') throw new ChatError('chat.errors.generate', statusData.error);
       }
 
-      // [MÓDOSÍTÁS] Itt törjük meg a folyamatot a Skald API hívás helyett
-      // Megjelenítjük az interaktív szerkesztőt a Human-in-the-Loop koncepció érvényesítéséhez.
-      setMessages(prev => [...prev, {
-        id: Date.now() + 1,
-        role: 'ai',
-        content: 'Elkészültek a kérdések! Az EU AI Act 14. cikke értelmében (Human-in-the-Loop) kérlek, ellenőrizd és szerkeszd a tartalmat a véglegesítés és az exportálás előtt.',
-        needsReview: true,
-        resultData: finalAiData
-      }]);
-      setFile(null);
-
+      // Human-in-the-loop review before export (EU AI Act art. 14).
+      addMessage({ role: 'ai', key: 'chat.ready', needsReview: true, resultData: result });
+      clearFile();
     } catch (err) {
-      setMessages(prev => [...prev, {
-        id: Date.now() + 1,
-        role: 'ai',
-        content: `Hiba történt: ${err.message}`,
-        isError: true
-      }]);
+      addMessage({ role: 'ai', content: errorText(err), isError: true });
     } finally {
       setIsLoading(false);
-      setStatusMsg('');
+      setStatusKey('');
     }
   };
 
-  // [ÚJ FÜGGVÉNY] A jóváhagyás utáni Skald (PDF/XML) exportáláshoz
   const handleApprove = async (messageId, editedData) => {
     setIsLoading(true);
-    setStatusMsg("Dokumentum szerkesztése és exportálása...");
-    
+    setStatusKey('chat.status.exporting');
     try {
-      const skaldRes = await fetch(import.meta.env.VITE_SKALD_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...editedData,
-          user_id: user?.email
-        })
-      });
-      
-      if (!skaldRes.ok) throw new Error("Hiba a PDF generálása során");
-      
-      const pdfBlob = await skaldRes.blob();
-      const pdfUrl = URL.createObjectURL(pdfBlob);
-
-      // Frissítjük az adott üzenetet: elrejtjük a szerkesztőt és mutatjuk a letöltőgombot
-      setMessages(prev => prev.map(msg => {
-        if (msg.id === messageId) {
-          return {
-            ...msg,
-            needsReview: false,
-            content: 'A vizsgaanyag ellenőrzése megtörtént és véglegesítésre került. Alább letöltheted a kész PDF-et.',
-            resultData: editedData,
-            pdfUrl: pdfUrl
-          };
-        }
-        return msg;
-      }));
+      const skaldRes = await postJson(endpoints.exportPdf, { ...editedData, user_id: user?.email });
+      if (!skaldRes.ok) throw new ChatError('chat.errors.export');
+      const pdfUrl = URL.createObjectURL(await skaldRes.blob());
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === messageId ? { ...msg, needsReview: false, key: 'chat.approved', resultData: editedData, pdfUrl } : msg,
+        ),
+      );
     } catch (err) {
-      setMessages(prev => [...prev, {
-        id: Date.now() + 1,
-        role: 'ai',
-        content: `Hiba történt az exportálás során: ${err.message}`,
-        isError: true
-      }]);
+      addMessage({ role: 'ai', content: errorText(err, 'chat.errors.exportPrefix'), isError: true });
     } finally {
       setIsLoading(false);
-      setStatusMsg('');
+      setStatusKey('');
     }
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)] max-w-4xl mx-auto px-4 md:px-6 py-6">
-      
-      {/* --- CHAT ÜZENETEK TARTOMÁNYA --- */}
-      <div 
-        ref={chatContainerRef} 
-        className="flex-1 overflow-y-auto mb-4 pr-2 space-y-6 scrollbar-thin scrollbar-thumb-surface scrollbar-track-transparent"
+    <div className="mx-auto flex h-[calc(100vh-80px)] max-w-4xl flex-col px-4 py-6 md:px-6">
+      <h1 className="sr-only">{t('meta.chat')}</h1>
+
+      <div
+        ref={chatContainerRef}
+        role="log"
+        aria-live="polite"
+        aria-relevant="additions"
+        className="mb-4 flex-1 space-y-6 overflow-y-auto pr-2"
       >
-        {messages.map((msg) => (
-          <motion.div 
-            key={msg.id} 
-            initial={{ opacity: 0, y: 10 }} 
-            animate={{ opacity: 1, y: 0 }}
-            className={cn(
-              "flex gap-4 max-w-[85%]",
-              msg.role === 'user' ? "ml-auto flex-row-reverse" : "flex-col md:flex-row" // Flex-col, hogy az editor rendesen kitöltse a teret mobil/tablet nézetben is
-            )}
-          >
-            <div className={cn(
-              "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-sm",
-              msg.role === 'ai' ? "bg-primary/20 text-accent border border-primary/30" : "bg-surface text-textMain border border-border"
-            )}>
-              {msg.role === 'ai' ? <Bot size={20} /> : <User size={20} />}
-            </div>
+        {messages.map((msg) => {
+          const isUser = msg.role === 'user';
+          return (
+            <motion.div
+              key={msg.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={cn('flex gap-4', isUser ? 'ml-auto max-w-[85%] flex-row-reverse' : 'flex-col md:flex-row', msg.needsReview ? 'max-w-full' : 'max-w-[85%]')}
+            >
+              <div
+                className={cn(
+                  'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full shadow-sm',
+                  isUser ? 'border border-border bg-surface text-textMain' : 'border border-primary/30 bg-primary/20 text-accent',
+                )}
+              >
+                {isUser ? <User size={20} aria-hidden="true" /> : <Bot size={20} aria-hidden="true" />}
+                <span className="sr-only">{isUser ? t('chat.you') : t('chat.assistant')}</span>
+              </div>
 
-            <div className={cn(
-              "p-4 rounded-2xl shadow-md w-full",
-              msg.role === 'user' 
-                ? "bg-surface text-textMain rounded-tr-none border border-border/50" 
-                : msg.isError 
-                  ? "bg-red-500/10 text-red-200 border border-red-500/30 rounded-tl-none" 
-                  : "bg-surface/50 backdrop-blur-md border border-border/50 rounded-tl-none"
-            )}>
-              {msg.attachedFile && (
-                <div className="flex items-center gap-2 mb-3 p-2 bg-background/60 rounded-lg text-xs text-textMain/80 border border-border/50 w-max">
-                  <FileText size={14} className="text-accent"/> <span>{msg.attachedFile}</span>
-                </div>
-              )}
-              
-              <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-              
-              {/* [ÚJ] INTERAKTÍV SZERKESZTŐ (Human-in-the-Loop) */}
-              {msg.needsReview && (
-                <div className="mt-4 p-4 border border-accent/40 rounded-xl bg-surface/80 shadow-inner">
-                  <div className="flex items-center gap-2 mb-3 text-accent font-semibold text-sm">
-                    <CheckSquare size={16} />
-                    <span>Interaktív Szerkesztő</span>
+              <div
+                className={cn(
+                  'w-full rounded-2xl p-4 shadow-md',
+                  isUser
+                    ? 'rounded-tr-none border border-border/50 bg-surface text-textMain'
+                    : msg.isError
+                      ? 'rounded-tl-none border border-danger/40 bg-danger/10 text-danger'
+                      : 'rounded-tl-none border border-border/50 bg-surface/50 backdrop-blur-md',
+                )}
+              >
+                {msg.attachedFile && (
+                  <div className="mb-3 flex w-max max-w-full items-center gap-2 rounded-lg border border-border/50 bg-background/60 p-2 text-xs text-textMain/80">
+                    <FileText size={14} className="shrink-0 text-accent" aria-hidden="true" /> <span className="truncate">{msg.attachedFile}</span>
                   </div>
-                  <textarea 
-                    id={`editor-${msg.id}`}
-                    className="w-full h-64 p-3 bg-background/80 text-textMain text-sm font-mono border border-border/50 rounded-lg focus:outline-none focus:border-accent transition-colors scrollbar-thin scrollbar-thumb-surface scrollbar-track-transparent resize-y"
-                    defaultValue={JSON.stringify(msg.resultData, null, 2)}
-                  />
-                  <div className="mt-4 flex justify-end">
-                    <Button 
-                      size="sm" 
-                      onClick={() => {
-                        const editedText = document.getElementById(`editor-${msg.id}`).value;
-                        try {
-                          const editedData = JSON.parse(editedText);
-                          handleApprove(msg.id, editedData);
-                        } catch(e) {
-                          alert("Hibás JSON formátum! Kérlek ellenőrizd a szintaktikát.");
-                        }
-                      }}
+                )}
+
+                <p className="whitespace-pre-wrap text-sm leading-relaxed md:text-base">{msg.key ? t(msg.key) : msg.content}</p>
+
+                {msg.needsReview && (
+                  <QuestionEditor initialData={msg.resultData} disabled={isLoading} onApprove={(data) => handleApprove(msg.id, data)} />
+                )}
+
+                {msg.pdfUrl && (
+                  <div className="mt-4 border-t border-border/30 pt-4">
+                    <a
+                      href={msg.pdfUrl}
+                      download="mimir_vizsga.pdf"
+                      className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-onPrimary shadow-lg shadow-accent/20 transition-colors hover:bg-primary/85"
                     >
-                      Ellenőriztem és jóváhagyom a kérdéseket
-                    </Button>
+                      <Download size={16} aria-hidden="true" /> {t('chat.downloadPdf')}
+                    </a>
                   </div>
-                </div>
-              )}
-
-              {msg.pdfUrl && (
-                <div className="mt-4 pt-4 border-t border-border/30">
-                  <a href={msg.pdfUrl} download="mimir_vizsga.pdf" className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-background rounded-xl font-medium hover:bg-white transition-colors text-sm shadow-lg shadow-accent/20">
-                    <Download size={16} /> Eredmény Letöltése (PDF)
-                  </a>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        ))}
+                )}
+              </div>
+            </motion.div>
+          );
+        })}
 
         {isLoading && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-4 max-w-[85%]">
-            <div className="w-10 h-10 rounded-full bg-primary/20 text-accent border border-primary/30 flex items-center justify-center">
-              <Loader2 size={20} className="animate-spin" />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex max-w-[85%] gap-4" role="status">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/30 bg-primary/20 text-accent">
+              <Loader2 size={20} className="animate-spin" aria-hidden="true" />
             </div>
-            <div className="p-4 rounded-2xl bg-surface/50 backdrop-blur-md border border-border/50 rounded-tl-none flex items-center gap-3 shadow-md">
-              <span className="text-sm text-textMain/70 animate-pulse">{statusMsg || 'Gondolkodom...'}</span>
+            <div className="flex items-center gap-3 rounded-2xl rounded-tl-none border border-border/50 bg-surface/50 p-4 shadow-md backdrop-blur-md">
+              <span className="animate-pulse text-sm text-muted">{statusKey ? t(statusKey) : t('chat.thinking')}</span>
             </div>
           </motion.div>
         )}
       </div>
 
-      {/* --- ALSÓ BEVITELI MEZŐ (INPUT AREA) --- */}
-      <div className="shrink-0 w-full flex flex-col items-center gap-3 mt-2">
-        
-        {/* Lebegő fájl címke */}
+      <div className="mt-2 flex w-full shrink-0 flex-col items-center gap-3">
         {file && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="self-start ml-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border/60 bg-surface/80 backdrop-blur-md text-sm shadow-sm"
+            className="ml-2 inline-flex items-center gap-2 self-start rounded-xl border border-border/60 bg-surface/80 px-3 py-1.5 text-sm shadow-sm backdrop-blur-md"
           >
-            <FileText size={14} className="text-accent" />
-            <span className="truncate max-w-[200px] text-textMain/90 font-medium">{file.name}</span>
-            <button 
-              type="button" 
-              onClick={() => setFile(null)} 
-              className="ml-1 text-textMain/50 hover:text-red-400 transition-colors"
-            >
-              <X size={14} />
+            <FileText size={14} className="text-accent" aria-hidden="true" />
+            <span className="max-w-[200px] truncate font-medium text-textMain/90">{file.name}</span>
+            <button type="button" onClick={clearFile} aria-label={t('chat.removeFile')} className="ml-1 text-muted transition-colors hover:text-danger">
+              <X size={14} aria-hidden="true" />
             </button>
           </motion.div>
         )}
 
-        {/* Kapszula alakú beviteli mező */}
-        <form 
-          onSubmit={handleSend} 
-          className="w-full flex items-center gap-2 bg-transparent border border-border/80 rounded-full pl-2 pr-2 py-1.5 shadow-sm focus-within:border-accent/60 transition-colors backdrop-blur-md"
+        <form
+          onSubmit={handleSend}
+          className="flex w-full items-center gap-2 rounded-full border border-border/80 bg-background/40 py-1.5 pl-2 pr-2 shadow-sm backdrop-blur-md transition-colors focus-within:border-accent/60"
         >
-          {/* Fájl csatolás gomb */}
-          <label className="flex items-center justify-center w-10 h-10 text-textMain/60 hover:text-accent cursor-pointer transition-colors shrink-0 rounded-full hover:bg-surface/50">
-            <input type="file" className="hidden" accept=".pdf,.txt" onChange={(e) => setFile(e.target.files[0])} disabled={isLoading} />
-            <Paperclip size={20} />
+          <label
+            className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted transition-colors focus-within:ring-2 focus-within:ring-accent hover:bg-surface/50 hover:text-accent"
+            title={t('chat.attach')}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              className="sr-only"
+              accept=".pdf,.txt,.md"
+              onChange={(e) => setFile(e.target.files[0] ?? null)}
+              disabled={isLoading}
+              aria-label={t('chat.attach')}
+            />
+            <Paperclip size={20} aria-hidden="true" />
           </label>
 
-          {/* Szövegdoboz */}
+          <label htmlFor="chat-input" className="sr-only">
+            {t('chat.placeholder')}
+          </label>
           <textarea
+            id="chat-input"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(e); } }}
-            placeholder="Írd le, milyen vizsgát szeretnél..."
-            className="flex-1 bg-transparent border-none focus:ring-0 resize-none py-2.5 px-2 text-textMain placeholder:text-textMain/40 text-[15px] outline-none scrollbar-none"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend(e);
+              }
+            }}
+            placeholder={t('chat.placeholder')}
+            className="flex-1 resize-none border-none bg-transparent px-2 py-2.5 text-[15px] text-textMain outline-none placeholder:text-muted focus:ring-0"
             rows="1"
             style={{ minHeight: '44px', maxHeight: '120px' }}
             disabled={isLoading}
           />
 
-          {/* Küldés gomb */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isLoading || (!input.trim() && !file)}
-            className="flex items-center justify-center w-10 h-10 bg-textMain/10 hover:bg-accent text-textMain/80 hover:text-background disabled:opacity-50 disabled:hover:bg-textMain/10 rounded-full transition-all shrink-0"
+            aria-label={t('chat.send')}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary transition-all hover:bg-primary/85 disabled:opacity-40"
           >
-            {isLoading ? (
-              <Loader2 size={18} className="animate-spin" />
-            ) : (
-              <Send size={18} /> 
-            )}
+            {isLoading ? <Loader2 size={18} className="animate-spin" aria-hidden="true" /> : <Send size={18} aria-hidden="true" />}
           </button>
         </form>
 
-        <div className="text-[11px] text-textMain/40 tracking-wide text-center">
-          A Mimir AI hibázhat. Kérjük, vizsgáztatás előtt ellenőrizze a generált tartalmat.
-        </div>
+        <p className="text-center text-[11px] tracking-wide text-muted">{t('chat.disclaimer')}</p>
       </div>
-      
     </div>
   );
 }

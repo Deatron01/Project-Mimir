@@ -1,9 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="hu">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Mimir AI – AI-alapú vizsgateszt-generátor / AI-driven exam generator" />
     <title>Mimir AI</title>
+    <script>
+      // Apply the saved palette, mode and language before first paint (prevents a colour flash).
+      (function () {
+        var d = document.documentElement;
+        var s = {};
+        try {
+          s = JSON.parse(localStorage.getItem('mimir-theme') || '{}');
+        } catch (e) {}
+        var mode = s.mode || 'system';
+        if (mode === 'system') {
+          mode = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        d.setAttribute('data-palette', s.palette || 'original');
+        d.setAttribute('data-mode', mode);
+        try {
+          var lng = localStorage.getItem('mimir-lang');
+          if (lng === 'hu' || lng === 'en') d.setAttribute('lang', lng);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
