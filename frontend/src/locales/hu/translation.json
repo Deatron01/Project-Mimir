@@ -4,7 +4,15 @@
     "loading": "Betöltés…",
     "close": "Bezárás",
     "download": "Letöltés",
-    "errorPrefix": "Hiba történt: {{message}}"
+    "errorPrefix": "Hiba történt: {{message}}",
+    "cancel": "Mégse",
+    "save": "Mentés",
+    "edit": "Szerkesztés",
+    "delete": "Törlés",
+    "retry": "Újra",
+    "optional": "nem kötelező",
+    "charCount": "{{count}} / {{max}}",
+    "typeToConfirm": "A megerősítéshez írd be: „{{text}}”"
   },
   "meta": {
     "home": "Mimir AI – Okos vizsgagenerátor",
@@ -18,7 +26,11 @@
     "privacy": "Adatkezelési tájékoztató – Mimir AI",
     "terms": "Felhasználási feltételek – Mimir AI",
     "notFound": "Az oldal nem található – Mimir AI",
-    "data": "Adataim – Mimir AI"
+    "data": "Adataim – Mimir AI",
+    "topics": "Témák – Mimir AI",
+    "verify": "E-mail megerősítése – Mimir AI",
+    "forgot": "Elfelejtett jelszó – Mimir AI",
+    "reset": "Új jelszó – Mimir AI"
   },
   "nav": {
     "skipToContent": "Ugrás a tartalomra",
@@ -32,7 +44,8 @@
     "openApp": "Vizsgagenerátor",
     "openMenu": "Menü megnyitása",
     "closeMenu": "Menü bezárása",
-    "main": "Fő navigáció"
+    "main": "Fő navigáció",
+    "topics": "Témák"
   },
   "settings": {
     "open": "Megjelenési beállítások",
@@ -173,20 +186,50 @@
       "noAccount": "Nincs még fiókod?",
       "registerLink": "Regisztrálj itt",
       "success": "Sikeres belépés! Átirányítás…",
-      "error": "Helytelen e-mail vagy jelszó!"
+      "error": "Helytelen e-mail vagy jelszó!",
+      "forgot": "Elfelejtetted a jelszavad?",
+      "expired": "A munkamenet lejárt. Kérjük, jelentkezz be újra."
     },
     "register": {
       "title": "Új fiók létrehozása",
       "subtitle": "Csatlakozz a Mimir közösségéhez",
-      "passwordPlaceholder": "Legalább 6 karakter",
+      "passwordPlaceholder": "Legalább {{min}} karakter",
       "confirm": "Jelszó újra",
       "submit": "Regisztráció",
       "hasAccount": "Már van fiókod?",
       "loginLink": "Lépj be itt",
       "mismatch": "A két jelszó nem egyezik!",
-      "tooShort": "A jelszónak legalább 6 karakternek kell lennie!",
+      "tooShort": "A jelszónak legalább {{min}} karakterből kell állnia.",
       "success": "Sikeres regisztráció! Kérlek, erősítsd meg az e-mail címedet a kiküldött linkkel.",
-      "error": "Hiba történt a regisztráció során."
+      "error": "Hiba történt a regisztráció során.",
+      "passwordHint": "Legalább {{min}} karakter. Egy rövid mondatot könnyű megjegyezni, de nehéz kitalálni.",
+      "language": "Az e-mailek és a felület nyelve",
+      "age16": "Elmúltam 16 éves.",
+      "acceptTerms": "Elfogadom a <terms>Felhasználási feltételeket</terms>, és elolvastam az <privacy>Adatkezelési tájékoztatót</privacy>.",
+      "ageRequired": "A Mimir önálló használatához legalább 16 évesnek kell lenned.",
+      "termsRequired": "Kérjük, fogadd el a Felhasználási feltételeket.",
+      "checkInboxTitle": "Nézd meg a postafiókod",
+      "checkInbox": "Ha a(z) {{email}} címmel regisztrálni lehet, küldtünk rá egy megerősítő linket. Nyisd meg a fiók aktiválásához – a link 24 óráig érvényes."
+    },
+    "verify": {
+      "title": "E-mail-cím megerősítése",
+      "pending": "Megerősítés…",
+      "success": "Az e-mail-címed megerősítettük. Most már bejelentkezhetsz.",
+      "failedHint": "Lehet, hogy a link lejárt vagy már felhasználták. Regisztrálj újra, vagy kérj új linket."
+    },
+    "forgot": {
+      "title": "Elfelejtett jelszó",
+      "subtitle": "Add meg az e-mail-címed, és küldünk egy linket az új jelszó beállításához.",
+      "submit": "Link küldése",
+      "sent": "Ha létezik fiók a(z) {{email}} címhez, elküldtük a visszaállító linket. 1 óráig érvényes.",
+      "back": "Vissza a bejelentkezéshez"
+    },
+    "reset": {
+      "title": "Új jelszó beállítása",
+      "subtitle": "Válassz új jelszót a fiókodhoz.",
+      "newPassword": "Új jelszó",
+      "submit": "Új jelszó mentése",
+      "success": "A jelszavad megváltozott, és minden más munkamenetből kiléptettünk."
     }
   },
   "chat": {
@@ -224,6 +267,36 @@
       "details": "A dokumentumot csak a teszt elkészítéséhez használjuk, és utána automatikusan töröljük. A feldolgozáshoz a szöveg egyes részeit az Óbudai Egyetem nyelvi modellje is megkaphatja, ha a szolgáltatás nem helyi módban fut.",
       "more": "Adatkezelési tájékoztató",
       "required": "Feltöltés előtt kérlek, erősítsd meg a fenti nyilatkozatot."
+    },
+    "v1": {
+      "sessions": "Beszélgetések",
+      "newChat": "Új beszélgetés",
+      "noSessions": "Még nincs beszélgetés.",
+      "conversation": "Beszélgetés",
+      "messages": "Üzenetek",
+      "rename": "Beszélgetés átnevezése: {{title}}",
+      "renameLabel": "A beszélgetés címe",
+      "deleteSession": "Beszélgetés törlése: {{title}}",
+      "deleteSessionTitle": "Törlöd ezt a beszélgetést?",
+      "deleteSessionBody": "Az üzenetei és a nem mentett tesztjei törlődnek. A mentett tesztek a témában maradnak.",
+      "sessionDeleted": "A beszélgetés törölve.",
+      "loadOlder": "Korábbi üzenetek betöltése",
+      "intent": "Mit szeretnél?",
+      "intents": {
+        "generate": "Teszt készítése",
+        "ask": "Kérdés feltevése"
+      },
+      "placeholderGenerate": "Írd le a tesztet (nem kötelező), pl. „a fényszakaszra koncentrálj”…",
+      "placeholderAsk": "Kérdezz valamit a téma dokumentumairól…",
+      "sendGenerate": "Teszt generálása",
+      "sendAsk": "Kérdés elküldése",
+      "optionsSummary": "{{count}} kérdés · {{difficulty}} · {{lang}}",
+      "noFiles": "Generálás előtt tölts fel dokumentumot ebbe a témába.",
+      "filesProcessing": "A dokumentumaid feldolgozása még tart – ez körülbelül egy perc.",
+      "goToFiles": "Ugrás a fájlokhoz",
+      "reviewTest": "Teszt átnézése és szerkesztése",
+      "welcomeTitle": "Kezdjünk a(z) „{{name}}” témán",
+      "welcomeBody": "Kérj tesztet, és lent állítsd be a kérdések számát, típusát és nehézségét – vagy kérdezz a dokumentumokról. Minden ebben a témában marad."
     }
   },
   "editor": {
@@ -265,6 +338,25 @@
     "save": {
       "label": "Mentés a „Tesztjeim” közé",
       "hint": "A PDF legfeljebb 12 hónapig marad meg, és bármikor törölheted. Ha nem jelölöd be, semmit nem tárolunk."
+    },
+    "difficulty": {
+      "easy": "Könnyű",
+      "medium": "Közepes",
+      "hard": "Nehéz"
+    },
+    "regenerate": "A(z) {{n}}. kérdés újragenerálása",
+    "regenerating": "A kérdés új változata készül…",
+    "sources_one": "{{count}} forrás",
+    "sources_other": "{{count}} forrás",
+    "page": "{{page}}. oldal",
+    "unknownFile": "Törölt fájl",
+    "dnd": {
+      "handle": "Húzd az átrendezéshez",
+      "instructions": "Átrendezéshez nyomd meg a Szóköz vagy az Enter billentyűt a fogantyún, a nyilakkal mozgasd, majd Szóközzel vagy Enterrel engedd el. Az Escape megszakítja.",
+      "picked": "A(z) {{n}}. kérdés felvéve.",
+      "over": "A(z) {{n}}. kérdés a(z) {{pos}}. hely felett.",
+      "dropped": "A(z) {{n}}. kérdés a(z) {{pos}}. helyre került.",
+      "cancelled": "Átrendezés megszakítva; a(z) {{n}}. kérdés visszakerült."
     }
   },
   "tests": {
@@ -285,7 +377,15 @@
     "confirmDelete": "Biztosan törlöd?",
     "deleted": "A teszt végleg törölve.",
     "deleteError": "A törlés nem sikerült.",
-    "retention": "A mentett teszteket legfeljebb 12 hónapig őrizzük, utána automatikusan töröljük."
+    "retention": "A mentett teszteket legfeljebb 12 hónapig őrizzük, utána automatikusan töröljük.",
+    "deleteTitle": "Törlöd ezt a tesztet?",
+    "deleteBody": "A(z) „{{title}}” véglegesen törlődik.",
+    "v1": {
+      "subtitle": "A megtartott tesztjeid témák szerint csoportosítva.",
+      "retention": "A mentett tesztek addig maradnak meg, amíg nem törlöd őket vagy a témájukat. A témák 90 nap aktivitás nélkül törlődnek.",
+      "emptyDesc": "Nyiss meg egy témát, generálj tesztet, és jelöld be a „Mentés a Tesztjeim közé” lehetőséget.",
+      "goToTopics": "Ugrás a témákhoz"
+    }
   },
   "notFound": {
     "title": "Az oldal nem található",
@@ -504,7 +604,9 @@
     "keys": {
       "mimir-theme": "Színpaletta és mód",
       "mimir-lang": "Nyelv",
-      "mimir_user": "Bejelentkezési állapot (e-mail cím)"
+      "mimir_user": "Bejelentkezési állapot (e-mail cím)",
+      "mimir-gen-options": "Utolsó tesztbeállítások",
+      "mimir-mock-db": "Demóadatok (csak mock módban)"
     },
     "empty": "Nincs tárolt adat.",
     "export": "Adataim letöltése (JSON)",
@@ -519,6 +621,320 @@
     "mailSubject": "Adattörlési kérelem (GDPR 17. cikk)",
     "mailBody": "Kérem a Mimir AI-fiókomhoz tartozó összes személyes adat törlését. Fiókom e-mail címe: {{email}}",
     "noEmail": "A törlési kérelmet a Kapcsolat oldalon keresztül küldheted el.",
-    "readNotice": "A teljes adatkezelési tájékoztató"
+    "readNotice": "A teljes adatkezelési tájékoztató",
+    "v1": {
+      "serverItems": [
+        "Fiók: e-mail-cím, hash-elt jelszó, nyelv, regisztráció dátuma.",
+        "Témák: a feltöltött dokumentumok, szövegrészeik és keresőindexük – témánként külön kulccsal titkosítva. A téma törlésekor a kulcsa megsemmisül.",
+        "A témák beszélgetései és tesztjei: amíg nem törlöd őket vagy a témát. A nem mentett tesztek a beszélgetésükkel együtt törlődnek.",
+        "A 90 napja inaktív témák automatikusan törlődnek.",
+        "Működési napló: csak metaadatok (dokumentumszöveg nélkül), 30 napig."
+      ],
+      "memberSince": "Regisztráció",
+      "topics": "Témák",
+      "savedTests": "Mentett tesztek",
+      "manageTopics": "Témáim kezelése",
+      "rightsDesc": "Itt letöltheted mindazt, amit rólad tárolunk, és törölheted a fiókodat az összes adatával együtt. Egyéb kérésekkel (korlátozás, tiltakozás) írj nekünk.",
+      "exportHint": "Az export JSON formátumban tartalmazza a fiókadataidat, a témáidat, a dokumentumok metaadatait, a beszélgetéseket és a teszteket. Az előkészítés egy percig is tarthat.",
+      "exportReady": "Az adatexport letöltődött.",
+      "deleteAccount": "Fiókom törlése",
+      "deleteTitle": "Törlöd a fiókodat?",
+      "deleteBody": "A fiókod, minden témád, dokumentumod, beszélgetésed és teszted törlődik, a témakulcsok megsemmisülnek, és kijelentkeztetünk. Ez nem vonható vissza.",
+      "passwordLabel": "Erősítsd meg a jelszavaddal",
+      "deleteConfirm": "Fiókom törlése",
+      "deleteStarted": "A fiókod törlése folyamatban. Kijelentkeztettünk."
+    }
+  },
+  "errors": {
+    "UNKNOWN": "Valami hiba történt. Kérjük, próbáld újra.",
+    "requestId": "Hivatkozási azonosító: {{id}}",
+    "NETWORK": "A szerver nem érhető el. Ellenőrizd a kapcsolatot, és próbáld újra.",
+    "VALIDATION_FAILED": "Néhány adat nem megfelelő. Ellenőrizd a mezőket, és próbáld újra.",
+    "UNSUPPORTED_FILE_TYPE": "Ez a fájltípus nem támogatott. PDF, TXT, DOCX vagy MD fájlt használj.",
+    "AUTH_REQUIRED": "A folytatáshoz jelentkezz be.",
+    "TOKEN_EXPIRED": "A munkamenet lejárt. Kérjük, jelentkezz be újra.",
+    "INVALID_CREDENTIALS": "Hibás e-mail-cím vagy jelszó.",
+    "EMAIL_NOT_VERIFIED": "Előbb erősítsd meg az e-mail-címed – regisztrációkor küldtünk egy linket.",
+    "FORBIDDEN": "Ehhez nincs hozzáférésed.",
+    "TOPIC_NOT_FOUND": "Ez a téma nem létezik, vagy törölték.",
+    "FILE_NOT_FOUND": "Ez a fájl már nem létezik.",
+    "SESSION_NOT_FOUND": "Ez a beszélgetés már nem létezik.",
+    "TEST_NOT_FOUND": "Ez a teszt már nem létezik.",
+    "JOB_NOT_FOUND": "Ez a feladat már nem létezik.",
+    "TOPIC_DELETING": "Ez a téma éppen törlődik.",
+    "FILE_NOT_READY": "A téma egyik dokumentumának feldolgozása sem fejeződött még be. Várj egy kicsit, vagy tölts fel egyet.",
+    "EMAIL_TAKEN": "Ez az e-mail-cím már regisztrálva van.",
+    "JOB_IN_PROGRESS": "Ez már folyamatban van.",
+    "FILE_TOO_LARGE": "A fájl túl nagy (korlát: {{limitMb}} MB).",
+    "TOPIC_QUOTA_EXCEEDED": "Elérted ennek a korlátját.",
+    "TOPIC_STORAGE_EXCEEDED": "A témában nincs több tárhely (korlát: {{limitMb}} MB). Előbb törölj egy fájlt.",
+    "NO_TEXT_EXTRACTED": "Ebből a dokumentumból nem sikerült szöveget kinyerni. Szkennelt kép? Próbálj szöveges PDF-et.",
+    "GENERATION_INVALID": "Az AI érvénytelen tesztet adott vissza. Kérjük, próbáld újra.",
+    "RATE_LIMITED": "Túl sok kérés. Várj egy percet, és próbáld újra.",
+    "TOO_MANY_JOBS": "Már 3 feladatod fut. Várd meg, amíg valamelyik befejeződik.",
+    "LLM_UNAVAILABLE": "A nyelvi modell most nem érhető el. Próbáld újra néhány perc múlva.",
+    "CONSENT_REQUIRED": "Kérjük, erősítsd meg, hogy feltöltheted ezeket a dokumentumokat.",
+    "INTERNAL": "Szerverhiba. Kérjük, próbáld újra később."
+  },
+  "topics": {
+    "title": "Témák",
+    "subtitle": "Minden téma külön őrzi a saját dokumentumait, beszélgetéseit és tesztjeit – a témák között semmi nem keveredik.",
+    "search": "Keresés a témák között",
+    "noMatch": "Nincs a(z) „{{q}}” keresésnek megfelelő téma.",
+    "resultCount_one": "{{count}} téma",
+    "resultCount_other": "{{count}} téma",
+    "quota": "{{count}} / {{max}} téma",
+    "quotaReached": "Elérted a {{max}} témás korlátot. Új téma létrehozásához törölj egyet.",
+    "emptyTitle": "Hozd létre az első témád",
+    "emptyDesc": "A téma egy tantárgy vagy tanegység munkaterülete: egyszer töltsd fel a dokumentumait, utána annyi tesztet készíthetsz, amennyi kell.",
+    "noDescription": "Nincs leírás",
+    "deleting": "Törlés…",
+    "expiresSoon_one": "Aktivitás nélkül {{count}} nap múlva törlődik",
+    "expiresSoon_other": "Aktivitás nélkül {{count}} nap múlva törlődik",
+    "sort": {
+      "label": "Rendezés",
+      "activity": "Legutóbbi aktivitás",
+      "name": "Név",
+      "created": "Legújabb"
+    },
+    "stats": {
+      "files": "Fájlok",
+      "saved": "Mentett tesztek",
+      "lastActivity": "Utolsó aktivitás",
+      "expires": "Automatikus törlés",
+      "filesCount_one": "{{count}} fájl",
+      "filesCount_other": "{{count}} fájl",
+      "savedCount_one": "{{count}} mentett teszt",
+      "savedCount_other": "{{count}} mentett teszt",
+      "active": "Aktív: {{when}}"
+    },
+    "fields": {
+      "name": "Név",
+      "namePlaceholder": "pl. Biológia 9. – Fotoszintézis",
+      "description": "Leírás",
+      "descriptionPlaceholder": "Miről szól ez a téma? Kinek készül?"
+    },
+    "new": {
+      "button": "Új téma",
+      "title": "Új téma",
+      "subtitle": "Adj nevet a témának; dokumentumokat most vagy később is feltölthetsz.",
+      "documents": "Dokumentumok",
+      "create": "Téma létrehozása",
+      "createAndUpload": "Létrehozás és feltöltés",
+      "nameRequired": "Adj nevet a témának.",
+      "created": "A(z) „{{name}}” téma elkészült.",
+      "uploadFailed": "A téma elkészült, de a feltöltés nem sikerült: {{reason}}"
+    }
+  },
+  "upload": {
+    "drop": "Húzd ide a fájlokat, vagy",
+    "browse": "tallózz",
+    "selected": "Kiválasztott fájlok",
+    "remove": "{{name}} eltávolítása",
+    "progress": "Feltöltés… {{pct}}%",
+    "limits": "{{types}} · fájlonként max. {{fileMb}} MB · egyszerre {{perUpload}} fájl · témánként {{perTopic}} fájl / {{topicMb}} MB",
+    "rejected": {
+      "type": "{{name}}: nem támogatott fájltípus.",
+      "size": "{{name}}: a fájl túl nagy.",
+      "count": "{{name}}: túl sok fájl.",
+      "storage": "{{name}}: nincs elég hely ebben a témában.",
+      "duplicate": "{{name}} már ki van választva."
+    },
+    "consent": {
+      "label": "Megerősítem, hogy jogosult vagyok ezeket a dokumentumokat felhasználni, és nem tartalmaznak különleges adatot (pl. egészségügyi adatot) vagy diákokra vonatkozó személyes adatot.",
+      "details": "A dokumentumokat a téma saját kulcsával titkosítva tároljuk, és csak a tesztjeid elkészítéséhez használjuk. A téma törlésekor a kulcsot megsemmisítjük, így minden másolat azonnal olvashatatlanná válik.",
+      "more": "Adatkezelési tájékoztató",
+      "required": "A feltöltéshez jelöld be a négyzetet."
+    }
+  },
+  "workspace": {
+    "breadcrumb": "Navigációs útvonal",
+    "sections": "A téma részei",
+    "backToTopics": "Vissza a témákhoz",
+    "deletedElsewhere": "Ezt a témát törölték.",
+    "notFoundTitle": "A téma nem található",
+    "notFoundDesc": "Lehet, hogy törölték, vagy hibás a link.",
+    "tabs": {
+      "chat": "Beszélgetés",
+      "files": "Fájlok",
+      "tests": "Tesztek"
+    },
+    "stream": {
+      "connecting": "Kapcsolódás…",
+      "open": "Élő",
+      "retrying": "Újrakapcsolódás…",
+      "closed": "Offline – időnként frissül"
+    },
+    "header": {
+      "editLabel": "Téma szerkesztése",
+      "saved": "A téma frissült.",
+      "storage": "Tárhely",
+      "expires": "Automatikus törlés",
+      "expiryHelp": "A témák 90 nap aktivitás nélkül automatikusan törlődnek. Bármilyen aktivitás kitolja a dátumot.",
+      "live": "Élő frissítés",
+      "delete": "Téma törlése",
+      "deleteTitle": "Törlöd ezt a témát?",
+      "deleteConfirm": "Végleges törlés",
+      "deleteBody": "A téma törlődik a(z) {{files}} fájljával, minden beszélgetésével és tesztjével együtt, beleértve {{saved}} mentett tesztet is. Ez nem vonható vissza.",
+      "deleteCrypto": "Először a téma titkosítási kulcsát semmisítjük meg, így minden megmaradt másolat (a biztonsági mentéseket is beleértve) azonnal olvashatatlanná válik.",
+      "deleteStarted": "„{{name}}” törlése folyamatban…"
+    },
+    "tests": {
+      "title": "A téma tesztjei",
+      "retention": "A nem mentett tesztek ideiglenesek: a beszélgetésükkel vagy a témával együtt törlődnek. Mentsd el, amelyiket meg akarod tartani.",
+      "filter": "Megjelenítés",
+      "all": "Összes",
+      "saved": "Mentett",
+      "empty": "Még nincs teszt",
+      "emptySaved": "Még nincs mentett teszt",
+      "emptyDesc": "Kérj tesztet a beszélgetésben; itt jelenik meg átnézésre.",
+      "goToChat": "Ugrás a beszélgetéshez",
+      "meta_one": "{{count}} kérdés · {{date}}",
+      "meta_other": "{{count}} kérdés · {{date}}",
+      "savedBadge": "Mentve",
+      "tempBadge": "Ideiglenes",
+      "deleteLabel": "Teszt törlése: {{title}}"
+    },
+    "test": {
+      "back": "Vissza a tesztekhez",
+      "aiActNotice": "Az AI által készített tartalom hibás lehet. Használat előtt nézz át minden kérdést (EU MI-rendelet, 14. cikk – emberi felügyelet).",
+      "saveChanges": "Módosítások mentése",
+      "changesSaved": "A módosítások elmentve.",
+      "savedToLibrary": "Elmentve a „Tesztjeim” közé.",
+      "regenerated": "A kérdés újragenerálva.",
+      "saveBeforeExport": "Exportálás előtt mentsd el a módosításokat.",
+      "leaveTitle": "Kilépsz mentés nélkül?",
+      "leaveBody": "A teszt módosításait nem mentetted, és elvesznek.",
+      "leaveConfirm": "Kilépés"
+    }
+  },
+  "generate": {
+    "legend": "Teszt beállításai",
+    "count": "Kérdések száma",
+    "types": "Kérdéstípusok",
+    "difficulty": "Nehézség",
+    "examLanguage": "A teszt nyelve",
+    "mode": "Minőség",
+    "modes": {
+      "fast": "Gyors",
+      "thorough": "Alapos"
+    },
+    "modeHint": {
+      "fast": "Vázlatnak jó; kb. egy perc alatt kész.",
+      "thorough": "Minden kérdést ellenőriz a forrásokon; tovább tart."
+    },
+    "sources": "Ezekből a dokumentumokból",
+    "allFiles": "mind"
+  },
+  "export": {
+    "button": "Exportálás",
+    "title": "Teszt exportálása",
+    "format": "Formátum",
+    "download": "Letöltés",
+    "done": "A letöltés elindult.",
+    "shuffle": "Válaszlehetőségek összekeverése",
+    "variants": "Változatok",
+    "variantOptions": {
+      "1": "Egy változat",
+      "2": "Két változat (A/B)"
+    },
+    "formats": {
+      "pdf": {
+        "label": "PDF a diákoknak",
+        "hint": "Csak a kérdések, nyomtatásra kész."
+      },
+      "pdf_with_key": {
+        "label": "PDF megoldókulccsal",
+        "hint": "A tanárnak: a helyes válaszok jelölve."
+      },
+      "moodle_xml": {
+        "label": "Moodle XML",
+        "hint": "Importálás Moodle kérdésbankba."
+      },
+      "gift": {
+        "label": "GIFT",
+        "hint": "Szöveges formátum Moodle-hoz és más LMS-ekhez."
+      },
+      "json": {
+        "label": "JSON",
+        "hint": "Géppel olvasható, saját eszközökhöz."
+      }
+    }
+  },
+  "files": {
+    "uploadTitle": "Dokumentumok feltöltése",
+    "listTitle": "Dokumentumok",
+    "emptyTitle": "Még nincs dokumentum",
+    "emptyDesc": "Tölts fel jegyzeteket, tankönyvfejezeteket vagy diákat; a tesztek kizárólag ezekből készülnek.",
+    "uploadButton_one": "{{count}} fájl feltöltése",
+    "uploadButton_other": "{{count}} fájl feltöltése",
+    "uploaded_one": "{{count}} fájl feltöltve – feldolgozás…",
+    "uploaded_other": "{{count}} fájl feltöltve – feldolgozás…",
+    "chunks_one": "{{count}} szövegrész",
+    "chunks_other": "{{count}} szövegrész",
+    "retryLabel": "{{name}} feldolgozásának újraindítása",
+    "deleteLabel": "{{name}} törlése",
+    "deleteTitle": "Törlöd ezt a dokumentumot?",
+    "deleteBody": "A(z) „{{name}}” és minden belőle származó adat (szövegrészek, keresőindex) törlődik. A már elkészült tesztek megmaradnak.",
+    "deleted": "„{{name}}” törölve.",
+    "usage": {
+      "files": "Fájlok",
+      "storage": "Tárhely"
+    },
+    "status": {
+      "queued": "Sorban áll",
+      "extracting": "Szöveg kinyerése",
+      "chunking": "Darabolás",
+      "indexing": "Indexelés",
+      "ready": "Kész",
+      "failed": "Sikertelen"
+    }
+  },
+  "jobs": {
+    "indicator_one": "{{count}} feladat fut",
+    "indicator_other": "{{count}} feladat fut",
+    "panelTitle": "Futó feladatok",
+    "openTopic": "Téma megnyitása",
+    "queued": "Sorban – {{position}}. hely",
+    "status": {
+      "queued": "Indulásra vár",
+      "running": "Dolgozik…",
+      "succeeded": "Kész",
+      "failed": "Sikertelen",
+      "cancelled": "Megszakítva"
+    },
+    "stage": {
+      "running": "Dolgozik…",
+      "retrieving": "A releváns részek keresése…",
+      "generating": "A kérdések megírása…",
+      "validating": "A kérdések ellenőrzése…",
+      "extracting": "A szöveg kinyerése…",
+      "chunking": "A szöveg darabolása…",
+      "indexing": "A keresőindex építése…",
+      "destroying_key": "A titkosítási kulcs megsemmisítése…",
+      "purging": "Adatok törlése…"
+    },
+    "type": {
+      "ingest_file": "Dokumentum feldolgozása",
+      "generate_test": "Teszt generálása",
+      "answer_question": "Válasz egy kérdésre",
+      "regenerate_question": "Kérdés újragenerálása",
+      "delete_topic": "Téma törlése",
+      "export_account": "Adatexport előkészítése",
+      "delete_account": "Fiók törlése"
+    }
+  },
+  "dev": {
+    "badge": "Mock postafiók",
+    "mailbox": "Mock postafiók",
+    "mockNotice": "Mock API: semmilyen adat nem hagyja el a böngésződet. Itt jelennek meg a demo által „küldött” e-mailek.",
+    "empty": "Még nincs e-mail.",
+    "openLink": "Link megnyitása",
+    "subjects": {
+      "verify": "E-mail-cím megerősítése",
+      "reset": "Jelszó visszaállítása"
+    },
+    "demoAccount": "Demófiók: demo@mimir.hu / mimir-demo-2026",
+    "reset": "Demóadatok visszaállítása"
   }
 }

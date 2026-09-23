@@ -36,6 +36,33 @@ for (const f of files) {
   }
 }
 
+// Keys built at runtime from API enums (errors.<CODE>, files.status.<status>, …) must exist for every enum value.
+const specPath = new URL('../openapi/mimir-public.yaml', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
+let spec = '';
+try {
+  spec = readFileSync(specPath, 'utf8');
+} catch {
+  /* spec not present – skip */
+}
+const enumOf = (name) => {
+  const m = new RegExp(`\\n    ${name}:\\s*(?:\\n\\s*type: string\\n\\s*)?(?:\\{ type: string, )?enum: \\[([^\\]]+)\\]`).exec(spec);
+  return m ? m[1].split(',').map((x) => x.trim()) : [];
+};
+const dynamic = [
+  ['errors', [...enumOf('ErrorCode'), 'NETWORK', 'UNKNOWN']],
+  ['files.status', enumOf('FileStatus')],
+  ['jobs.type', enumOf('JobType')],
+  ['jobs.status', enumOf('JobStatus')],
+  ['editor.difficulty', enumOf('Difficulty')],
+  ['editor.types', enumOf('QuestionType')],
+];
+if (spec) {
+  for (const [prefix, values] of dynamic) {
+    if (!values.length) problems.push(`could not read enum for ${prefix} from the OpenAPI spec`);
+    for (const v of values) if (!hu.has(`${prefix}.${v}`)) problems.push(`missing dynamic key ${prefix}.${v}`);
+  }
+}
+
 if (problems.length) {
   console.error(problems.join('\n'));
   process.exit(1);

@@ -4,7 +4,15 @@
     "loading": "Loading…",
     "close": "Close",
     "download": "Download",
-    "errorPrefix": "Something went wrong: {{message}}"
+    "errorPrefix": "Something went wrong: {{message}}",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "retry": "Try again",
+    "optional": "optional",
+    "charCount": "{{count}} / {{max}}",
+    "typeToConfirm": "Type \"{{text}}\" to confirm"
   },
   "meta": {
     "home": "Mimir AI – Smart exam generator",
@@ -18,7 +26,11 @@
     "privacy": "Privacy notice – Mimir AI",
     "terms": "Terms of use – Mimir AI",
     "notFound": "Page not found – Mimir AI",
-    "data": "Your data – Mimir AI"
+    "data": "Your data – Mimir AI",
+    "topics": "Topics – Mimir AI",
+    "verify": "Confirm e-mail – Mimir AI",
+    "forgot": "Forgotten password – Mimir AI",
+    "reset": "New password – Mimir AI"
   },
   "nav": {
     "skipToContent": "Skip to content",
@@ -32,7 +44,8 @@
     "openApp": "Exam generator",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "main": "Main navigation"
+    "main": "Main navigation",
+    "topics": "Topics"
   },
   "settings": {
     "open": "Appearance settings",
@@ -173,20 +186,50 @@
       "noAccount": "Don't have an account yet?",
       "registerLink": "Sign up here",
       "success": "Signed in! Redirecting…",
-      "error": "Incorrect email or password!"
+      "error": "Incorrect email or password!",
+      "forgot": "Forgot your password?",
+      "expired": "Your session has expired. Please sign in again."
     },
     "register": {
       "title": "Create a new account",
       "subtitle": "Join the Mimir community",
-      "passwordPlaceholder": "At least 6 characters",
+      "passwordPlaceholder": "At least {{min}} characters",
       "confirm": "Confirm password",
       "submit": "Sign up",
       "hasAccount": "Already have an account?",
       "loginLink": "Sign in here",
       "mismatch": "The passwords do not match!",
-      "tooShort": "The password must be at least 6 characters long!",
+      "tooShort": "The password must be at least {{min}} characters long.",
       "success": "Registration successful! Please confirm your email address using the link we sent you.",
-      "error": "Something went wrong during registration."
+      "error": "Something went wrong during registration.",
+      "passwordHint": "Use at least {{min}} characters. A short sentence is easy to remember and hard to guess.",
+      "language": "Language of e-mails and the interface",
+      "age16": "I am at least 16 years old.",
+      "acceptTerms": "I accept the <terms>Terms of use</terms> and have read the <privacy>Privacy notice</privacy>.",
+      "ageRequired": "You must be at least 16 to use Mimir on your own.",
+      "termsRequired": "Please accept the Terms of use.",
+      "checkInboxTitle": "Check your inbox",
+      "checkInbox": "If {{email}} can be registered, we have sent a confirmation link to it. Open it to activate your account – the link is valid for 24 hours."
+    },
+    "verify": {
+      "title": "Confirm your e-mail",
+      "pending": "Confirming…",
+      "success": "Your e-mail address is confirmed. You can sign in now.",
+      "failedHint": "The link may have expired or already been used. Register again or ask for a new link."
+    },
+    "forgot": {
+      "title": "Forgotten password",
+      "subtitle": "Enter your e-mail address and we will send you a link to set a new password.",
+      "submit": "Send link",
+      "sent": "If an account exists for {{email}}, a reset link is on its way. It is valid for 1 hour.",
+      "back": "Back to sign in"
+    },
+    "reset": {
+      "title": "Set a new password",
+      "subtitle": "Choose a new password for your account.",
+      "newPassword": "New password",
+      "submit": "Save new password",
+      "success": "Your password was changed and every other session was signed out."
     }
   },
   "chat": {
@@ -224,6 +267,36 @@
       "details": "The document is used only to create your test and is deleted automatically afterwards. Unless the service runs in local mode, parts of the text may be processed by Óbuda University's language model.",
       "more": "Privacy notice",
       "required": "Please confirm the statement above before uploading."
+    },
+    "v1": {
+      "sessions": "Conversations",
+      "newChat": "New conversation",
+      "noSessions": "No conversations yet.",
+      "conversation": "Conversation",
+      "messages": "Messages",
+      "rename": "Rename conversation: {{title}}",
+      "renameLabel": "Conversation title",
+      "deleteSession": "Delete conversation: {{title}}",
+      "deleteSessionTitle": "Delete this conversation?",
+      "deleteSessionBody": "Its messages and unsaved tests are deleted. Saved tests stay in the topic.",
+      "sessionDeleted": "Conversation deleted.",
+      "loadOlder": "Load earlier messages",
+      "intent": "What would you like to do?",
+      "intents": {
+        "generate": "Create a test",
+        "ask": "Ask a question"
+      },
+      "placeholderGenerate": "Describe the test (optional), e.g. “focus on the light reactions”…",
+      "placeholderAsk": "Ask something about this topic's documents…",
+      "sendGenerate": "Generate test",
+      "sendAsk": "Send question",
+      "optionsSummary": "{{count}} questions · {{difficulty}} · {{lang}}",
+      "noFiles": "Upload a document to this topic before generating.",
+      "filesProcessing": "Your documents are still being processed – this takes a minute.",
+      "goToFiles": "Go to files",
+      "reviewTest": "Review and edit the test",
+      "welcomeTitle": "Start working on “{{name}}”",
+      "welcomeBody": "Ask for a test and set the number of questions, types and difficulty below – or ask a question about the documents. Everything stays in this topic."
     }
   },
   "editor": {
@@ -265,6 +338,25 @@
     "save": {
       "label": "Save to \"My tests\"",
       "hint": "The PDF is kept for at most 12 months and you can delete it at any time. If you leave this unticked, nothing is stored."
+    },
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "regenerate": "Regenerate question {{n}}",
+    "regenerating": "Generating a new version of this question…",
+    "sources_one": "{{count}} source",
+    "sources_other": "{{count}} sources",
+    "page": "page {{page}}",
+    "unknownFile": "Deleted file",
+    "dnd": {
+      "handle": "Drag to reorder",
+      "instructions": "To reorder, press Space or Enter on the handle, use the arrow keys to move, then Space or Enter to drop. Escape cancels.",
+      "picked": "Picked up question {{n}}.",
+      "over": "Question {{n}} is over position {{pos}}.",
+      "dropped": "Question {{n}} dropped at position {{pos}}.",
+      "cancelled": "Reordering cancelled; question {{n}} returned."
     }
   },
   "tests": {
@@ -285,7 +377,15 @@
     "confirmDelete": "Delete permanently?",
     "deleted": "The test was permanently deleted.",
     "deleteError": "Deletion failed.",
-    "retention": "Saved tests are kept for at most 12 months and then deleted automatically."
+    "retention": "Saved tests are kept for at most 12 months and then deleted automatically.",
+    "deleteTitle": "Delete this test?",
+    "deleteBody": "“{{title}}” will be deleted permanently.",
+    "v1": {
+      "subtitle": "Tests you chose to keep, grouped by topic.",
+      "retention": "Saved tests stay until you delete them or their topic. Topics are deleted after 90 days without activity.",
+      "emptyDesc": "Open a topic, generate a test and tick “Save to My tests”.",
+      "goToTopics": "Go to topics"
+    }
   },
   "notFound": {
     "title": "Page not found",
@@ -504,7 +604,9 @@
     "keys": {
       "mimir-theme": "Palette and mode",
       "mimir-lang": "Language",
-      "mimir_user": "Sign-in state (email address)"
+      "mimir_user": "Sign-in state (email address)",
+      "mimir-gen-options": "Last test settings",
+      "mimir-mock-db": "Demo data (mock mode only)"
     },
     "empty": "Nothing stored.",
     "export": "Download my data (JSON)",
@@ -519,6 +621,320 @@
     "mailSubject": "Erasure request (GDPR Art. 17)",
     "mailBody": "Please delete all personal data associated with my Mimir AI account. My account email: {{email}}",
     "noEmail": "You can send your erasure request through the Contact page.",
-    "readNotice": "Read the full privacy notice"
+    "readNotice": "Read the full privacy notice",
+    "v1": {
+      "serverItems": [
+        "Account: e-mail address, hashed password, language, registration date.",
+        "Topics: the documents you upload, their text passages and search index – encrypted with a separate key per topic. Deleting a topic destroys its key.",
+        "Conversations and tests in a topic: until you delete them or the topic. Unsaved tests go with their conversation.",
+        "Topics with no activity for 90 days are deleted automatically.",
+        "Operations log: metadata only (no document text), 30 days."
+      ],
+      "memberSince": "Registered",
+      "topics": "Topics",
+      "savedTests": "Saved tests",
+      "manageTopics": "Manage my topics",
+      "rightsDesc": "You can download everything we hold about you, correct it, or delete your account with all its data here. For other requests (restriction, objection) write to us.",
+      "exportHint": "The export contains your account data, topics, documents' metadata, conversations and tests as JSON. Preparing it can take a minute.",
+      "exportReady": "Your data export was downloaded.",
+      "deleteAccount": "Delete my account",
+      "deleteTitle": "Delete your account?",
+      "deleteBody": "Your account, every topic, document, conversation and test is deleted, and the topic keys are destroyed. You will be signed out. This cannot be undone.",
+      "passwordLabel": "Confirm with your password",
+      "deleteConfirm": "Delete my account",
+      "deleteStarted": "Your account is being deleted. You have been signed out."
+    }
+  },
+  "errors": {
+    "UNKNOWN": "Something went wrong. Please try again.",
+    "requestId": "Reference: {{id}}",
+    "NETWORK": "The server cannot be reached. Check your connection and try again.",
+    "VALIDATION_FAILED": "Some of the data is not valid. Check the fields and try again.",
+    "UNSUPPORTED_FILE_TYPE": "This file type is not supported. Use PDF, TXT, DOCX or MD.",
+    "AUTH_REQUIRED": "Please sign in to continue.",
+    "TOKEN_EXPIRED": "Your session has expired. Please sign in again.",
+    "INVALID_CREDENTIALS": "Incorrect e-mail address or password.",
+    "EMAIL_NOT_VERIFIED": "Confirm your e-mail address first – we sent you a link when you registered.",
+    "FORBIDDEN": "You do not have access to this.",
+    "TOPIC_NOT_FOUND": "This topic does not exist or has been deleted.",
+    "FILE_NOT_FOUND": "This file no longer exists.",
+    "SESSION_NOT_FOUND": "This conversation no longer exists.",
+    "TEST_NOT_FOUND": "This test no longer exists.",
+    "JOB_NOT_FOUND": "This task no longer exists.",
+    "TOPIC_DELETING": "This topic is being deleted.",
+    "FILE_NOT_READY": "No document in this topic has finished processing yet. Wait for it or upload one.",
+    "EMAIL_TAKEN": "This e-mail address is already registered.",
+    "JOB_IN_PROGRESS": "This is already in progress.",
+    "FILE_TOO_LARGE": "The file is too large (limit: {{limitMb}} MB).",
+    "TOPIC_QUOTA_EXCEEDED": "You have reached the limit for this.",
+    "TOPIC_STORAGE_EXCEEDED": "This topic has no more storage space (limit: {{limitMb}} MB). Delete a file first.",
+    "NO_TEXT_EXTRACTED": "No text could be read from this document. Is it a scanned image? Try a text-based PDF.",
+    "GENERATION_INVALID": "The AI returned an invalid test. Please try again.",
+    "RATE_LIMITED": "Too many requests. Wait a minute and try again.",
+    "TOO_MANY_JOBS": "You already have 3 tasks running. Wait for one to finish.",
+    "LLM_UNAVAILABLE": "The language model is not available right now. Try again in a few minutes.",
+    "CONSENT_REQUIRED": "Please confirm that you may upload these documents.",
+    "INTERNAL": "Server error. Please try again later."
+  },
+  "topics": {
+    "title": "Topics",
+    "subtitle": "Each topic keeps its own documents, conversations and tests – nothing leaks between topics.",
+    "search": "Search topics",
+    "noMatch": "No topic matches “{{q}}”.",
+    "resultCount_one": "{{count}} topic",
+    "resultCount_other": "{{count}} topics",
+    "quota": "{{count}} of {{max}} topics",
+    "quotaReached": "You have reached the limit of {{max}} topics. Delete one to create a new one.",
+    "emptyTitle": "Create your first topic",
+    "emptyDesc": "A topic is a workspace for one subject or unit: upload its documents once, then generate as many tests as you need.",
+    "noDescription": "No description",
+    "deleting": "Deleting…",
+    "expiresSoon_one": "Deleted in {{count}} day without activity",
+    "expiresSoon_other": "Deleted in {{count}} days without activity",
+    "sort": {
+      "label": "Sort",
+      "activity": "Recent activity",
+      "name": "Name",
+      "created": "Newest"
+    },
+    "stats": {
+      "files": "Files",
+      "saved": "Saved tests",
+      "lastActivity": "Last activity",
+      "expires": "Automatic deletion",
+      "filesCount_one": "{{count}} file",
+      "filesCount_other": "{{count}} files",
+      "savedCount_one": "{{count}} saved test",
+      "savedCount_other": "{{count}} saved tests",
+      "active": "Active {{when}}"
+    },
+    "fields": {
+      "name": "Name",
+      "namePlaceholder": "e.g. Biology 9 – Photosynthesis",
+      "description": "Description",
+      "descriptionPlaceholder": "What is this topic about? Who is it for?"
+    },
+    "new": {
+      "button": "New topic",
+      "title": "New topic",
+      "subtitle": "Give the topic a name; you can add documents now or later.",
+      "documents": "Documents",
+      "create": "Create topic",
+      "createAndUpload": "Create and upload",
+      "nameRequired": "Give the topic a name.",
+      "created": "Topic “{{name}}” created.",
+      "uploadFailed": "The topic was created but the upload failed: {{reason}}"
+    }
+  },
+  "upload": {
+    "drop": "Drag files here or",
+    "browse": "browse",
+    "selected": "Selected files",
+    "remove": "Remove {{name}}",
+    "progress": "Uploading… {{pct}}%",
+    "limits": "{{types}} · max {{fileMb}} MB per file · {{perUpload}} files at a time · {{perTopic}} files / {{topicMb}} MB per topic",
+    "rejected": {
+      "type": "{{name}}: unsupported file type.",
+      "size": "{{name}}: the file is too large.",
+      "count": "{{name}}: too many files.",
+      "storage": "{{name}}: not enough space left in this topic.",
+      "duplicate": "{{name}} is already selected."
+    },
+    "consent": {
+      "label": "I confirm that I may use these documents and that they contain no special category data (e.g. health data) or personal data about students.",
+      "details": "The documents are stored encrypted with this topic's own key and used only to create your tests. Deleting the topic destroys the key, so every copy becomes unreadable at once.",
+      "more": "Privacy notice",
+      "required": "Please tick the box to upload."
+    }
+  },
+  "workspace": {
+    "breadcrumb": "Breadcrumb",
+    "sections": "Topic sections",
+    "backToTopics": "Back to topics",
+    "deletedElsewhere": "This topic was deleted.",
+    "notFoundTitle": "Topic not found",
+    "notFoundDesc": "It may have been deleted, or the link is wrong.",
+    "tabs": {
+      "chat": "Chat",
+      "files": "Files",
+      "tests": "Tests"
+    },
+    "stream": {
+      "connecting": "Connecting…",
+      "open": "Live",
+      "retrying": "Reconnecting…",
+      "closed": "Offline – refreshing periodically"
+    },
+    "header": {
+      "editLabel": "Edit topic",
+      "saved": "Topic updated.",
+      "storage": "Storage",
+      "expires": "Automatic deletion",
+      "expiryHelp": "Topics are deleted automatically after 90 days without activity. Any activity moves the date forward.",
+      "live": "Live updates",
+      "delete": "Delete topic",
+      "deleteTitle": "Delete this topic?",
+      "deleteConfirm": "Delete permanently",
+      "deleteBody": "This deletes the topic with its {{files}} file(s), every conversation and every test, including {{saved}} saved test(s). This cannot be undone.",
+      "deleteCrypto": "We destroy the topic's encryption key first, so every remaining copy (including backups) becomes unreadable immediately.",
+      "deleteStarted": "Deleting “{{name}}”…"
+    },
+    "tests": {
+      "title": "Tests in this topic",
+      "retention": "Unsaved tests are temporary: they are deleted with their conversation or topic. Save the ones you want to keep.",
+      "filter": "Show",
+      "all": "All",
+      "saved": "Saved",
+      "empty": "No tests yet",
+      "emptySaved": "No saved tests yet",
+      "emptyDesc": "Ask for a test in the chat; it will appear here for review.",
+      "goToChat": "Go to the chat",
+      "meta_one": "{{count}} question · {{date}}",
+      "meta_other": "{{count}} questions · {{date}}",
+      "savedBadge": "Saved",
+      "tempBadge": "Temporary",
+      "deleteLabel": "Delete test: {{title}}"
+    },
+    "test": {
+      "back": "Back to tests",
+      "aiActNotice": "AI-generated content can contain mistakes. Review every question before you use the test (EU AI Act, Art. 14 – human oversight).",
+      "saveChanges": "Save changes",
+      "changesSaved": "Changes saved.",
+      "savedToLibrary": "Saved to “My tests”.",
+      "regenerated": "Question regenerated.",
+      "saveBeforeExport": "Save your changes before exporting.",
+      "leaveTitle": "Leave without saving?",
+      "leaveBody": "Your edits to this test have not been saved and will be lost.",
+      "leaveConfirm": "Leave"
+    }
+  },
+  "generate": {
+    "legend": "Test settings",
+    "count": "Number of questions",
+    "types": "Question types",
+    "difficulty": "Difficulty",
+    "examLanguage": "Language of the test",
+    "mode": "Quality",
+    "modes": {
+      "fast": "Fast",
+      "thorough": "Thorough"
+    },
+    "modeHint": {
+      "fast": "Good for drafts; ready in about a minute.",
+      "thorough": "Checks every question against the sources; takes longer."
+    },
+    "sources": "Use these documents",
+    "allFiles": "all"
+  },
+  "export": {
+    "button": "Export",
+    "title": "Export test",
+    "format": "Format",
+    "download": "Download",
+    "done": "Download started.",
+    "shuffle": "Shuffle the answer options",
+    "variants": "Variants",
+    "variantOptions": {
+      "1": "One version",
+      "2": "Two versions (A/B)"
+    },
+    "formats": {
+      "pdf": {
+        "label": "PDF for students",
+        "hint": "Questions only, ready to print."
+      },
+      "pdf_with_key": {
+        "label": "PDF with answer key",
+        "hint": "For the teacher: the correct answers are marked."
+      },
+      "moodle_xml": {
+        "label": "Moodle XML",
+        "hint": "Import into a Moodle question bank."
+      },
+      "gift": {
+        "label": "GIFT",
+        "hint": "Plain-text format for Moodle and other LMSs."
+      },
+      "json": {
+        "label": "JSON",
+        "hint": "Machine-readable, for your own tools."
+      }
+    }
+  },
+  "files": {
+    "uploadTitle": "Upload documents",
+    "listTitle": "Documents",
+    "emptyTitle": "No documents yet",
+    "emptyDesc": "Upload notes, textbook chapters or slides; tests are generated only from these.",
+    "uploadButton_one": "Upload {{count}} file",
+    "uploadButton_other": "Upload {{count}} files",
+    "uploaded_one": "{{count}} file uploaded – processing…",
+    "uploaded_other": "{{count}} files uploaded – processing…",
+    "chunks_one": "{{count}} passage",
+    "chunks_other": "{{count}} passages",
+    "retryLabel": "Retry processing {{name}}",
+    "deleteLabel": "Delete {{name}}",
+    "deleteTitle": "Delete this document?",
+    "deleteBody": "“{{name}}” and everything derived from it (text passages, search index) are deleted. Existing tests are kept.",
+    "deleted": "“{{name}}” deleted.",
+    "usage": {
+      "files": "Files",
+      "storage": "Storage"
+    },
+    "status": {
+      "queued": "Queued",
+      "extracting": "Reading text",
+      "chunking": "Splitting",
+      "indexing": "Indexing",
+      "ready": "Ready",
+      "failed": "Failed"
+    }
+  },
+  "jobs": {
+    "indicator_one": "{{count}} task running",
+    "indicator_other": "{{count}} tasks running",
+    "panelTitle": "Running tasks",
+    "openTopic": "Open topic",
+    "queued": "In queue – position {{position}}",
+    "status": {
+      "queued": "Waiting to start",
+      "running": "Working…",
+      "succeeded": "Done",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    },
+    "stage": {
+      "running": "Working…",
+      "retrieving": "Finding the relevant passages…",
+      "generating": "Writing the questions…",
+      "validating": "Checking the questions…",
+      "extracting": "Reading the text…",
+      "chunking": "Splitting the text…",
+      "indexing": "Building the search index…",
+      "destroying_key": "Destroying the encryption key…",
+      "purging": "Deleting data…"
+    },
+    "type": {
+      "ingest_file": "Processing a document",
+      "generate_test": "Generating a test",
+      "answer_question": "Answering a question",
+      "regenerate_question": "Regenerating a question",
+      "delete_topic": "Deleting a topic",
+      "export_account": "Preparing your data export",
+      "delete_account": "Deleting your account"
+    }
+  },
+  "dev": {
+    "badge": "Mock mailbox",
+    "mailbox": "Mock mailbox",
+    "mockNotice": "Mock API: no data leaves your browser. E-mails the demo would send appear here.",
+    "empty": "No e-mails yet.",
+    "openLink": "Open link",
+    "subjects": {
+      "verify": "Confirm your e-mail",
+      "reset": "Reset your password"
+    },
+    "demoAccount": "Demo account: demo@mimir.hu / mimir-demo-2026",
+    "reset": "Reset demo data"
   }
 }
