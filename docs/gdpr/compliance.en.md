@@ -82,7 +82,7 @@ A legitimate interest assessment (balancing test) is required for activities 4, 
 | Browser storage | Until the user clears it or signs out | "Your data" page deletes all Mimir keys | **Implemented** in this change |
 | Data already in git history (`services/skald/storage`) | Must be removed | Files are untracked in this change; history rewrite with `git filter-repo` | **Partly implemented** (history rewrite: PLT-01 #1) |
 
-**Planned change – Topic workspace ([epic #103](https://github.com/Deatron01/Project-Mimir/issues/103)):** when topics ship, chunks, embeddings, the concept graph and chat history are kept per topic until the user deletes the file or topic, or the topic is inactive for the period decided in [#104](https://github.com/Deatron01/Project-Mimir/issues/104) (proposal: 90 days). Raw files are still never stored. Deleting a topic cascades to all of its data ([#108](https://github.com/Deatron01/Project-Mimir/issues/108)). The privacy notice and this pack must be updated before release ([#121](https://github.com/Deatron01/Project-Mimir/issues/121)); until then the rules above apply.
+**Planned change – Topic workspace ([epic #103](https://github.com/Deatron01/Project-Mimir/issues/103)):** when topics ship, chunks, embeddings, the concept graph and chat history are kept per topic until the user deletes the file or topic, or the topic is inactive for the period decided in [#104](https://github.com/Deatron01/Project-Mimir/issues/104) (proposal: 90 days). Raw files are still never stored. Topic data is encrypted with a per-topic key held by the operator ([#123](https://github.com/Deatron01/Project-Mimir/issues/123), [#124](https://github.com/Deatron01/Project-Mimir/issues/124)). Deleting a topic first destroys its key (crypto-shredding, [#125](https://github.com/Deatron01/Project-Mimir/issues/125)) and then cascades to all of its data ([#108](https://github.com/Deatron01/Project-Mimir/issues/108)). The privacy notice and this pack must be updated before release ([#121](https://github.com/Deatron01/Project-Mimir/issues/121)); until then the rules above apply.
 
 Backups: account data may be backed up; uploaded documents, chunks and job results must never be included in backups. Backups older than the retention above must be rotated out.
 
@@ -207,7 +207,11 @@ Example: the unauthenticated `/api/v1/tests` endpoint (see the roadmap audit) wo
 | Topic cascade delete and janitor | Skald, Bifrost, The Forge | Planned | TOP-04 #108 |
 | Topic isolation and zero-residue test suite | Tests | Planned | TOP-08 #112 |
 | Auto-delete inactive topics | The Forge | Planned | TOP-09 #113 |
-| Retention decision and encryption at rest for topic data | Architecture | Planned | TOP-18 #104 |
+| Retention decision for topic data (inactivity period) | Architecture | Planned | TOP-18 #104 |
+| Per-topic encryption keys (envelope encryption) | Shared | Planned | TOP-19 #123 |
+| Topic data encrypted at rest (chunks, graph, chat, tests, metadata) | Bifrost, Skald | Planned | TOP-20 #124 |
+| Crypto-shredding on topic delete; key backups max 7 days | Privacy | Planned | TOP-21 #125 |
+| Encrypted volumes and key-management runbook | Operations | Planned | TOP-23 #127 |
 | Privacy notice and pack updated for topics | Docs | Planned (before topics ship) | TOP-17 #121 |
 | Processor agreements (hosting, university, email) and institutional DPA template | Legal | Planned | R6 #98, GDPR-08 #80 |
 | Legitimate interest assessment, full DPIA before rollout | Legal | Planned | GDPR-08 #80 |

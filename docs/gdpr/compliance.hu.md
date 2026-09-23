@@ -82,7 +82,7 @@ A 4., 5. és 6. adatkezeléshez érdekmérlegelési teszt szükséges. Röviden:
 | Böngészőtár | Amíg a felhasználó törli vagy kijelentkezik | Az „Adataim” oldal minden Mimir-kulcsot töröl | **Megvalósítva** ebben a változtatásban |
 | A git-történetben lévő adatok (`services/skald/storage`) | El kell távolítani | Ebben a változtatásban kikerülnek a követésből; történet-újraírás `git filter-repo`-val | **Részben megvalósítva** (újraírás: PLT-01 #1) |
 
-**Tervezett változás – Témakör-munkaterület ([#103 epic](https://github.com/Deatron01/Project-Mimir/issues/103)):** a témakörök bevezetésével a chunkok, embeddingek, a fogalmi gráf és a chatelőzmények témakörönként megmaradnak, amíg a felhasználó törli a fájlt vagy a témakört, illetve amíg a témakör a [#104](https://github.com/Deatron01/Project-Mimir/issues/104)-ben meghatározott ideig (javaslat: 90 nap) inaktív nem lesz. A nyers fájlokat továbbra sem tároljuk. A témakör törlése minden hozzá tartozó adatot töröl ([#108](https://github.com/Deatron01/Project-Mimir/issues/108)). Az adatkezelési tájékoztatót és ezt a dokumentációt a kiadás előtt frissíteni kell ([#121](https://github.com/Deatron01/Project-Mimir/issues/121)); addig a fenti szabályok érvényesek.
+**Tervezett változás – Témakör-munkaterület ([#103 epic](https://github.com/Deatron01/Project-Mimir/issues/103)):** a témakörök bevezetésével a chunkok, embeddingek, a fogalmi gráf és a chatelőzmények témakörönként megmaradnak, amíg a felhasználó törli a fájlt vagy a témakört, illetve amíg a témakör a [#104](https://github.com/Deatron01/Project-Mimir/issues/104)-ben meghatározott ideig (javaslat: 90 nap) inaktív nem lesz. A nyers fájlokat továbbra sem tároljuk. A témakör adatait az üzemeltető által kezelt, témakörönkénti kulccsal titkosítjuk ([#123](https://github.com/Deatron01/Project-Mimir/issues/123), [#124](https://github.com/Deatron01/Project-Mimir/issues/124)). A témakör törlése először a kulcsot semmisíti meg (kriptográfiai törlés, [#125](https://github.com/Deatron01/Project-Mimir/issues/125)), majd minden hozzá tartozó adatot töröl ([#108](https://github.com/Deatron01/Project-Mimir/issues/108)). Az adatkezelési tájékoztatót és ezt a dokumentációt a kiadás előtt frissíteni kell ([#121](https://github.com/Deatron01/Project-Mimir/issues/121)); addig a fenti szabályok érvényesek.
 
 Mentések: a fiókadatokról készülhet mentés, de a feltöltött dokumentumok, chunkok és feladateredmények soha nem kerülhetnek mentésbe. A fenti megőrzési időnél régebbi mentéseket ki kell forgatni.
 
@@ -207,7 +207,11 @@ Példa: a hitelesítés nélküli `/api/v1/tests` végpont (lásd az ütemterv a
 | Témakör kaszkádtörlése és takarító feladat | Skald, Bifrost, The Forge | Tervezett | TOP-04 #108 |
 | Témakör-elkülönítési és maradványmentességi tesztcsomag | Tesztek | Tervezett | TOP-08 #112 |
 | Inaktív témakörök automatikus törlése | The Forge | Tervezett | TOP-09 #113 |
-| Megőrzési döntés és titkosítás tároláskor a témakör-adatokra | Architektúra | Tervezett | TOP-18 #104 |
+| Megőrzési döntés a témakör-adatokra (inaktivitási idő) | Architektúra | Tervezett | TOP-18 #104 |
+| Témakörönkénti titkosítási kulcsok (borítéktitkosítás) | Shared | Tervezett | TOP-19 #123 |
+| Témakör-adatok titkosítása tároláskor (chunkok, gráf, chat, tesztek, metaadatok) | Bifrost, Skald | Tervezett | TOP-20 #124 |
+| Kriptográfiai törlés a témakör törlésekor; kulcsmentések legfeljebb 7 napig | Adatvédelem | Tervezett | TOP-21 #125 |
+| Titkosított kötetek és kulcskezelési üzemeltetési leírás | Üzemeltetés | Tervezett | TOP-23 #127 |
 | Tájékoztató és dokumentáció frissítése a témakörökhöz | Dokumentáció | Tervezett (a témakörök kiadása előtt) | TOP-17 #121 |
 | Adatfeldolgozói szerződések (tárhely, egyetem, e-mail) és intézményi szerződésminta | Jogi | Tervezett | R6 #98, GDPR-08 #80 |
 | Érdekmérlegelési teszt, teljes hatásvizsgálat a bevezetés előtt | Jogi | Tervezett | GDPR-08 #80 |

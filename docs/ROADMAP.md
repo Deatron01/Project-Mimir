@@ -234,11 +234,11 @@ Seven 2-week sprints take Mimir from single-user demo to v1.0: multi-user safe b
 | Sprint | Dates | Theme | Build (issue IDs) | Research spikes | Exit criteria |
 | --- | --- | --- | --- | --- | --- |
 | S1 | 28 Sep – 11 Oct | Stop the bleeding | PLT-01, PLT-02, PLT-04, PLT-05, BIF-02, RUN-01, HEI-01, FE-01, FE-03 | R1, R2 | CI green on every PR; no shared vector store; `make up` works on both GPU types |
-| S2 | 12 – 25 Oct | Identity and privacy | GW-01, GW-02, GW-03, GW-06, FE-04, FE-10, SKA-01, SKA-02, WEL-04, FRG-01, FRG-02, FRG-04, FRG-05, TOP-01, TOP-02, TOP-03, TOP-04 | R3, R6, TOP-18 | **M1 multi-user alpha:** real login, topics isolated in Qdrant with cascade delete, no OOM with 5 concurrent jobs |
-| S3 | 26 Oct – 8 Nov | AI core v1 | BIF-03, BIF-04, BIF-05, BIF-07, HEI-02, RUN-02, RUN-03, RUN-04, SHR-01, SHR-02, FE-02, WEL-01, TOP-05, TOP-06, TOP-07, TOP-10, TOP-11 | R4, R7 | Requested question count and types always honoured; multi-file topics ingest and chat in isolation; naive-RAG baseline recorded |
+| S2 | 12 – 25 Oct | Identity and privacy | GW-01, GW-02, GW-03, GW-06, FE-04, FE-10, SKA-01, SKA-02, WEL-04, FRG-01, FRG-02, FRG-04, FRG-05, TOP-01, TOP-02, TOP-03, TOP-04, TOP-19 | R3, R6, TOP-18 | **M1 multi-user alpha:** real login, topics isolated in Qdrant with cascade delete, no OOM with 5 concurrent jobs |
+| S3 | 26 Oct – 8 Nov | AI core v1 | BIF-03, BIF-04, BIF-05, BIF-07, HEI-02, RUN-02, RUN-03, RUN-04, SHR-01, SHR-02, FE-02, WEL-01, TOP-05, TOP-06, TOP-07, TOP-10, TOP-11, TOP-20, TOP-21 | R4, R7 | Requested question count and types always honoured; multi-file topics ingest and chat in isolation; naive-RAG baseline recorded |
 | S4 | 9 – 22 Nov | Agentic generation | BIF-06, HEI-03, FRG-03, FRG-06, FE-05, FE-07, FE-08, TOP-08, TOP-12, TOP-13, TOP-14, TOP-15 | R5 | **M2 beta:** new pipeline beats baseline on eval set; topic workspace in HU/EN with themes; isolation suite green |
-| S5 | 23 Nov – 6 Dec | Editor and exports | FE-06, SKA-03, SKA-04, WEL-02, WEL-03, HEI-04, HEI-05, BIF-08, TOP-09, TOP-16, TOP-17 | — | Teacher can edit, regenerate one question, export PDF + Moodle; topic lifecycle E2E green; privacy notice updated for topics |
-| S6 | 7 – 20 Dec | Hardening | PLT-06, GW-04, GW-05, FE-09, RUN-05, WEL-05, WEL-06, load and security tests | — | **M3 feature freeze / RC:** GDPR checklist signed off; p95 latency and error-rate targets met |
+| S5 | 23 Nov – 6 Dec | Editor and exports | FE-06, SKA-03, SKA-04, WEL-02, WEL-03, HEI-04, HEI-05, BIF-08, TOP-09, TOP-16, TOP-17 | TOP-22 | Teacher can edit, regenerate one question, export PDF + Moodle; topic lifecycle E2E green; privacy notice updated for topics |
+| S6 | 7 – 20 Dec | Hardening | PLT-06, GW-04, GW-05, FE-09, RUN-05, WEL-05, WEL-06, TOP-23, load and security tests | — | **M3 feature freeze / RC:** GDPR checklist signed off; p95 latency and error-rate targets met |
 | S7 | 4 – 15 Jan | Release | Bug fixes only, SKA-05, SKA-06, PLT-07, docs, demo script | — | **v1.0** tagged and deployed; eval results written up for TDK / paper |
 
 ### Research spikes
@@ -391,7 +391,7 @@ Uploaded content lives only inside one processing session: in memory or tmpfs, e
 | Data | Where it lives | Lifetime | How it is removed |
 | --- | --- | --- | --- |
 | Uploaded file bytes | Wellspring process memory / tmpfs | Seconds (until text is extracted) | Buffer freed; tmpfs file unlinked in `finally` block |
-| Extracted text, chunks, embeddings, concept graph | Today: memory, cleared after each job. With topics: Qdrant / Postgres tagged `topic_id`, encrypted volumes | Today: job duration, max 60 min. With topics: until file/topic deletion or inactivity (TOP-18) | Today: purge after job. With topics: cascade delete (TOP-04) + inactivity purge (TOP-09) |
+| Extracted text, chunks, embeddings, concept graph | Today: memory, cleared after each job. With topics: Qdrant / Postgres tagged `topic_id`, text encrypted with a per-topic key (section 9), encrypted volumes | Today: job duration, max 60 min. With topics: until file/topic deletion or inactivity (TOP-18) | Today: purge after job. With topics: cascade delete (TOP-04) + inactivity purge (TOP-09) |
 | Prompts and raw LLM outputs | Worker memory only | One call | Never persisted; never logged |
 | Generated exam JSON (draft) | Redis, encrypted with session key | Until export or 24 h idle | Delete on export/discard; key expiry makes leftovers unreadable (crypto-shredding) |
 | Saved exams (opt-in "My tests") | Postgres, owner-scoped | Until user deletes, max 12 months | User delete; account delete; yearly purge job |
@@ -524,7 +524,8 @@ The biggest schedule risk is the AI core in S4: if the graph + agent loop is too
 | Agent loop too slow on `gpu8` (> 4 min for 10 questions) | Medium | High | Fast mode; graph only for long docs; vLLM on the 12 GB node for the shared deployment |
 | Small local models write weak Hungarian questions | Medium | High | R1 measures HU quality explicitly; allow the university GenAI API when legally cleared |
 | University GenAI API terms don't allow personal or student data | Medium | Medium | `LOCAL_ONLY` default; R6 memo before enabling |
-| Topic persistence weakens the zero-retention promise | Medium | High | Spike TOP-18, encryption at rest, cascade delete, inactivity purge, notice update (TOP-17) before release |
+| Topic persistence weakens the zero-retention promise | Medium | High | Per-topic keys with crypto-shredding (TOP-19–21), cascade delete, inactivity purge, notice update (TOP-17) before release |
+| Master key (KEK) leaks or is lost | Low | High | Secret outside DB and git, restricted access, rotation and leak runbook, restore drill (TOP-23) |
 | Topic epic adds ~73 points to S2–S5 | High | Medium | Minimum viable workspace first; TOP-09, TOP-13 polish and TOP-15 can move to S6 |
 | Scope creep (K8s, QTI, extra formats) | High | Medium | Stretch items marked P2/P3; feature freeze at M3 |
 | Git history rewrite disrupts the team | Low | Medium | Do it in week 1, everyone re-clones, one coordinated push |
@@ -642,7 +643,21 @@ Today everything derived from a document is deleted when the job ends. Topics de
 | Chat messages | Not stored | Kept per topic session, deleted with the session or topic |
 | Generated drafts and saved tests | Draft 60 min; saved opt-in, max 12 months | Stored per topic; saved tests keep the 12-month cap |
 
-Needed safeguards: encryption at rest for the Postgres and Qdrant volumes, cascade delete, inactivity purge, and an updated privacy notice and compliance pack **before** topics ship (TOP-17). Until then the current zero-retention behaviour and notice stay in force.
+Needed safeguards: per-topic encryption (below), cascade delete, inactivity purge, and an updated privacy notice and compliance pack **before** topics ship (TOP-17). Until then the current zero-retention behaviour and notice stay in force.
+
+### Encryption decision: standard topics with per-topic keys
+
+**Decided 22 September 2026.** Topic data stays on the server, encrypted with a key per topic that the operator holds and destroys when the topic is deleted. This protects against database leaks, stray backups and incomplete deletes. It is not "only the user can read it": the service decrypts in memory while it retrieves and generates. Browser-side end-to-end encryption is not adopted for now.
+
+| Part | Design | Task |
+| --- | --- | --- |
+| Keys | Every topic gets a random 256-bit data key (DEK). It is stored only wrapped by the server master key (KEK) in `topic_keys`. The KEK lives in a secret (Docker secret now, a vault later), never in the database or git. KEK rotation re-wraps the DEKs without touching the data. | [TOP-19](https://github.com/Deatron01/Project-Mimir/issues/123) |
+| Records | AES-256-GCM with a random nonce and AAD = `topic_id \| record_type \| record_id`, so ciphertext can't be moved between topics or records. Unwrapped DEKs live in memory for at most 5 minutes and are never logged. | [TOP-19](https://github.com/Deatron01/Project-Mimir/issues/123) |
+| What is encrypted | Chunk text in the Qdrant payload, concept-graph facts and names, chat messages, generated tests and saved PDFs, file names, topic name and description | [TOP-20](https://github.com/Deatron01/Project-Mimir/issues/124) |
+| Keyword search | BM25 tokens are hashed with a per-topic HMAC key, so search works but the index holds no readable words | [TOP-20](https://github.com/Deatron01/Project-Mimir/issues/124) |
+| Embedding vectors | Can't be encrypted and still searched. They stay on an encrypted volume and are deleted with the topic. A spike tests a secret per-topic rotation of the vectors, which keeps search results identical but blocks inversion with the public model. | [TOP-22](https://github.com/Deatron01/Project-Mimir/issues/126) |
+| Delete | Step one of the cascade deletes the topic's wrapped key (crypto-shredding): every remaining copy becomes unreadable at once, then the physical purge runs. Key-table backups are kept at most 7 days, so no backup can decrypt a deleted topic after a week. | [TOP-21](https://github.com/Deatron01/Project-Mimir/issues/125) |
+| Operations | Encrypted disks for Postgres and Qdrant, KEK access list, rotation and leak runbook, restore drill | [TOP-23](https://github.com/Deatron01/Project-Mimir/issues/127) |
 
 ### Frontend
 
@@ -680,6 +695,11 @@ Needed safeguards: encryption at rest for the Postgres and Qdrant volumes, casca
 | [TOP-09](https://github.com/Deatron01/Project-Mimir/issues/113) | Auto-delete inactive topics | Privacy | P1 | 2 | S5 |
 | [TOP-16](https://github.com/Deatron01/Project-Mimir/issues/120) | E2E: topic lifecycle | Frontend | P1 | 3 | S5 |
 | [TOP-17](https://github.com/Deatron01/Project-Mimir/issues/121) | Privacy notice and compliance pack update for topics | Privacy | P0 | 2 | S5 |
+| [TOP-19](https://github.com/Deatron01/Project-Mimir/issues/123) | Envelope encryption: per-topic data keys wrapped by the server master key | Shared | P0 | 5 | S2 |
+| [TOP-20](https://github.com/Deatron01/Project-Mimir/issues/124) | Encrypt topic data at rest with the topic key (chunks, graph, chat, tests, metadata; HMAC keyword index) | Bifrost | P0 | 5 | S3 |
+| [TOP-21](https://github.com/Deatron01/Project-Mimir/issues/125) | Crypto-shredding on topic delete and key backup policy | Privacy | P0 | 2 | S3 |
+| [TOP-22](https://github.com/Deatron01/Project-Mimir/issues/126) | Spike: harden stored embeddings against inversion | Research | P2 | 2 | S5 |
+| [TOP-23](https://github.com/Deatron01/Project-Mimir/issues/127) | Encrypted volumes and key-management runbook | Platform | P1 | 2 | S6 |
 
 ### Superseded and updated tasks
 
@@ -701,4 +721,4 @@ Needed safeguards: encryption at rest for the Postgres and Qdrant volumes, casca
 | [FE-06](https://github.com/Deatron01/Project-Mimir/issues/55) Question editor | Embedded in the topic chat |
 | [GDPR-10](https://github.com/Deatron01/Project-Mimir/issues/82) Upload confirmation | Also in the New Topic modal and uploader |
 
-**Capacity:** the epic adds about 73 points across S2–S5. If the team falls behind, keep TOP-01/03/04/05/06/07/08/10/12/14 (a working isolated workspace) and move TOP-09, TOP-13 progress bars and TOP-15 polish to S6.
+**Capacity:** the epic adds about 89 points across S2–S6 (16 of them for encryption). If the team falls behind, keep TOP-01/03/04/05/06/07/08/10/12/14 plus the encryption core TOP-19/20/21 (a working, isolated and encrypted workspace) and move TOP-09, TOP-13 progress bars, TOP-15 polish and TOP-22 to S6.
