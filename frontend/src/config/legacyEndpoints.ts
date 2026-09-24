@@ -10,6 +10,7 @@ export const legacyEndpoints = {
   ingest: () => `${base()}/ingest`,
   generate: () => `${base()}/generate`,
   status: (jobId: string) => `${base()}/status/${e(jobId)}`,
+  models: () => `${base()}/models`,
   exportPdf: () => `${base()}/export`,
   tests: (userId: string) => `${base()}/tests?user_id=${e(userId)}`,
   download: (testId: string) => `${base()}/tests/download/${e(testId)}`,

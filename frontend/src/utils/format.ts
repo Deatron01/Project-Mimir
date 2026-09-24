@@ -29,3 +29,19 @@ export function formatRelative(iso: string, lang = 'hu', now = Date.now()): stri
 }
 
 export const daysUntil = (iso: string, now = Date.now()): number => Math.ceil((Date.parse(iso) - now) / 86_400_000);
+
+/**
+ * Minutes and seconds for a wait estimate; above a minute rounded to 5 s so the text does not jitter.
+ * Format with the `progress.duration.*` translations.
+ */
+export function splitDuration(seconds: number): { m: number; s: number } {
+  const total = Math.max(0, Math.round(seconds));
+  const rounded = total < 60 ? total : Math.round(total / 5) * 5;
+  return { m: Math.floor(rounded / 60), s: rounded % 60 };
+}
+
+/** Stopwatch style, e.g. "1:05". */
+export function formatClock(seconds: number): string {
+  const total = Math.max(0, Math.floor(seconds));
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+}

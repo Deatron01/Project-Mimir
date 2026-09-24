@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Paperclip, Loader2, FileText, Download, Bot, User, X, ShieldCheck } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Send, Paperclip, Loader2, FileText, Download, Bot, User, X, ShieldCheck, Cloud, HardDrive } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../../utils/cn';
@@ -9,9 +10,13 @@ import { legacyEndpoints as endpoints } from '../../config/legacyEndpoints';
 import TestEditor, { type EditableExam } from '../../components/tests/TestEditor';
 import type { Exam } from '../../api/types';
 import useDocumentTitle from '../../hooks/useDocumentTitle';
+import GenerationProgress, { type GenerationPhase, type ServerJobStatus } from '../../components/generation/GenerationProgress';
+import ModelSelect, { AUTO_MODEL, loadModel, locationOf, storeModel, validModel, type ModelList } from '../../components/generation/ModelSelect';
 
-const POLL_INTERVAL_MS = 3000;
+const POLL_INTERVAL_MS = 2000;
 const POLL_TIMEOUT_MS = 10 * 60 * 1000;
+/** Used until the backend has timed a few jobs (or when it is too old to report estimates). */
+const DEFAULT_GENERATION_S = 60;
 
 /** Error that carries a translation key, so messages follow the UI language. */
 class ChatError extends Error {
@@ -25,6 +30,10 @@ class ChatError extends Error {
 const postJson = (url: string, body: unknown) =>
   fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
 
+/** Legacy result metadata (model, date, AI disclosure); passed through to the PDF export. */
+type ExamMetadata = Record<string, unknown> & { model_used?: string; processing_location?: 'external' | 'local'; is_fallback?: boolean };
+type LegacyExam = EditableExam & { metadata?: ExamMetadata };
+
 interface ChatMessage {
   id: number;
   role: 'user' | 'ai';
@@ -32,9 +41,24 @@ interface ChatMessage {
   content?: string;
   attachedFile?: string | null;
   isError?: boolean;
+  isInfo?: boolean;
   needsReview?: boolean;
-  resultData?: EditableExam;
+  resultData?: LegacyExam;
   pdfUrl?: string;
+}
+
+/** Models offered by the backend (GET /models). Older backends without it: no selector, default behaviour. */
+function useLegacyModels() {
+  return useQuery({
+    queryKey: ['legacy-models'],
+    queryFn: async (): Promise<ModelList> => {
+      const res = await fetch(endpoints.models());
+      if (!res.ok) throw new Error(String(res.status));
+      return (await res.json()) as ModelList;
+    },
+    retry: false,
+    staleTime: 60_000,
+  });
 }
 
 /** Pre-topic chat flow for the old backend (apiMode = 'legacy'). Replaced by the topic workspace in v1 mode. */
@@ -48,6 +72,16 @@ export default function LegacyChat() {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [statusKey, setStatusKey] = useState('');
+  // Generation progress (loader with steps and a time estimate).
+  const [phase, setPhase] = useState<GenerationPhase | null>(null);
+  const [serverJob, setServerJob] = useState<ServerJobStatus | null>(null);
+  const [startedAt, setStartedAt] = useState(0);
+  const [expectedGenS, setExpectedGenS] = useState(DEFAULT_GENERATION_S);
+  const cancelRef = useRef(false);
+  const models = useLegacyModels();
+  const [model, setModel] = useState(loadModel);
+  const chosenModel = validModel(models.data, model);
+  const where = locationOf(models.data, chosenModel);
   // GDPR: explicit confirmation before a document is uploaded (reset for every new file).
   const [consent, setConsent] = useState(false);
   const [consentError, setConsentError] = useState(false);
@@ -57,7 +91,21 @@ export default function LegacyChat() {
   useEffect(() => {
     const el = chatContainerRef.current;
     el?.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-  }, [messages, isLoading, statusKey]);
+  }, [messages, isLoading, statusKey, phase]);
+
+  // Finished while the user was in another tab: say so in the tab title until they come back.
+  const notifyIfHidden = () => {
+    if (!document.hidden) return;
+    const previous = document.title;
+    document.title = t('progress.readyTitle');
+    const back = () => {
+      if (!document.hidden) {
+        document.title = previous;
+        document.removeEventListener('visibilitychange', back);
+      }
+    };
+    document.addEventListener('visibilitychange', back);
+  };
 
   const addMessage = (msg: Omit<ChatMessage, 'id'>) => setMessages((prev) => [...prev, { id: Date.now() + Math.random(), ...msg }]);
 
@@ -83,18 +131,26 @@ export default function LegacyChat() {
     addMessage({ role: 'user', content: prompt, attachedFile: file?.name ?? null });
     setInput('');
     setIsLoading(true);
+    cancelRef.current = false;
+    setServerJob(null);
+    setStartedAt(Date.now());
+    setExpectedGenS(models.data?.estimates_s?.[where ?? 'external'] ?? DEFAULT_GENERATION_S);
+    const stopIfCancelled = () => {
+      if (cancelRef.current) throw new ChatError('chat.errors.cancelled');
+    };
 
     try {
       if (!file) throw new ChatError('chat.errors.noFile');
 
-      setStatusKey('chat.status.extracting');
+      setPhase('extracting');
       const formData = new FormData();
       formData.append('file', file);
       const wellRes = await fetch(endpoints.extract(), { method: 'POST', body: formData });
       if (!wellRes.ok) throw new ChatError('chat.errors.extract');
       const wellData = await wellRes.json();
+      stopIfCancelled();
 
-      setStatusKey('chat.status.chunking');
+      setPhase('chunking');
       const runeRes = await postJson(endpoints.chunk(), {
         filename: file.name,
         extension: file.name.split('.').pop(),
@@ -102,25 +158,34 @@ export default function LegacyChat() {
       });
       if (!runeRes.ok) throw new ChatError('chat.errors.chunk');
       const runeData = await runeRes.json();
+      stopIfCancelled();
 
-      setStatusKey('chat.status.indexing');
+      setPhase('indexing');
       const ingestRes = await postJson(endpoints.ingest(), { chunks: runeData.chunks });
       if (!ingestRes.ok) throw new ChatError('chat.errors.ingest');
+      stopIfCancelled();
 
-      setStatusKey('chat.status.generating');
-      const genRes = await postJson(endpoints.generate(), { query: prompt, limit: 3 });
+      setPhase('generating');
+      const genRes = await postJson(endpoints.generate(), {
+        query: prompt,
+        limit: 3,
+        ...(models.data && chosenModel !== AUTO_MODEL ? { model: chosenModel } : {}),
+      });
       if (!genRes.ok) throw new ChatError('chat.errors.start');
-      const { job_id: jobId } = await genRes.json();
+      const gen = (await genRes.json()) as { job_id: string; expected_total_s?: number };
+      if (gen.expected_total_s) setExpectedGenS(gen.expected_total_s);
 
-      // Poll the job until it completes, fails or times out.
+      // Poll the job until it completes, fails or times out; every answer refreshes the estimate.
       const started = Date.now();
-      let result: EditableExam | null = null;
+      let result: LegacyExam | null = null;
       while (!result) {
         if (Date.now() - started > POLL_TIMEOUT_MS) throw new ChatError('chat.errors.generate');
         await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
-        const statusRes = await fetch(endpoints.status(jobId));
+        stopIfCancelled();
+        const statusRes = await fetch(endpoints.status(gen.job_id));
         if (!statusRes.ok) continue;
         const statusData = await statusRes.json();
+        setServerJob({ ...statusData, receivedAt: Date.now() });
         if (statusData.status === 'completed') result = statusData.data;
         else if (statusData.status === 'failed') throw new ChatError('chat.errors.generate', statusData.error);
       }
@@ -128,24 +193,35 @@ export default function LegacyChat() {
       // Human-in-the-loop review before export (EU AI Act art. 14).
       addMessage({ role: 'ai', key: 'chat.ready', needsReview: true, resultData: result });
       clearFile();
+      notifyIfHidden();
     } catch (err) {
-      addMessage({ role: 'ai', content: errorText(err), isError: true });
+      if (err instanceof ChatError && err.key === 'chat.errors.cancelled') addMessage({ role: 'ai', key: err.key, isInfo: true });
+      else addMessage({ role: 'ai', content: errorText(err), isError: true });
     } finally {
       setIsLoading(false);
       setStatusKey('');
+      setPhase(null);
+      setServerJob(null);
     }
+  };
+
+  const changeModel = (id: string) => {
+    setModel(id);
+    storeModel(id);
   };
 
   const handleApprove = async (messageId: number, editedData: Exam, { save = false }: { save?: boolean } = {}) => {
     setIsLoading(true);
     setStatusKey('chat.status.exporting');
     try {
-      const skaldRes = await postJson(endpoints.exportPdf(), { ...editedData, user_id: user?.email, save });
+      // Keep the generation metadata: the PDF prints it as the AI disclosure (AI Act art. 50).
+      const metadata = messages.find((m) => m.id === messageId)?.resultData?.metadata;
+      const skaldRes = await postJson(endpoints.exportPdf(), { ...editedData, metadata, user_id: user?.email, save });
       if (!skaldRes.ok) throw new ChatError('chat.errors.export');
       const pdfUrl = URL.createObjectURL(await skaldRes.blob());
       setMessages((prev) =>
         prev.map((msg) =>
-          msg.id === messageId ? { ...msg, needsReview: false, key: 'chat.approved', resultData: editedData, pdfUrl } : msg,
+          msg.id === messageId ? { ...msg, needsReview: false, key: 'chat.approved', resultData: { ...editedData, metadata }, pdfUrl } : msg,
         ),
       );
     } catch (err) {
@@ -204,6 +280,17 @@ export default function LegacyChat() {
 
                 <p className="whitespace-pre-wrap text-sm leading-relaxed md:text-base">{msg.key ? t(msg.key) : msg.content}</p>
 
+                {msg.resultData?.metadata?.model_used && !msg.resultData.metadata.is_fallback && (
+                  <p className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-background/50 px-2.5 py-1 text-xs text-muted">
+                    {msg.resultData.metadata.processing_location === 'local' ? (
+                      <HardDrive size={12} aria-hidden="true" />
+                    ) : (
+                      <Cloud size={12} aria-hidden="true" />
+                    )}
+                    {t('models.madeWith', { model: msg.resultData.metadata.model_used })}
+                  </p>
+                )}
+
                 {msg.needsReview && (
                   <div className="mt-4">
                     <TestEditor
@@ -231,7 +318,26 @@ export default function LegacyChat() {
           );
         })}
 
-        {isLoading && (
+        {isLoading && phase && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex w-full max-w-xl gap-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-primary/30 bg-primary/20 text-accent">
+              <Bot size={20} aria-hidden="true" />
+            </div>
+            <div className="w-full rounded-2xl rounded-tl-none border border-border/50 bg-surface/50 p-4 shadow-md backdrop-blur-md">
+              <GenerationProgress
+                phase={phase}
+                job={serverJob}
+                startedAt={startedAt}
+                expectedGenS={expectedGenS}
+                onCancel={() => {
+                  cancelRef.current = true;
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+
+        {isLoading && !phase && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex max-w-[85%] gap-4" role="status">
             <div className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/30 bg-primary/20 text-accent">
               <Loader2 size={20} className="animate-spin" aria-hidden="true" />
@@ -281,7 +387,11 @@ export default function LegacyChat() {
             <p id="consent-details" className="mt-2 flex items-start gap-2 pl-6">
               <ShieldCheck size={14} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
               <span>
-                {t('chat.consent.details')}{' '}
+                {where === 'local'
+                  ? t('chat.consent.detailsLocal')
+                  : where === 'external'
+                    ? t('chat.consent.detailsExternal')
+                    : t('chat.consent.details')}{' '}
                 <Link to="/privacy" className="font-medium text-accent underline-offset-2 hover:underline">
                   {t('chat.consent.more')}
                 </Link>
@@ -292,6 +402,12 @@ export default function LegacyChat() {
                 {t('chat.consent.required')}
               </p>
             )}
+          </div>
+        )}
+
+        {models.data && (
+          <div className="w-full px-2">
+            <ModelSelect list={models.data} value={chosenModel} onChange={changeModel} disabled={isLoading} id="legacy-model" />
           </div>
         )}
 

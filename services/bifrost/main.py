@@ -1,16 +1,16 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import torch
 from transformers import AutoTokenizer, AutoModel
 from vector_db import RAGVectorStore
 from prompts import build_naive_prompt
+from jobs import JobStore
 import os
 import json
 import httpx
 import uuid
-import time
 import hashlib
 from dotenv import load_dotenv
 from datetime import datetime
@@ -46,16 +46,26 @@ JOB_TTL_SECONDS = int(os.getenv("JOB_TTL_SECONDS", "3600"))
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:7b")
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://host.docker.internal:11434/api/generate")
 
-generation_jobs = {}
-_job_created_at = {}
+GENAI_URL = "https://genai.uni-obuda.hu/api/chat/completions"
+# A szerveren elérhető modellek változnak (2026-09: a Qwen3.5-122B és a nemotron már nincs fent,
+# lásd GET /api/models). Sorrend: GENAI_MODELS env, vesszővel elválasztva.
+GENAI_MODELS = [m.strip() for m in os.getenv("GENAI_MODELS", "gpt-oss:120b,Qwen3.8-Flash-Next").split(",") if m.strip()]
+LOCAL_MODEL_ID = "local"
+
+# Feladatok: állapot, szakasz, előrehaladás, becsült hátralévő idő (a lejárt eredményeket eldobja).
+jobs = JobStore(ttl_seconds=JOB_TTL_SECONDS)
 
 
-def _purge_expired_jobs():
-    """Eldobja a lejárt feladateredményeket (bennük a generált kérdésekkel)."""
-    cutoff = time.time() - JOB_TTL_SECONDS
-    for job_id in [j for j, t in _job_created_at.items() if t < cutoff]:
-        generation_jobs.pop(job_id, None)
-        _job_created_at.pop(job_id, None)
+def _external_available() -> bool:
+    return bool(os.getenv("OE_GENAI_API_KEY")) and not LOCAL_ONLY
+
+
+def _extract_json(raw: str) -> dict:
+    cleaned = raw.replace('```json', '').replace('```', '').strip()
+    start, end = cleaned.find('{'), cleaned.rfind('}')
+    if start != -1 and end != -1:
+        cleaned = cleaned[start:end + 1]
+    return json.loads(cleaned)
 
 
 def _purge_document_data():
@@ -80,6 +90,9 @@ class GenerateRequest(BaseModel):
     query: str
     limit: int = 3
     format: str = "pdf"
+    # None / "auto": a szerver modelljei sorban, majd helyi tartalék; "local": csak helyi Ollama;
+    # egy GENAI_MODELS-beli név: azzal kezd (FE-11 modellválasztó). Lista: GET /api/v1/models
+    model: Optional[str] = None
 
 def _get_embeddings(texts: List[str], is_query=False):
     prefix = "query: " if is_query else "passage: "
@@ -112,11 +125,12 @@ async def _run_generation(job_id: str, request: GenerateRequest):
     """Ez a függvény a háttérben fut, és nem blokkolja a webszervert."""
     try:
         # 1. Keresés a Qdrantban
+        jobs.stage(job_id, "retrieving")
         query_vector = _get_embeddings([request.query], is_query=True)[0]
         results = vector_store.search(query_vector, limit=request.limit)
         
         if not results:
-            generation_jobs[job_id] = {"status": "failed", "error": "Nem található releváns kontextus."}
+            jobs.fail(job_id, "Nem található releváns kontextus.")
             return
             
         # 2. Kontextus összeállítása
@@ -126,25 +140,26 @@ async def _run_generation(job_id: str, request: GenerateRequest):
         prompt = build_naive_prompt(context_text, request.query, request.format)
         
         # 4. Hívás az Óbudai Egyetem GenAI szerveréhez (Modell lista iterációja)
-        genai_url = "https://genai.uni-obuda.hu/api/chat/completions"
         api_key = os.getenv("OE_GENAI_API_KEY")
-        
-        # A szerveren elérhető modellek változnak (2026-09: a Qwen3.5-122B és a nemotron már nincs fent,
-        # lásd GET /api/models). Sorrend: GENAI_MODELS env, vesszővel elválasztva.
-        models_to_try = [m.strip() for m in os.getenv("GENAI_MODELS", "gpt-oss:120b,Qwen3.8-Flash-Next").split(",") if m.strip()]
+        models_to_try = list(GENAI_MODELS)
+        if request.model and request.model in GENAI_MODELS:   # a választott modell az első
+            models_to_try.remove(request.model)
+            models_to_try.insert(0, request.model)
+        use_external = _external_available() and request.model != LOCAL_MODEL_ID
         
         genai_success = False
 
-        if api_key and not LOCAL_ONLY:
+        if use_external:
             async with httpx.AsyncClient(proxy=None, trust_env=False) as client:
                 for model_name in models_to_try:
                     try:
                         print(f"🔄 Próbálkozás a '{model_name}' modellel (Job ID: {job_id}) STREAMING módban...")
+                        jobs.stage(job_id, "generating", model=model_name, location="external")
                         llm_response = ""
                         
                         async with client.stream(
                             "POST",
-                            genai_url,
+                            GENAI_URL,
                             headers={
                                 "Authorization": f"Bearer {api_key}",
                                 "Content-Type": "application/json"
@@ -172,32 +187,29 @@ async def _run_generation(job_id: str, request: GenerateRequest):
                                         chunk = data_json.get("choices", [{}])[0].get("delta", {}).get("content", "")
                                         if chunk:
                                             llm_response += chunk
+                                            jobs.generating(job_id, len(llm_response))
                                     except json.JSONDecodeError:
                                         continue
 
                         if not llm_response or llm_response.strip() == "":
                             raise ValueError("Üres válasz érkezett a stream végén.")
 
-                        # Tisztítás
-                        cleaned_response = llm_response.replace('```json', '').replace('```', '').strip()
-                        start = cleaned_response.find('{')
-                        end = cleaned_response.rfind('}')
-                        if start != -1 and end != -1:
-                            cleaned_response = cleaned_response[start:end+1]
-                        
-                        generated_json = json.loads(cleaned_response)
+                        generated_json = _extract_json(llm_response)
+                        cleaned_response = json.dumps(generated_json, ensure_ascii=False)
                         print(f"✅ Sikeres generálás a '{model_name}' modellel!")
                         
+                        jobs.stage(job_id, "validating")
                         await send_audit_log(job_id, request.query, prompt, context_text, model_name, cleaned_response)
                         
                         generated_json["metadata"] = {
                             "model_used": model_name,
+                            "processing_location": "external",
                             "tokens_generated": "Streamed", 
                             "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                             "system_prompt_version": "v1.0"
                         }
                         
-                        generation_jobs[job_id] = {"status": "completed", "data": generated_json}
+                        jobs.complete(job_id, generated_json)
                         genai_success = True
                         break # Ha sikerült, kilép a for ciklusból
                         
@@ -207,16 +219,19 @@ async def _run_generation(job_id: str, request: GenerateRequest):
                         
         # 5. Lokális Ollama Fallback (Csak akkor fut le, ha a GenAI_success False maradt)
         if not genai_success:
-            print(f"⚠️ Az összes külső szerveres modell elhasalt vagy nincs API kulcs. Próbálkozás lokális Ollama-val ({OLLAMA_MODEL})...")
+            print(f"⚠️ Külső modell nem használható vagy hibázott. Lokális Ollama ({OLLAMA_MODEL})...")
+            jobs.stage(job_id, "generating", model=OLLAMA_MODEL, location="local")
             try:
-                ollama_url = OLLAMA_URL
+                raw_content = ""
                 async with httpx.AsyncClient(trust_env=False) as client:
-                    ollama_response = await client.post(
-                        ollama_url,
+                    # Streaming: a generált karakterek száma adja az előrehaladást.
+                    async with client.stream(
+                        "POST",
+                        OLLAMA_URL,
                         json={
                             "model": OLLAMA_MODEL,
                             "prompt": prompt,
-                            "stream": False,
+                            "stream": True,
                             "format": "json",
                             "options": {
                                 "num_ctx": 16384,
@@ -224,32 +239,38 @@ async def _run_generation(job_id: str, request: GenerateRequest):
                             }
                         },
                         timeout=300.0
-                    )
-                    
-                    if ollama_response.status_code == 200:
-                        raw_content = ollama_response.json().get("response", "")
-                        cleaned_local = raw_content.replace('```json', '').replace('```', '').strip()
-                        start = cleaned_local.find('{')
-                        end = cleaned_local.rfind('}')
-                        if start != -1 and end != -1:
-                            cleaned_local = cleaned_local[start:end+1]
-                        
-                        local_json = json.loads(cleaned_local)
-                        print(f"✅ Sikeres generálás lokális Ollama ({OLLAMA_MODEL}) modellel!")
-                        
-                        await send_audit_log(job_id, request.query, prompt, context_text, f"{OLLAMA_MODEL} (local fallback)", cleaned_local)
-                        
-                        local_json["metadata"] = {
-                            "model_used": f"{OLLAMA_MODEL} (local fallback)", 
-                            "tokens_generated": "N/A", 
-                            "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                            "system_prompt_version": "v1.0"
-                        }
+                    ) as ollama_response:
+                        if ollama_response.status_code != 200:
+                            raise ValueError(f"Lokális hiba kód: {ollama_response.status_code}")
+                        async for line in ollama_response.aiter_lines():
+                            if not line.strip():
+                                continue
+                            try:
+                                part = json.loads(line)
+                            except json.JSONDecodeError:
+                                continue
+                            raw_content += part.get("response", "")
+                            jobs.generating(job_id, len(raw_content))
+                            if part.get("done"):
+                                break
 
-                        generation_jobs[job_id] = {"status": "completed", "data": local_json}
-                        return
-                    else:
-                        raise ValueError(f"Lokális hiba kód: {ollama_response.status_code}")
+                local_json = _extract_json(raw_content)
+                cleaned_local = json.dumps(local_json, ensure_ascii=False)
+                print(f"✅ Sikeres generálás lokális Ollama ({OLLAMA_MODEL}) modellel!")
+                
+                jobs.stage(job_id, "validating")
+                await send_audit_log(job_id, request.query, prompt, context_text, f"{OLLAMA_MODEL} (local fallback)", cleaned_local)
+                
+                local_json["metadata"] = {
+                    "model_used": f"{OLLAMA_MODEL} (local fallback)", 
+                    "processing_location": "local",
+                    "tokens_generated": "N/A", 
+                    "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "system_prompt_version": "v1.0"
+                }
+
+                jobs.complete(job_id, local_json)
+                return
             except Exception as e:
                 print(f"❌ Lokális fallback is sikertelen: {str(e)}")
 
@@ -272,10 +293,10 @@ async def _run_generation(job_id: str, request: GenerateRequest):
                              "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
             }
             await send_audit_log(job_id, request.query, prompt, context_text, "fallback_hardcoded", json.dumps(fallback_json))
-            generation_jobs[job_id] = {"status": "completed", "data": fallback_json}
+            jobs.complete(job_id, fallback_json, record=False)
 
     except Exception as e:
-        generation_jobs[job_id] = {"status": "failed", "error": f"Váratlan hiba történt a generálás során: {str(e)}"}
+        jobs.fail(job_id, f"Váratlan hiba történt a generálás során: {str(e)}")
 
 # --- Végpontok ---
 @app.get("/health")
@@ -312,23 +333,40 @@ async def search_knowledge(request: SearchRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Keresési hiba: {str(e)}")
 
+@app.get("/api/v1/models")
+async def list_models():
+    """FE-11 / BIF-09: választható modellek és a várható generálási idő. Helyi modell mindig van;
+    a szerver modelljei csak akkor, ha van API kulcs és nincs LOCAL_ONLY (GDPR-06)."""
+    external = _external_available()
+    models = [{"id": m, "label": m, "location": "external"} for m in GENAI_MODELS] if external else []
+    models.append({"id": LOCAL_MODEL_ID, "label": OLLAMA_MODEL, "location": "local"})
+    return {"local_only": LOCAL_ONLY, "external_available": external, "default": "auto",
+            "models": models, "estimates_s": jobs.estimates()}
+
+
 @app.post("/api/v1/generate")
 async def start_generation(request: GenerateRequest, background_tasks: BackgroundTasks):
     """Azonnal visszaad egy Job ID-t, a generálás a háttérben indul."""
-    _purge_expired_jobs()
+    if request.model not in (None, "", "auto", LOCAL_MODEL_ID) and request.model not in GENAI_MODELS:
+        raise HTTPException(status_code=400, detail={"code": "MODEL_UNAVAILABLE"})
+    if request.model in GENAI_MODELS and not _external_available():
+        raise HTTPException(status_code=400, detail={"code": "EXTERNAL_DISABLED"})
     job_id = str(uuid.uuid4())
-    generation_jobs[job_id] = {"status": "processing"}
-    _job_created_at[job_id] = time.time()
+    location = "external" if _external_available() and request.model != LOCAL_MODEL_ID else "local"
+    job = jobs.create(job_id, location)
     background_tasks.add_task(_process_generation, job_id, request)
-    return {"status": "success", "job_id": job_id}
+    return {"status": "success", "job_id": job_id, "expected_total_s": job["expected_total_s"],
+            "location": location}
 
 @app.get("/api/v1/status/{job_id}")
 async def get_generation_status(job_id: str):
-    """A frontend ezen a végponton tudja lekérdezni, hogy kész van-e a feladat."""
-    _purge_expired_jobs()
-    if job_id not in generation_jobs:
+    """Állapot, szakasz (queued/retrieving/generating/validating/done), előrehaladás (0..1),
+    eltelt és becsült hátralévő idő másodpercben."""
+    jobs.purge_expired()
+    job = jobs.public(job_id)
+    if job is None:
         raise HTTPException(status_code=404, detail="Feladat nem található.")
-    return generation_jobs[job_id]
+    return job
 
 
 async def send_audit_log(job_id: str, user_query: str, prompt: str, context: str, model_name: str, generated_content: str):

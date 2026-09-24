@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import SegmentedControl from '../ui/SegmentedControl';
+import ModelSelect, { AUTO_MODEL, validModel } from '../generation/ModelSelect';
+import { useModels } from '../../api/hooks/models';
 import type { GenerationOptions, QuestionType, TopicFile } from '../../api/types';
 
 export const OPTIONS_KEY = 'mimir-gen-options';
@@ -39,6 +41,7 @@ export default function GenerationOptionsForm({
   disabled?: boolean;
 }) {
   const { t } = useTranslation();
+  const models = useModels();
   const set = (patch: Partial<GenerationOptions>) => onChange({ ...value, ...patch });
   const toggleType = (type: QuestionType) => {
     const types = value.types.includes(type) ? value.types.filter((x) => x !== type) : [...value.types, type];
@@ -134,6 +137,17 @@ export default function GenerationOptionsForm({
         />
         <p className="mt-1 text-xs text-muted">{t(`generate.modeHint.${value.mode}`)}</p>
       </div>
+
+      {models.data && (
+        <div className="sm:col-span-2">
+          <ModelSelect
+            id="gen-model"
+            list={models.data}
+            value={validModel(models.data, value.model ?? AUTO_MODEL)}
+            onChange={(model) => set({ model: model === AUTO_MODEL ? undefined : model })}
+          />
+        </div>
+      )}
 
       {readyFiles.length > 1 && (
         <div className="sm:col-span-2">

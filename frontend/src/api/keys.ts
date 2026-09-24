@@ -12,5 +12,6 @@ export const qk = {
   test: (topicId: string, testId: string) => ['topic', topicId, 'test', testId] as const,
   savedTests: ['tests', 'saved'] as const,
   activeJobs: ['jobs', 'active'] as const,
+  models: ['models'] as const,
   job: (jobId: string) => ['job', jobId] as const,
 };

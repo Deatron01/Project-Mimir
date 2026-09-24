@@ -34,7 +34,7 @@ Ez a belső dokumentáció tartalmazza mindazt, amire a Mimir üzemeltetőjének
 
 Következmények:
 
-- Intézményi használathoz **adatfeldolgozói szerződés** (28. cikk) kell az intézmény és az üzemeltető között. A szerződésminta tervezett (GDPR-08, #80).
+- Intézményi használathoz **adatfeldolgozói szerződés** (28. cikk) kell az intézmény és az üzemeltető között. A szerződésminta tervezete: [dpa-template.hu.md](dpa-template.hu.md) (használat előtt jogi átvizsgálás szükséges; GDPR-08, #80).
 - Ha a Mimirt maga az Óbudai Egyetem üzemelteti, az egyetem az adatkezelő, a GenAI szolgáltatás pedig belső szolgáltatás; ekkor az 5. pont ennek megfelelően módosul.
 
 ## 2. Adatleltár
@@ -50,7 +50,8 @@ Következmények:
 | Mentett tesztek | Skald tárhely (PDF + SQLite sor a tulajdonos e-mail címével) | Igen |
 | MI működési napló | Postgres `audit_logs` (csak lenyomatok és metaadatok) | Álnevesített (feladatazonosító) |
 | Szervernaplók | Nginx és a konténerek kimenete | Igen (rövidített IP) |
-| Böngészőtár: `mimir-theme`, `mimir-lang`, `mimir_user` | A felhasználó saját böngészője | A `mimir_user` tartalmazza az e-mail címet |
+| Feladat-időstatisztika (időtartam, szakasz, a kimenet karakterszáma) | Bifrost memória, újraindításkor elvész | Nem (tartalom és felhasználói kapcsolat nélkül) |
+| Böngészőtár: `mimir-theme`, `mimir-lang`, `mimir_user`, `mimir-gen-options`, `mimir-model` | A felhasználó saját böngészője | A `mimir_user` tartalmazza az e-mail címet |
 
 ## 3. Adatkezelési nyilvántartás (30. cikk)
 
@@ -65,7 +66,7 @@ Következmények:
 | 5 | Biztonsági naplózás | Biztonság, visszaélések felderítése | Látogatók | Rövidített IP, időpont, útvonal paraméterek nélkül, válaszkód | 6. cikk (1) f) | Tárhelyszolgáltató, Cloudflare | Cloudflare (DPF / általános szerződési feltételek) | Legfeljebb 14 nap | IP-rövidítés, lekérdezési paraméterek nélkül |
 | 6 | Kapcsolatfelvétel | Megkeresések megválaszolása | Megkeresők | Név, e-mail, üzenet | 6. cikk (1) f) / b) | E-mail szolgáltató | Nem | Lezárás után 1 év | Hozzáférés-szabályozás |
 
-A 4., 5. és 6. adatkezeléshez érdekmérlegelési teszt szükséges. Röviden: az érdekek (biztonság, szolgáltatásminőség) szükségesek, az adatok minimalizáltak (nincs tartalom, rövidített IP), a megőrzés rövid, és a felhasználók tiltakozhatnak. Indulás előtt teljes terjedelmében el kell készíteni (tervezett, GDPR-08 #80).
+A 4., 5. és 6. adatkezeléshez érdekmérlegelési teszt szükséges. Röviden: az érdekek (biztonság, szolgáltatásminőség) szükségesek, az adatok minimalizáltak (nincs tartalom, rövidített IP), a megőrzés rövid, és a felhasználók tiltakozhatnak. A teljes értékelés tervezete: [lia.hu.md](lia.hu.md) (jogi átvizsgálás szükséges; GDPR-08 #80).
 
 ## 4. Megőrzési rend és törlési mechanizmusok
 
@@ -178,7 +179,7 @@ Példa: a hitelesítés nélküli `/api/v1/tests` végpont (lásd az ütemterv a
 
 ## 11. Kapcsolódás az MI-rendelethez
 
-- **Átláthatóság (50. cikk):** a felhasználóknak tudniuk kell, hogy MI-rendszerrel dolgoznak, és hogy a kérdéseket MI generálta. **Megvalósítva:** figyelmeztetés a chatben, az adatkezelési tájékoztató 7. pontja, valamint a PDF metaadat-oldala, amely jelzi, hogy a tartalom MI-asszisztens segítségével készült.
+- **Átláthatóság (50. cikk):** a felhasználóknak tudniuk kell, hogy MI-rendszerrel dolgoznak, és hogy a kérdéseket MI generálta. **Megvalósítva:** figyelmeztetés a chatben, az adatkezelési tájékoztató 7. pontja, valamint a PDF metaadat-oldala, amely jelzi, hogy a tartalom MI-asszisztens segítségével készült, és melyik modell írta. A szerkesztő minden eredménynél kiírja a modellt. (2026-09-24-én javítva: a régi chat exportja elhagyta ezeket a metaadatokat, így a PDF-ben nem volt ilyen oldal.)
 - **Emberi felügyelet:** a szerkesztő kötelező ellenőrzési lépést iktat be az exportálás elé. **Megvalósítva.**
 - **Kockázati besorolás:** a III. melléklet szerint az oktatásban a *tanulási eredmények értékelésére* vagy a *tanulási folyamat irányítására* használt MI **magas kockázatú**. A tanárok által teljes egészében ellenőrzött tesztek *generálása* ezen kívül esik, de **a diákválaszok automatikus pontozása magas kockázatú kategóriába sorolná a Mimirt**. Pontozási funkciót csak új értékelés után szabad bevezetni.
 - **Naplózás:** a csak metaadatot tartalmazó működési napló tartalom tárolása nélkül biztosítja a nyomonkövethetőséget.
@@ -197,6 +198,7 @@ Példa: a hitelesítés nélküli `/api/v1/tests` végpont (lásd az ütemterv a
 | Mentett tesztek megőrzése (12 hónap) | Skald | Megvalósítva | GDPR-03 #75 |
 | Hozzáférési napló: paraméterek nélkül, rövidített IP-vel | Nginx | Megvalósítva | GDPR-05 #77 |
 | Helyi mód (külső MI nélkül) | Bifrost, Heimdall, Wellspring, compose | Megvalósítva (alapból kikapcsolva) | GDPR-06 #78 |
+| A feldolgozás helye minden feltöltés előtt látható; választható a helyi modell; a szervermodellek „az adat elhagyja ezt a szervert” jelzést kapnak | Chat oldal, generálási beállítások, Bifrost `GET /api/v1/models` | Megvalósítva | GDPR-06 #78, FE-11 |
 | Tárolt felhasználói adatok kivétele a git-követésből | `.gitignore`, `git rm --cached` | Megvalósítva | PLT-01 #1 |
 | A git-történet újraírása a régi felhasználói adatok eltávolításához | Repó | Tervezett (csapatszintű egyeztetés és force push kell) | PLT-01 #1 |
 | Valódi hitelesítés és tulajdonos-ellenőrzés | Auth szolgáltatás, gateway, Skald | Tervezett | GW-01 #8, GW-02 #9, SKA-02 #45 |
@@ -213,8 +215,10 @@ Példa: a hitelesítés nélküli `/api/v1/tests` végpont (lásd az ütemterv a
 | Kriptográfiai törlés a témakör törlésekor; kulcsmentések legfeljebb 7 napig | Adatvédelem | Tervezett | TOP-21 #125 |
 | Titkosított kötetek és kulcskezelési üzemeltetési leírás | Üzemeltetés | Tervezett | TOP-23 #127 |
 | Tájékoztató és dokumentáció frissítése a témakörökhöz | Dokumentáció | Tervezett (a témakörök kiadása előtt) | TOP-17 #121 |
-| Adatfeldolgozói szerződések (tárhely, egyetem, e-mail) és intézményi szerződésminta | Jogi | Tervezett | R6 #98, GDPR-08 #80 |
-| Érdekmérlegelési teszt, teljes hatásvizsgálat a bevezetés előtt | Jogi | Tervezett | GDPR-08 #80 |
+| Adatfeldolgozói szerződések (tárhely, egyetem, e-mail) | Jogi | Tervezett | R6 #98 |
+| Intézményi adatfeldolgozói szerződésminta | Jogi | Tervezet kész, jogi átvizsgálás szükséges ([dpa-template.hu.md](dpa-template.hu.md)) | GDPR-08 #80 |
+| Érdekmérlegelési teszt | Jogi | Tervezet kész, jogi átvizsgálás szükséges ([lia.hu.md](lia.hu.md)) | GDPR-08 #80 |
+| Teljes hatásvizsgálat a bevezetés előtt | Jogi | Tervezett | GDPR-08 #80 |
 | Naplórotáció | `docker-compose.yml` (konténerenként 10 MB × 3); 14 napos időkorlát a szerveren | Részben megvalósítva | GDPR-05 #77 |
 
 ## 13. Még kitöltendő mezők

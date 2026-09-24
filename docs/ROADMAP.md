@@ -158,7 +158,7 @@ Full UX plan in section 7; tasks here for the board.
 | [FE-08](https://github.com/Deatron01/Project-Mimir/issues/57) | Theme system: light/dark per palette | P1 | 5 | See section 7 |
 | [FE-09](https://github.com/Deatron01/Project-Mimir/issues/58) | Accessibility pass (WCAG 2.2 AA) | P1 | 3 | axe: 0 serious violations |
 | [FE-10](https://github.com/Deatron01/Project-Mimir/issues/59) | Privacy UX: consent on upload, retention notice, "delete my data" button | P0 | 2 | Linked to GDPR tasks |
-| FE-11 (no issue yet) | Model selector in the generation settings (see section 7, "Model selector") | P1 | 3 | Selected model is sent with the request and shown in the exam metadata and export |
+| FE-11 (no issue yet) | ✅ Done 2026-09-24: Model selector in the generation settings (see section 7, "Model selector") | P1 | 3 | Selected model is sent with the request and shown in the exam metadata and export |
 
 ### Topic workspace (TOP)
 
@@ -539,7 +539,9 @@ Today each palette is one dark set of 6 hex values injected as CSS variables. Cl
 | [FE-UX-05](https://github.com/Deatron01/Project-Mimir/issues/92) | Usability test with 5 teachers (think-aloud, task success, SUS score ≥ 75) | P1 | 3 | S5 |
 | FE-UX-06 (= FE-11) | Model selector (depends on BIF-09, GW public API update) | P1 | 3 | S5 |
 
-#### Model selector (FE-11, BIF-09) - planned, not implemented
+#### Model selector (FE-11, BIF-09) - implemented 2026-09-24
+
+Status: Bifrost serves `GET /api/v1/models` and accepts `model` on `/generate`; the old chat (production) and the v1 workspace (mock API) show the selector, the data-location badge, and the model on each result and in the PDF. Differences from the plan below: the choice is remembered per browser, not per topic; instead of a separate confirmation dialog, the upload consent text names where the document will be processed (it must be ticked for every upload). Generation also reports stage, progress and a remaining-time estimate (`GET /api/v1/status/{job_id}`).
 
 Teachers and the evaluation team need to choose which LLM writes an exam, so results from different models can be compared on the same document without editing config files.
 
