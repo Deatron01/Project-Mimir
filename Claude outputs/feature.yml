@@ -1,0 +1,45 @@
+name: Feature / task
+description: A planned piece of work from the roadmap or a new feature idea.
+title: "[MODULE-NN] "
+labels: ["type:feature"]
+body:
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module
+      options: [Platform, Gateway, Wellspring, RuneCarver, Bifrost, Heimdall, Forge, Skald, Frontend, Shared, AI Core, Privacy]
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options: ["P0 blocker", "P1 must", "P2 should", "P3 nice"]
+    validations:
+      required: true
+  - type: textarea
+    id: task
+    attributes:
+      label: Task
+      description: What needs to be built and why.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      value: |
+        - [ ] 
+        - [ ] Tests added / updated, CI green
+        - [ ] Docs / ADR updated if behaviour or architecture changed
+    validations:
+      required: true
+  - type: input
+    id: estimate
+    attributes:
+      label: Estimate (story points 1/2/3/5/8)
+  - type: textarea
+    id: context
+    attributes:
+      label: Context / dependencies
+      description: Roadmap section, related issues (#NN), links.

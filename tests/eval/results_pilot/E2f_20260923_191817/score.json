@@ -1,0 +1,15 @@
+{
+  "scored": "2026-09-23T21:44:35",
+  "embedder": "intfloat/multilingual-e5-base",
+  "judge": {
+    "provider": "genai",
+    "model": "gpt-oss:120b",
+    "temperature": 0.0,
+    "num_ctx": 16384,
+    "prompt_version": "judge-v1"
+  },
+  "judge_calls": 0,
+  "n_exams": 3,
+  "n_ok": 3,
+  "n_questions": 30
+}
