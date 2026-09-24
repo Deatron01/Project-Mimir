@@ -40,3 +40,7 @@ Thumbs.db
 # === GDPR: felhasználói adatok soha ne kerüljenek a gitbe ===
 services/skald/storage/
 *.db
+
+
+.Claude output
+.Claude output/
