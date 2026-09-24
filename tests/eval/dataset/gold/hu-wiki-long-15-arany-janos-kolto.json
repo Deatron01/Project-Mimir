@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Arany János (költő)",
+    "nehezseg": "medium",
+    "nyelv": "hu",
+    "forras": "Hungarian Wikipedia (full article, fetched 2026-09-23): Arany János (költő); gold questions from MILQA"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Milyen élmények érték Arany Jánost 1861 után, amelyek a költészetére is kihatottak?",
+      "helyes_valasz": "Az 1860-as években a lírai költészet a Bach-korszak bukásával talaját vesztette, és Pestre költözésétől ez nála is megfigyelhető, hiszen költészete másként bontakozik ki. Az 1861–1877 közötti időszakban átélt élmények lírai megörökítése ugyan elmaradt, de egyfajta kárpótlásként lírai szövegek azért előfordulnak az Őszikék versciklusában.\nA szabadságharc utáni időkben a vallás szerepe a természettudományok fejlődésével a korábbiakhoz képest bizonyos mértékben visszaszorult. A túlvilágba vetett hit és a földöntúli élet léte megkérdőjeleződött, és így megrázó élménnyé vált a halál véglegessége. Arany átérezte korának nagy világnézeti válságát és lélektani hatását, és költészetére az is hatott, hogy az európai szabadságküzdelmek mind sorra elbuktak. A magyar szabadságharc elvesztése miatt érzett kiábrándultság és az elvesztett remény lírai költészetére is jelentős hatást gyakorolt.",
+      "evidence": [
+        "Az 1860-as években a lírai költészet a Bach-korszak bukásával talaját vesztette, és Pestre költözésétől ez nála is megfigyelhető, hiszen költészete másként bontakozik ki. Az 1861–1877 közötti időszakban átélt élmények lírai megörökítése ugyan elmaradt, de egyfajta kárpótlásként lírai szövegek azért előfordulnak az Őszikék versciklusában.\nA szabadságharc utáni időkben a vallás szerepe a természettudományok fejlődésével a korábbiakhoz képest bizonyos mértékben visszaszorult. A túlvilágba vetett hit és a földöntúli élet léte megkérdőjeleződött, és így megrázó élménnyé vált a halál véglegessége. Arany átérezte korának nagy világnézeti válságát és lélektani hatását, és költészetére az is hatott, hogy az európai szabadságküzdelmek mind sorra elbuktak. A magyar szabadságharc elvesztése miatt érzett kiábrándultság és az elvesztett remény lírai költészetére is jelentős hatást gyakorolt."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Az Arany János Színház mikor működött?",
+      "helyes_valasz": "1985–1994 között",
+      "evidence": [
+        "1985–1994 között működött Arany János Színház néven a Budapesti Gyermekszínház társulata a Paulay Ede u. 35. sz. alatti épületben."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mit jelképez a versekben legtöbbször a madár?",
+      "helyes_valasz": "a szabadságot",
+      "evidence": [
+        "A madarak általában a szabadságot jelképezik, de itt a törött szárnyú gólya vélhetően a költő lelkiállapotát jeleníti meg."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Arany János A rab gólya című versében mit jelképez a címben említett madár?",
+      "helyes_valasz": "vélhetően a költő lelkiállapotát",
+      "evidence": [
+        "A madarak általában a szabadságot jelképezik, de itt a törött szárnyú gólya vélhetően a költő lelkiállapotát jeleníti meg."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Az Arany Jánosról elnevezett kisbolygót mikor fedezték fel?",
+      "helyes_valasz": "2002. szeptember 8-án",
+      "evidence": [
+        "Kisbolygót neveztek el róla: a 89973 Aranyjánost. Az apró, 1–2 km átmérőjű, 3,29 éves keringési idejű égitestet, melyet 2002. szeptember 8-án fedezett fel Sárneczky Krisztián."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen külföldi országokban neveztek el iskolákat Arany Jánosról?",
+      "helyes_valasz": "Magyarország több pontján iskola viseli a nevét (például: Budapesten, Szegeden, Bonyhádon, Nyíregyházán, Dunaújvárosban), Gyöngyösön (Arany János Általános Iskola), Százhalombattán (Arany János Általános Iskola és Gimnázium), továbbá a környező országokban is (például: Arany János Líceum, Nagyszalonta, Arany János Alapiskola, Ekecs, Arany János Általános Iskola, Oromhegyes,) de még a tengerentúlon is, Kanada Hamilton városában és az Amerikai Egyesült Államokban, New Yorkban.",
+      "evidence": [
+        "Magyarország több pontján iskola viseli a nevét (például: Budapesten, Szegeden, Bonyhádon, Nyíregyházán, Dunaújvárosban), Gyöngyösön (Arany János Általános Iskola), Százhalombattán (Arany János Általános Iskola és Gimnázium), továbbá a környező országokban is (például: Arany János Líceum, Nagyszalonta, Arany János Alapiskola, Ekecs, Arany János Általános Iskola, Oromhegyes,) de még a tengerentúlon is, Kanada Hamilton városában és az Amerikai Egyesült Államokban, New Yorkban."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki nevezett el kisbolygót Arany Jánosról?",
+      "helyes_valasz": "Sárneczky Krisztián",
+      "evidence": [
+        "Kisbolygót neveztek el róla: a 89973 Aranyjánost. Az apró, 1–2 km átmérőjű, 3,29 éves keringési idejű égitestet, melyet 2002. szeptember 8-án fedezett fel Sárneczky Krisztián."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor írta Arany János a Nemzetőrdalt?",
+      "helyes_valasz": "1848-ban",
+      "evidence": [
+        "Nemzetőrdal (1848): A forradalmi lelkesedés és a népies dalköltészet egyesülése, mely a katonatoborzók hangulatát idézi meg."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Ki írta a Nemzetőrdalt?",
+      "helyes_valasz": "Korai darabjai között két igazán kiemelkedő vers van: A rab gólya (1847) és a Nemzetőrdal (1848).",
+      "evidence": [
+        "Korai darabjai között két igazán kiemelkedő vers van: A rab gólya (1847) és a Nemzetőrdal (1848)."
+      ],
+      "type": "open",
+      "kerdestipus": "A cím a válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "A rab gólya című verset mikor írta Arany János?",
+      "helyes_valasz": "1847-ben",
+      "evidence": [
+        "A rab gólya (1847): Az 1847-ben írt népies költeménye a lírai kisepika szép példája."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

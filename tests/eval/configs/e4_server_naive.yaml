@@ -1,0 +1,10 @@
+﻿# E4 - same as E0 but on the university GenAI server (RQ4: local vs server).
+# Once the blueprint pipeline exists, copy the best of E1-E3 here instead.
+# Data leaves the machine: only use documents whose license allows it.
+name: E4
+description: "Naive RAG on qwen38udq8xl (university GenAI server)"
+seeds: [1, 2, 3]
+exam: {n_questions: 10, types: [mcq]}
+pipeline: {kind: naive_direct, retrieval_k: 3}
+chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
+generator: {provider: genai, model: "qwen38udq8xl", temperature: 0.2}

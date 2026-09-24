@@ -1,0 +1,8 @@
+# E5c - chunking ablation: fixed 800-char windows (no semantics) as the lower bound.
+name: E5c
+description: "Naive RAG, fixed 800-character chunks"
+seeds: [1, 2, 3]
+exam: {n_questions: 10, types: [mcq]}
+pipeline: {kind: naive_direct, retrieval_k: 3}
+chunking: {mode: fixed, target_size: 800, overlap: 0}
+generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 16384}

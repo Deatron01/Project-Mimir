@@ -9,7 +9,8 @@ class ContextualChunker:
         print(f"Modell betöltése a {device.upper()}-ra: {model_name}...")
         self.device = device
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModel.from_pretrained(model_name, torch_dtype=torch.float16).to(device)
+        dtype = torch.float16 if str(device).startswith('cuda') else torch.float32
+        self.model = AutoModel.from_pretrained(model_name, torch_dtype=dtype).to(device)
         self.model.eval()
 
     def _get_sentence_spans(self, text):
@@ -34,11 +35,9 @@ class ContextualChunker:
         
         return sentences
 
-    def embed_and_chunk(self, text, method='percentile', threshold_val=85.0, target_chunk_chars=800):
-        sentences = self._get_sentence_spans(text)
-        if len(sentences) <= 1:
-            return [sentences[0][0]] if sentences else [text], [], 0.0
-
+    def _legacy_sentence_embeddings(self, text, sentences):
+        """Eredeti viselkedés: az egész szöveg EGY menetben, max. 512 tokenig.
+        A 512. token utáni mondatok nullvektort kapnak (csak összehasonlító kísérlethez)."""
         # 1. Tokenizálás és Beágyazás
         inputs = self.tokenizer(text, return_tensors='pt', truncation=True, max_length=512, return_offsets_mapping=True)
         offsets = inputs.pop('offset_mapping')[0].cpu().numpy()
@@ -59,6 +58,54 @@ class ContextualChunker:
                 sentence_embeddings.append(pool)
             else:
                 sentence_embeddings.append(np.zeros(token_embeddings.shape[1]))
+        return sentence_embeddings
+
+    def _windowed_sentence_embeddings(self, text, sentences, max_tokens=510):
+        """Mondatbeágyazás hosszú szövegre: a mondatokat <= 512 tokenes ablakokba csoportosítjuk
+        (mondathatáron vágva), ablakonként futtatjuk a modellt, és mondatonként átlagolunk.
+        Rövid (<= 512 token) szövegnél ez egyetlen ablak, azaz ugyanaz, mint a régi viselkedés."""
+        lengths = [len(self.tokenizer(st, add_special_tokens=False)["input_ids"]) for st, _, _ in sentences]
+        windows, current, current_len = [], [], 0
+        for idx, n_tok in enumerate(lengths):
+            if current and current_len + n_tok > max_tokens:
+                windows.append(current)
+                current, current_len = [], 0
+            current.append(idx)
+            current_len += n_tok
+        if current:
+            windows.append(current)
+
+        hidden = self.model.config.hidden_size
+        sentence_embeddings = [None] * len(sentences)
+        for win in windows:
+            w_start = sentences[win[0]][1]
+            w_end = sentences[win[-1]][2]
+            inputs = self.tokenizer(text[w_start:w_end], return_tensors='pt', truncation=True, max_length=512,
+                                    return_offsets_mapping=True)
+            offsets = inputs.pop('offset_mapping')[0].cpu().numpy()
+            inputs = {k: v.to(self.device) for k, v in inputs.items()}
+            with torch.no_grad():
+                token_embeddings = self.model(**inputs).last_hidden_state[0]
+            for idx in win:
+                _, c_start, c_end = sentences[idx]
+                a, b = c_start - w_start, c_end - w_start
+                token_indices = [t for t, (o_s, o_e) in enumerate(offsets) if o_s < b and o_e > a and o_s != o_e]
+                if token_indices:
+                    sentence_embeddings[idx] = token_embeddings[token_indices].float().mean(dim=0).cpu().numpy()
+                else:
+                    sentence_embeddings[idx] = np.zeros(hidden, dtype=np.float32)
+        return sentence_embeddings
+
+    def embed_and_chunk(self, text, method='percentile', threshold_val=85.0, target_chunk_chars=800, encoder='window'):
+        sentences = self._get_sentence_spans(text)
+        if len(sentences) <= 1:
+            return [sentences[0][0]] if sentences else [text], [], 0.0
+
+        # 1-2. Mondatonkénti beágyazás (encoder="window": hosszú szövegre is jó; "legacy": régi, 512 tokenre vágott)
+        if encoder == 'legacy':
+            sentence_embeddings = self._legacy_sentence_embeddings(text, sentences)
+        else:
+            sentence_embeddings = self._windowed_sentence_embeddings(text, sentences)
 
         # 3. Koszinusz távolságok számítása
         distances = []

@@ -1,0 +1,9 @@
+# E3 - E2 + concept graph: graph concepts replace the planner call, sibling concepts are offered as
+# distractor ideas, 1-hop neighbour chunks join the context. One extra call per ~3000 chars of text.
+name: E3
+description: "Blueprint + verifier + concept graph"
+seeds: [1, 2, 3]
+exam: {n_questions: 10, types: [mcq]}
+pipeline: {kind: blueprint, retrieval: dense, retrieval_k: 3, verifier: true, blind_test: true, max_retries: 2, graph: true}
+chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
+generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 16384}

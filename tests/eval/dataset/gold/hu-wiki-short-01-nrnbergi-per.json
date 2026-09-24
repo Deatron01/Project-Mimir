@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Nürnbergi per",
+    "nehezseg": "easy",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Nürnbergi per"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Hogyan vélekedett Henry Stimson Henry Morgenthau elképzeléséről, mely szerint a német háborús főbűnösöket elfogatásuk és azonosításuk után nyomban agyon kell lőni?",
+      "helyes_valasz": "Morgenthau változatának egyik „leghangosabb” ellenzője Henry Lewis Stimson külügyminiszter volt.",
+      "evidence": [
+        "Morgenthau változatának egyik „leghangosabb” ellenzője Henry Lewis Stimson külügyminiszter volt."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor tartották az első, még előkészítő ülést Berlinben a nürnbergi per előtt?",
+      "helyes_valasz": "1945. október 18-án",
+      "evidence": [
+        "Az első, még előkészítő ülést Berlinben 1945. október 18-án tartották"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mi volt a feladat a nürnbergi per vádlottjai által végzett helyettesítési tesztben?",
+      "helyes_valasz": "különböző szimbólumok számokkal való helyettesítése",
+      "evidence": [
+        "Hasonló hangzású szavak jelentésének fogalmi tisztázása.B.) A megfigyelőképesség és appercepció, valamint a motorikus idegrendszer együttműködésének vizsgálata:Helyettesítési teszt (különböző szimbólumok számokkal való helyettesítése)."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hogyan jellemezte John McCloy Henry Morgenthau elképzelését, mely szerint a német háborús főbűnösöket elfogatásuk és azonosításuk után nyomban agyon kell lőni?",
+      "helyes_valasz": "mint az emberi civilizáció elleni bűntettet",
+      "evidence": [
+        "John McCloy hadügyi államtitkár egy memorandumában pedig úgy jellemezte Morgenthau tervét, mint az emberi civilizáció elleni bűntettet."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki volt az USA pénzügyminisztere a második világháború idején?",
+      "helyes_valasz": "Henry Morgenthau",
+      "evidence": [
+        "Ezt ezúttal Henry Morgenthau amerikai pénzügyminiszter fogalmazta meg: „Össze kell állítani a német háborús főbűnösök listáját, amelyen azok szerepelnek, akiknek nyilvánvaló bűnösségét az Egyesült Nemzetek megállapította; ezeket elfogatásuk és azonosításuk után nyomban agyon kell lőni.” Ekkoriban maga Roosevelt is hajlott arra, hogy Morgenthauhoz csatlakozzon."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor tartóztatták le Franz von Papent a második világháború végén?",
+      "helyes_valasz": "1945 áprilisában",
+      "evidence": [
+        "Franz von Papent, aki betöltötte mind a kancellári, mind az alkancellári posztot, fiával, Franzcal együtt saját otthonában tartóztatta le Thomas McKinley főhadnagy és a 194. Glider gyalogosezred 1945 áprilisában."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mi volt Francis Biddle szerepe a nürnbergi perben?",
+      "helyes_valasz": "amerikai bíró",
+      "evidence": [
+        "Ezeknek az ülésszakoknak a részleteit Francis Biddle amerikai bíró naplójában jegyezte fel."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hová menekült Baldur von Schirach a Vörös Hadsereg elől?",
+      "helyes_valasz": "Tirolba",
+      "evidence": [
+        "Baldur von Schirach, a Hitlerjugend vezetője, a Vörös Hadsereg elől Tirolba menekült"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mely nemzetek képviselői nem vettek igénybe külső tanácsadókat a nürnbergi perben?",
+      "helyes_valasz": "a britek, a franciák és a szovjetek",
+      "evidence": [
+        "Az ítéletek megvitatása során a britek, a franciák és a szovjetek nem vettek igénybe külső tanácsadókat"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hol tartották az első, még előkészítő ülést a nürnbergi per előtt 1945. október 18-án?",
+      "helyes_valasz": "Berlinben",
+      "evidence": [
+        "Az első, még előkészítő ülést Berlinben 1945. október 18-án tartották"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Berlini fal",
+    "nehezseg": "hard",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Berlini fal"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Meddig teljesített járőrszolgálatot a német határőrség a berlini falnál?",
+      "helyes_valasz": "1990. július 1-jéig",
+      "evidence": [
+        "1990. július 1-jén, a német valutaunió életbe lépésének napján a határőrség hivatalosan is beszüntette tevékenységét a belnémet határ berlini szakaszán."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "A berlini fal hivatalos lebontását kik végezték?",
+      "helyes_valasz": "az NDK-határőrség 300 fős műszaki alakulata",
+      "evidence": [
+        "A munkálatokat az NDK-határőrség 300 fős műszaki alakulata végezte, és a belvárosi falszakasz bontásával november 30-án végeztek is."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hány őrtorony áll még ma is az egykori berlini fal mentén?",
+      "helyes_valasz": "öt",
+      "evidence": [
+        "Az egykori 302 őrtoronyból ma még öt látható."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor lépett életbe a német valutaunió?",
+      "helyes_valasz": "1990. július 1-jén",
+      "evidence": [
+        "1990. július 1-jén, a német valutaunió életbe lépésének napján a határőrség hivatalosan is beszüntette tevékenységét a belnémet határ berlini szakaszán."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hány őrtornyot építettek a berlini fal mentén?",
+      "helyes_valasz": "302-t",
+      "evidence": [
+        "Az egykori 302 őrtoronyból ma még öt látható."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Miért épült meg 1972-ben a steinstückeni fal?",
+      "helyes_valasz": "Nyugat-Berlin körül az NDK-területébe ágyazva, de attól teljesen elszigetelve 10 nyugati exklávé létezett. Ezek közül az egyetlen lakott a Berlin délnyugati részén fekvő Steinstücken nevű falu volt. 1951-ben a szocialista állam megkísérelte a terület elfoglalását, de a lakosság ellenállása miatt ez nem sikerült. Steinstücken egy rés volt a falon, mivel az odavezető utakon csak tankakadályok álltak. A területen különösen gyakoriak voltak a határőrök dezertálásai. A fal felépítésekor a területre vezető utat az NDK teljesen lezárta, ezért az amerikai hadsereg helikopter-leszállót épített és állandó „helyőrséget” hozott létre Steinstücken egyik portáján. A megoldást 1972 őszén egy bonyolult területcsere és alku hozta el, amikor a két állam kiegyezett egy 20 méter széles korridor létesítésében. A korridort és a települést az NDK ekkor egy külön „steinstückeni fallal” vette körül.",
+      "evidence": [
+        "Nyugat-Berlin körül az NDK-területébe ágyazva, de attól teljesen elszigetelve 10 nyugati exklávé létezett. Ezek közül az egyetlen lakott a Berlin délnyugati részén fekvő Steinstücken nevű falu volt. 1951-ben a szocialista állam megkísérelte a terület elfoglalását, de a lakosság ellenállása miatt ez nem sikerült. Steinstücken egy rés volt a falon, mivel az odavezető utakon csak tankakadályok álltak. A területen különösen gyakoriak voltak a határőrök dezertálásai. A fal felépítésekor a területre vezető utat az NDK teljesen lezárta, ezért az amerikai hadsereg helikopter-leszállót épített és állandó „helyőrséget” hozott létre Steinstücken egyik portáján. A megoldást 1972 őszén egy bonyolult területcsere és alku hozta el, amikor a két állam kiegyezett egy 20 méter széles korridor létesítésében. A korridort és a települést az NDK ekkor egy külön „steinstückeni fallal” vette körül."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mi történt a berlini fallal 1989. november 9-e után?",
+      "helyes_valasz": "1989. november 9-e után a keletnémet hatóságok nem tudták eldönteni, hogy mi történjen a politikai értelemben már leomlott berlini fal fizikai maradványaival. Az NDK határőrsége változatlanul felügyelte a falat és a NSZEP vezetése úgy gondolta, hogy lehetséges a határzár valamilyen formában való továbbüzemeltetése. Az első hetekben a határőrség munkatársai több helyen is hozzáláttak a megrongált elemek javításához.\nA fal leomlása utáni hétvégén 10 új határátkelő helyet nyitottak. A határátkelőknél nagy tömeg gyülekezett és hangosan ünnepelték a fal minden egyes elemének eltávolítását. (A TV-felvételeken ezeket a jeleneteket a berlini fal bontásaként szokták bemutatni, pedig csak az új határátkelők helyén szedték fel a betonelemeket.) 1989. december 24-étől már a nyugat-berlini polgárok is beutazhattak Kelet-Berlinbe. Ekkorra már igencsak megritkultak a keletnémet határőrség őrjáratai a fal vonalán. Megszűnt az ellenőrzés a határátkelőhelyeknél, és a határőrök nem avatkoztak közbe, amikor a berliniek több helyen is bontani kezdték a létesítményeket. A határzár magánszorgalmú bontása különösen az NDK Népi Kamarájának 1990. március 18-án lezajlott választása után gyorsult fel.",
+      "evidence": [
+        "1989. november 9-e után a keletnémet hatóságok nem tudták eldönteni, hogy mi történjen a politikai értelemben már leomlott berlini fal fizikai maradványaival. Az NDK határőrsége változatlanul felügyelte a falat és a NSZEP vezetése úgy gondolta, hogy lehetséges a határzár valamilyen formában való továbbüzemeltetése. Az első hetekben a határőrség munkatársai több helyen is hozzáláttak a megrongált elemek javításához.\nA fal leomlása utáni hétvégén 10 új határátkelő helyet nyitottak. A határátkelőknél nagy tömeg gyülekezett és hangosan ünnepelték a fal minden egyes elemének eltávolítását. (A TV-felvételeken ezeket a jeleneteket a berlini fal bontásaként szokták bemutatni, pedig csak az új határátkelők helyén szedték fel a betonelemeket.) 1989. december 24-étől már a nyugat-berlini polgárok is beutazhattak Kelet-Berlinbe. Ekkorra már igencsak megritkultak a keletnémet határőrség őrjáratai a fal vonalán. Megszűnt az ellenőrzés a határátkelőhelyeknél, és a határőrök nem avatkoztak közbe, amikor a berliniek több helyen is bontani kezdték a létesítményeket. A határzár magánszorgalmú bontása különösen az NDK Népi Kamarájának 1990. március 18-án lezajlott választása után gyorsult fel."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik újságnak írt Peter Brinkmann 1989 novemberében?",
+      "helyes_valasz": "a hamburgi Bildnek",
+      "evidence": [
+        "Erre a hamburgi Bild riportere Peter Brinkmann az intézkedések életbe lépésének idejéről érdeklődött, Schabowski ekkorra már eltette a szemüvegét, így pár másodpercig tanácstalanul forgatta papírjait, majd a következő választ adta:\nIsmereteim szerint ez érvénybe lép… igen, azonnal."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Ki volt az NSZK kancellárja az 1970-es évek elején?",
+      "helyes_valasz": "Willy Brandt",
+      "evidence": [
+        "A '70-es évek elejétől kezdve Willy Brandt NSZK-kancellár lépéseket tett a két német állam viszonyának javítása érdekében."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Miért nem nőnek növények a berlini fal egykori nyomvonalán?",
+      "helyes_valasz": "A berlini népnyelv falsávnak nevezi az egykori határzóna elhanyagolt, beépítetlen vonalát, ahol még ma is láthatók a betonkerítések és néhol az őrtornyok is. A növényzet, az egykor töményen kiszórt gyomirtó szerek miatt, csak nehezen regenerálódik.",
+      "evidence": [
+        "A berlini népnyelv falsávnak nevezi az egykori határzóna elhanyagolt, beépítetlen vonalát, ahol még ma is láthatók a betonkerítések és néhol az őrtornyok is. A növényzet, az egykor töményen kiszórt gyomirtó szerek miatt, csak nehezen regenerálódik."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

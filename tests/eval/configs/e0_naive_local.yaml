@@ -1,0 +1,9 @@
+# E0 - naive RAG baseline (reference arm). Production retrieval + production v1 prompt,
+# generated locally so model, temperature and seed are controlled.
+name: E0
+description: "Naive RAG: top-3 semantic chunks -> whole exam in one call, qwen2.5:7b on Ollama"
+seeds: [1, 2, 3]
+exam: {n_questions: 10, types: [mcq]}
+pipeline: {kind: naive_direct, retrieval_k: 3}
+chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
+generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 16384}

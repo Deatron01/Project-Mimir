@@ -1,0 +1,63 @@
+{
+  "teszt_metaadatok": {
+    "tema": "microbiology ch. 6, 6.2 The Viral Life Cycle",
+    "nehezseg": "easy",
+    "nyelv": "en",
+    "forras": "EduQG / OpenStax microbiology chapter 6"
+  },
+  "kerdesek": [
+    {
+      "id": "fs-id1168329066690",
+      "kerdes": "What is the name for the transfer of genetic information from one bacterium to another bacterium by a phage?",
+      "helyes_valasz": "transduction",
+      "disztraktorok": [
+        "penetration",
+        "excision",
+        "translation"
+      ],
+      "evidence": [
+        "Transduction occurs when a bacteriophage transfers bacterial DNA from one bacterium to another during sequential infections."
+      ]
+    },
+    {
+      "id": "fs-id1168329038074",
+      "kerdes": "What is a characteristic of a positive-strand RNA virus?",
+      "helyes_valasz": "can be used directly to translate viral proteins.",
+      "disztraktorok": [
+        "must first be converted to a mRNA before it can be translated.",
+        "will be degraded by host enzymes.",
+        "is not recognized by host ribosomes."
+      ],
+      "evidence": [
+        "If the viral genome is RNA, a different mechanism must be used.",
+        "If a virus has a + ssRNA genome, it can be translated directly to make viral proteins."
+      ]
+    },
+    {
+      "id": "fs-id1168329002208",
+      "kerdes": "Which of the following components is brought into a cell by HIV?",
+      "helyes_valasz": "reverse transcriptase",
+      "disztraktorok": [
+        "a DNA-dependent DNA polymerase",
+        "RNA polymerase",
+        "ribosome"
+      ],
+      "evidence": [
+        "Single-stranded RNA viruses such as HIV carry a special enzyme called reverse transcriptase within the capsid that synthesizes a complementary ssDNA (cDNA) copy using the + ssRNA genome as a template."
+      ]
+    },
+    {
+      "id": "fs-id1168329265123",
+      "kerdes": "Which of the following leads to the destruction of the host cells?",
+      "helyes_valasz": "lytic cycle",
+      "disztraktorok": [
+        "lysogenic cycle",
+        "prophage",
+        "temperate phage"
+      ],
+      "evidence": [
+        "During the lytic cycle of viral replication, the virus hijacks the host cell, degrades the host chromosome, and makes more viral genomes."
+      ]
+    }
+  ]
+}

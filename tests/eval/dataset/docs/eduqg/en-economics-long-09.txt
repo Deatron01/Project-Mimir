@@ -1,0 +1,385 @@
+7.1   Describe How and Why Managers Use Budgets 
+
+ Implementation of a company’s strategic plan often begins by determining management’s basic expectations about future economic, competitive, and technological conditions, and their effects on anticipated goals, both long-term and short-term. Many firms at this stage conduct a situational analysis that involves examining their  strengths  and  weaknesses  and the external  opportunities  available and the  threats  that they might face from competitors. This common analysis is often labeled as SWOT. 
+
+ After performing the situational analysis, the organization identifies potential strategies that could enable achievement of its goals. Finally, the company will create, initiate, and monitor both long-term and short-term plans. 
+
+ An important step in the initiation of the company’s strategic plan is the creation of a budget. A good budgeting system will help a company reach its strategic goals by allowing management to plan and to control major categories of activity, such as revenue, expenses, and financing options. As detailed in  Accounting as a Tool for Managers , planning involves developing future objectives, whereas controlling involves monitoring the planning objectives that have been put into place. 
+
+ There are many advantages to budgeting, including: 
+
+ Communication
+
+ Budgeting is a formal method to communicate a company’s plans to its internal stakeholders, such as executives, department managers, and others who have an interest in—or responsibility for—monitoring the company’s performance. 
+
+ Budgeting requires managers to plan for both revenues and expenses. 
+
+ Planning
+
+ Preparing a budget requires managers to consider and evaluate
+
+ The assumptions used to prepare the budget. 
+
+ Long-term financial goals. 
+
+ Short-term financial goals. 
+
+ The company’s position in the market. 
+
+ How each department supports the strategic plan. 
+
+ Preparing a budget requires departments to work together to
+
+ Determine realizable sales goals. 
+
+ Compute the manufacturing or other requirements necessary to meet the sales goals. 
+
+ Solve bottlenecks that are predicted by the budget. 
+
+ Allocate resources so they can be used effectively to meet the sales and manufacturing goals. 
+
+ Compare forecasted or flexible budgets with actual results. 
+
+ Evaluation
+
+ When compared to actual results, budgets are early alerts and they forecast:
+
+ Cash flows for various levels of production. 
+
+ When loans may be required or when loans may be reduced. 
+
+ Budgets show which areas, departments, units, and so forth, are profitable or meet their appropriate goals. Similarly, they also show which components are unprofitable or do not reach their anticipated goals. 
+
+ Budgets set defined benchmarks that may be used for evaluating company and management performance, including raises and bonuses, as well as negative consequences, such as firing. 
+
+ To understand the benefits of budgeting, consider Big Bad Bikes, a company that manufactures high-end mountain bikes. The company will begin producing and selling trainers this year. Trainers are stands that allow a rider to ride their bike indoors similar to the way bikes are used in spinning classes. Big Bad Bikes has a 5-year plan and has always been successful in managing its budget. Managers participate in developing the budget and are aware that all expenses must be related to the company’s strategic plan. They know that managing their departments is much easier when the budget is developed to support the strategic plan. 
+
+ The plan for Big Bad Bikes is to introduce itself to the trainer market with a sales price of $70 for the first two quarters of the year and then raise the price to $75 per unit. The marketing department estimates that sales will be 1,000 units for the first two quarters, 1,500 for the third quarter, and 2,500 per quarter through the second year. Management will work with each department to communicate goals and build a budget based on the sales plan. The resulting budget can be evaluated by all departments involved. 
+
+ Ethical Considerations Break-Even Analysis and Profitability In the long run, proper budget reporting assists management in making good decisions. Management uses budgets to evaluate the performance of employees and their department. They can also use budgets to evaluate and benchmark the performance of a business unit in a large business organization or of the entire performance of a small company. They can also use budgets to evaluate separate projects. In budgeting situations, employees may feel a tension between reporting actual results and reporting results that reach the predetermined goals created by the budget. This creates a situation where managers may choose to act unethically and pressure accountants to report favorable financial results not supported by the operations. 
+
+ Accountants need to be aware of this circumstance and use ethical standards when assisting the development and creation of budgets. After a proper budget has been created, the reporting of the actual results will assist in creating a realistic and honest picture of the actual operations for the managers reviewing the budget. The budget accountant needs to take steps to ensure that employees are not trying to misreport the budget results; for example, managers might be tempted to set artificially low standards to ensure that targets are hit and significantly exceeded. Such results could lead to what might be considered as excessive bonuses paid to managers. 
+
+ The Basics of Budgeting 
+
+ All companies—large and small—have limits on the amount of money or resources they can receive and pay out. How these resources are used to reach their goals and objectives must be planned. The quantitative plan estimating when and how much cash or other resources will be received and when and how the cash or other resources will be used is the  budget . As you’ve learned, some of the benefits of budgeting include improved communication, planning, coordination, and evaluation. 
+
+ All budgets are quantitative plans for the future and will be constructed based on the needs of the organization for which the budget is being created. Depending on the complexity, some budgets can take months or even years to develop. The most common time period covered by a budget is one year, although the time period may vary from strategic, long-term budgets to very detailed, short-term budgets. Generally, the closer the company is to the start of the budget’s time period, the more detailed the budget becomes. 
+
+ Management begins with a vision of the future. The long-term vision sets the direction of the company. The vision develops into goals and strategies that are built into the budget and are directly or indirectly reflected on the master budget. 
+
+ The master budget has two major categories: the financial budget and the operating budget. The financial budget plans the use of assets and liabilities and results in a projected balance sheet. The operating budget helps plan future revenue and expenses and results in a projected income statement. The operating budget has several subsidiary budgets that all begin with projected sales. For example, management estimates sales for the upcoming few years. It then breaks down estimated sales into quarters, months, and weeks and prepares the sales budget. The sales budget is the foundation for other operating budgets. Management uses the number of units from the sales budget and the company’s inventory policy to determine how many units need to be produced. This information in units and in dollars becomes the production budget. 
+
+ The production budget is then broken up into budgets for materials, labor, and overhead, which use the standard quantity and standard price for raw materials that need to be purchased, the standard direct labor rate and the standard direct labor hours that need to be scheduled, and the standard costs for all other direct and indirect operating expenses. Companies use the historic quantities of the amount of material per unit and the hours of direct labor per unit to compute a standard used to estimate the quantity of materials and labor hours needed for the expected level of production. Current costs are used to develop standard costs for the price of materials, the direct labor rate, as well as an estimate of overhead costs. 
+
+ The budget development process results in various budgets for various purposes, such as revenue, expenses, or units produced, but they all begin with a plan. To save time and eliminate unnecessary repetition, management often starts with the current year’s budget and adjusts it to meet future needs. 
+
+ There are various strategies companies use in adjusting the budget amounts and planning for the future. For example, budgets can be derived from a top-down approach or from a bottom-up approach.  Figure 7.2  shows the general difference between the top-down approach and the bottom-up approach. The top-down approach typically begins with senior management. The goals, assumptions, and predicted revenue and expenses information are passed from the senior manager to middle managers, who further pass the information downward. Each department must then determine how it can allocate its expenses efficiently while still meeting the company goals. The benefit of this approach is that it ties in to the strategic plan and company goals. Another benefit of passing the amount of allowed expenses downward is that the final anticipated costs are reduced by the  vetting  (fact checking and information gathering) process. 
+
+ In the top-down approach, management must devote attention to efficiently allocating resources to ensure that expenses are not padded to create budgetary slack. The drawback to this approach to budgeting is that the budget is prepared by individuals who are not familiar with specific operations and expenses to understand each department’s nuances. 
+
+ The bottom-up approach (sometimes also named a self-imposed or participative budget) begins at the lowest level of the company. After senior management has communicated the expected departmental goals, the departments then plans and predicts their sales and estimates the amount of resources needed to reach these goals. This information is communicated to the supervisor, who then passes it on to upper levels of management. The advantages of this approach are that managers feel their work is valued and that knowledgeable individuals develop the budget with realistic numbers. Therefore, the budget is more likely to be attainable. The drawback is that managers may not fully understand or may misunderstand the strategic plan. 
+
+ Other approaches in addition to the top-down and bottom-up approaches are a combination approach and the zero-based budgeting approach. In the combination approach, guidelines and targets are set at the top while the managers work to develop a budget within the targeted parameters. 
+
+ Zero-based budgeting  begins with zero dollars and then adds to the budget only revenues and expenses that can be supported or justified.  Figure 7.3  illustrates the difference between traditional budget preparation and zero-based budgeting in a bottom-up budgeting scenario. The advantage to zero-based budgeting is that unnecessary expenses are eliminated because managers cannot justify them. The drawback is that every expense needs to be justified, including obvious ones, so it takes a lot of time to complete. A compromise tactic is to use a zero-based budgeting approach for certain expenses, like travel, that can be easily justified and linked to the company goals. 
+
+ Often budgets are developed so they can adjust for changes in the volume or activity and help management make decisions. Changes and challenges can affect the budget and have an impact on a company’s plans. A flexible budget adjusts the cost of goods produced for varying levels of production and is more useful than a static budget, which remains at one amount regardless of the production level. A flexible budget is created at the end of the accounting period, whereas the static budget is created before the fiscal year begins. 
+
+ Additionally  Figure 7.4  shows a comparison of a static budget and a flexible budget for Bingo’s Bags, a company that produces purses and backpacks. In the flexible budget, the budgeted costs are calculated with actual sales, whereas in the static budget, budgeted costs are calculated with budgeted sales. The flexible budget allows management to see what they would expect the budget to look like based on the actual sales and budgeted costs. Flexible budgets are addressed in greater detail in  Prepare Flexible Budgets . 
+
+ In order to handle changes that occur in the future, companies can also use a  rolling budget , which is one that is continuously updated. While the company’s goals may be multi-year, the rolling budget is adjusted monthly, and a new month is added as each month passes. Rolling budgets allow management to respond to changes in estimates or actual occurrences, but it also takes management away from other duties as it requires continual updating.  Figure 7.5  shows an example of how a rolling quarterly budget would work. Notice that as one month rolls off (is completed) another month is added to the budget so that four quarters of a year are always presented. 
+
+ Because budgets are used to evaluate a manager’s performance as well as the company’s, managers are responsible for specific expenses within their own budget. Each manager’s performance is evaluated by how well he or she manages the revenues and expenses under his or her control. Each individual who exercises control over spending should have a budget specifying limits on that spending. 
+
+ The Role of the Master Budget 
+
+ Most organizations will create a master budget—whether that organization is large or small, public or private, or a merchandising, manufacturing, or service company. A  master budget  is one that includes two areas, operational and financial, each of which has its own sub-budgets. The  operating budget  spans several areas that help plan and manage day-to-day business. The  financial budget  depicts the expectations for cash inflows and outflows, including cash payments for planned operations, the purchase or sale of assets, the payment or financing of loans, and changes in equity. Each of the sub-budgets is made up of separate but interrelated budgets, and the number and type of separate budgets will differ depending on the type and size of the organization. For example, the sales budget predicts the sales expected for each quarter. The direct materials budget uses information from the sales budget to compute the number of units necessary for production. This information is used in other budgets, such as the direct materials budget, which plans when materials will be purchased, how much will be purchased, and how much that material should cost. You will review some specific examples of budgeting for direct materials in  Prepare Operating Budgets . 
+
+ Figure 7.6  shows how operating budgets and financial budgets are related within a master budget. 
+
+ The Role of Operating Budgets 
+
+ An operating budget consists of the sales budget, production budget, direct material budget, direct labor budget, and overhead budget. These budgets serve to assist in planning and monitoring the day-to-day activities of the organization by informing management of how many units need to be produced, how much material needs to be ordered, how many labor hours need to be scheduled, and the amount of overhead expected to be incurred. The individual pieces of the operating budget collectively lead to the creation of the budgeted income statement. For example, Big Bad Bikes estimates it will sell 1,000 trainers for $70 each in the first quarter and prepares a sales budget to show the sales by quarter. Management understands that it needs to have on hand the 1,000 trainers that it estimates will be sold. It also understands that additional inventory needs to be on hand in the event there are additional sales and to prepare for sales in the second quarter. This information is used to develop a production budget. Each trainer requires 3.2 pounds of material that usually costs $1.25 per pound. Knowing how many units are to be produced and how much inventory needs to be on hand is used to develop a direct materials budget. 
+
+ The direct materials budget lets managers know when and how much raw materials need to be ordered. The same is true for direct labor, as management knows how many units will be manufactured and how many hours of direct labor are needed. The necessary hours of direct labor and the estimated labor rate are used to develop the direct labor budget. While the materials and labor are determined from the production budget, only the variable overhead can be determined from the production budget. Existing information regarding fixed manufacturing costs are combined with variable manufacturing costs to determine the manufacturing overhead budget. The information from the sales budget is used to determine the sales and administrative budget. Finally, the sales, direct materials, direct labor, fixed manufacturing overhead budget, and sales and administrative budgets are used to develop a pro-forma income statement. 
+
+ The Role of Financial Budgets 
+
+ A financial budget consists of the cash budget, the budgeted balance sheet, and the budget for capital expenses. Similar to the individual budgets that make up the operating budgets, the financial budgets serve to assist with planning and monitoring the financing requirements of the organization. Management plans its capital asset needs and states them in the capital expense budget. Management addresses its collection and payment policies to determine when it will receive cash from sales and when it will pay the material, labor, and overhead expenses. The capital expense budget and the estimated payment and collection of cash allow management to build a cash budget and determine when it will need financing or have additional funds to pay back loans. These budgets taken together will be part of the budgeted balance sheet.  Figure 7.6  shows how these budgets relate. 
+
+ Your Turn Maintaining a Cash Balance DaQuan recently began work as a senior accountant at Mad Coffee Company. He learned he would be responsible for monitoring the cash balance because there is a bank loan requirement that a minimum balance of $10,000 be maintained with the bank at all times. DaQuan asked to see the cash budget so he could anticipate when the balance was most likely to go below $10,000. How can DaQuan determine potential cash balance issues by looking at the budget? 
+
+ Solution 
+
+ Budgeting helps plan for those times when cash is in short supply and bills need to be paid. Proper budgeting shows when and for how long a cash shortage may exist. DaQuan can see the months when the cash payments exceed the cash receipts and when the company is in danger of having a cash balance below the minimum requirement of $10,000. Knowing the inflow and outflow of cash will help him plan and manage the shortage through a line of credit, delay in purchasing, delay in hiring, or delay in payment of non-essential items. 
+
+ Link to Learning 
+
+ Budgeting is a task that should be completed by all organizations, not only those limited to manufacturing. Unfortunately, there are many individuals who want to operate a business and know nothing about budgeting. Often, professional organizations or industry trade groups offer information to help their members succeed in business. For example, the real estate profession provides information and suggestions such as this  article on preparing a marketing budget  to help professionals. 
+ 7.2   Prepare Operating Budgets 
+
+ Operating budgets  are a primary component of the master budget and involve examining the expectations for the primary operations of the business. Assumptions such as sales in units, sales price, manufacturing costs per unit, and direct material needed per unit involve a significant amount of time and input from various parts of the organization. It is important to obtain all of the information, however, because the more accurate the information, the more accurate the resulting budget, and the more likely management is to effectively monitor and achieve its budget goals. 
+
+ Individual Operating Budgets 
+
+ In order for an organization to align the budget with the strategic plan, it must budget for the day-to-day operations of the business. This means the company must understand when and how many sales will occur, as well as what expenses are required to generate those sales. In short, each component—sales, production, and other expenses—must be properly budgeted to generate the operating budget components and the resulting pro-forma budgeted income statement. 
+
+ The budgeting process begins with the estimate of sales. When management has a solid estimate of sales for each quarter, month, week, or other relevant time period, they can determine how many units must be produced. From there, they determine the expenditures, such as direct materials necessary to produce the units. It is critical for the sales estimate to be accurate so that management knows how many units to produce. If the estimate is understated, the company will not have enough inventory to satisfy customers, and they will not have ordered enough material or scheduled enough direct labor to manufacture more units. Customers may then shop somewhere else to meet their needs. Likewise, if sales are overestimated, management will have purchased more material than necessary and have a larger labor force than needed. This overestimate will cause management to have spent more cash than was necessary. 
+
+ Sales Budget 
+
+ The  sales budget  details the expected sales in units and the sales price for the budget period. The information from the sales budget is carried to several places in the master budget. It is used to determine how many units must be produced as well as when and how much cash will be collected from those sales. 
+
+ For example, Big Bad Bikes used information from competitor sales, its marketing department, and industry trends to estimate the number of units that will be sold in each quarter of the coming year. The number of units is multiplied by the sales price to determine the sales by quarter as shown in  Figure 7.7 . 
+
+ The sales budget leads into the production budget to determine how many units must be produced each week, month, quarter, or year. It also leads into the cash receipts budget, which will be discussed in  Prepare Financial Budgets . 
+
+ Production Budget 
+
+ Estimating sales leads to identifying the desired quantity of inventory to meet the demand. Management wants to have enough inventory to meet production, but they do not want too much in the ending inventory to avoid paying for unnecessary storage. Management often uses a formula to estimate how much should remain in ending inventory. Management wants to be flexible with its budgeting, wants to create budgets that can grow or shrink as needed, and needs to have inventory on hand. So the amount of ending inventory often is a percentage of the next week’s, month’s, or quarter’s sales. 
+
+ In creating the production budget, a major issue is how much inventory should be on hand. Having inventory on hand helps the company avoid losing a customer because the product isn’t available. However, there are storage costs associated with holding inventory as well as having a lag time between paying to manufacture a product and receiving cash from selling that product. Management must balance the two issues and determine the amount of inventory that should be available. 
+
+ When determining the number of units needed to be produced, start with the estimated sales plus the desired ending inventory to derive the maximum number of units that must be available during the period. Since the number of units in beginning inventory are already produced, subtracting the beginning inventory from the goods available results in the number of units that need to be produced. 
+
+ After management has estimated how many units will sell and how many units need to be in ending inventory, it develops the  production budget  to compute the number of units that need to be produced during each quarter. The formula is the reverse of the formula for the cost of goods sold. 
+
+ The number of units expected to be sold plus the desired ending inventory equals the number of units that are available. When the beginning inventory is subtracted from the number of units available, management knows how many units must be produced during that quarter to meet sales. 
+
+ In a merchandising firm, retailers do not produce their inventory but purchase it. Therefore, stores such as  Walmart  do not have raw materials and instead substitute the number of units to be purchased in place of the number of units to be produced; the result is the merchandise inventory to be purchased. 
+
+ To illustrate the steps in developing a production budget, recall that Big Bad Bikes is introducing a new product that the marketing department thinks will have strong sales. For new products, Big Bad Bikes requires a target ending inventory of 30% of the next quarter’s sales. Unfortunately, they were unable to manufacture any units before the end of the current year, so the first quarter’s beginning inventory is 0 units. As shown in  Figure 7.7 , sales in quarter 2 are estimated at 1,000 units; since 30% is required to be in ending inventory, the ending inventory for quarter 1 needs to be 300 units. With expected sales of 1,000 units for quarter 2 and a required ending inventory of 30%, or 300 units, Big Bad Bikes needs to have 1,300 units available during the quarter. Since 1,300 units needed to be available and there are zero units in beginning inventory, Big Bad Bikes needs to manufacture 1,300 units, as shown in  Figure 7.8 
+
+ The ending inventory from one quarter is the beginning inventory for the next quarter and the calculations are all the same. In order to determine the ending inventory in quarter 4, Big Bad Bikes must estimate the sales for the first quarter of the next year. Big Bad Bikes’s marketing department believes sales will increase in each of the next several quarters, and they estimate sales as 3,500 for the first quarter of the next year and 4,500 for the second quarter of the next year. Thirty percent of 3,500 is 1,050, so the number of units required in the ending inventory for quarter 4 is 1,050. 
+
+ The number of units needed in production for the first quarter of the next year provides information needed for other budgets such as the direct materials budget, so Big Bad Bikes must also determine the number of units needed in production for that first quarter. The estimated sales of 3,500 and the desired ending inventory of 1,350 (30% of the next quarter’s estimated sales of 4,500) determines that 4,850 units are required during the quarter. The beginning inventory is estimated to be 1,050, which means the number of units that need to be produced during the first quarter of year 2 is 3,800. 
+
+ The number of units needed to be produced each quarter was computed from the estimated sales and is used to determine the quantity of direct or raw material to purchase, to schedule enough direct labor to manufacture the units, and to approximate the overhead required for production. It is also necessary to estimate the sales for the first quarter of the next year. The ending inventory for the current year is based on the sales estimates for the first quarter of the following year. From this amount, the production budget and direct materials budget are calculated and flow to the operating and cash budget. 
+
+ Direct Materials Budget 
+
+ From the production budget, management knows how many units need to be produced in each budget period. Management is already aware of how much material it needs to produce each unit and can combine the direct material per unit with the production budget to compute the  direct materials budget . This information is used to ensure the correct quantity of materials is ordered and the correct amount is budgeted for those materials. 
+
+ Similar to the production budget, management wants to have an ending inventory available to ensure there are enough materials on hand. The direct materials budget illustrates how much material needs to be ordered and how much that material costs. The calculation is similar to that used in the production budget, with the addition of the cost per unit. 
+
+ If Big Bad Bikes uses 3.2 pounds of material for each trainer it manufactures and each pound of material costs $1.25, we can create a direct materials budget. Management’s goal is to have 20% of the next quarter’s material needs on hand as the desired ending materials inventory. Therefore, the determination of each quarter’s material needs is partially dependent on the following quarter’s production requirements. The desired ending inventory of material is readily determined for quarters 1 through 3 as those needs are based on the production requirements for quarters 2 through 4. To compute the desired ending materials inventory for quarter 4, we need the production requirements for quarter 1 of year 2. Recall that the number of units to be produced during the first quarter of year 2 is 3,800. Thus, quarter 4 materials ending inventory requirement is 20% of 3,800. That information is used to compute the direct materials budget shown in  Figure 7.9 . 
+
+ Management knows how much the materials will cost and integrates this information into the schedule of expected cash disbursements, which will be shown in  Prepare Financial Budgets . This information will also be used in the budgeted income statement and on the budgeted balance sheet. With 6,000 units estimated for sale, 3.2 pounds of material per unit, and $1.25 per pound, the direct materials used represent $24,000 of the cost of goods sold. The remaining $7,240 is included in ending inventory as units completed and raw material. 
+
+ Direct Labor Budget 
+
+ Management uses the same information in the production budget to develop the  direct labor budget . This information is used to ensure that the proper amount of staff is available for production and that there is money available to pay for the labor, including potential overtime. Typically, the number of hours is computed and then multiplied by an hourly rate, so the total direct labor cost is known. 
+
+ If Big Bad Bikes knows that they need 45 minutes or 0.75 hours of direct labor for each unit produced, and the labor rate for this type of manufacturing is $20 per hour, the computation for direct labor simply begins with the number of units in the production budget. As shown in  Figure 7.10 , the number of units produced each quarter multiplied by the number of hours per unit equals the required direct labor hours needed to be scheduled in order to meet production needs. The total number of hours is next multiplied by the direct labor rate per hour, and the labor cost can be budgeted and used in the cash disbursement budget and operating budget illustrated in  Prepare Financial Budgets . 
+
+ The direct labor of $105,750 will be apportioned to the budgeted income statement and budgeted balance sheet. With 0.75 hours of direct labor per unit and $20 per direct labor hour, each unit will cost $15 in direct labor. Of the 7,050 units produced, 6,000 units will be sold, so $90,000 represents the labor portion of the cost of goods sold and will be shown on the income statement, while the remaining $15,750 will be the labor portion of ending inventory and will be shown on the balance sheet. 
+
+ Manufacturing Overhead Budget 
+
+ The  manufacturing overhead budget  includes the remainder of the production costs not covered by the direct materials and direct labor budgets. In the manufacturing overhead budgeting process, producers will typically allocate overhead costs depending upon their cost behavior production characteristics, which are generally classified as either variable or fixed. Based on this allocation process, the variable component will be treated as occurring proportionately in relation to budgeted activity, while the fixed component will be treated as remaining constant. This process is similar to the overhead allocation process you learned in studying product, process, or activity-based costing. 
+
+ For Big Bad Bikes to create their manufacturing overhead budget, they first determine that the appropriate driver for assigning overhead costs to products is direct labor hours. The overhead allocation rates for the variable overhead costs are: indirect material of $1.00 per hour, indirect labor of $1.25 per hour, maintenance of $0.25 per hour, and utilities of $0.50 per hour. The fixed overhead costs per quarter are: supervisor salaries of $15,000, fixed maintenance salaries of $4,000, insurance of $7,000, and depreciation expenses of $3,000. 
+
+ Given the direct labor hours for each quarter from the direct labor budget, the variable costs are the number of hours multiplied by the variable overhead application rate. The fixed costs are the same for each quarter, as shown in the manufacturing overhead budget in  Figure 7.11 . 
+
+ The total manufacturing overhead cost was $131,863 for 7,050 units, or $18.70 per unit (rounded). Since 6,000 units are sold, $112,200 (6,000 units × $18.70 /unit) will be expensed as cost of goods sold, while the remaining $19,663 will be part of finished goods ending inventory. 
+
+ Sales and Administrative Expenses Budget 
+
+ The direct materials budget, the direct labor budget, and the manufacturing overhead budget plan for all costs related to production, while the  selling and administrative expense budget  contains a listing of variable and fixed expenses estimated to be incurred in all areas other than production costs. While this one budget contains all nonmanufacturing expenses, in practice, it actually comprises several small budgets created by managers in sales and administrative positions. All managers must follow the budget, but setting an appropriate budget for selling and administrative functions is complicated and is not always thoroughly understood by managers without a background in managerial accounting. 
+
+ If Big Bad Bikes pays a sales commission of $2 per unit sold and a transportation cost of $0.50 per unit, they can use these costs to put together their sales and administrative budget. All other costs are fixed costs per quarter: sales salaries of $5,000; administrative salaries of $5,000; marketing expenses of $5,000; insurance of $1,000; and depreciation of $2,000. The sales and administrative budget is shown in  Figure 7.12 , along with the budgeted sales used in the computation of variable sales and administrative expenses. 
+
+ Only manufacturing costs are treated as a product cost and included in ending inventory, so all of the expenses in the sales and administrative budget are period expenses and included in the budgeted income statement. 
+
+ Budgeted Income Statement 
+
+ A  budgeted income statement  is formatted similarly to a traditional income statement except that it contains budgeted data. Once all of the operating budgets have been created, these costs are used to prepare a budgeted income statement and budgeted balance sheet. The manufacturing costs are allocated to the cost of goods sold and the ending inventory. 
+
+ Big Bad Bikes uses the information on direct materials ( Figure 7.9 ), direct labor ( Figure 7.10 ), and manufacturing overhead ( Figure 7.11 ) to allocate the manufacturing costs between the cost of goods sold and the ending work in process inventory, as shown in ( Figure 7.13 ). 
+
+ Once they perform this allocation, the budgeted income statement can be prepared. Big Bad Bikes estimates an interest of $954. It also estimates that $22,000 of its income will not be collected and will be reported as uncollectible expense. The budgeted income statement is shown in  Figure 7.14 . 
+
+ Think It Through Errors in a Budgeted Balance Sheet Which error has the potential to cause more problems with the budgeted balance sheet: overstating sales or understating the cash collected? 
+ 7.3   Prepare Financial Budgets 
+
+ Now that you have developed an understanding of operating budgets, let’s turn to the other primary component of the master budget: financial budgets. Preparing financial budgets involves examining the expectations for financing the operations of the business and planning for the cash needs of the organization. The budget helps estimate the source, amount, and timing of cash collection and cash payments as well as determine if and when additional financing is needed or debt can be paid. 
+
+ Individual Financial Budgets 
+
+ Preparing a financial budget first requires preparing the capital asset budget, the cash budgets, and the budgeted balance sheet. The capital asset budget represents a significant investment in cash, and the amount is carried to the cash budget. Therefore, it needs to be prepared before the cash budget. If the cash will not be available, the capital asset budget can be adjusted and, again, carried to the cash budget. 
+
+ When the budgets are complete, the beginning and ending balance from the cash budget, changes in financing, and changes in equity are shown on the budgeted balance sheet. 
+
+ Capital Asset Budget 
+
+ The  capital asset budget , also called the  capital expenditure budget , shows the company’s plans to invest in long-term assets. Some assets, such as computers, must be replaced every few years, while other assets, such as manufacturing equipment, are purchased very infrequently. Some assets can be purchased with cash, whereas others may require a loan. Budgeting for these types of expenditures requires long-range planning because the purchases affect cash flows in current and future periods and affect the income statement due to depreciation and interest expenses. 
+
+ Cash Budget 
+
+ The  cash budget  is the combined budget of all inflows and outflows of cash. It should be divided into the shortest time period possible, so management can be quickly made aware of potential problems resulting from fluctuations in cash flow. One goal of this budget is to anticipate the timing of cash inflows and outflows, which allows a company to try to avoid a decrease in the cash balance due to paying out more cash than it receives. In order to provide timely feedback and alert management to short-term cash needs, the cash flow budget is commonly geared toward monthly or quarterly figures.  Figure 7.15  shows how the other budgets tie into the cash budget. 
+
+ Cash is so important to the operations of a company that, often, companies will arrange to have an emergency cash source, such as a  line of credit , to avoid defaulting on current payables due and also to protect against other unanticipated expenses, such as major repair costs on equipment. This line of credit would be similar in function to the  overdraft protection  offered on many checking accounts. 
+
+ Because the cash budget accounts for every inflow and outflow of cash, it is broken down into smaller components. The  cash collections schedule  includes all of the cash inflow expected to be received from customer sales, whether those customers pay at the same rate or even if they pay at all. The cash collections schedule includes all the cash expected to be received and does not include the amount of the receivables estimated as uncollectible. The  cash payments schedule  plans the outflow or payments of all accounts payable, showing when cash will be used to pay for direct material purchases. Both the cash collections schedule and the cash payments schedule are included along with other cash transactions in a cash budget. The cash budget, then, combines the cash collection schedule, the cash payment schedule, and all other budgets that plan for the inflow or outflow of cash. When everything is combined into one budget, that budget shows if financing arrangements are needed to maintain balances or if excess cash is available to pay for additional liabilities or assets. 
+
+ The operating budgets all begin with the sales budget. The cash collections schedule does as well. Since purchases are made at varying times during the period and cash is received from customers at varying rates, data are needed to estimate how much will be collected in the month of sale, the month after the sale, two months after the sale, and so forth. Bad debts also need to be estimated, since that is cash that will not be collected. 
+
+ To illustrate, let’s return to Big Bad Bikes. They believe cash collections for the trainer sales will be similar to the collections from their bicycle sales, so they will use that pattern to budget cash collections for the trainers. In the quarter of sales, 65% of that quarter’s sales will be collected. In the quarter after the sale, 30% will be collected. This leaves 5% of the sales considered uncollectible.  Figure 7.16  illustrates when each quarter’s sales will be collected. An estimate of the net realizable balance of Accounts Receivable can be reconciled by using information from the cash collections schedule: 
+
+ For example, in quarter 1 of year 2, 65% of the quarter 1 sales will be collected in cash, as well as 30% of the sales from quarter 4 of the prior year. There were no sales in quarter 4 of the prior year so 30% of zero sales shows the collections are $0. Using information from Big Bad Bikes sales budget, the cash collections from the sales are shown in  Figure 7.17 . 
+
+ When the cash collections schedule is made for sales, management must account for other potential cash collections such as cash received from the sale of equipment or the issuance of stock. These are listed individually in the cash inflows portion of the cash budget. 
+
+ The cash payments schedule, on the other hand, shows when cash will be used to pay for Accounts Payable. One such example are direct material purchases, which originates from the direct materials budget. When the production budget is determined from the sales, management prepares the direct materials budget to determine when and how much material needs to be ordered. Orders for materials take place throughout the quarter, and payments for the purchases are made at different intervals from the orders. A schedule of cash payments is similar to the cash collections schedule, except that it accounts for the company’s purchases instead of the company’s sales. The information from the cash payments schedule feeds into the cash budget. 
+
+ Big Bad Bikes typically pays half of its purchases in the quarter of purchase. The remaining half is paid in the following quarter, so payments in the first quarter include payments for purchases made during the first quarter as well as half of the purchases for the preceding quarter.  Figure 7.18  shows when each quarter’s purchases will be paid. Additionally, the balance of purchases in Accounts Payable can be reconciled by using information from the cash payment schedule as follows: 
+
+ The first quarter of the year plans cash payments from the prior quarter as well as the current quarter. Again, since the trainers are a new product, in this example, there are no purchases in the preceding quarter, and the payments are $0.  Figure 7.19 . 
+
+ While the cash payments schedule is made for purchases of material on account, there are other outflows of cash for the company, and management must estimate all other cash payments for the year. Typically, this includes the manufacturing overhead budget, the sales and administrative budget, the capital asset budget, and any other potential payments of cash. Since depreciation is an expense not requiring cash, the cash budget includes the amount from the budgets less depreciation. Cash payments are listed on the cash budget following cash receipts.  Figure 7.20  shows the major components of the cash budget. 
+
+ The cash budget totals the cash receipts and adds it to the beginning cash balance to determine the available cash. From the available cash, the cash payments are subtracted to compute the net cash excess or deficiency of cash for the quarter. This amount is the potential ending cash balance. Organizations typically require a minimum cash balance. If the potential ending cash balance does not meet the minimum amount, management must plan to acquire financing to reach that amount. If the potential ending cash balance exceeds the minimum cash balance, the excess amount may be used to pay any financing loans and interest. 
+
+ Big Bad Bikes has a minimum cash balance requirement of $10,000 and has a line of credit available for an interest rate of 19%. They also plan to issue additional capital stock for $5,000 in the first quarter, to pay taxes of $1,000 during each quarter, and to purchase a copier for $8,500 cash in the third quarter. The beginning cash balance for Big Bad Bikes is $13,000, which can be used to create the cash budget shown in  Figure 7.21 . 
+
+ Budgeted Balance Sheet 
+
+ The cash budget shows how cash changes from the beginning of the year to the end of the year, and the ending cash balance is the amount shown on the budgeted balance sheet. The  budgeted balance sheet  is the estimated assets, liabilities, and equities that the company would have at the end of the year if their performance were to meet its expectations.  Table 7.1  shows a list of the most common changes to the balance sheet and where the information is derived. 
+
+ Common Changes in the Budgeted Balance Sheet 
+
+ Information Source 
+
+ Balance Sheet Change 
+
+ Cash balance 
+
+  ending cash balance from the cash budget 
+
+ Accounts Receivable balance 
+
+  uncollected receivables from the cash collections schedule 
+
+ Inventory 
+
+  ending balance in inventory as shown from calculations to create the income statement 
+
+ Machinery & Equipment 
+
+  ending balance in the capital asset budget 
+
+ Accounts Payable 
+
+  unpaid purchases from the cash payments schedule 
+
+ Table  7.1   
+
+ Other balance sheet changes throughout the year are reflected in the income statement and statement of cash flows. For example, the beginning cash balance of Accounts Receivable plus the sales, less the cash collected results in the ending balance of Accounts Receivable. A similar formula is used to compute the ending balance in Accounts Payable. Other budgets and information such as the capital asset budget, depreciation, and financing loans are used as well. 
+
+ To explain how to use a budgeted balance sheet, let’s return to Big Bad Bikes. For simplicity, assume that they did not have accounts receivable or payable at the beginning of the year. They also incurred and paid back their financing during the year, so there is no ending debt. However, the cash budget shows cash inflows and outflows not related to sales or the purchase of materials. The company’s capital assets increased by $8,500 from the copier purchase, and their common stock increased by $5,000 from the additional issue as shown in  Figure 7.22 . 
+
+ Though there seem to be many budgets, they all fit together like a puzzle to create an overall picture of how a company expects the upcoming business year to look.  Figure 7.15  detailed the components of the master budget, and can be used to summarize the budget process. All budgets begin with the sales budget. This budget estimates the number of units that need to be manufactured and precedes the production budget. The production budget (refer to  Figure 7.6 ) provides the necessary information for the budgets needed to plan how many units will be produced. Knowing how many units need to be produced from the production budget, the direct materials budget, direct labor budget, and the manufacturing overhead budget are all prepared. The sales and administrative budget is a nonmanufacturing budget that relies on the sales estimates to pay commissions and other variable expenses. The sales and expenses estimated in all of these budgets are used to develop a budgeted income statement. 
+
+ The estimated sales information is used to prepare the cash collections schedule, and the direct materials budget is used to prepare the cash payment schedule. The cash receipts and cash payments budget are combined with the direct labor budget, the manufacturing overhead budget, the sales and administrative budget, and the capital assets budget to develop the cash budget. Finally, all the information is used to flow to the budgeted balance sheet. 
+
+ Your Turn Creating a Master Budget Molly Malone is starting her own company in which she will produce and sell Molly’s Macaroons. Molly is trying to learn about the budget process as she puts her business plan together. Help Molly by explaining the optimal order for preparing the following budgets and schedules and why this is the optimal order. 
+
+ budgeted balance sheet 
+
+ budgeted income statement 
+
+ capital asset budget 
+
+ cash budget 
+
+ cash collections schedule 
+
+ cash payments schedule 
+
+ direct materials budget 
+
+ direct labor budget 
+
+ master budget 
+
+ manufacturing overhead 
+
+ production budget 
+
+ sales budget 
+
+ selling and administrative budget 
+
+ Solution 
+
+ A master budget always begins with the sales budget must be prepared first as this determines the number of units that will need to be produced. The next step would be to create the production budget, which helps determine the number of units that will need to be produced each period to meet sales goals. Once Molly knows how many units she will need to produce, she will need to budget the costs associated with those units, which will require her to create the direct materials budget, the direct labor budget and the manufacturing overhead budget. But Molly will have costs other than manufacturing costs so she will need to create a selling and administrative expenses budget. Molly will need to determine what are her capital asset needs and budget for those. Now that Molly has all her revenues budgeted and her costs budgeted, she can determine her budgeted cash inflows and outflows by putting together the cash schedules that lead to the cash budget. Molly will then need to create a cash collections schedule and a cash payments schedule and that information, along with the cash inflow and outflow information from her other budgets, will allow her to create her cash budget. Once Molly has completed her cash budget she will be able to put together her budgeted income statement and budgeted balance sheet. 
+ 7.4   Prepare Flexible Budgets 
+
+ A company makes a budget for the smallest time period possible so that management can find and adjust problems to minimize their impact on the business. Everything starts with the estimated sales, but what happens if the sales are more or less than expected? How does this affect the budget? What adjustments does a company have to make in order to compare the actual numbers to budgeted numbers when evaluating results? If production is higher than planned and has been increased to meet the increased sales, expenses will be over budget. But is this bad? To account for actual sales and expenses differing from budgeted sales and expenses, companies will often create flexible budgets to allow budgets to fluctuate with future demand. 
+
+ Flexible Budgets 
+
+ A  flexible budget  is one based on different volumes of sales. A flexible budget flexes the static budget for each anticipated level of production. This flexibility allows management to estimate what the budgeted numbers would look like at various levels of sales. Flexible budgets are prepared at each analysis period (usually monthly), rather than in advance, since the idea is to compare the operating income to the expenses deemed appropriate at the actual production level. 
+
+ Big Bad Bikes is planning to use a flexible budget when they begin making trainers. The company knows its variable costs per unit and knows it is introducing its new product to the marketplace. Its estimations of sales and sales price will likely change as the product takes hold and customers purchase it. Big Bad Bikes developed a flexible budget that shows the change in income and expenses as the number of units changes. It also looked at the effect a change in price would have if the number of units remained the same. The expenses that do not change are the fixed expenses, as shown in  Figure 7.23 . 
+
+ Static versus Flexible Budgets 
+
+ A  static budget  is one that is prepared based on a single level of output for a given period. The master budget, and all the budgets included in the master budget, are examples of static budgets. Actual results are compared to the static budget numbers as one means to evaluate company performance. However, this comparison may be like comparing apples to oranges because variable costs should follow production, which should follow sales. Thus, if sales differ from what is budgeted, then comparing actual costs to budgeted costs may not provide a clear indicator of how well the company is meeting its targets. A flexible budget created each period allows for a comparison of apples to apples because it will calculate budgeted costs based on the actual sales activity. 
+
+ For example,  Figure 7.24  shows a static quarterly budget for 1,500 trainers sold by Big Bad Bikes. The budget will change if there are more or fewer units sold. 
+
+ Budget with Varying Levels of Production 
+
+ Companies develop a budget based on their expectations for their most likely level of sales and expenses. Often, a company can expect that their production and sales volume will vary from budget period to budget period. They can use their various expected levels of production to create a flexible budget that includes these different levels of production. Then, they can modify the flexible budget when they have their actual production volume and compare it to the flexible budget for the same production volume. A flexible budget is more complicated, requires a solid understanding of a company’s fixed and variable expenses, and allows for greater control over changes that occur throughout the year. For example, suppose a proposed sale of items does not occur because the expected client opted to go with another supplier. In a static budget situation, this would result in large variances in many accounts due to the static budget being set based on sales that included the potential large client. A flexible budget on the other hand would allow management to adjust their expectations in the budget for both changes in costs and revenue that would occur from the loss of the potential client. The changes made in the flexible budget would then be compared to what actually occurs to result in more realistic and representative variance. This ability to change the budget also makes it easier to pinpoint who is responsible if a revenue or cost target is missed. 
+
+ Big Bad Bikes used the flexible budget concept to develop a budget based on its expectation that production levels will vary by quarter. By the fourth quarter, sales are expected to be strong enough to pay back the financing from earlier in the year. The budget shown in  Figure 7.25  illustrates the payment of interest and contains information helpful to management when determining which items should be produced if production capacity is limited. 
+
+ Concepts In Practice Flexible Budgets and Sustainability The ability to provide flexible budgets can be critical in new or changing businesses where the accuracy of estimating sales or usage my not be strong. For example, organizations are often reporting their sustainability efforts and may have some products that require more electricity than other products. The reporting of the energy per unit of output has sometimes been in error and can mislead management into making changes that may or may not help the company. For example, based on the energy per unit reported, management may decide to change the product mix, the amount that is outsourced, and/or the amount that is produced. 1  If the energy output isn’t correct, the decisions may be wrong and create an adverse impact on the budget. 1 Jon Bartley, et al. “Using Flexible Budgeting to Improve Sustainability Measures.:  American Institute of CPAs . Jan. 23, 2017. https://www.aicpa.org/interestareas/businessindustryandgovernment/resources/sustainability/improvesustainabilitymeasures.html 
+
+ Link to Learning 
+
+ In theory, a flexible budget is not difficult to develop since the variable costs change with production and the fixed costs remain the same. However, planning to meet an organization’s goals can be very difficult if there are not many variable costs, if the cash inflows are relatively fixed, and if the fixed costs are high. For example, this  article shows some large U.S. cities are faced with complicated budgets  because of high fixed costs. 
+ 7.5   Explain How Budgets Are Used to Evaluate Goals 
+
+ As you’ve learned, an advantage of budgeting is evaluating performance. Having a strong understanding of their budgets helps managers keep track of expenses and work toward the company’s goals. Companies need to understand their revenue and expense details to develop budgets as a tool for planning operations and cash flow. Part of understanding revenue and expenses is evaluating the prior year. Did the company earn the expected profit? Could it have earned a higher profit? What expenses or revenues were not on the budget? Critically evaluating the actual results versus the estimated budgetary results can help management plan for the future.  Variance analysis  helps the manager analyze its results. It does not necessarily find a problem, but it does indicate where a problem may exist. The same is true for favorable variances as well as unfavorable variances. A favorable variance occurs when revenue is higher than budgeted or expenses are lower than budgeted. An unfavorable variance is when revenue is lower than budgeted or expenses are higher than budgeted. 
+
+ Comparing Favorable to Unfavorable Variances 
+
+ Favorable 
+
+ Unfavorable 
+
+ Actual Sales > Budgeted Sales 
+
+ Actual Sales < Budgeted Sales 
+
+ Actual Expenses < Budgeted Expenses 
+
+ Actual Expenses > Budgeted expenses 
+
+ Table  7.2   
+
+ It is easy to understand that an unfavorable variance may be a problem. But that is not always true, as a higher labor rate may mean the company has a higher quality employee who is able to waste less material. Likewise, having a favorable variance indicates that more revenue was earned or less expenses were incurred but further analysis can indicate if costs were cut too far and better materials should have been purchased. 
+
+ If a company has only a static budget, meaningful comparisons are difficult. Analyzing the sales for Bid Bad Bikes will illustrate whether there was a profit and how net income impacts the company. In the third quarter, Big Bad Bikes sold 1,400 trainers and had third quarter net income of $15,915 as shown in  Figure 7.26 . 
+
+ The company earned a profit during the third quarter, but what does that mean to the company? Simply having net income instead of a net loss does not help plan for the future. The third quarter static budget was for the sale of 1,500 units. Comparing that budget to the actual results shows whether there is a favorable variance or an unfavorable variance. A comparison of the actual costs with the budget for the third quarter, as shown in  Figure 7.27 , has a favorable variance for all of the expenses and an unfavorable variance for everything associated with revenues. 
+
+ How do those results advise management when evaluating the company’s performance? It is difficult to look at one variance and make a conclusion about the company or its management. However, the variances can help narrow down the areas that need addressing because they differ from the budgeted amount. For example, looking at the variance when using a static budget does not indicate the amount of the variance results because they sold 100 fewer units than budgeted. The variance for the cost of goods sold is favorable, but it should be if production was less than the budget. A static budget does not evaluate whether costs for 1,400 were appropriate for production of those 1,400 units. 
+
+ Using a static budget to evaluate performance affects the bottom line as well as the individual expenses. The net income for the sale of 1,400 units is less than the budgeted net income for 1,500 units, but it does not indicate whether expenses were appropriate for 1,400 units. If there had been 1,600 units sold, the expenses would be more than the budgeted amount, but sales would be higher. Would it be fair to evaluate a manager’s control over their expenses using a static budget? 
+
+ Ethical Considerations Budget Manipulation and Ethics Training Why is ethics training important? An organization that bases a manager’s evaluation and pay on how close to the budget the division performs may inadvertently encourage that manager to act unethically in order to get a pay raise. Many employees manipulate the budget process to enhance their earnings by garnering bonuses based upon questionably ethical behavior and improper financial reporting. Generally, this unethical behavior involves either manipulating the numbers in the budget or modifying the timing of reports to apply income to a different budget period. Kenton Walker and Gary Fleischman studied ethics in budgeting and determined that certain ethics-related structures in a business created a better operational environment. 
+
+ The study found that the existence of formal ethical codes, ethics training, good management role models, and social pressure to be disclosing within an organization can be a deterrent to budget manipulation by employees. The authors recommended: “Therefore, organizations should carefully cultivate an ethical atmosphere that is sensitive to the pressures employees may feel to game the budget through actions that involve cheating and/or manipulating earnings targets to maximize bonuses.”  2  The study concluded that requiring organizational ethics training that includes role playing helps teach ethical behavior in budgeting and other areas of business. Ethics training never goes out so style. 2 Kenton B. Walker, et al. “Toeing the Line: The Ethics of Manipulating Budgets and Earnings.”  Management Accounting Quarterly  14, no. 3 (Spring 2013). https://www.imanet.org/-/media/f4869589d9d444de8c211d245a0192ff.ashx 
+
+ Evaluating the expenses on a flexible budget computed for the number of units sold would provide an indication of management’s ability to control expenses. As shown in  Figure 7.28 , some expenses have a favorable variance, while others have an unfavorable variance. This type of variance analysis provides more information to evaluate management and help prepare the next year’s budget. For example, the direct labor in the flexible budget comparison shows an unfavorable variance, meaning the direct labor expense was more than budgeted for the production of 1,400 units. When comparing direct labor expense, the direct labor in the static budget mentioned earlier was even larger because it computed direct labor required to manufacture 1,500 units. It is not surprising that the static budget variance is favorable because 100 fewer units were actually produced. However, that information is not as useful as the unfavorable variance when comparing 1,400 units produced versus the budgeted direct labor for 1,400 units used. 
+
+ Think It Through A Budget for a New Business You are beginning your own business and developed a budget based on modest sales and expense assumptions. The actual results are very close to the budget at the end of the first and second months. During the third month, both cash collected and paid differ significantly from the budget. What could be the cause and what should you do? 
+
+ Link to Learning 
+
+ Budgeting is only the beginning of the process. Evaluating the results to determine if the financial goals are being met can make the difference in whether an organization or individual meets its goals or not.  Forbes  recognizes that budgeting is an important personal task that should start early in one’s professional career. This  article provides some custom budgeting guidelines for young adults  to help.

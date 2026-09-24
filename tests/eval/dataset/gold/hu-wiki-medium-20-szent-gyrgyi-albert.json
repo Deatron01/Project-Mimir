@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Szent-Györgyi Albert",
+    "nehezseg": "easy",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Szent-Györgyi Albert"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Hol lakott Szent-Györgyi Albert Amerikában?",
+      "helyes_valasz": "a massachusettsi Woods Hole-ban",
+      "evidence": [
+        "1947-ben Amerikába emigrált, a massachusettsi Woods Hole-ban telepedett le."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mi a Szegóra hosszabb, hivatalos neve?",
+      "helyes_valasz": "Szent-Györgyi Albert Agóra",
+      "evidence": [
+        "Szent-Györgyi Albert Agóra, röviden Szegóra lett a neve a Kálvária sugárút–Jósika utca–Londoni körút–Gogol utca által határolt területen épített közművelődési központnak, Szegeden."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mit kutatott Szent-Györgyi Albert Amerikában?",
+      "helyes_valasz": "eleinte az izomműködés biokémiáját, majd a rák kialakulását",
+      "evidence": [
+        "1947-ben Amerikába emigrált, a massachusettsi Woods Hole-ban telepedett le. Itt létrehozott egy alapítványt, amelynek keretei között eleinte az izomműködés biokémiáját, majd a rák kialakulását kutatta."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hány év leforgása alatt vesztette el Szent-Györgyi Albert a második feleségét és a lányát?",
+      "helyes_valasz": "hat",
+      "evidence": [
+        "Élete utolsó két évtizedét a rákkutatásnak szentelte. Ebben feltehetőleg közrejátszott az a tény, hogy második felesége, Borbíró Márta 1963-ban és egyetlen gyermeke, Szent-Györgyi Nelli 1969-ben ebben a betegségben hunyt el."
+      ],
+      "type": "open",
+      "kerdestipus": "Aritmetika:Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Lefoglalták-e a hatóságok Szent-Györgyiék pozsonyi laboratóriumának felszerelését?",
+      "helyes_valasz": "mielőtt a hatóságok lefoglalhatták volna",
+      "evidence": [
+        "Szent-Györgyi és Cori felpakolta a laboratórium felszerelését, és mielőtt a hatóságok lefoglalhatták volna, átcsempészték azt a határon."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz:Nem"
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik magyar várostól kapott díszpolgári címet Szent-Györgyi Albert?",
+      "helyes_valasz": "Szegedtől",
+      "evidence": [
+        "Szeged város díszpolgára (1937)"
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor adtak át először Kossuth-díjakat?",
+      "helyes_valasz": "1948-ban",
+      "evidence": [
+        "1948-ban az első alkalommal kiosztott Kossuth-díjjal"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik magyar egyetemen kapott díszdoktori címet Szent-Györgyi Albert?",
+      "helyes_valasz": "a Szegedi Orvostudományi Egyetemen",
+      "evidence": [
+        "Ekkor avatták a Szegedi Orvostudományi Egyetem díszdoktorává, valamint a Magyarok Világszövetsége tiszteletbeli tagjává."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Ki halt meg előbb, Szent-Györgyi Albert vagy fiatal felesége, Marcia Houston?",
+      "helyes_valasz": "Szent-Györgyi Albert",
+      "evidence": [
+        "1975-ben feleségül vette a nála ötven évvel fiatalabb Marcia Houstont, akivel haláláig élt együtt."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen tudományok tiszteletbeli doktora lett Szent-Györgyi Szegeden?",
+      "helyes_valasz": "a bölcsészeti tudományoké",
+      "evidence": [
+        "A Szegedi Tudományegyetem tiszteletbeli doktora (1938) – kimagasló tudományos érdemei elismeréséül a bölcsészeti tudományok tiszteletbeli doktorává avatva"
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    }
+  ]
+}

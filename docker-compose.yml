@@ -1,5 +1,3 @@
-version: '3.8'
-
 # GDPR: naplók méretkorlátos rotációja, hogy a (rövidített IP-t tartalmazó) naplók ne halmozódjanak fel.
 x-logging: &default-logging
   driver: json-file
@@ -47,7 +45,8 @@ services:
     restart: unless-stopped
 
   minio:
-    image: minio/minio
+    # A minio/minio kép 2026 szeptemberében eltűnt a Docker Hubról; a Quay.io tükör még elérhető.
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     container_name: mimir-minio
     logging: *default-logging
     environment:
@@ -141,6 +140,7 @@ services:
       - OE_GENAI_API_KEY=${OE_GENAI_API_KEY}
       - LOCAL_ONLY=${LOCAL_ONLY:-false}
       - JOB_TTL_SECONDS=${JOB_TTL_SECONDS:-3600}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen2.5:7b}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -162,6 +162,7 @@ services:
       - .env # IDE kerülnek az SMTP e-mail küldő és JWT authentikációs jelszavak!
     environment:
       - LOCAL_ONLY=${LOCAL_ONLY:-false}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen2.5:7b}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:

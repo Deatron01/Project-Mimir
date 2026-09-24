@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Isztambul",
+    "nehezseg": "hard",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Isztambul"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Isztambul melyik részében található sok ókori épület?",
+      "helyes_valasz": "a város európai oldalán",
+      "evidence": [
+        "Isztambul bővelkedik ókori görög, római, bizánci és oszmán épületekben, emlékművekben, különösen igaz ez a város európai oldalára."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik a legnevesebb jazz klub Isztambulban?",
+      "helyes_valasz": "az ortaköyi Q Jazz Bar",
+      "evidence": [
+        "A jazz kedvelői az ortaköyi Q Jazz Bar-ban élvezhetik a műfaj kiváló előadóinak koncertjeit."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Kinek a nevéhez fűződik Isztambul fejlesztése az 1960-as években?",
+      "helyes_valasz": "Adnan Menderes",
+      "evidence": [
+        "A 60-as években – Adnan Menderes kormányzása alatt – kiterjedt ipar- és infrastruktúra-fejlesztést hajtottak végre, az építkezések azonban nem egyszer történelmi emlékek pusztulásával jártak."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hány éves történelmi múltra tekint vissza Isztambul?",
+      "helyes_valasz": "8000 éves",
+      "evidence": [
+        "2009 januárjában, a Marmaray alagút építése közben olyan leletekre bukkantak, melyek alapján a régészek kijelentették, hogy Isztambul – amiről eddig azt hitték, hogy körülbelül 2000 éves – valójában már 8000 évvel ezelőtt is lakott terület volt, egy település épületeinek nyomára bukkantak, valamint feltárták egy 8000 évvel ezelőtti négytagú család sírját is."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik volt Isztambul első mecsete?",
+      "helyes_valasz": "Arap camii avagy az Arab mecset",
+      "evidence": [
+        "A város első mecsetét (Arap camii avagy az Arab mecset) az arabok emelték még 717-ben."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Kik alapították Isztambult?",
+      "helyes_valasz": "görögök",
+      "evidence": [
+        "Idővel a városban is mindinkább felszínre kerültek az etnikai és vallási konfliktusok, s az 1955-ös, Beyoğlu negyedbeli zavargás nyomán a város eredetét jelző görögség veleje emigrált."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen leletekre bukkantak Isztambulban a Marmaray alagút építése közben?",
+      "helyes_valasz": "egy település épületeinek nyomára bukkantak, valamint feltárták egy 8000 évvel ezelőtti négytagú család sírját is",
+      "evidence": [
+        "2009 januárjában, a Marmaray alagút építése közben olyan leletekre bukkantak, melyek alapján a régészek kijelentették, hogy Isztambul – amiről eddig azt hitték, hogy körülbelül 2000 éves – valójában már 8000 évvel ezelőtt is lakott terület volt, egy település épületeinek nyomára bukkantak, valamint feltárták egy 8000 évvel ezelőtti négytagú család sírját is."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor épült az isztambuli Arab mecset?",
+      "helyes_valasz": "717-ben",
+      "evidence": [
+        "A város első mecsetét (Arap camii avagy az Arab mecset) az arabok emelték még 717-ben."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik városban található az Ístiklal sugárút?",
+      "helyes_valasz": "Isztambulban",
+      "evidence": [
+        "Isztambul építészeti szempontból is magán viseli történelmének és etnikumainak sokszínűségét. A városban rengeteg mecsetet, templomot, zsinagógát, palotát, várat és tornyot csodálhat meg a látogató. Isztambul bővelkedik ókori görög, római, bizánci és oszmán épületekben, emlékművekben, különösen igaz ez a város európai oldalára. Olyan, szerte a világon ismert épületek állnak itt, mint a Hagia Szophia székesegyház, a Kék mecset, a Dolmabahçe palota, a Kız Kulesi, ahol a görög mitológiában Héró és Leandrosz találkozott. Az olasz kereskedők által 1348-ban építtetett Galata-toronyból pazar kilátás nyílik az Aranyszarv-öbölre. Megcsodálhatunk barokk és rokokó stílusban épült dzsámikat, és az İstiklal sugárút Art Nouveau épületeiben vásárolhatunk."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen vallású Isztambul lakossága?",
+      "helyes_valasz": "iszlám",
+      "evidence": [
+        "Amikor az oszmán uralkodók meghódították a várost, a hivatalos vallás az iszlám lett."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "teszt_metaadatok": {
+    "tema": "introduction to sociology ch. 8, 8.1 Technology Today",
+    "nehezseg": "hard",
+    "nyelv": "en",
+    "forras": "EduQG / OpenStax introduction_to_sociology chapter 8"
+  },
+  "kerdesek": [
+    {
+      "id": "fs-id1352100",
+      "kerdes": "When it comes to technology, media, and society, which of the following is true?",
+      "helyes_valasz": "Technology, media, and society are bound and cannot be separated.",
+      "disztraktorok": [
+        "Media influences technology, but not society. ",
+        "Technology created media, but society has nothing to do with these.",
+        "Society influences media but is not connected to technology."
+      ],
+      "evidence": [
+        "Technology creates media.",
+        "Without technology, media would not exist; but remember, technology is more than just the media we are exposed to."
+      ],
+      "bloom_szint": "Megértés"
+    },
+    {
+      "id": "fs-id1703872",
+      "kerdes": "If the U.S. Patent Office were to issue a patent for a new type of tomato that tastes like a jellybean, Which patent would it be issuing?",
+      "helyes_valasz": "plant patent",
+      "disztraktorok": [
+        "utility patent",
+        "design patent",
+        "The U.S. Patent Office does not issue a patent for plants."
+      ],
+      "evidence": [
+        "Plant patents, the final type, recognize the discovery of new plant types that can be asexually reproduced.",
+        "While genetically modified food is the hot-button issue within this category, farmers have long been creating new hybrids and patenting them."
+      ],
+      "bloom_szint": "Alkalmazás"
+    },
+    {
+      "id": "fs-id1789391",
+      "kerdes": "Which of the following is the primary component of the evolutionary model of technological change?",
+      "helyes_valasz": "A breakthrough in one form of technology leads to a number of variations, and technological developments.",
+      "disztraktorok": [
+        "Technology should not be subject to patenting.",
+        "Technology and the media evolve together.",
+        "Technology can be traced back to the early stages of human society."
+      ],
+      "evidence": [
+        "Anderson and Tushman (1990) suggest an evolutionary model of technological change, in which a breakthrough in one form of technology leads to a number of variations."
+      ],
+      "bloom_szint": "Emlékezés"
+    },
+    {
+      "id": "fs-id1490378",
+      "kerdes": "What are comic books, Wikipedia, MTV, and a Coca-Cola commercial all examples of?",
+      "helyes_valasz": "media ",
+      "disztraktorok": [
+        "symbolic interaction perspective",
+        "e-readiness",
+        "the digital divide"
+      ],
+      "evidence": [
+        "The comic book you bought your daughter at the drugstore is a form of media, as is the movie you rented for family night, the internet site you used to order dinner online, the billboard you passed on the way to get that dinner, and the newspaper you read while you were waiting to pick up your order."
+      ],
+      "bloom_szint": "Emlékezés"
+    }
+  ]
+}

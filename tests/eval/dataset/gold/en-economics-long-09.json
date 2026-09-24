@@ -1,0 +1,167 @@
+{
+  "teszt_metaadatok": {
+    "tema": "principles of accounting, volume 2: managerial accounting ch. 7",
+    "nehezseg": "hard",
+    "nyelv": "en",
+    "forras": "EduQG / OpenStax principles_of_accounting,_volume_2:_managerial_accounting chapter 7"
+  },
+  "kerdesek": [
+    {
+      "id": "fs-idm214666480",
+      "kerdes": "Which of the following is not a part of budgeting?",
+      "helyes_valasz": "preventing net operating losses",
+      "disztraktorok": [
+        "planning",
+        "finding bottlenecks",
+        "providing performance evaluations"
+      ],
+      "evidence": [
+        "As you’ ve learned, an advantage of budgeting is evaluating performance.",
+        "Companies need to understand their revenue and expense details to develop budgets as a tool for planning operations and cash flow.",
+        "Part of understanding revenue and expenses is evaluating the prior year.",
+        "Critically evaluating the actual results versus the estimated budgetary results can help management plan for the future.",
+        "Variance analysis helps the manager analyze its results.",
+        "It does not necessarily find a problem, but it does indicate where a problem may exist."
+      ]
+    },
+    {
+      "id": "fs-idm354528256",
+      "kerdes": "The cash budget is part of which category of budgets?",
+      "helyes_valasz": "financial budget",
+      "disztraktorok": [
+        "sales budget",
+        "cash payments budget",
+        "operating budget"
+      ],
+      "evidence": [
+        "Preparing a financial budget first requires preparing the capital asset budget, the cash budgets, and the budgeted balance sheet.",
+        "A financial budget consists of the cash budget, the budgeted balance sheet, and the budget for capital expenses."
+      ]
+    },
+    {
+      "id": "fs-idm222609568",
+      "kerdes": "Which budget evaluates the results of operations at the actual level of activity?",
+      "helyes_valasz": "flexible budget",
+      "disztraktorok": [
+        "capital budget",
+        "cash budget",
+        "static budget"
+      ],
+      "evidence": [
+        "A flexible budget is one based on different volumes of sales.",
+        "A flexible budget flexes the static budget for each anticipated level of production.",
+        "This flexibility allows management to estimate what the budgeted numbers would look like at various levels of sales.",
+        "Flexible budgets are prepared at each analysis period (usually monthly), rather than in advance, since the idea is to compare the operating income to the expenses deemed appropriate at the actual production level."
+      ]
+    },
+    {
+      "id": "fs-idm213422192",
+      "kerdes": "Which of the operating budgets is prepared first?",
+      "helyes_valasz": "sales budget",
+      "disztraktorok": [
+        "production budget",
+        "cash received budget",
+        "cash payments budget"
+      ],
+      "evidence": [
+        "The operating budget has several subsidiary budgets that all begin with projected sales.",
+        "For example, management estimates sales for the upcoming few years.",
+        "It then breaks down estimated sales into quarters, months, and weeks and prepares the sales budget.",
+        "The sales budget is the foundation for other operating budgets."
+      ]
+    },
+    {
+      "id": "fs-idm617181376",
+      "kerdes": "Which budget is the starting point in preparing financial budgets?",
+      "helyes_valasz": "the budgeted income statement",
+      "disztraktorok": [
+        "the budgeted balance sheet",
+        "the capital expense budget",
+        "the cash receipts budget"
+      ],
+      "evidence": [
+        "A budgeted income statement is formatted similarly to a traditional income statement except that it contains budgeted data.",
+        "Once all of the operating budgets have been created, these costs are used to prepare a budgeted income statement and budgeted balance sheet."
+      ]
+    },
+    {
+      "id": "fs-idm219964864",
+      "kerdes": "The units required in production each period are computed by which of the following methods?",
+      "helyes_valasz": "adding budgeted sales to the desired ending inventory and subtracting beginning inventory",
+      "disztraktorok": [
+        "adding beginning inventory, budgeted sales, and desired ending inventory",
+        "adding beginning inventory to budgeted sales and subtracting desired ending inventory",
+        "adding budgeted sales to the beginning inventory and subtracting the desired ending inventory."
+      ],
+      "evidence": [
+        "When determining the number of units needed to be produced, start with the estimated sales plus the desired ending inventory to derive the maximum number of units that must be available during the period.",
+        "Since the number of units in beginning inventory are already produced, subtracting the beginning inventory from the goods available results in the number of units that need to be produced."
+      ]
+    },
+    {
+      "id": "fs-idm223830944",
+      "kerdes": "The direct materials budget is prepared using which budget’s information?",
+      "helyes_valasz": "production budget",
+      "disztraktorok": [
+        "cash payments budget",
+        "cash receipts budget",
+        "raw materials budget"
+      ],
+      "evidence": [
+        "When the production budget is determined from the sales, management prepares the direct materials budget to determine when and how much material needs to be ordered.",
+        "The direct materials budget illustrates how much material needs to be ordered and how much that material costs.",
+        "Management is already aware of how much material it needs to produce each unit and can combine the direct material per unit with the production budget to compute the direct materials budget.",
+        "This information is used to ensure the correct quantity of materials is ordered and the correct amount is budgeted for those materials."
+      ]
+    },
+    {
+      "id": "fs-idm194894144",
+      "kerdes": "What is the main difference between static and flexible budgets?",
+      "helyes_valasz": "The variable costs are adjusted in a flexible budget.",
+      "disztraktorok": [
+        "The fixed manufacturing overhead is adjusted for units sold in the flexible budget.",
+        "The variable manufacturing overhead is adjusted in the static budget.",
+        "There is no difference between the budgets."
+      ],
+      "evidence": [
+        "A static budget is one that is prepared based on a single level of output for a given period.",
+        "The master budget, and all the budgets included in the master budget, are examples of static budgets.",
+        "Actual results are compared to the static budget numbers as one means to evaluate company performance.",
+        "However, this comparison may be like comparing apples to oranges because variable costs should follow production, which should follow sales."
+      ]
+    },
+    {
+      "id": "fs-idm348508704",
+      "kerdes": "Which of the following includes only financial budgets?",
+      "helyes_valasz": "cash budget, budgeted balance sheet, capital asset budget",
+      "disztraktorok": [
+        "capital asset budget, budgeted income statement, sales budget",
+        "production budget, capital asset budget, budgeted balance sheet",
+        "budgeted income statement, direct material purchases budget, cash budget"
+      ],
+      "evidence": [
+        "Preparing a financial budget first requires preparing the capital asset budget, the cash budgets, and the budgeted balance sheet.",
+        "The capital asset budget represents a significant investment in cash, and the amount is carried to the cash budget.",
+        "Therefore, it needs to be prepared before the cash budget.",
+        "A financial budget consists of the cash budget, the budgeted balance sheet, and the budget for capital expenses."
+      ]
+    },
+    {
+      "id": "fs-idm206820480",
+      "kerdes": "Which of the following is an operating budget?",
+      "helyes_valasz": "production budget",
+      "disztraktorok": [
+        "cash budget",
+        "tax budget",
+        "capital budget"
+      ],
+      "evidence": [
+        "The operating budget helps plan future revenue and expenses and results in a projected income statement.",
+        "The operating budget has several subsidiary budgets that all begin with projected sales.",
+        "For example, management estimates sales for the upcoming few years.",
+        "It then breaks down estimated sales into quarters, months, and weeks and prepares the sales budget.",
+        "This information in units and in dollars becomes the production budget."
+      ]
+    }
+  ]
+}

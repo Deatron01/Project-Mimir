@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Fehér gólya",
+    "nehezseg": "medium",
+    "nyelv": "hu",
+    "forras": "Hungarian Wikipedia (full article, fetched 2026-09-23): Fehér gólya; gold questions from MILQA"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Mit eszik a fehér gólya?",
+      "helyes_valasz": "rovarokat, halakat, kétéltűeket, hüllőket, kisebb emlősöket és madarakat",
+      "evidence": [
+        "Ragadozó madár, és sokféle fajt fogyaszt; zsákmányol rovarokat, halakat, kétéltűeket, hüllőket, kisebb emlősöket és madarakat."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hogyan tisztogatják egymást a fehér gólyák?",
+      "helyes_valasz": "Az egyedek a kapcsolatukat egymás tisztogatásával és más segítségekkel ápolják. A tisztogatást csak a fészeknél végzik. Az álló madár tisztogatja az ülőt, aki lehet a fiókája, vagy a testvére.",
+      "evidence": [
+        "Az egyedek a kapcsolatukat egymás tisztogatásával és más segítségekkel ápolják. A tisztogatást csak a fészeknél végzik. Az álló madár tisztogatja az ülőt, aki lehet a fiókája, vagy a testvére."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hogy néz ki a fehér gólya?",
+      "helyes_valasz": "Tollazata nagyrészt fehér, de szárnyainak végeit fekete tollak borítják. Lába hosszú, csőre hosszú, hegyes és piros.",
+      "evidence": [
+        "Tollazata nagyrészt fehér, de szárnyainak végeit fekete tollak borítják. Lába hosszú, csőre hosszú, hegyes és piros."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor indulnak el az európai fehér gólyák afrikai vándorútjukra?",
+      "helyes_valasz": "augusztus végén, szeptember elején",
+      "evidence": [
+        "A fehér gólyák augusztus végén, szeptember elején indulnak el európai szaporodóhelyeikről Afrikába."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hogyan tudja megfogni a fehér gólya a cickányt?",
+      "helyes_valasz": "a lakóüregük bejáratánál",
+      "evidence": [
+        "A cickányokat a lakóüregük bejáratánál fogják el."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Miért tűnt el a fehér gólya Európa egyes részeiről a XX. század elején?",
+      "helyes_valasz": "A középkorban az ember megtelepedése és erdőirtása kedvezett a fajnak, de a termelés módjának megváltozása és az iparosodás ahhoz vezetett, hogy a fehér gólya Európa egyes részeiről eltűnt a 19. században és a 20. század elején.",
+      "evidence": [
+        "A középkorban az ember megtelepedése és erdőirtása kedvezett a fajnak, de a termelés módjának megváltozása és az iparosodás ahhoz vezetett, hogy a fehér gólya Európa egyes részeiről eltűnt a 19. században és a 20. század elején."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mitől függ a fehér gólya étrendje?",
+      "helyes_valasz": "A táplálék összetétele helytől, évszaktól és a helyi állatvilágtól függ.",
+      "evidence": [
+        "A táplálék összetétele helytől, évszaktól és a helyi állatvilágtól függ."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Miért hasznos állat a fehér gólya?",
+      "helyes_valasz": "az egerek és a sáskák fogyasztása miatt",
+      "evidence": [
+        "A művelt területeken hasznosnak számít az egerek és a sáskák fogyasztása miatt."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen országokban él ma ismét fehér gólya az újratelepítéseknek köszönhetően?",
+      "helyes_valasz": "Hollandiában, Belgiumban, Svájcban és Svédországban",
+      "evidence": [
+        "A fajmegőrző programok és az újratelepítések miatt ma ismét megtalálható Hollandiában, Belgiumban, Svájcban és Svédországban."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "A fehér gólyák magányosan élnek?",
+      "helyes_valasz": "Társas madár; vándorútjain és afrikai telelőhelyein több ezres rajokat is észleltek.",
+      "evidence": [
+        "Társas madár; vándorútjain és afrikai telelőhelyein több ezres rajokat is észleltek."
+      ],
+      "type": "open",
+      "kerdestipus": "Nem"
+    }
+  ]
+}

@@ -17,6 +17,7 @@ SERVICES = {
     "bifrost_ingest": "http://localhost:8003/api/v1/ingest",
     "bifrost_search": "http://localhost:8003/api/v1/search",
     "bifrost_generate": "http://localhost:8003/api/v1/generate",
+    "bifrost_status": "http://localhost:8003/api/v1/status/",
     "skald": "http://localhost:8005/api/v1/export"
 }
 
@@ -113,12 +114,28 @@ def run_pipeline_for_difficulty(difficulty):
     # --- 4. BIFROST GENERATE & BASELINE COMPARE ---
     start_time = time.time()
     global_llm_data = {}
+    latency = 0.0
     try:
         query = f"Készíts tesztet a(z) {difficulty} szintű dokumentumból."
         res = requests.post(SERVICES["bifrost_generate"], json={"query": query, "limit": 3})
+        if res.status_code != 200:
+            raise Exception(res.text)
+        # A /generate ma már aszinkron: job_id-t ad vissza, a /status végpontot kell lekérdezni.
+        job = res.json()
+        job_id = job.get("job_id")
+        while job_id and job.get("status") not in ("completed", "failed"):
+            if time.time() - start_time > 600:
+                raise Exception("Időtúllépés (600 s) a Bifrost feladatra várva")
+            time.sleep(2)
+            job = requests.get(SERVICES["bifrost_status"] + job_id).json()
         latency = time.time() - start_time
+        if job.get("status") == "failed":
+            raise Exception(job.get("error", "Bifrost job failed"))
         if res.status_code == 200:
-            global_llm_data = res.json().get("data", {})
+            global_llm_data = job.get("data", {})
+            meta = global_llm_data.get("metadata", {}) if isinstance(global_llm_data, dict) else {}
+            if meta.get("is_fallback") or "Generálási Hiba" in str(global_llm_data.get("title", "")):
+                print("  ⚠️ FIGYELEM: a Bifrost a beépített hibaüzenet-tesztet adta vissza, egyik modell sem futott le!")
             # Eredmény kimentése
             generated_path = os.path.join(REPORT_DIR, f"{difficulty}_Generated.json")
             with open(generated_path, "w", encoding="utf-8") as f:
@@ -126,6 +143,8 @@ def run_pipeline_for_difficulty(difficulty):
             
             # Összehasonlítás a baseline-nal
             baseline_status = compare_with_baseline(global_llm_data, baseline_path)
+            if meta.get("is_fallback") or "Generálási Hiba" in str(global_llm_data.get("title", "")):
+                baseline_status = "HIBA: fallback (nem futott modell)"
             print(f"  -> Baseline összehasonlítás ({difficulty}): {baseline_status}")
             
             results_log.append({"Nehézség": difficulty, "Modul": "Bifrost LLM", "Válaszidő (s)": latency, "Státusz": baseline_status})

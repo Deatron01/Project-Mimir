@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Gárdonyi Géza",
+    "nehezseg": "medium",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Gárdonyi Géza"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Gárdonyi Gézát miért hívták egri remetének?",
+      "helyes_valasz": "vidéki visszavonultságban alkotott („az egri remete”), szépírói munkásságának szentelve életét",
+      "evidence": [
+        "A pályafutását 1881-ben népiskolai tanítóként kezdő, majd 1885 után újságíróként folytató Gárdonyi 1897 után vidéki visszavonultságban alkotott („az egri remete”), szépírói munkásságának szentelve életét."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hány korszakra osztható Gárdonyi Géza írói munkássága?",
+      "helyes_valasz": "három korszakra",
+      "evidence": [
+        "Pályáját folyamatos útkeresés, tematikai és formai kalandozás jellemezte, prózaírói életműve ennek fényében három korszakra osztható."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki foglalkozott Gárdonyi Géza irodalmi hagyatékával?",
+      "helyes_valasz": "fia, Gárdonyi József",
+      "evidence": [
+        "Gárdonyi halálát követően fia, Gárdonyi József vette kezébe apja irodalmi hagyatékának rendezését, emellett Az élő Gárdonyi címen könyvet is írt apjáról (1934), valamint németre fordította A láthatatlan ember című regényét (1941)."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Gárdonyi Géza milyen néven született?",
+      "helyes_valasz": "Ziegler Géza",
+      "evidence": [
+        "Gárdonyi Géza, született Ziegler Géza (Agárdpuszta, 1863. augusztus 3. – Eger, 1922. október 30.) magyar író, költő, drámaíró, újságíró, pedagógus, a Magyar Tudományos Akadémia tiszteleti tagja."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor született Gárdonyi Géza?",
+      "helyes_valasz": "1863. augusztus 3.",
+      "evidence": [
+        "Gárdonyi Géza, született Ziegler Géza (Agárdpuszta, 1863."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki írta Az élő Gárdonyi című könyvet?",
+      "helyes_valasz": "Gárdonyi József",
+      "evidence": [
+        "Gárdonyi halálát követően fia, Gárdonyi József vette kezébe apja irodalmi hagyatékának rendezését, emellett Az élő Gárdonyi címen könyvet is írt apjáról (1934), valamint németre fordította A láthatatlan ember című regényét (1941)."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor írta Gárdonyi Géza az Egri csillagokat?",
+      "helyes_valasz": "1901-ben",
+      "evidence": [
+        "Az 1890-es években írt népies hangvételű novellái és elbeszélései hozták meg számára a kortársak elismerését (Az én falum, 1898), de az utókor elsősorban a századfordulót követő évtizedben keletkezett történelmi regényei révén ismeri (Egri csillagok, 1901; A láthatatlan ember, 1902; Isten rabjai, 1908), illetve a magyar lélektani regény korai darabjainak szerzőjét tiszteli személyében (Szunyoghy miatyánkja, 1913; Ida regénye, 1920)."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik könyvkiadó jelentette meg Gárdonyi Géza teljes életművét 1924 és 1938 között?",
+      "helyes_valasz": "a Dante Könyvkiadó",
+      "evidence": [
+        "Részben szervezőmunkájának köszönhetően 1923-ban létrejött az Országos Gárdonyi Géza Irodalmi Társaság, amely 1924 és 1938 között a Dante Könyvkiadóval összefogva hatvan kötetben jelentette meg az író teljes életművét."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Gárdonyi Géza mikor halt meg?",
+      "helyes_valasz": "1922. október 30.)",
+      "evidence": [
+        "– Eger, 1922."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Gárdonyi Géza hány évig tanított?",
+      "helyes_valasz": "A pályafutását 1881-ben népiskolai tanítóként kezdő, majd 1885 után újságíróként folytató Gárdonyi 1897 után vidéki visszavonultságban alkotott („az egri remete”), szépírói munkásságának szentelve életét.",
+      "evidence": [
+        "A pályafutását 1881-ben népiskolai tanítóként kezdő, majd 1885 után újságíróként folytató Gárdonyi 1897 után vidéki visszavonultságban alkotott („az egri remete”), szépírói munkásságának szentelve életét."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    }
+  ]
+}

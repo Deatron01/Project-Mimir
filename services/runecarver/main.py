@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional
 from chunker import ContextualChunker
 import re
 import ast
@@ -26,6 +27,20 @@ class DocumentRequest(BaseModel):
     content: str
     percentile: float = 85.0
     target_size: int = 1000
+    # Cut rule for the semantic chunker: 'percentile' (threshold_val = percentile, default 85)
+    # or 'std' (threshold_val = k in mean + k*std, default 1.5). Used by the chunking ablation (tests/eval).
+    method: str = "percentile"
+    threshold_val: Optional[float] = None
+    # Sentence encoder: "window" (default; windows of <= 512 tokens, works for long texts) or
+    # "legacy" (old single pass, sentences after 512 tokens get zero vectors). Legacy is kept only
+    # so the evaluation can show the before/after (tests/eval, E5a).
+    encoder: str = "window"
+
+    def cut_params(self):
+        method = self.method if self.method in ("percentile", "std") else "percentile"
+        if self.threshold_val is not None:
+            return method, self.threshold_val
+        return method, (self.percentile if method == "percentile" else 1.5)
 
 @app.get("/health")
 async def health_check():
@@ -38,6 +53,8 @@ async def process_document(request: DocumentRequest):
     """
     try:
         ext = request.extension.lower()
+        cut_method, cut_value = request.cut_params()
+        encoder = "legacy" if request.encoder == "legacy" else "window"
         text = request.content
         chunks = []
 
@@ -69,14 +86,14 @@ async def process_document(request: DocumentRequest):
                     for sec in sections:
                         if sec.strip():
                             # Szemantikai darabolás a narratív részekre
-                            s_chunks, _, _ = chunker.embed_and_chunk(sec.strip(), threshold_val=request.percentile, target_chunk_chars=request.target_size)
+                            s_chunks, _, _ = chunker.embed_and_chunk(sec.strip(), method=cut_method, threshold_val=cut_value, target_chunk_chars=request.target_size, encoder=encoder)
                             for c in s_chunks:
                                 chunks.append({"type": "markdown_section", "content": c, "metadata": {"qa_score": 10}})
             return {"status": "success", "chunks": chunks}
 
         # 3. Sima szöveg / PDF (Kizárólag narratív szemantikai darabolás)
         else:
-            s_chunks, _, _ = chunker.embed_and_chunk(text, threshold_val=request.percentile, target_chunk_chars=request.target_size)
+            s_chunks, _, _ = chunker.embed_and_chunk(text, method=cut_method, threshold_val=cut_value, target_chunk_chars=request.target_size, encoder=encoder)
             for c in s_chunks:
                 chunks.append({"type": "narrative", "content": c, "metadata": {"qa_score": 10}})
             return {"status": "success", "chunks": chunks}

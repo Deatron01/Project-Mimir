@@ -108,6 +108,7 @@ IDs below are suggested issue titles prefixes; points are relative sizing, not h
 | [BIF-06](https://github.com/Deatron01/Project-Mimir/issues/30) | Agentic generation loop and knowledge graph (full detail in section 5) | P1 | 13 | Question count/type always match request; grounding score ≥ target |
 | [BIF-07](https://github.com/Deatron01/Project-Mimir/issues/31) | Replace hard-coded fallback "AI overloaded" fake exam with a proper error status | P1 | 1 | Frontend shows a retry state, not a fake question |
 | [BIF-08](https://github.com/Deatron01/Project-Mimir/issues/32) | Prompt registry: prompts as versioned files (HU + EN), not f-strings; prompt version stored in metadata | P2 | 2 | `system_prompt_version` reflects real file hash |
+| BIF-09 (no issue yet) | Model catalogue + per-request model: `GET /api/v1/models` merges local Ollama models (`/api/tags`) and university GenAI models (`/api/models`), filtered by an allowlist in config; each entry has id, display name, provider (local/server), context size, availability; `/generate` accepts an optional `model` validated against the list; `LOCAL_ONLY=true` hides server models. Depends on BIF-03 | P1 | 3 | Picking a model needs no rebuild or env change; an unknown or unavailable model returns 400/503, never a silent fallback |
 
 ### Heimdall — validation (HEI)
 
@@ -157,6 +158,7 @@ Full UX plan in section 7; tasks here for the board.
 | [FE-08](https://github.com/Deatron01/Project-Mimir/issues/57) | Theme system: light/dark per palette | P1 | 5 | See section 7 |
 | [FE-09](https://github.com/Deatron01/Project-Mimir/issues/58) | Accessibility pass (WCAG 2.2 AA) | P1 | 3 | axe: 0 serious violations |
 | [FE-10](https://github.com/Deatron01/Project-Mimir/issues/59) | Privacy UX: consent on upload, retention notice, "delete my data" button | P0 | 2 | Linked to GDPR tasks |
+| FE-11 (no issue yet) | Model selector in the generation settings (see section 7, "Model selector") | P1 | 3 | Selected model is sent with the request and shown in the exam metadata and export |
 
 ### Topic workspace (TOP)
 
@@ -381,6 +383,32 @@ Run the same eval on the current pipeline first (S3) to get the baseline; the co
 | [AI-10](https://github.com/Deatron01/Project-Mimir/issues/70) | Job state machine in Forge; resumable steps; Fast/Thorough modes | P1 | 5 | S4 |
 | [AI-11](https://github.com/Deatron01/Project-Mimir/issues/71) | Single-question regenerate endpoint for the editor | P1 | 2 | S5 |
 | [AI-12](https://github.com/Deatron01/Project-Mimir/issues/72) | Ablation study: graph on/off, verifier on/off, model tiers | P2 | 3 | S6 |
+| AI-13 (no issue yet) | TDK report: judge-human agreement table (Krippendorff α, Cohen κ, Spearman) from `rate-import` output | P0 | 2 | S5 |
+| AI-14 (no issue yet) | TDK report: significance table for the key pairs (E1–E0, E2–E1, E3–E2, E4–E0) with Holm-corrected p and rank-biserial r | P0 | 1 | S5 |
+| AI-15 (no issue yet) | TDK report: Hungarian vs English breakdown (quality index and metrics per language) | P1 | 1 | S5 |
+| AI-16 (no issue yet) | TDK report: dataset table (documents, gold questions, language, length, licence per source) | P1 | 1 | S5 |
+| AI-17 (no issue yet) | TDK report: example questions (one good, one bad per method, with the judge's reasoning) for the error analysis | P1 | 2 | S5 |
+| AI-18 (no issue yet) | Eval speed-ups: judge `Reasoning: low` + per-question context, `num_ctx` 8192, `max_retries` 1, one seed for blueprint arms, server arms on a subset | P0 | 2 | S5 |
+| AI-19 (no issue yet) | Freeze the dataset as `eval-v1`, full run of all arms (rerun E2, E2f, E2h, E3 after the format fix), then teacher rating (2–3 raters, 30–50 questions each) | P0 | 3 | S5–S6 |
+
+### TDK evaluation: remaining work (planned, not implemented)
+
+State on 2026-09-24: the harness (`tests/eval`), all experiment arms (E0–E5c), the 39-document dataset
+and the Hungarian report (`python -m mimir_eval report`: 2 tables, 6 figures, results text) are done.
+The pilot run (1 document, 3 seeds) works end to end; its numbers are not final.
+
+What is still needed for the TDK paper, in order:
+
+1. **AI-18 speed-ups**, otherwise the full run takes days (the judge is ~14 s per call).
+2. **AI-13 – AI-17 report sections**, built while the full run is going:
+   - judge-human agreement (shows the LLM judge can be trusted; the committee will ask),
+   - significance table (the `analyze` step already computes it; the report does not show it yet),
+   - Hungarian vs English breakdown,
+   - dataset table for the methods chapter,
+   - example questions for the error analysis.
+3. **AI-19 full run**: freeze `eval-v1`, run every arm on all documents (at least 6, ideally all 39;
+   the paired Wilcoxon test needs 6+), rerun E2/E2f/E2h/E3, export blind rating sheets.
+4. When the ratings are back: `rate-import`, then `report` rebuilds every table, figure and the text.
 
 ## 6. GDPR zero-retention and scalability
 
@@ -512,6 +540,19 @@ Today each palette is one dark set of 6 hex values injected as CSS variables. Cl
 | [FE-UX-03](https://github.com/Deatron01/Project-Mimir/issues/55) (= FE-06) | Question editor with citations and single-question regenerate (depends on AI-11) | P1 | 8 | S5 |
 | [FE-UX-04](https://github.com/Deatron01/Project-Mimir/issues/91) | Component primitives + Storybook with palette × mode × language toolbar | P2 | 5 | S3–S5 |
 | [FE-UX-05](https://github.com/Deatron01/Project-Mimir/issues/92) | Usability test with 5 teachers (think-aloud, task success, SUS score ≥ 75) | P1 | 3 | S5 |
+| FE-UX-06 (= FE-11) | Model selector (depends on BIF-09, GW public API update) | P1 | 3 | S5 |
+
+#### Model selector (FE-11, BIF-09) - planned, not implemented
+
+Teachers and the evaluation team need to choose which LLM writes an exam, so results from different models can be compared on the same document without editing config files.
+
+- **Where:** a dropdown in the generation settings (next to count, type, difficulty), with the current model shown as a small chip on each generated test and in its export metadata.
+- **Options:** grouped as *Local (runs on this machine)* and *University server*; each shows a short label (e.g. "qwen2.5:7b - fast, 8 GB GPU", "Qwen-3.8-Q8 - university server"). The list comes from `GET /api/v1/models` (BIF-09), never hard-coded in the frontend, because the university server's model list changes (in September 2026 Qwen3.5-122B and nemotron were removed).
+- **Privacy:** server models carry a "data leaves this machine" badge; choosing one for the first time asks for confirmation (ties in with FE-10 and the GDPR processor terms, R6). With `LOCAL_ONLY` the server group is hidden.
+- **Defaults:** an admin-set default model; the user's last choice is remembered per topic. Unavailable models are shown disabled with a reason ("server unreachable", "not pulled in Ollama").
+- **Evaluation link:** the chosen model id is stored in job metadata (`model_used`) so the evaluation harness (`tests/eval`) can compare exams made in the UI with the E0/E4 runs.
+- **API contract:** add `GET /models` and the optional `model` field to `frontend/openapi/mimir-public.yaml`; mock the endpoint in MSW for Storybook and e2e tests.
+- **Out of scope for now:** per-question model choice, comparing two models side by side in the UI, model fine-tuning.
 
 ## 8. Risks, open questions and "production-ready"
 

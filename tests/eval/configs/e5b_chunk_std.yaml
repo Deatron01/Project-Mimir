@@ -1,0 +1,8 @@
+# E5b - chunking ablation: RuneCarver with the mean + 1.5*std cut rule (compare with E0 = percentile).
+name: E5b
+description: "Naive RAG, semantic chunking with std cut rule (k = 1.5)"
+seeds: [1, 2, 3]
+exam: {n_questions: 10, types: [mcq]}
+pipeline: {kind: naive_direct, retrieval_k: 3}
+chunking: {mode: service, method: std, threshold: 1.5, target_size: 1000}
+generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 16384}
