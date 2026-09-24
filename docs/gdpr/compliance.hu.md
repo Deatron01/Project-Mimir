@@ -72,7 +72,7 @@ A 4., 5. és 6. adatkezeléshez érdekmérlegelési teszt szükséges. Röviden:
 | Adat | Megőrzés | Törlési mechanizmus | Állapot |
 | --- | --- | --- | --- |
 | Feltöltött fájl bájtjai | A kérés idejére | Soha nem kerül lemezre; a kinyerés után felszabadul | **Megvalósítva** (a Wellspring eddig is memóriában dolgozott) |
-| Chunkok és embeddingek | A feladat végéig, legfeljebb 60 perc | A Bifrost a feladat befejezésekor vagy hibájakor kiüríti a vektortárat; a következő betöltés is kiüríti | **Megvalósítva** ebben a változtatásban; munkamenetenkénti kollekciók: tervezett (BIF-01 #25) |
+| Chunkok és embeddingek | A feladat végéig, legfeljebb 60 perc | A Bifrost a feladat befejezésekor vagy hibájakor kiüríti a vektortárat; a következő betöltés is kiüríti | **Megvalósítva** ebben a változtatásban; témakörönkénti elkülönítés: tervezett (TOP-03 #107) |
 | Feladateredmények (tesztpiszkozat) | 60 perc (`JOB_TTL_SECONDS`) | A Bifrost minden kérésnél eldobja a lejárt feladatokat | **Megvalósítva** ebben a változtatásban |
 | Mentett tesztek | Törlésig, legfeljebb 12 hónap (`HISTORY_RETENTION_DAYS=365`) | Skald törlés induláskor és 24 óránként; törlési végpont a felhasználónak; a mentés csak kérésre történik | **Megvalósítva** ebben a változtatásban |
 | MI működési napló | 30 nap (`AUDIT_RETENTION_DAYS`) | A The Forge óránként töröl; csak lenyomatokat tárol; a régi szöveges oszlopokat induláskor kiüríti | **Megvalósítva** ebben a változtatásban |
@@ -81,6 +81,8 @@ A 4., 5. és 6. adatkezeléshez érdekmérlegelési teszt szükséges. Röviden:
 | Kapcsolatfelvételi üzenetek | 1 év | Postafiók-szabály | **Tervezett** (az űrlap még nincs bekötve) |
 | Böngészőtár | Amíg a felhasználó törli vagy kijelentkezik | Az „Adataim” oldal minden Mimir-kulcsot töröl | **Megvalósítva** ebben a változtatásban |
 | A git-történetben lévő adatok (`services/skald/storage`) | El kell távolítani | Ebben a változtatásban kikerülnek a követésből; történet-újraírás `git filter-repo`-val | **Részben megvalósítva** (újraírás: PLT-01 #1) |
+
+**Tervezett változás – Témakör-munkaterület ([#103 epic](https://github.com/Deatron01/Project-Mimir/issues/103)):** a témakörök bevezetésével a chunkok, embeddingek, a fogalmi gráf és a chatelőzmények témakörönként megmaradnak, amíg a felhasználó törli a fájlt vagy a témakört, illetve amíg a témakör a [#104](https://github.com/Deatron01/Project-Mimir/issues/104)-ben meghatározott ideig (javaslat: 90 nap) inaktív nem lesz. A nyers fájlokat továbbra sem tároljuk. A témakör adatait az üzemeltető által kezelt, témakörönkénti kulccsal titkosítjuk ([#123](https://github.com/Deatron01/Project-Mimir/issues/123), [#124](https://github.com/Deatron01/Project-Mimir/issues/124)). A témakör törlése először a kulcsot semmisíti meg (kriptográfiai törlés, [#125](https://github.com/Deatron01/Project-Mimir/issues/125)), majd minden hozzá tartozó adatot töröl ([#108](https://github.com/Deatron01/Project-Mimir/issues/108)). Az adatkezelési tájékoztatót és ezt a dokumentációt a kiadás előtt frissíteni kell ([#121](https://github.com/Deatron01/Project-Mimir/issues/121)); addig a fenti szabályok érvényesek.
 
 Mentések: a fiókadatokról készülhet mentés, de a feltöltött dokumentumok, chunkok és feladateredmények soha nem kerülhetnek mentésbe. A fenti megőrzési időnél régebbi mentéseket ki kell forgatni.
 
@@ -104,7 +106,7 @@ Minden adatfeldolgozónál ellenőrizendő: írásos szerződés; kizárólag ut
 | TLS minden forgalomhoz (Cloudflare Tunnel, HTTPS) | Megvalósítva |
 | Jelszavak bcrypt/Argon2 hash-sel | Tervezett az auth szolgáltatással (GW-01 #8) |
 | Valódi hitelesítés és felhasználónkénti jogosultság minden végponton | Tervezett (GW-01 #8, GW-02 #9, SKA-02 #45) — **legmagasabb prioritás**: ma a `/tests` és a letöltések egy `user_id` paraméterben bíznak meg |
-| Munkamenetenként elkülönített feldolgozás (nincs közös vektortár) | Tervezett (BIF-01 #25) |
+| Témakörönként elkülönített feldolgozás (kötelező `topic_id` szűrő, nincs közös keresés) | Tervezett (TOP-03 #107) |
 | Feldolgozási adatok, feladateredmények, mentett tesztek, működési napló automatikus törlése | Megvalósítva ebben a változtatásban |
 | Nincs dokumentumtartalom a naplókban és a működési naplóban | Megvalósítva ebben a változtatásban |
 | IP-rövidítés és lekérdezési paraméterek nélküli hozzáférési napló | Megvalósítva ebben a változtatásban |
@@ -142,7 +144,7 @@ Minden adatfeldolgozónál ellenőrizendő: írásos szerződés; kizárólag ut
 
 | Kockázat | Valószínűség / hatás | Kockázatcsökkentés | Állapot |
 | --- | --- | --- | --- |
-| Egy másik felhasználó látja a dokumentumomat vagy tesztemet (közös vektortár) | Magas / magas | Munkamenet-elkülönítés (BIF-01 #25); törlés minden feladat után | Részben |
+| Egy másik felhasználó látja a dokumentumomat vagy tesztemet (közös vektortár) | Magas / magas | Témakör-elkülönítés (TOP-03 #107, tesztelve: TOP-08 #112); törlés minden feladat után | Részben |
 | Jogosulatlan hozzáférés a mentett tesztekhez | Magas / közepes | Valódi hitelesítés és tulajdonos-ellenőrzés (GW-01 #8, SKA-02 #45) | Tervezett |
 | Dokumentumtartalom marad a naplókban vagy a működési naplóban | Közepes / magas | Csak metaadatot tartalmazó működési napló, naplószűrés | Megvalósítva |
 | Túlzott megőrzés | Közepes / közepes | Lejárati idők és törlési feladatok | Megvalósítva |
@@ -198,9 +200,19 @@ Példa: a hitelesítés nélküli `/api/v1/tests` végpont (lásd az ütemterv a
 | Tárolt felhasználói adatok kivétele a git-követésből | `.gitignore`, `git rm --cached` | Megvalósítva | PLT-01 #1 |
 | A git-történet újraírása a régi felhasználói adatok eltávolításához | Repó | Tervezett (csapatszintű egyeztetés és force push kell) | PLT-01 #1 |
 | Valódi hitelesítés és tulajdonos-ellenőrzés | Auth szolgáltatás, gateway, Skald | Tervezett | GW-01 #8, GW-02 #9, SKA-02 #45 |
-| Vektoradatok munkamenetenkénti elkülönítése | Bifrost | Tervezett | BIF-01 #25 |
+| Vektoradatok elkülönítése | Bifrost | Tervezett (témakörönként) | TOP-03 #107 (a BIF-01 #25 helyett) |
 | Fiókexport és -törlés | Auth szolgáltatás | Tervezett | GDPR-07 #79 |
 | Automatizált zéró megőrzési teszt a CI-ban | Tesztek | Tervezett | GDPR-04 #76 |
+| Témakör-elkülönítés: kötelező `topic_id` szűrés a Qdrantban | Bifrost | Tervezett | TOP-03 #107 |
+| Témakör kaszkádtörlése és takarító feladat | Skald, Bifrost, The Forge | Tervezett | TOP-04 #108 |
+| Témakör-elkülönítési és maradványmentességi tesztcsomag | Tesztek | Tervezett | TOP-08 #112 |
+| Inaktív témakörök automatikus törlése | The Forge | Tervezett | TOP-09 #113 |
+| Megőrzési döntés a témakör-adatokra (inaktivitási idő) | Architektúra | Tervezett | TOP-18 #104 |
+| Témakörönkénti titkosítási kulcsok (borítéktitkosítás) | Shared | Tervezett | TOP-19 #123 |
+| Témakör-adatok titkosítása tároláskor (chunkok, gráf, chat, tesztek, metaadatok) | Bifrost, Skald | Tervezett | TOP-20 #124 |
+| Kriptográfiai törlés a témakör törlésekor; kulcsmentések legfeljebb 7 napig | Adatvédelem | Tervezett | TOP-21 #125 |
+| Titkosított kötetek és kulcskezelési üzemeltetési leírás | Üzemeltetés | Tervezett | TOP-23 #127 |
+| Tájékoztató és dokumentáció frissítése a témakörökhöz | Dokumentáció | Tervezett (a témakörök kiadása előtt) | TOP-17 #121 |
 | Adatfeldolgozói szerződések (tárhely, egyetem, e-mail) és intézményi szerződésminta | Jogi | Tervezett | R6 #98, GDPR-08 #80 |
 | Érdekmérlegelési teszt, teljes hatásvizsgálat a bevezetés előtt | Jogi | Tervezett | GDPR-08 #80 |
 | Naplórotáció | `docker-compose.yml` (konténerenként 10 MB × 3); 14 napos időkorlát a szerveren | Részben megvalósítva | GDPR-05 #77 |

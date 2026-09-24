@@ -1,0 +1,738 @@
+openapi: 3.1.0
+info:
+  title: Mimir public API
+  version: 1.0.0
+  description: |
+    Public API behind the nginx gateway at `/api/v1`. Source of truth for the frontend types
+    (`npm run api:types` regenerates `src/api/schema.d.ts`). Mirrors the "Mimir API Specification by Module" doc.
+
+    * Auth: short-lived access token in `Authorization: Bearer`, refresh token in an HttpOnly cookie scoped to `/api/v1/auth`.
+    * Errors always use the `Error` envelope. The frontend maps `error.code` to the `errors.<CODE>` i18n key.
+    * Long-running work answers `202` with a `job_id`; progress arrives on the topic event stream (SSE) and via `GET /jobs/{id}`.
+servers:
+  - url: /api/v1
+security:
+  - bearerAuth: []
+tags:
+  - name: auth
+  - name: me
+  - name: topics
+  - name: files
+  - name: sessions
+  - name: tests
+  - name: jobs
+  - name: events
+paths:
+  /auth/register:
+    post:
+      tags: [auth]
+      operationId: register
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterRequest' }
+      responses:
+        '202': { description: Verification e-mail sent. Same answer whether or not the address exists., content: { application/json: { schema: { $ref: '#/components/schemas/Accepted' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+  /auth/verify:
+    post:
+      tags: [auth]
+      operationId: verifyEmail
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties: { token: { type: string } }
+      responses:
+        '204': { description: E-mail verified. }
+        '400': { $ref: '#/components/responses/Error' }
+  /auth/login:
+    post:
+      tags: [auth]
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+      responses:
+        '200':
+          description: Logged in. Sets the `mimir_refresh` HttpOnly cookie.
+          content: { application/json: { schema: { $ref: '#/components/schemas/Session' } } }
+        '401': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+  /auth/refresh:
+    post:
+      tags: [auth]
+      operationId: refresh
+      security: []
+      responses:
+        '200': { description: New access token (refresh cookie rotated)., content: { application/json: { schema: { $ref: '#/components/schemas/Session' } } } }
+        '401': { $ref: '#/components/responses/Error' }
+  /auth/logout:
+    post:
+      tags: [auth]
+      operationId: logout
+      responses:
+        '204': { description: Refresh token revoked and cookie cleared. }
+  /auth/password/forgot:
+    post:
+      tags: [auth]
+      operationId: forgotPassword
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties: { email: { type: string, format: email } }
+      responses:
+        '202': { description: Reset e-mail sent if the account exists., content: { application/json: { schema: { $ref: '#/components/schemas/Accepted' } } } }
+        '429': { $ref: '#/components/responses/Error' }
+  /auth/password/reset:
+    post:
+      tags: [auth]
+      operationId: resetPassword
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, new_password]
+              properties:
+                token: { type: string }
+                new_password: { type: string, minLength: 10 }
+      responses:
+        '204': { description: Password changed; all sessions revoked. }
+        '400': { $ref: '#/components/responses/Error' }
+
+  /me:
+    get:
+      tags: [me]
+      operationId: getMe
+      responses:
+        '200': { description: Current user., content: { application/json: { schema: { $ref: '#/components/schemas/Me' } } } }
+        '401': { $ref: '#/components/responses/Error' }
+    patch:
+      tags: [me]
+      operationId: updateMe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { language: { $ref: '#/components/schemas/Language' } }
+      responses:
+        '200': { description: Updated., content: { application/json: { schema: { $ref: '#/components/schemas/Me' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+    delete:
+      tags: [me]
+      operationId: deleteMe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties: { password: { type: string } }
+      responses:
+        '202': { description: Account deletion started (GDPR Art. 17)., content: { application/json: { schema: { $ref: '#/components/schemas/JobAccepted' } } } }
+        '401': { $ref: '#/components/responses/Error' }
+  /me/export:
+    post:
+      tags: [me]
+      operationId: exportMe
+      responses:
+        '202': { description: Export job started (GDPR Art. 15/20)., content: { application/json: { schema: { $ref: '#/components/schemas/JobAccepted' } } } }
+        '409': { $ref: '#/components/responses/Error' }
+
+  /topics:
+    get:
+      tags: [topics]
+      operationId: listTopics
+      parameters:
+        - { name: q, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 50 } }
+        - { name: cursor, in: query, schema: { type: string } }
+      responses:
+        '200': { description: Topics, most recent activity first., content: { application/json: { schema: { $ref: '#/components/schemas/TopicList' } } } }
+    post:
+      tags: [topics]
+      operationId: createTopic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TopicInput' }
+      responses:
+        '201': { description: Created., content: { application/json: { schema: { $ref: '#/components/schemas/Topic' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+  /topics/{topicId}:
+    parameters: [{ $ref: '#/components/parameters/TopicId' }]
+    get:
+      tags: [topics]
+      operationId: getTopic
+      responses:
+        '200': { description: Topic., content: { application/json: { schema: { $ref: '#/components/schemas/Topic' } } } }
+        '404': { $ref: '#/components/responses/Error' }
+    patch:
+      tags: [topics]
+      operationId: updateTopic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TopicPatch' }
+      responses:
+        '200': { description: Updated., content: { application/json: { schema: { $ref: '#/components/schemas/Topic' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+    delete:
+      tags: [topics]
+      operationId: deleteTopic
+      responses:
+        '202': { description: Cascade delete started (key destroyed first)., content: { application/json: { schema: { $ref: '#/components/schemas/JobAccepted' } } } }
+        '404': { $ref: '#/components/responses/Error' }
+
+  /topics/{topicId}/files:
+    parameters: [{ $ref: '#/components/parameters/TopicId' }]
+    get:
+      tags: [files]
+      operationId: listFiles
+      responses:
+        '200': { description: Files of the topic., content: { application/json: { schema: { type: object, required: [items], properties: { items: { type: array, items: { $ref: '#/components/schemas/TopicFile' } } } } } } }
+    post:
+      tags: [files]
+      operationId: uploadFiles
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: ['files[]', consent]
+              properties:
+                'files[]': { type: array, maxItems: 10, items: { type: string, format: binary } }
+                consent: { type: boolean, description: Must be true — the user confirms they may upload these documents. }
+      responses:
+        '202':
+          description: Files queued for ingestion.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [files, job_ids]
+                properties:
+                  files: { type: array, items: { $ref: '#/components/schemas/TopicFile' } }
+                  job_ids: { type: array, items: { type: string } }
+        '400': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+        '413': { $ref: '#/components/responses/Error' }
+        '415': { $ref: '#/components/responses/Error' }
+  /topics/{topicId}/files/{fileId}:
+    parameters: [{ $ref: '#/components/parameters/TopicId' }, { $ref: '#/components/parameters/FileId' }]
+    delete:
+      tags: [files]
+      operationId: deleteFile
+      responses:
+        '204': { description: File, chunks and vectors removed. }
+        '404': { $ref: '#/components/responses/Error' }
+  /topics/{topicId}/files/{fileId}/retry:
+    parameters: [{ $ref: '#/components/parameters/TopicId' }, { $ref: '#/components/parameters/FileId' }]
+    post:
+      tags: [files]
+      operationId: retryFile
+      responses:
+        '202': { description: Ingestion restarted., content: { application/json: { schema: { $ref: '#/components/schemas/JobAccepted' } } } }
+        '409': { $ref: '#/components/responses/Error' }
+
+  /topics/{topicId}/sessions:
+    parameters: [{ $ref: '#/components/parameters/TopicId' }]
+    get:
+      tags: [sessions]
+      operationId: listSessions
+      responses:
+        '200': { description: Chat sessions, newest first., content: { application/json: { schema: { type: object, required: [items], properties: { items: { type: array, items: { $ref: '#/components/schemas/ChatSession' } } } } } } }
+    post:
+      tags: [sessions]
+      operationId: createSession
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { title: { type: string, maxLength: 120 } }
+      responses:
+        '201': { description: Created., content: { application/json: { schema: { $ref: '#/components/schemas/ChatSession' } } } }
+  /topics/{topicId}/sessions/{sessionId}:
+    parameters: [{ $ref: '#/components/parameters/TopicId' }, { $ref: '#/components/parameters/SessionId' }]
+    patch:
+      tags: [sessions]
+      operationId: updateSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties: { title: { type: string, maxLength: 120 } }
+      responses:
+        '200': { description: Updated., content: { application/json: { schema: { $ref: '#/components/schemas/ChatSession' } } } }
+    delete:
+      tags: [sessions]
+      operationId: deleteSession
+      responses:
+        '204': { description: Session and its unsaved tests deleted. }
+  /topics/{topicId}/sessions/{sessionId}/messages:
+    parameters: [{ $ref: '#/components/parameters/TopicId' }, { $ref: '#/components/parameters/SessionId' }]
+    get:
+      tags: [sessions]
+      operationId: listMessages
+      parameters:
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 50 } }
+        - { name: cursor, in: query, schema: { type: string } }
+      responses:
+        '200': { description: Messages, newest first., content: { application/json: { schema: { $ref: '#/components/schemas/MessageList' } } } }
+    post:
+      tags: [sessions]
+      operationId: postMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MessageInput' }
+      responses:
+        '202':
+          description: Message stored, generation queued.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [message, job_id]
+                properties:
+                  message: { $ref: '#/components/schemas/Message' }
+                  job_id: { type: string }
+        '409': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+
+  /topics/{topicId}/tests:
+    parameters: [{ $ref: '#/components/parameters/TopicId' }]
+    get:
+      tags: [tests]
+      operationId: listTopicTests
+      parameters:
+        - { name: saved, in: query, schema: { type: boolean } }
+      responses:
+        '200': { description: Tests of the topic, newest first., content: { application/json: { schema: { type: object, required: [items], properties: { items: { type: array, items: { $ref: '#/components/schemas/TestSummary' } } } } } } }
+  /topics/{topicId}/tests/{testId}:
+    parameters: [{ $ref: '#/components/parameters/TopicId' }, { $ref: '#/components/parameters/TestId' }]
+    get:
+      tags: [tests]
+      operationId: getTest
+      responses:
+        '200': { description: Test with questions., content: { application/json: { schema: { $ref: '#/components/schemas/Test' } } } }
+        '404': { $ref: '#/components/responses/Error' }
+    put:
+      tags: [tests]
+      operationId: updateTest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [exam]
+              properties: { exam: { $ref: '#/components/schemas/Exam' } }
+      responses:
+        '200': { description: Saved edits., content: { application/json: { schema: { $ref: '#/components/schemas/Test' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+    delete:
+      tags: [tests]
+      operationId: deleteTest
+      responses:
+        '204': { description: Deleted. }
+  /topics/{topicId}/tests/{testId}/save:
+    parameters: [{ $ref: '#/components/parameters/TopicId' }, { $ref: '#/components/parameters/TestId' }]
+    post:
+      tags: [tests]
+      operationId: saveTest
+      responses:
+        '200': { description: Marked as saved (opt-in retention)., content: { application/json: { schema: { $ref: '#/components/schemas/Test' } } } }
+  /topics/{topicId}/tests/{testId}/questions/{questionId}/regenerate:
+    parameters: [{ $ref: '#/components/parameters/TopicId' }, { $ref: '#/components/parameters/TestId' }, { name: questionId, in: path, required: true, schema: { type: string } }]
+    post:
+      tags: [tests]
+      operationId: regenerateQuestion
+      responses:
+        '202': { description: Regeneration queued., content: { application/json: { schema: { $ref: '#/components/schemas/JobAccepted' } } } }
+        '409': { $ref: '#/components/responses/Error' }
+  /topics/{topicId}/tests/{testId}/export:
+    parameters: [{ $ref: '#/components/parameters/TopicId' }, { $ref: '#/components/parameters/TestId' }]
+    post:
+      tags: [tests]
+      operationId: exportTest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ExportRequest' }
+      responses:
+        '200':
+          description: The exported file (Content-Disposition carries the file name).
+          content:
+            application/pdf: { schema: { type: string, format: binary } }
+            application/zip: { schema: { type: string, format: binary } }
+            application/xml: { schema: { type: string, format: binary } }
+            text/plain: { schema: { type: string, format: binary } }
+            application/json: { schema: { type: string, format: binary } }
+        '400': { $ref: '#/components/responses/Error' }
+  /tests:
+    get:
+      tags: [tests]
+      operationId: listSavedTests
+      responses:
+        '200':
+          description: All saved tests grouped by topic.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [groups]
+                properties:
+                  groups:
+                    type: array
+                    items:
+                      type: object
+                      required: [topic, tests]
+                      properties:
+                        topic: { type: object, required: [id, name], properties: { id: { type: string }, name: { type: string } } }
+                        tests: { type: array, items: { $ref: '#/components/schemas/TestSummary' } }
+
+  /jobs:
+    get:
+      tags: [jobs]
+      operationId: listJobs
+      parameters:
+        - { name: active, in: query, schema: { type: boolean } }
+      responses:
+        '200': { description: The caller's jobs., content: { application/json: { schema: { type: object, required: [items], properties: { items: { type: array, items: { $ref: '#/components/schemas/Job' } } } } } } }
+  /jobs/{jobId}:
+    parameters: [{ $ref: '#/components/parameters/JobId' }]
+    get:
+      tags: [jobs]
+      operationId: getJob
+      responses:
+        '200': { description: Job., content: { application/json: { schema: { $ref: '#/components/schemas/Job' } } } }
+        '404': { $ref: '#/components/responses/Error' }
+  /jobs/{jobId}/cancel:
+    parameters: [{ $ref: '#/components/parameters/JobId' }]
+    post:
+      tags: [jobs]
+      operationId: cancelJob
+      responses:
+        '202': { description: Cancellation requested., content: { application/json: { schema: { $ref: '#/components/schemas/Job' } } } }
+        '409': { $ref: '#/components/responses/Error' }
+
+  /topics/{topicId}/events:
+    parameters: [{ $ref: '#/components/parameters/TopicId' }]
+    get:
+      tags: [events]
+      operationId: topicEvents
+      description: |
+        Server-sent events for one topic. Event names: `job.progress`, `job.succeeded`, `job.failed`,
+        `file.status`, `message.created`, `topic.deleted`, `heartbeat` (every 15 s). `data` is JSON of
+        `TopicEvent`. Supports `Last-Event-ID` for resume.
+      parameters:
+        - { name: Last-Event-ID, in: header, schema: { type: string } }
+      responses:
+        '200': { description: Event stream., content: { text/event-stream: { schema: { type: string } } } }
+
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+  parameters:
+    TopicId: { name: topicId, in: path, required: true, schema: { type: string } }
+    FileId: { name: fileId, in: path, required: true, schema: { type: string } }
+    SessionId: { name: sessionId, in: path, required: true, schema: { type: string } }
+    TestId: { name: testId, in: path, required: true, schema: { type: string } }
+    JobId: { name: jobId, in: path, required: true, schema: { type: string } }
+  responses:
+    Error:
+      description: Error envelope.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+  schemas:
+    ErrorCode:
+      type: string
+      enum: [VALIDATION_FAILED, UNSUPPORTED_FILE_TYPE, AUTH_REQUIRED, TOKEN_EXPIRED, INVALID_CREDENTIALS, EMAIL_NOT_VERIFIED, FORBIDDEN, TOPIC_NOT_FOUND, FILE_NOT_FOUND, SESSION_NOT_FOUND, TEST_NOT_FOUND, JOB_NOT_FOUND, TOPIC_DELETING, FILE_NOT_READY, EMAIL_TAKEN, JOB_IN_PROGRESS, FILE_TOO_LARGE, TOPIC_QUOTA_EXCEEDED, TOPIC_STORAGE_EXCEEDED, NO_TEXT_EXTRACTED, GENERATION_INVALID, RATE_LIMITED, TOO_MANY_JOBS, LLM_UNAVAILABLE, CONSENT_REQUIRED, INTERNAL]
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, request_id]
+          properties:
+            code: { $ref: '#/components/schemas/ErrorCode' }
+            message: { type: string }
+            request_id: { type: string }
+            details: { type: object, additionalProperties: true }
+    Accepted:
+      type: object
+      properties: { status: { type: string, const: accepted } }
+    JobAccepted:
+      type: object
+      required: [job_id]
+      properties: { job_id: { type: string } }
+    Language: { type: string, enum: [hu, en] }
+    RegisterRequest:
+      type: object
+      required: [email, password, language, confirm_age_16, accepted_terms_version]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 10 }
+        language: { $ref: '#/components/schemas/Language' }
+        confirm_age_16: { type: boolean, const: true }
+        accepted_terms_version: { type: string }
+    User:
+      type: object
+      required: [id, email, language]
+      properties:
+        id: { type: string }
+        email: { type: string }
+        language: { $ref: '#/components/schemas/Language' }
+    Session:
+      type: object
+      required: [access_token, expires_in, user]
+      properties:
+        access_token: { type: string }
+        expires_in: { type: integer, description: Seconds. }
+        user: { $ref: '#/components/schemas/User' }
+    Me:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          required: [created_at, usage, limits]
+          properties:
+            created_at: { type: string, format: date-time }
+            usage:
+              type: object
+              required: [topics, saved_tests]
+              properties: { topics: { type: integer }, saved_tests: { type: integer } }
+            limits: { $ref: '#/components/schemas/Limits' }
+    Limits:
+      type: object
+      required: [max_topics, max_files_per_topic, max_topic_bytes, max_file_bytes, max_files_per_upload, allowed_types]
+      properties:
+        max_topics: { type: integer, default: 50 }
+        max_files_per_topic: { type: integer, default: 20 }
+        max_topic_bytes: { type: integer, default: 104857600 }
+        max_file_bytes: { type: integer, default: 20971520 }
+        max_files_per_upload: { type: integer, default: 10 }
+        allowed_types: { type: array, items: { type: string } }
+    TopicInput:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 80 }
+        description: { type: string, maxLength: 500 }
+    TopicPatch:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 80 }
+        description: { type: string, maxLength: 500 }
+    Topic:
+      type: object
+      required: [id, name, description, status, file_count, total_bytes, saved_test_count, created_at, updated_at, last_activity_at, expires_at]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        status: { type: string, enum: [active, deleting] }
+        file_count: { type: integer }
+        total_bytes: { type: integer }
+        saved_test_count: { type: integer }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        last_activity_at: { type: string, format: date-time }
+        expires_at: { type: string, format: date-time, description: Deleted automatically after this much inactivity. }
+    TopicList:
+      type: object
+      required: [items, next_cursor, total]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/Topic' } }
+        next_cursor: { type: [string, 'null'] }
+        total: { type: integer }
+    FileStatus: { type: string, enum: [queued, extracting, chunking, indexing, ready, failed] }
+    TopicFile:
+      type: object
+      required: [id, topic_id, filename, mime, size_bytes, status, error_code, chunk_count, created_at]
+      properties:
+        id: { type: string }
+        topic_id: { type: string }
+        filename: { type: string }
+        mime: { type: string }
+        size_bytes: { type: integer }
+        status: { $ref: '#/components/schemas/FileStatus' }
+        error_code: { oneOf: [{ $ref: '#/components/schemas/ErrorCode' }, { type: 'null' }] }
+        chunk_count: { type: integer }
+        page_count: { type: [integer, 'null'] }
+        created_at: { type: string, format: date-time }
+    ChatSession:
+      type: object
+      required: [id, topic_id, title, message_count, created_at, updated_at]
+      properties:
+        id: { type: string }
+        topic_id: { type: string }
+        title: { type: string }
+        message_count: { type: integer }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    QuestionType: { type: string, enum: [mcq, tf, open] }
+    Difficulty: { type: string, enum: [easy, medium, hard] }
+    GenerationOptions:
+      type: object
+      required: [count, types, difficulty, exam_language, mode]
+      properties:
+        count: { type: integer, minimum: 1, maximum: 50 }
+        types: { type: array, minItems: 1, items: { $ref: '#/components/schemas/QuestionType' } }
+        difficulty: { $ref: '#/components/schemas/Difficulty' }
+        exam_language: { $ref: '#/components/schemas/Language' }
+        mode: { type: string, enum: [fast, thorough] }
+        file_ids: { type: array, items: { type: string }, description: Limit retrieval to these files. Omit for all ready files. }
+    MessageInput:
+      type: object
+      required: [content, intent]
+      properties:
+        content: { type: string, maxLength: 4000 }
+        intent: { type: string, enum: [generate, ask] }
+        options: { $ref: '#/components/schemas/GenerationOptions' }
+    Message:
+      type: object
+      required: [id, session_id, role, content, job_id, test_id, created_at]
+      properties:
+        id: { type: string }
+        session_id: { type: string }
+        role: { type: string, enum: [user, assistant, system] }
+        content: { type: string }
+        job_id: { type: [string, 'null'] }
+        test_id: { type: [string, 'null'] }
+        options: { $ref: '#/components/schemas/GenerationOptions' }
+        citations: { type: array, items: { $ref: '#/components/schemas/Citation' } }
+        error_code: { oneOf: [{ $ref: '#/components/schemas/ErrorCode' }, { type: 'null' }] }
+        created_at: { type: string, format: date-time }
+    MessageList:
+      type: object
+      required: [items, next_cursor]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/Message' } }
+        next_cursor: { type: [string, 'null'] }
+    Citation:
+      type: object
+      required: [file_id, chunk_id]
+      properties:
+        file_id: { type: string }
+        chunk_id: { type: string }
+        filename: { type: string }
+        page: { type: [integer, 'null'] }
+        snippet: { type: string }
+    Answer:
+      type: object
+      required: [text, is_correct]
+      properties:
+        text: { type: string }
+        is_correct: { type: boolean }
+    Question:
+      type: object
+      required: [id, type, text, answers, citations, difficulty]
+      properties:
+        id: { type: string }
+        type: { $ref: '#/components/schemas/QuestionType' }
+        text: { type: string }
+        answers: { type: array, items: { $ref: '#/components/schemas/Answer' } }
+        citations: { type: array, items: { $ref: '#/components/schemas/Citation' } }
+        difficulty: { $ref: '#/components/schemas/Difficulty' }
+    Exam:
+      type: object
+      required: [title, questions]
+      properties:
+        title: { type: string }
+        questions: { type: array, items: { $ref: '#/components/schemas/Question' } }
+    TestSummary:
+      type: object
+      required: [id, topic_id, session_id, title, question_count, saved, created_at, updated_at]
+      properties:
+        id: { type: string }
+        topic_id: { type: string }
+        session_id: { type: [string, 'null'] }
+        title: { type: string }
+        question_count: { type: integer }
+        saved: { type: boolean }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    Test:
+      allOf:
+        - $ref: '#/components/schemas/TestSummary'
+        - type: object
+          required: [exam]
+          properties:
+            exam: { $ref: '#/components/schemas/Exam' }
+    ExportRequest:
+      type: object
+      required: [format]
+      properties:
+        format: { type: string, enum: [pdf, pdf_with_key, moodle_xml, gift, json] }
+        variants: { type: integer, enum: [1, 2], default: 1 }
+        shuffle_answers: { type: boolean, default: false }
+    JobType: { type: string, enum: [ingest_file, generate_test, answer_question, regenerate_question, delete_topic, export_account, delete_account] }
+    JobStatus: { type: string, enum: [queued, running, succeeded, failed, cancelled] }
+    Job:
+      type: object
+      required: [id, type, topic_id, status, stage, progress, queue_position, error_code, result, created_at]
+      properties:
+        id: { type: string }
+        type: { $ref: '#/components/schemas/JobType' }
+        topic_id: { type: [string, 'null'] }
+        status: { $ref: '#/components/schemas/JobStatus' }
+        stage: { type: [string, 'null'], description: 'e.g. retrieving, generating, validating, extracting, indexing' }
+        progress: { type: number, minimum: 0, maximum: 1 }
+        queue_position: { type: [integer, 'null'] }
+        error_code: { oneOf: [{ $ref: '#/components/schemas/ErrorCode' }, { type: 'null' }] }
+        result:
+          type: [object, 'null']
+          properties:
+            test_id: { type: string }
+            file_id: { type: string }
+            message_id: { type: string }
+            download_url: { type: string }
+        created_at: { type: string, format: date-time }
+    TopicEvent:
+      description: Payload of an SSE `data:` line. Which fields are set depends on the event name.
+      type: object
+      properties:
+        job: { $ref: '#/components/schemas/Job' }
+        file: { $ref: '#/components/schemas/TopicFile' }
+        message: { $ref: '#/components/schemas/Message' }
+        topic_id: { type: string }
