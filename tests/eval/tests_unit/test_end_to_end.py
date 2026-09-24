@@ -1,5 +1,6 @@
 """Full harness run with fake services and a mock LLM: run -> score -> rate -> analyze."""
 import json
+import math
 import random
 import re
 
@@ -222,6 +223,14 @@ monitor_vram: false
     assert ds["kiertekelve"].sum() == 6 and len(ds) > 6
     ex = pd.read_csv(out / "peldak.csv")
     assert set(ex["modszer"]) == {"E0", "E1"}
+    # the paper's tables: one row per arm in a fixed order, CIs once there are enough documents
+    main = (out / "latex" / "tab_main.tex").read_text(encoding="utf-8")
+    assert "95\\,\\% CI" in main and main.index("\nE0 &") < main.index("\nE1 &")
+    assert (out / "latex" / "tab_leakage.tex").exists() and not (out / "latex" / "tab_verifier.tex").exists()
+    nums = json.loads((out / "latex" / "paper_numbers.json").read_text(encoding="utf-8"))
+    assert [r["arm"] for r in nums["main"]] == ["E0", "E1"] and nums["n_documents"] == 6
+    assert len((out / "latex" / "fig_quality_time.dat").read_text().splitlines()) == 3
+    assert "E1 vs E0" in (out / "latex" / "tab_significance.tex").read_text(encoding="utf-8")
 
     # without ratings the agreement table is skipped, not an error
     out2 = build_report(str(tmp_path / "results"), "t2", out_root=str(tmp_path / "report"), ratings=None)
@@ -263,3 +272,47 @@ def test_judge_question_context_and_reasoning(tmp_path):
         assert not seen[1][0]["content"].startswith("Reasoning")
     finally:
         llm_mod.set_mock_handler(None)
+
+
+def test_full_document_baseline(tmp_path, monkeypatch):
+    """B-doc: the whole (capped) document in one prompt; the cut share is recorded and scored."""
+    monkeypatch.setattr(runner_mod, "MimirServices", FakeServices)
+    llm_mod.set_mock_handler(mock_llm)
+    try:
+        p = tmp_path / "B-doc.yaml"
+        p.write_text("""name: B-doc
+documents: [hu-coffee]
+seeds: [1]
+exam: {n_questions: 3, types: [mcq]}
+pipeline: {kind: full_document, max_doc_chars: 400, probe_k: 3}
+generator: {provider: mock, model: good}
+monitor_vram: false
+""", encoding="utf-8")
+        rd = runner_mod.run_experiment(str(p), results_root=tmp_path / "results")
+        ex = read_jsonl(rd / "exams.jsonl")[0]
+        assert ex["status"] == "ok" and len(ex["questions"]) == 3
+        assert ex["retrieved"] == [] and ex["probe"]
+        doc = ex["document"]
+        assert doc["chars_used"] <= 400 < doc["chars"] and 0 < doc["truncated_share"] < 1
+        assert ex["context_text"] and len(ex["context_text"]) == doc["chars_used"]
+        score_run(rd, judge_cfg={"provider": "mock", "model": "judge"}, embedder="bow")
+        import pandas as pd
+        em = pd.read_csv(rd / "exam_metrics.csv")
+        assert em["truncated_share"].iloc[0] == pytest.approx(doc["truncated_share"])
+    finally:
+        llm_mod.set_mock_handler(None)
+
+
+def test_verifier_as_classifier():
+    import pandas as pd
+    from mimir_eval.paper_tables import verifier_rows
+    rows = [("E2", True, True, True), ("E2", True, True, False), ("E2", True, False, True),
+            ("E2", True, False, False), ("E2", True, True, True), ("E1", False, True, False)]
+    qs = pd.DataFrame([{"arm": a, "verifier_on": on, "verified": v, "grounded": g, "blind_correct": None,
+                        "judge_would_use": g} for a, on, v, g in rows])
+    pooled, per_arm = verifier_rows(qs)
+    assert [p["n"] for p in pooled] == [3, 2]                   # E1 ran without the verifier: left out
+    assert pooled[0]["grounded"] == pytest.approx(2 / 3) and math.isnan(pooled[0]["blind_correct"])
+    (r,) = per_arm
+    assert r["arm"] == "E2" and r["precision"] == pytest.approx(2 / 3) and r["recall"] == pytest.approx(2 / 3)
+    assert r["pass_rate"] == pytest.approx(0.6)

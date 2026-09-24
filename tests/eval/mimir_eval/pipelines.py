@@ -9,6 +9,9 @@
                   reproducible enough for the paper tables.
 - blueprint     : planner -> per-slot retrieval -> one question per call -> verifier ->
                   assembler (ROADMAP section 5); see mimir_eval/blueprint/. Arms E1-E3.
+- full_document : the status quo "send the document to an LLM": the whole extracted text and the
+                  request in one prompt (arms B-doc-L / B-doc-S). Same prompt and model settings
+                  as E0; only the context differs (whole document instead of the top-k chunks).
 """
 from __future__ import annotations
 
@@ -161,6 +164,42 @@ class NaiveDirectPipeline(BasePipeline):
         return out
 
 
+def cut_document(text: str, limit: int | None) -> str:
+    """Keep the beginning of a document that does not fit the context, cut at a word boundary."""
+    if not limit or len(text) <= limit:
+        return text
+    cut = text.rfind(" ", int(limit * 0.9), limit)
+    return text[: cut if cut != -1 else limit]
+
+
+class FullDocumentPipeline(BasePipeline):
+    """B-doc: the whole document in one prompt. `pipeline.max_doc_chars` caps the document so the
+    prompt fits the model's context (a local 7B model at a 16k context cannot take the longest
+    documents); the share that had to be cut is recorded as `document.truncated_share`."""
+    kind = "full_document"
+
+    def generate_exam(self, prep, spec, seed):
+        query = build_query(spec.n_questions, spec.types, spec.difficulty, spec.language)
+        r = self.ingest_and_retrieve(prep, None)   # only the gold retrieval probe, for comparable metrics
+        doc = cut_document(prep.text, self.cfg["pipeline"].get("max_doc_chars"))
+        prompt = build_naive_prompt(doc, query, "pdf")
+        res = self.llm.chat([{"role": "system", "content": SYSTEM_PROMPT},
+                             {"role": "user", "content": prompt}], json_mode=True, seed=seed)
+        out = {"query": query, "prompt_version": PROMPT_VERSION, "raw_text": res.text,
+               "model_used": f"{self.llm.provider}:{self.llm.model}",
+               "llm": {"calls": 1, "prompt_tokens": res.prompt_tokens,
+                       "completion_tokens": res.completion_tokens, "attempts": res.attempts},
+               "retrieved": [], "probe": r["probe"], "context_text": doc,
+               "document": {"chars": len(prep.text), "chars_used": len(doc),
+                            "truncated_share": 1 - len(doc) / len(prep.text) if prep.text else 0.0},
+               "timings": {**r["timings"], "generate_s": res.latency_s}}
+        try:
+            out["raw_json"] = parse_llm_json(res.text)
+        except Exception as e:
+            out["raw_json"], out["parse_error"] = None, str(e)
+        return out
+
+
 class NaiveServicePipeline(BasePipeline):
     kind = "naive_service"
 
@@ -178,7 +217,7 @@ class NaiveServicePipeline(BasePipeline):
                 "timings": {**r["timings"], "generate_s": t_gen}}
 
 
-PIPELINES = {p.kind: p for p in (NaiveDirectPipeline, NaiveServicePipeline)}
+PIPELINES = {p.kind: p for p in (NaiveDirectPipeline, NaiveServicePipeline, FullDocumentPipeline)}
 
 
 def pipeline_class(kind: str):

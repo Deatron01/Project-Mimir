@@ -4,7 +4,7 @@ from __future__ import annotations
 import numpy as np
 
 from .embed import Embedder, cos_matrix
-from .schema import has_meta_reference, question_shape_ok
+from .schema import has_meta_reference, key_in_stem, question_shape_ok, stem_is_question
 from .util import evidence_in, token_overlap
 
 DUP_THRESHOLD = 0.90
@@ -20,6 +20,8 @@ def question_metrics(q: dict, context: str) -> dict:
     return {
         "shape_ok": question_shape_ok(q),
         "meta_reference": has_meta_reference(q["text"]),
+        "key_in_stem": key_in_stem(q),
+        "stem_is_question": stem_is_question(q),
         "key_lexical_support": round(token_overlap(q.get("key", ""), context), 4) if q.get("key") else None,
     }
 
@@ -96,6 +98,8 @@ def exam_metrics(exam: dict, embedder: Embedder, gold: list[dict]) -> tuple[dict
         "shape_ok_rate": fmt.get("shape_ok_rate", 0.0),
         "valid_json": exam.get("raw_json") is not None,
         "meta_reference_rate": (float(np.mean([m["meta_reference"] for m in per_q])) if per_q else None),
+        "leakage_rate": (float(np.mean([m["key_in_stem"] for m in per_q])) if per_q else None),
+        "non_question_rate": (float(np.mean([not m["stem_is_question"] for m in per_q])) if per_q else None),
         "duplicate_rate": duplicate_rate(q_emb),
         "coverage": cov,
         "gold_max_sim_mean": gs["gold_max_sim_mean"],

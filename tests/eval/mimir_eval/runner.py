@@ -14,7 +14,7 @@ from .pipelines import ExamSpec, finalize, pipeline_class
 from .schema import exam_format
 from .services import MimirServices
 from .util import append_jsonl, git_info, read_jsonl, write_json
-from .vram import VramMonitor
+from .vram import VramMonitor, gpu_info, ollama_residency
 
 
 def run_experiment(config_path: str, results_root: str | Path = "results", resume: str | None = None,
@@ -47,7 +47,8 @@ def run_experiment(config_path: str, results_root: str | Path = "results", resum
             "n_documents": len(docs), "seeds": cfg["seeds"],
             "git": git_info(REPO_ROOT), "python": platform.python_version(),
             "host": platform.node(), "started": datetime.now().isoformat(timespec="seconds"),
-            "generator": llm.describe() if llm else {"provider": "bifrost-service"}}
+            "generator": llm.describe() if llm else {"provider": "bifrost-service"},
+            "hardware": {"gpus": gpu_info(), "platform": platform.platform()}}
     write_json(out_dir / "run.json", meta)
 
     total = len(docs) * len(cfg["seeds"])
@@ -77,11 +78,14 @@ def run_experiment(config_path: str, results_root: str | Path = "results", resum
                 with VramMonitor(enabled=cfg["monitor_vram"]) as vm:
                     out = pipeline.generate_exam(prep, spec, seed)
                 out = finalize(out)
+                resident = (ollama_residency(llm.base_url)
+                            if llm and llm.provider == "ollama" and cfg["monitor_vram"] else None)
                 rec = {**base, **out,
                        "doc_text": prep.text, "chunks": [c.get("content", "") for c in prep.chunks],
                        "n_chunks": len(prep.chunks),
                        "timings": {**prep.timings, **out["timings"], "total_s": time.perf_counter() - t0},
                        "vram_peak_mib": vm.peak_mib, "vram_baseline_mib": vm.baseline_mib,
+                       "ollama_ps": resident,
                        "format": exam_format(out["questions"], spec.n_questions, spec.types)}
             except Exception as e:
                 rec = {**base, "status": "error", "error": f"{type(e).__name__}: {e}",

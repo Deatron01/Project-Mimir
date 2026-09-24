@@ -22,8 +22,9 @@ pip install -r requirements.txt
 ```
 
 The Mimir services must be running (`docker-compose up -d` from the repo root), and Ollama must have
-the generator model pulled (`ollama pull qwen2.5:7b`). The judge and E4 use the university GenAI
-server; the key comes from `OE_GENAI_API_KEY` in the repo's `.env`.
+the generator model pulled (`ollama pull qwen2.5:7b`; E2x also needs `ollama pull llama3.1:8b`). The
+judge, E4/E4b and B-doc-S use the university GenAI server; the key comes from `OE_GENAI_API_KEY` in the
+repo's `.env`.
 
 Rebuild the changed services once (`docker-compose up -d --build runecarver bifrost heimdall`).
 Service changes that the evaluation relies on:
@@ -79,15 +80,18 @@ python -m mimir_eval analyze E0=results\E0_... E2=results\E2_... E4=results\E4_.
 
 | File | Arm | What changes |
 | --- | --- | --- |
+| `b_doc_local.yaml` | B-doc-L | Status quo: the whole document in one prompt (same prompt as E0), `qwen2.5:7b`, 16k context; documents over 30,000 characters are cut and the cut share is recorded |
+| `b_doc_server.yaml` | B-doc-S | The same on the GenAI server model (up to 80,000 characters) |
 | `e0_naive_local.yaml` | E0 | Reference: production retrieval + production prompt, `qwen2.5:7b` on Ollama |
 | `e0s_naive_service.yaml` | E0s | Whole chain through Bifrost `/generate`; smoke test only (Bifrost picks the model) |
 | `e1_blueprint.yaml` | E1 | Planner + per-slot retrieval + one question per call, no verifier |
 | `e2_blueprint_verifier.yaml` | E2 | E1 + verifier chain with retries ("Thorough") |
+| `e2x_blueprint_other_verifier.yaml` | E2x | E2 with a verifier from another family (`llama3.1:8b` checks `qwen2.5:7b`) |
 | `e2f_blueprint_fast.yaml` | E2f | E2 without the blind answer test ("Fast") |
 | `e2h_blueprint_hybrid.yaml` | E2h | E2 with hybrid BM25 + dense retrieval |
 | `e3_blueprint_graph.yaml` | E3 | E2 + concept graph |
-| `e4_server_naive.yaml` | E4 | E0 on Qwen3.5-122B (GenAI server) |
-| `e4b_server_blueprint.yaml` | E4b | E2 on Qwen3.5-122B |
+| `e4_server_naive.yaml` | E4 | E0 on the GenAI server model (`qwen38udq8xl`) |
+| `e4b_server_blueprint.yaml` | E4b | E2 on the GenAI server model |
 | `e5a_chunk_legacy.yaml` | E5a | Old RuneCarver encoder (512-token bug), for before/after |
 | `e5b_chunk_std.yaml` | E5b | Chunking: mean + 1.5·std cut rule |
 | `e5c_chunk_fixed.yaml` | E5c | Chunking: fixed 800-character windows |
@@ -103,7 +107,11 @@ generates one question with chunk citations, and (E2+) verifies it: shape, meta-
 citations, then an LLM grounding + distractor check, then a blind answer test. A failed check goes
 back to the generator as feedback (max 1 retry, a wider retrieval net when the key was not
 supported), then one spare concept is tried, and as a last resort the best attempt is kept and marked
-`verified: false`, so the question count is always met. Near-duplicates (embedding similarity > 0.9)
+`verified: false`, so the question count is always met. The last resort prefers a well-formed attempt;
+if none is, one repair call adds the missing options (`repair`), so a malformed question no longer
+fails the whole exam. Two rule checks (`leakage_checks`) reject a stem that already contains the key
+(at least 80 % of a key of three or more words) and an MCQ stem that is a statement, not a question.
+`verifier_llm` runs the grounding and blind checks on another model (E2x). Near-duplicates (embedding similarity > 0.9)
 are regenerated. E3 builds a session-scoped concept graph (one call per ~3,000 characters): graph
 concepts replace the planner call, sibling concepts are offered as distractor ideas, and 1-hop
 neighbour chunks join the context. Every run records calls per stage, retries, replacements and
@@ -143,6 +151,7 @@ python -m mimir_eval view                        # results\viewer.html: read the
 | `tabla6_adatkeszlet`, `adatkeszlet.csv` | documents, gold questions, lengths and licence per source |
 | `abra1`–`abra6` | methods diagram, ranking, measures, cost, components, chunking |
 | `peldak.md` | one good and one bad question per arm with the judge's reasoning (error analysis) |
+| `latex/` | the paper's tables in English: `tab_main`, `tab_verifier` (judge outcomes by verifier verdict), `tab_verifier_arms` (precision, recall, κ of the verifier against the judge's "grounded"), `tab_leakage`, plus `fig_quality_time.dat` and `paper_numbers.json` |
 
 With fewer than 6 documents everything is marked PILOT. Still to do (ROADMAP AI-19): freeze `eval-v1`,
 full run, teacher rating.
@@ -161,9 +170,12 @@ retries once (`max_retries: 1`), the blueprint arms run one seed, and E4/E4b run
 | Grounding rate, distractor validity, 1–5 rubric scores | LLM judge (`judge.py`), sees the key | question |
 | Blind answerability | LLM judge answers without the key | question |
 | Meta-reference rate ("a szöveg szerint…") | regex, `schema.py` | question |
+| Leakage rate (key in stem), non-question rate | token overlap / stem ending, `schema.py` | question |
+| Truncated share of the document (B-doc) | `pipelines.py` | exam |
 | Duplicate rate, section coverage, gold similarity | e5 embeddings, `metrics.py` | exam |
 | Retrieval recall@k, MRR | gold evidence sentences vs retrieved chunks | exam |
 | Time per step, peak VRAM, tokens, LLM calls | runner | exam |
+| GPU name, total memory, driver (`run.json` → `hardware`); share of the Ollama model in GPU memory (`gpu_share`, from `/api/ps`) | `vram.py` | run / exam |
 
 Exam statuses: `ok`; `parse_error` (model output not JSON) and `fallback` (Bifrost's hard-coded
 "models overloaded" exam) count as failed exams; `error` (service or network down) is excluded
