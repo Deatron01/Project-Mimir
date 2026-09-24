@@ -68,7 +68,11 @@ def score_run(run_dir: str | Path, judge_cfg: dict | None = None, use_judge: boo
                 "prompt_tokens": llm.get("prompt_tokens"), "completion_tokens": llm.get("completion_tokens"),
                 "n_chunks": ex.get("n_chunks"),
                 "unverified": (ex.get("blueprint") or {}).get("unverified"),
-                "replacements": (ex.get("blueprint") or {}).get("replacements")}
+                "replacements": (ex.get("blueprint") or {}).get("replacements"),
+                "repairs": (ex.get("blueprint") or {}).get("repairs"),
+                "truncated_share": (ex.get("document") or {}).get("truncated_share"),
+                "gpu_share": min((m["gpu_share"] for m in ex.get("ollama_ps") or [] if m.get("gpu_share") is not None),
+                                 default=None)}
         if ex.get("status") != "ok":
             # fallback = valid JSON but an error message; error = no output at all
             e_rows.append({**erow, "format_compliant": False, "count_ok": False,
@@ -82,6 +86,8 @@ def score_run(run_dir: str | Path, judge_cfg: dict | None = None, use_judge: boo
             judged.append({**base, "uid": f"{ex['run_id']}|{ex['doc_id']}|{ex['seed']}|{q['qid']}",
                            "qid": q["qid"], "type": q["type"], "text": q["text"], "key": q["key"],
                            "options": q["options"], "citations": q.get("citations"), "bloom": q.get("bloom"),
+                           "verified": q.get("verified"),
+                           "verifier_on": ((ex.get("blueprint") or {}).get("settings") or {}).get("verifier"),
                            **qm})
         if judge:
             results = list(pool.map(lambda q: judge.judge_question(ex, q), ex["questions"]))

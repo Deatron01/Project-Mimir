@@ -134,3 +134,39 @@ def test_spearman_and_kappa():
     assert stats.spearman([1, 2, 3, 4], [2, 3, 4, 5])["rho"] == pytest.approx(1.0)
     assert stats.cohen_kappa([True, True, False, False], [True, True, False, False]) == pytest.approx(1.0)
     assert stats.cohen_kappa([True, False, True, False], [True, True, False, False]) == pytest.approx(0.0)
+
+
+def test_leakage_checks():
+    from mimir_eval.schema import key_in_stem, stem_is_question
+    q = {"type": "mcq", "text": "A B-sejtek termelik az antitesteket, melyik sejt termeli őket?",
+         "key": "A B-sejtek termelik"}
+    assert key_in_stem(q) and stem_is_question(q)
+    assert not key_in_stem({**q, "key": "B-sejtek"})               # too short to count as a copy
+    assert not key_in_stem({**q, "type": "tf"})                     # a tf statement is its own key
+    assert not stem_is_question({**q, "text": "Az antitesteket a B-sejtek termelik."})
+    assert stem_is_question({**q, "text": "Válassza ki a helyes állítást:"})
+
+
+def test_hardware_record(monkeypatch):
+    import subprocess
+    from mimir_eval import vram
+    monkeypatch.setattr(vram.shutil, "which", lambda _: "/usr/bin/nvidia-smi")
+    monkeypatch.setattr(vram.subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(
+        a, 0, stdout="NVIDIA GeForce RTX 4060, 8188, 560.94\n"))
+    assert vram.gpu_info() == [{"name": "NVIDIA GeForce RTX 4060", "memory_total_mib": 8188, "driver": "560.94"}]
+
+    class Resp:
+        def json(self):
+            return {"models": [{"name": "qwen2.5:7b", "size": 6 * 2**30, "size_vram": 3 * 2**30}]}
+
+    class Client:
+        def __init__(self, **_): pass
+        def __enter__(self): return self
+        def __exit__(self, *_): pass
+        def get(self, url):
+            assert url == "http://localhost:11434/api/ps"
+            return Resp()
+
+    monkeypatch.setattr(vram.httpx, "Client", Client)
+    assert vram.ollama_residency("http://localhost:11434/v1") == [
+        {"model": "qwen2.5:7b", "size_mib": 6144, "vram_mib": 3072, "gpu_share": 0.5}]

@@ -9,6 +9,8 @@ from __future__ import annotations
 import json
 import re
 
+from .util import norm_text, token_overlap
+
 ERROR_MARKERS = ("Generálási Hiba", "túlterheltek", "Generation error")
 
 TYPE_ALIASES = {
@@ -140,3 +142,28 @@ _META_RE = re.compile("|".join(META_PATTERNS), re.IGNORECASE)
 
 def has_meta_reference(text: str) -> bool:
     return bool(_META_RE.search(text or ""))
+
+
+# ------------------------------------------------------------------ answer leakage
+# Found in the pilot: verified questions sometimes copy a source sentence into the stem and repeat it
+# as the key, so they are trivially "grounded" and "blind-answerable".
+LEAK_OVERLAP = 0.8      # share of the key's word tokens that appear in the stem
+LEAK_MIN_TOKENS = 3     # shorter keys (a name, a number) may legitimately appear in a stem
+
+
+def key_in_stem(q: dict) -> bool:
+    """The stem gives the answer away: at least 80 % of a (3+ token) key's words are in the stem.
+    True/false questions are exempt: their stem is a statement by design."""
+    if q.get("type") == "tf" or not q.get("key"):
+        return False
+    if len(norm_text(q["key"]).split()) < LEAK_MIN_TOKENS:
+        return False
+    return token_overlap(q["key"], q.get("text", "")) >= LEAK_OVERLAP
+
+
+def stem_is_question(q: dict) -> bool:
+    """Multiple-choice stems must ask something (end with '?' or introduce the options with ':').
+    Other types are not checked: true/false stems are statements, open questions may be imperative."""
+    if q.get("type") != "mcq":
+        return True
+    return (q.get("text") or "").strip().rstrip("\"'”»").rstrip().endswith(("?", ":"))

@@ -1,0 +1,12 @@
+# E2x - E2 with a verifier from another model family. The pilot showed that the 7B self-verifier
+# (the generator checking its own questions) does not agree with the judge; this arm tests whether an
+# independent verifier does. Generator and verifier cannot both stay loaded on an 8 GB card, so Ollama
+# swaps models between calls: compare E2x with E2 on quality; its time includes the swaps.
+name: E2x
+description: "Blueprint + verifier from another family (Llama-3.1-8B verifies Qwen2.5-7B)"
+seeds: [1]
+exam: {n_questions: 10, types: [mcq]}
+pipeline: {kind: blueprint, retrieval: dense, retrieval_k: 3, verifier: true, blind_test: true, max_retries: 1, graph: false}
+chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
+generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 8192}
+verifier_llm: {provider: ollama, model: "llama3.1:8b", temperature: 0.0, num_ctx: 8192}

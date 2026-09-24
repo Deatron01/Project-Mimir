@@ -109,6 +109,33 @@ KIMENETI FORMÁTUM (csak ez a JSON objektum):
  "citations": ["C0"], "bloom": "{slot['bloom']}", "explanation": "egy mondat: miért ez a helyes válasz"}}"""
 
 
+# ------------------------------------------------------------------ repair
+REPAIR_SYSTEM = ("[repair] Te egy gondos vizsgakészítő vagy, aki hibás formájú kérdéseket javít. "
+                 "Kizárólag érvényes JSON formátumban válaszolj, markdown formázás nélkül!")
+
+
+def repair_prompt(q: dict, context: list[tuple[str, str]], language: str) -> str:
+    """Last resort for a malformed question: keep its content, fix only the shape."""
+    ctx = "\n\n".join(f"[{cid}] {text}" for cid, text in context)
+    opts = "\n".join(f"- {o['text']}{'  (helyes)' if o['correct'] else ''}" for o in q["options"]) or "- (nincs)"
+    return f"""Az alábbi feleletválasztós kérdés formája hibás. Javítsd ki úgy, hogy PONTOSAN 4 válasz legyen,
+ebből PONTOSAN 1 helyes; a hiányzó rossz válaszokat a kontextus alapján egyértelműen hibás, de hihető
+állításokkal pótold. A kérdés tartalmán és a helyes válaszon ne változtass, ha azok a kontextus szerint
+helyesek. A kérdés ne tartalmazza a helyes választ, és kérdőjellel végződjön.
+Nyelv: {LANG_HU.get(language, language)}.
+
+KÉRDÉS: {q['text']}
+VÁLASZOK:
+{opts}
+
+KONTEXTUS:
+{ctx}
+
+KIMENETI FORMÁTUM (csak ez a JSON objektum):
+{{"type": "mcq", "text": "A kérdés szövege?", "answers": [{{"text": "...", "is_correct": true}}, {{"text": "...", "is_correct": false}}, {{"text": "...", "is_correct": false}}, {{"text": "...", "is_correct": false}}],
+ "citations": ["C0"], "explanation": "egy mondat"}}"""
+
+
 # ------------------------------------------------------------------ verifier
 VERIFIER_SYSTEM = "[verifier] You check exam questions against source text. Reply with one valid JSON object only."
 

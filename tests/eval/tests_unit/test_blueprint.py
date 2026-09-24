@@ -42,7 +42,7 @@ def bp_mock(messages, meta):
         # every second concept is wrong on the first try (key not in the source)
         bad = (not retry) and (sum(map(ord, concept)) % 2 == 0)
         key = "Teljesen kitalált válasz" if bad else sent
-        return json.dumps({"type": "mcq", "text": f"{concept}: mi igaz erre? ({sent[:30]})",
+        return json.dumps({"type": "mcq", "text": f"{concept}: mi igaz erre ({sent[:30]})?",
                            "answers": [{"text": key, "is_correct": True}] +
                                       [{"text": f"hamis {j} {concept}", "is_correct": False} for j in range(3)],
                            "citations": [cid], "bloom": "understand", "explanation": "x"}, ensure_ascii=False)
@@ -161,3 +161,91 @@ def test_graph_merge_and_siblings():
     assert isinstance(g, ConceptGraph)
     sib = [s.name for s in g.siblings(g.key("T-sejt"))]
     assert "B-sejt" in sib and "makrofág" not in sib
+
+
+def _cfg_file(tmp_path, name, pipeline, **top):
+    p = tmp_path / f"{name}.yaml"
+    p.write_text(json.dumps({"name": name, "seeds": [1], "documents": ["hu-immune"],
+                             "exam": {"n_questions": 4, "types": ["mcq"]},
+                             "pipeline": {"kind": "blueprint", "retrieval_k": 2, "embedder": "bow", **pipeline},
+                             "generator": {"provider": "mock", "model": "m"}, "monitor_vram": False, **top}),
+                 encoding="utf-8")
+    return p
+
+
+def _leaky_mock(messages, meta):
+    """First attempts copy a source sentence into the stem and repeat it as the key (pilot failure)."""
+    system, user = messages[0]["content"], messages[-1]["content"]
+    if system.startswith("[generator]") and "HIBÁS VOLT" not in user:
+        ctx = re.findall(r"\[(C\d+)\] (.+)", user.split("KONTEXTUS:")[1])
+        cid, text = ctx[0]
+        sent = text.split(".")[0] + "."
+        return json.dumps({"type": "mcq", "text": sent,
+                           "answers": [{"text": sent, "is_correct": True}] +
+                                      [{"text": f"{sent[:-1]} {j}. változat", "is_correct": False} for j in range(3)],
+                           "citations": [cid]}, ensure_ascii=False)
+    return bp_mock(messages, meta)
+
+
+def test_leakage_checks_reject_copied_stems(bp):
+    from mimir_eval.schema import key_in_stem, normalize_exam
+    tmp, _ = bp
+    llm_mod.set_mock_handler(_leaky_mock)
+    rd = runner_mod.run_experiment(str(_cfg_file(tmp, "E2", {"verifier": True})), results_root=tmp / "r")
+    e = _exams(rd)[0]
+    assert e["status"] == "ok" and e["format"]["format_compliant"]
+    assert not any(key_in_stem(q) for q in normalize_exam(e["raw_json"]))
+    assert any(len(s["attempts"]) > 1 for s in e["blueprint"]["slot_logs"])
+    # without the checks (the pilot's verifier) the copied stems pass the grounding check and survive
+    rd2 = runner_mod.run_experiment(str(_cfg_file(tmp, "E2old", {"verifier": True, "leakage_checks": False})),
+                                    results_root=tmp / "r")
+    e2 = _exams(rd2)[0]
+    assert any(key_in_stem(q) for q in normalize_exam(e2["raw_json"]))
+
+
+def _three_option_mock(messages, meta):
+    """The generator never manages four options; only the repair call does."""
+    system, user = messages[0]["content"], messages[-1]["content"]
+    if system.startswith("[generator]"):
+        out = json.loads(bp_mock(messages, meta))
+        out["answers"] = out["answers"][:3]
+        return json.dumps(out, ensure_ascii=False)
+    if system.startswith("[repair]"):
+        CALLS.append("repair")
+        stem = re.search(r"KÉRDÉS: (.+)", user).group(1)
+        key = re.search(r"^- (.+)  \(helyes\)$", user, re.M).group(1)
+        return json.dumps({"type": "mcq", "text": stem,
+                           "answers": [{"text": key, "is_correct": True}] +
+                                      [{"text": f"pótolt hamis {j}", "is_correct": False} for j in range(3)],
+                           "citations": ["C0"]}, ensure_ascii=False)
+    return bp_mock(messages, meta)
+
+
+def test_malformed_last_resort_is_repaired(bp):
+    tmp, _ = bp
+    llm_mod.set_mock_handler(_three_option_mock)
+    rd = runner_mod.run_experiment(str(_cfg_file(tmp, "E2", {"verifier": True})), results_root=tmp / "r")
+    e = _exams(rd)[0]
+    assert e["status"] == "ok" and e["format"]["format_compliant"], e["format"]
+    assert e["blueprint"]["repairs"] == 4 and "repair" in e["llm"]["calls_by_stage"]
+    assert all(not q["verified"] for q in e["raw_json"]["questions"])   # repaired, but never verified
+    # without repair the pilot's failure mode comes back
+    rd2 = runner_mod.run_experiment(str(_cfg_file(tmp, "E2norep", {"verifier": True, "repair": False})),
+                                    results_root=tmp / "r")
+    assert not _exams(rd2)[0]["format"]["format_compliant"]
+
+
+def test_verifier_llm_runs_on_another_model(bp):
+    tmp, _ = bp
+    seen = []
+
+    def spy(messages, meta):
+        seen.append((messages[0]["content"].split("]")[0].strip("["), meta["model"]))
+        return bp_mock(messages, meta)
+
+    llm_mod.set_mock_handler(spy)
+    cfg = _cfg_file(tmp, "E2x", {"verifier": True}, verifier_llm={"model": "other-family"})
+    e = _exams(runner_mod.run_experiment(str(cfg), results_root=tmp / "r"))[0]
+    models = {role: {m for r, m in seen if r == role} for role in ("generator", "planner", "verifier")}
+    assert models == {"generator": {"m"}, "planner": {"m"}, "verifier": {"other-family"}}
+    assert e["blueprint"]["verifier_model"] == "mock:other-family"

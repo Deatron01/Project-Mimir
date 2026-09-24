@@ -19,6 +19,7 @@ Writes, in Hungarian:
   peldak.md             one good and one bad question per arm with the judge's reasoning
   eredmenyek.md         a results-chapter draft with the numbers filled in
   eredmenyek_tabla.csv  the main table
+  latex/                the paper's tables (tab_main, tab_verifier, tab_leakage) and plot data, in English
 Every figure is saved as PNG (300 dpi) and PDF (vector) for Word or LaTeX.
 """
 from __future__ import annotations
@@ -37,13 +38,17 @@ import pandas as pd  # noqa: E402
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch  # noqa: E402
 
 from .config import resolve  # noqa: E402
+from .paper_tables import write_latex  # noqa: E402
 from .rubric import CRITERIA  # noqa: E402
 from .stats import bootstrap_ci, holm, paired_wilcoxon  # noqa: E402
 
 ARM_HU = {
+    "B-doc-L": ("Teljes dokumentum, helyi", "a teljes dokumentum egy promptban, helyi 7B modell"),
+    "B-doc-S": ("Teljes dokumentum, szerver", "a teljes dokumentum egy promptban, szervermodell"),
     "E0": ("Alapmódszer", "naiv RAG: 3 részlet, egy hívásban 10 kérdés"),
     "E1": ("Tervezés", "fogalmak megtervezése, kérdésenként külön írás"),
     "E2": ("Tervezés + ellenőrzés", "minden kérdés ellenőrzése, hiba esetén újraírás"),
+    "E2x": ("Ellenőrzés más modellel", "E2, de az ellenőrzést egy másik modellcsalád végzi"),
     "E2f": ("Ellenőrzés vak teszt nélkül", "E2 a vak megoldási próba nélkül"),
     "E2h": ("Ellenőrzés + hibrid keresés", "E2 kulcsszavas és jelentés alapú kereséssel"),
     "E3": ("Ellenőrzés + fogalomgráf", "E2 kiegészítve a dokumentum fogalomtérképével"),
@@ -491,7 +496,8 @@ def md_table(rows: list[list[str]]) -> list[str]:
 
 
 # ---------------------------------------------------------------- TDK sections (AI-13 - AI-17)
-KEY_PAIRS = [("E1", "E0"), ("E2", "E1"), ("E3", "E2"), ("E4", "E0")]   # (new, reference): what each step adds
+KEY_PAIRS = [("E1", "B-doc-L"), ("E1", "E0"), ("E2", "E1"), ("E2x", "E2"), ("E3", "E2"),   # (new, reference):
+             ("E4", "E0")]                                                                 # what each step adds
 CRIT_HU = {"correctness": "Helyesség", "clarity": "Érthetőség", "distractor_quality": "Disztraktorok",
            "bloom_fit": "Szintillesztés", "would_use": "Használná (igen/nem)"}
 LANG_HU = {"hu": "magyar", "en": "angol"}
@@ -948,7 +954,9 @@ def build_report(results_root: str = "results", name: str | None = None, arms: l
     rpath = resolve(ratings) if ratings else None
     if rpath and rpath.exists():
         extra["agreement"] = table_agreement(rpath, root, out)
-    extra["n_examples"] = write_examples(load_questions(root, ex["run_dir"].unique()), list(summary["arm"]), out)
+    qs = load_questions(root, ex["run_dir"].unique())
+    extra["n_examples"] = write_examples(qs, list(summary["arm"]), out)
+    write_latex(out, ex, summary, qs, root, sig=extra["sig"][0] if extra["sig"] else None)
     write_text(out, ex, summary, metrics, best, sig, steps, has_chunk, pilot, best_local, rank_rows, win, extra)
     tab = summary.rename(columns={"arm": "modszer", "qi": "minosegi_index"})
     tab.to_csv(out / "eredmenyek_tabla.csv", index=False, encoding="utf-8-sig")

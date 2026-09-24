@@ -27,7 +27,7 @@ DEFAULTS: dict = {
         "language": "from_document",     # hu | en | from_document
     },
     "pipeline": {
-        "kind": "naive_direct",   # naive_direct | naive_service | blueprint
+        "kind": "naive_direct",   # naive_direct | naive_service | blueprint | full_document
         "retrieval_k": 3,
         "retrieval_probe": True,  # extra /search calls with gold questions -> recall@k
         "probe_k": 10,
@@ -54,6 +54,7 @@ DEFAULTS: dict = {
         "timeout_s": 600,
         "poll_interval_s": 2.0,
     },
+    "verifier_llm": None,         # blueprint only: {provider, model, ...} to verify with another model (E2x)
     "monitor_vram": True,
 }
 
@@ -103,7 +104,7 @@ def validate(cfg: dict) -> None:
     bad = set(ex["types"]) - {"mcq", "tf", "open"}
     if bad:
         raise ValueError(f"unknown question types: {bad}")
-    if cfg["pipeline"]["kind"] not in {"naive_direct", "naive_service", "blueprint"}:
+    if cfg["pipeline"]["kind"] not in {"naive_direct", "naive_service", "blueprint", "full_document"}:
         raise ValueError(f"unknown pipeline.kind: {cfg['pipeline']['kind']}")
     if cfg["chunking"]["mode"] not in {"service", "fixed"}:
         raise ValueError(f"unknown chunking.mode: {cfg['chunking']['mode']}")
@@ -115,6 +116,14 @@ def validate(cfg: dict) -> None:
         raise ValueError(f"unknown chunking.method: {cfg['chunking']['method']}")
     if cfg["generator"]["provider"] not in PROVIDERS:
         raise ValueError(f"unknown generator.provider: {cfg['generator']['provider']}")
+    v = cfg.get("verifier_llm")
+    if v is not None:
+        if not isinstance(v, dict) or not v.get("model"):
+            raise ValueError("verifier_llm needs at least a model")
+        if v.get("provider", cfg["generator"]["provider"]) not in PROVIDERS:
+            raise ValueError(f"unknown verifier_llm.provider: {v.get('provider')}")
+        if cfg["pipeline"]["kind"] != "blueprint":
+            raise ValueError("verifier_llm only applies to the blueprint pipeline")
     if cfg["pipeline"]["kind"] == "naive_service" and cfg["chunking"]["mode"] == "fixed":
         raise ValueError("naive_service uses the real service chain; use naive_direct for fixed chunking")
 

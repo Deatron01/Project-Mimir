@@ -11,6 +11,11 @@ verify -> assemble. Arms E1-E3 switch parts on and off through `pipeline:` confi
     spare_concepts: 3       extra planned concepts used as replacements
     dedupe_threshold: 0.9   embedding similarity above which a question counts as a duplicate
     embedder: e5            for dedupe and concept merging ("bow" in tests)
+    leakage_checks: true    verifier arms reject stems that contain the key or are not questions
+                            (found in the pilot; false reproduces the pilot's verifier)
+    repair: true            a malformed last-resort question gets one shape-repair call
+Top-level `verifier_llm:` (optional) runs the LLM checks on another model (arm E2x); the generator
+config is the default for every key it does not set.
 """
 from __future__ import annotations
 
@@ -21,11 +26,13 @@ import numpy as np
 
 from ..embed import get_embedder
 from ..pipelines import BasePipeline, PreparedDoc, ExamSpec
-from ..schema import has_meta_reference, normalize_exam, parse_llm_json, question_shape_ok
+from ..llm import LLMClient
+from ..schema import (has_meta_reference, key_in_stem, normalize_exam, parse_llm_json, question_shape_ok,
+                      stem_is_question)
 from ..util import truthy
 from .graph import ConceptGraph, build_graph, rank_concepts
-from .prompts import (BP_PROMPT_VERSION, GENERATOR_SYSTEM, PLANNER_SYSTEM, VERIFIER_SYSTEM, blind_prompt,
-                      generator_prompt, grounding_prompt, planner_prompt)
+from .prompts import (BP_PROMPT_VERSION, GENERATOR_SYSTEM, PLANNER_SYSTEM, REPAIR_SYSTEM, VERIFIER_SYSTEM,
+                      blind_prompt, generator_prompt, grounding_prompt, planner_prompt, repair_prompt)
 from .retrieval import BM25, rrf
 
 BLOOM_ORDER = ["remember", "understand", "apply", "analyze", "evaluate"]
@@ -36,7 +43,8 @@ BLOOM_MIX = {
 }
 DEFAULTS = {"verifier": False, "blind_test": True, "max_retries": 1, "graph": False, "retrieval": "dense",
             "retrieval_k": 3, "spare_concepts": 3, "dedupe_threshold": 0.9, "embedder": "e5",
-            "overview_chars": 12000, "graph_batch_chars": 3000, "max_context_chars": 6000}
+            "overview_chars": 12000, "graph_batch_chars": 3000, "max_context_chars": 6000,
+            "leakage_checks": True, "repair": True}
 LETTERS = "ABCDEFGH"
 
 
@@ -77,12 +85,17 @@ class BlueprintPipeline(BasePipeline):
         super().__init__(cfg, services, llm)
         self.p = {**DEFAULTS, **cfg["pipeline"]}
         self.embedder = get_embedder(self.p["embedder"])
+        vcfg = cfg.get("verifier_llm")
+        # E2x: a verifier from another model family (the generator settings are the defaults)
+        self.vllm = LLMClient.from_config({**cfg["generator"], **vcfg}) if vcfg else llm
 
     # ---------------------------------------------------------------- LLM helper
-    def _ask(self, system: str, user: str, stage: str, seed: int, attempt: int = 0) -> dict | None:
+    def _ask(self, system: str, user: str, stage: str, seed: int, attempt: int = 0,
+             client: LLMClient | None = None) -> dict | None:
+        client = client or self.llm
         for k in range(2):  # one retry for unparsable JSON, with a different seed
             try:
-                res = self.llm.chat([{"role": "system", "content": system}, {"role": "user", "content": user}],
+                res = client.chat([{"role": "system", "content": system}, {"role": "user", "content": user}],
                                     json_mode=True, seed=seed * 1000 + attempt * 10 + k)
             except Exception as e:  # network / server error: count and give up on this call
                 self.stats["llm_errors"] += 1
@@ -171,6 +184,13 @@ class BlueprintPipeline(BasePipeline):
             problems.append("A kérdés a szövegre/dokumentumra hivatkozik; fogalmazd meg általános vizsgakérdésként.")
         if not self.p["verifier"]:
             return problems
+        if self.p["leakage_checks"]:
+            if key_in_stem(q):
+                problems.append("A kérdés szövege elárulja a helyes választ (a válasz szinte szó szerint benne van a "
+                                "kérdésben). Tegyél fel valódi kérdést, amely nem tartalmazza a választ.")
+            if not stem_is_question(q):
+                problems.append("A kérdés ne a forrás egy kijelentő mondata legyen: tegyél fel valódi kérdést "
+                                "(kérdőjellel).")
         cited = [i for i in q.get("_cited", []) if i in ctx_ids]
         if not cited:
             problems.append("Adj meg a 'citations' mezőben legalább egy, a kontextusban szereplő azonosítót (pl. C3).")
@@ -178,7 +198,7 @@ class BlueprintPipeline(BasePipeline):
         if problems:
             return problems  # do not pay for LLM checks on a malformed question
         source = "\n\n".join(prep.chunks[i]["content"] for i in cited)
-        g = self._ask(VERIFIER_SYSTEM, grounding_prompt(q, source), "verify_grounding", seed, attempt)
+        g = self._ask(VERIFIER_SYSTEM, grounding_prompt(q, source), "verify_grounding", seed, attempt, self.vllm)
         if g is None:
             self.stats["verifier_skipped"] += 1
             return []  # verifier unavailable: do not block the exam, but it is counted
@@ -195,7 +215,7 @@ class BlueprintPipeline(BasePipeline):
             return problems
         order = list(range(len(q["options"])))
         random.Random(seed * 7 + attempt).shuffle(order)
-        b = self._ask(VERIFIER_SYSTEM, blind_prompt(q, order, source), "verify_blind", seed, attempt)
+        b = self._ask(VERIFIER_SYSTEM, blind_prompt(q, order, source), "verify_blind", seed, attempt, self.vllm)
         ans = str((b or {}).get("answer", "")).strip().upper()[:1]
         if b is not None and ans in LETTERS[: len(order)] and not q["options"][order[LETTERS.index(ans)]]["correct"]:
             problems.append("Egy független megoldó a forrás alapján más választ jelölt meg helyesnek; "
@@ -213,7 +233,7 @@ class BlueprintPipeline(BasePipeline):
     # ---------------------------------------------------------------- one slot
     def _fill_slot(self, prep, spec, slot, accepted, seed) -> tuple[dict | None, dict]:
         log = {"slot": slot["slot"], "concept": slot["concept"], "bloom": slot["bloom"], "attempts": []}
-        best, best_n = None, (2, 99)   # (malformed?, number of problems): a well-formed question always wins
+        best, best_n = None, (2, 2, 99)   # (malformed?, leaks the key?, problems): well-formed wins
         feedback, extra_k = None, 0
         for attempt in range(self.p["max_retries"] + 1):
             ctx_ids = self._slot_context(prep, slot, extra_k)
@@ -240,7 +260,7 @@ class BlueprintPipeline(BasePipeline):
             log["attempts"].append({"problems": problems})
             if not problems:
                 return q, {**log, "passed": True}
-            rank = (0 if question_shape_ok(q) else 1, len(problems))
+            rank = (0 if question_shape_ok(q) else 1, 1 if key_in_stem(q) else 0, len(problems))
             if rank < best_n:
                 best, best_n = q, rank
             if not self.p["verifier"] and not dup and question_shape_ok(q):
@@ -250,11 +270,28 @@ class BlueprintPipeline(BasePipeline):
                 extra_k += 2   # loop back to retrieval with a wider net
         return best, {**log, "passed": False}
 
+    # ---------------------------------------------------------------- last-resort repair
+    def _repair(self, q: dict, prep: PreparedDoc, spec: ExamSpec, seed: int) -> dict | None:
+        """One call that fixes only the shape of a malformed question (pilot: 2-3 options survived)."""
+        ctx_ids = q.get("_ctx") or []
+        raw = self._ask(REPAIR_SYSTEM, repair_prompt(q, [(f"C{i}", prep.chunks[i]["content"]) for i in ctx_ids],
+                                                     spec.language), "repair", seed, 99)
+        qs = normalize_exam({"questions": [raw]}) if raw else []
+        if not qs or not question_shape_ok(qs[0]):
+            return None
+        fixed = qs[0]
+        fixed["_raw"] = {**raw, "type": q["type"]}
+        cited = [int(str(c).upper().lstrip("C")) for c in (raw.get("citations") or [])
+                 if str(c).upper().lstrip("C").isdigit()]
+        fixed["_cited"] = [i for i in cited if i in ctx_ids] or q.get("_cited", [])
+        fixed["_ctx"] = ctx_ids
+        return fixed
+
     # ---------------------------------------------------------------- main entry
     def generate_exam(self, prep: PreparedDoc, spec: ExamSpec, seed: int) -> dict:
         t0 = time.perf_counter()
         self.stats = {"calls": {}, "tokens": 0, "llm_s": 0.0, "parse_failures": 0, "llm_errors": 0,
-                      "verifier_skipped": 0, "planner_fallback": False}
+                      "verifier_skipped": 0, "planner_fallback": False, "repairs": 0, "repair_failed": 0}
         rng = random.Random(seed)
         self._bm25 = BM25([c["content"] for c in prep.chunks]) if self.p["retrieval"] == "hybrid" else None
         probe_out = self.ingest_and_retrieve(prep, None)  # ingest + gold retrieval probe
@@ -282,6 +319,12 @@ class BlueprintPipeline(BasePipeline):
             if q is None:
                 logs.append(log)
                 continue
+            if q["type"] == "mcq" and not question_shape_ok(q) and self.p["repair"]:   # the repair prompt is MCQ-only
+                fixed = self._repair(q, prep, spec, seed)
+                self.stats["repairs" if fixed else "repair_failed"] += 1
+                log["repaired"] = fixed is not None
+                if fixed is not None:
+                    q = fixed
             if not log["passed"]:
                 unverified += 1
             q["verified"] = log["passed"]
@@ -314,6 +357,8 @@ class BlueprintPipeline(BasePipeline):
             "context_text": "\n\n".join(prep.chunks[i]["content"] for i in used_ids),
             "blueprint": {"n_concepts_planned": len(concepts), "slots": len(slots), "replacements": replaced,
                           "unverified": unverified, "verifier_skipped": self.stats["verifier_skipped"],
+                          "repairs": self.stats["repairs"], "repair_failed": self.stats["repair_failed"],
+                          "verifier_model": f"{self.vllm.provider}:{self.vllm.model}",
                           "planner_fallback": self.stats["planner_fallback"],
                           "graph": self.graph.stats() if self.graph else None, "slot_logs": logs,
                           "settings": {k: self.p[k] for k in DEFAULTS}},

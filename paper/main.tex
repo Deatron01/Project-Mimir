@@ -212,7 +212,8 @@ concepts, offers sibling concepts as distractor ideas, and adds 1-hop neighbour 
 \textbf{Verification.} Checks run cheapest first (Table~\ref{tab:verifier}). A failed check returns its
 reason to the generator for one retry; after that the slot moves to a spare concept, and as a last
 resort the best attempt is kept and flagged as unverified for the teacher. Near-duplicates (embedding
-similarity $>0.9$) are regenerated.
+similarity $>0.9$) are regenerated. After the pilot we added leakage checks, a repair call for malformed
+last-resort questions, and an optional verifier from another model family.
 
 \begin{table}[t]
 \centering
@@ -229,6 +230,7 @@ Meta-reference & -- & Rephrase without ``according to the text'' \\
 Citations & -- & Cite a chunk from the given context \\
 Grounding and distractors & 1 & Key not supported by the cited chunks, or a distractor may be true \\
 Blind answer & 1 & A solver without the key chose another option \\
+Leakage (new) & -- & Key contained in the stem, or stem not a question \\
 Duplicate & -- & Too similar to an accepted question \\
 \bottomrule
 \end{tabular}
@@ -322,9 +324,11 @@ Total & & 39 & 15/12/12 & 7{,}919 & 326 \\
 \toprule
 Arm & Configuration \\
 \midrule
+B-doc-L / S & Whole document in one prompt, local 7B / server model (status quo) \\
 E0 & Naive RAG: top-3 chunks, whole exam in one call (baseline) \\
 E1 & Blueprint: planner, per-slot retrieval, one question per call \\
 E2 & E1 + verifier chain with retries \\
+E2x & E2 with a verifier from another family (Llama-3.1-8B) \\
 E2f / E2h & E2 without blind answer test / with hybrid retrieval \\
 E3 & E2 + concept graph \\
 E4 / E4b & E0 / E2 with the large server model \\
@@ -339,7 +343,8 @@ quoted sentence), \emph{distractor validity} (each distractor false and on topic
 answerability} (answering from the source without the key picks the keyed option), and gives 1--5
 rubric scores. The \emph{quality index} is the mean of these four rates. \emph{Coverage} is the share
 of the document's chunks that are the closest chunk (by embedding) of at least one question; we also record duplicates,
-meta-references, unverified questions, calls, tokens, time and peak GPU memory.
+meta-references, answer leakage, unverified questions, calls, tokens, time, peak GPU memory, the GPU
+model and the share of the model held in GPU memory.
 
 \textbf{Judge and teachers.} The judge is gpt-oss-120b~\cite{gptoss2025}, from a different model family
 than the generators, to avoid self-preference~\cite{panickssery2024selfpref}. Blind teacher rating
@@ -378,24 +383,9 @@ the results show directions and costs, and they shaped the main study.
 \caption{Pilot: one Hungarian document, 3 seeds, 30 questions per arm. Rates in \%.}
 \label{tab:pilot}
 \footnotesize
-\setlength{\tabcolsep}{1.9pt}
-\begin{tabular}{@{}lccccccccr@{}}
-\toprule
-Arm & Index & Form. & Grnd. & Blind & Dist. & Cov. & Unv. & Calls & Min \\
-\midrule
-E0  & 0.83 & 100 & 67 & 85 & 80 & 50 & -- & 1 & 0.3 \\
-E1  & 0.88 & 100 & 73 & 93 & 87 & 58 & 2.0 & 23 & 3.0 \\
-E2  & 0.76 & 67 & 73 & 77 & 89 & 58 & 4.3 & 75 & 6.2 \\
-E2f & 0.73 & 67 & 53 & 82 & 90 & 58 & 3.3 & 59 & 5.3 \\
-E2h & 0.76 & 67 & 67 & 79 & 93 & 67 & 4.0 & 76 & 6.7 \\
-E3  & 0.85 & 67 & 87 & 100 & 87 & 50 & 6.0 & 101 & 8.1 \\
-E4  & 0.99 & 100 & 100 & 100 & 97 & 25 & -- & 1 & 6.6 \\
-E5a & 0.90 & 100 & 80 & 86 & 93 & 50 & -- & 1 & 0.3 \\
-E5b & 0.90 & 100 & 80 & 90 & 91 & 56 & -- & 1 & 0.3 \\
-E5c & 0.81 & 100 & 60 & 79 & 83 & 67 & -- & 1 & 0.3 \\
-\bottomrule
-\end{tabular}
-\\[2pt]{\footnotesize Form.\ format compliance; Grnd.\ grounding; Dist.\ distractor validity; Cov.\ coverage; Unv.\ unverified questions per exam; Min: median minutes per exam.}
+\setlength{\tabcolsep}{1.6pt}
+\input{tables/pilot_main}
+\\[2pt]{\footnotesize Form.\ format compliance; Grnd.\ grounding; Dist.\ distractor validity; Cov.\ coverage; Leak.\ key in stem; Unv.\ unverified questions per exam; Calls: mean model calls per exam; Min: median minutes per exam.}
 \end{table}
 
 \begin{figure}[t]
@@ -441,8 +431,10 @@ Verification on top of planning did not raise grounding (73\,\% for E1 and E2) a
 answerability (93$\to$77\,\%). The concept-graph arm (E3) reached the highest local grounding (87\,\%), blind
 answerability (100\,\%) and judge correctness (4.4 of 5, against 3.5 for E0), but these scores are
 partly an artefact (see answer leakage below). Table~\ref{tab:verifier-judge} shows why: pooled over the four verifier arms, the questions the 7B
-verifier passed were judged grounded \emph{less} often (66\,\%) than those it flagged (75\,\%), and blind
-answerability and the judge's ``would use'' verdict were similar in both groups. A verifier that is
+verifier passed were judged grounded \emph{less} often (66\,\%) than those it flagged (75\,\%); they were
+blind-answerable somewhat more often (89 vs.\ 79\,\%), and the judge would use both groups equally often.
+Scored as a classifier of the judge's grounding verdict, the verifier was at chance level in every arm
+(Cohen's $\kappa$ from $-0.14$ to $0.07$, recall 0.42--0.62). A verifier that is
 the generator itself is not independent of it~\cite{panickssery2024selfpref}, and a 7B model cannot
 yet decide reliably whether a passage entails a key. The pilot thus identified two fixes for the main
 study: the last-resort path must never emit a malformed question, and the verifier must be validated
@@ -455,14 +447,7 @@ different-family verifier is tested before its flag is shown to teachers.
 verifier's verdict; judge outcomes in \%.}
 \label{tab:verifier-judge}
 \footnotesize
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-Verifier verdict & $n$ & Grounded & Blind correct & Would use \\
-\midrule
-Passed (verified) & 67 & 66 & 81 & 61 \\
-Flagged (unverified) & 53 & 75 & 77 & 64 \\
-\bottomrule
-\end{tabular}
+\input{tables/pilot_verifier}
 \end{table}
 
 \textbf{Server versus local (RQ3).} The large server model with naive RAG scored highest (0.99) but
@@ -499,14 +484,15 @@ options (315 vs.\ 60 characters for all four).
 
 \textbf{Answer leakage.} Reading the questions (Table~\ref{tab:examples}) exposed a failure that
 neither our metrics nor the judge penalised: some verified questions copy a source sentence into the
-stem and repeat it as the key. The key's words appeared in the stem ($\ge$80\,\% token overlap) in
-20\,\% of E3's questions, 7--10\,\% of E2f and E2h, 3\,\% of E2 and none of the single-call or E1
-questions, and 47\,\% of E3's stems were statements rather than questions. Such items are trivially
+stem and repeat it as the key. For keys of at least three words, the key's words appeared in the stem
+($\ge$80\,\% token overlap) in 20\,\% of E3's questions, 7--10\,\% of E2f and E2h, 3\,\% of E2 and none
+of the single-call or E1 questions (Table~\ref{tab:pilot}, Leak.), and 47\,\% of E3's stems were
+statements rather than questions (10--33\,\% in five other arms). Such items are trivially
 ``grounded'' and ``blind-answerable'', and the judge still gave them 5 of 5 for correctness. The
 verifier's feedback loop seems to push the small model towards copying the source verbatim, which is
-the cheapest way to pass a grounding check. The main study therefore adds two rule checks (the key
-must not be contained in the stem; the stem must be a question) and reports the leakage rate as a
-metric.
+the cheapest way to pass a grounding check. The verifier now has two rule checks for this (the key
+must not be contained in the stem; the stem must be a question; Table~\ref{tab:verifier}), and the
+leakage rate is reported as a metric.
 
 \begin{table}[t]
 \centering
@@ -543,7 +529,7 @@ its source, which exposed both the naive baseline's wrong keys and the verified 
 component that must earn its place in the main study is therefore the verifier, not the blueprint.
 
 \textbf{From pilot to main study.} Each pilot finding changes the design of the \texttt{eval-v1}
-run on the 39 documents: (i) a \emph{whole-document} baseline---the document in one prompt, locally and
+run on the 39 documents (items (i)--(iv) are implemented and tested in the harness): (i) a \emph{whole-document} baseline---the document in one prompt, locally and
 on the server---tests P1 and P2 directly instead of through naive RAG; (ii) the last-resort path keeps
 only well-formed questions; (iii) two rule checks reject questions whose stem contains the key or is
 not a question, and the leakage rate is reported; (iv) the verifier is evaluated as a classifier
@@ -558,6 +544,7 @@ rates; verifier and judge agreement with teachers]}.
 generator settings; judge answers are cached by a hash of model, prompt version and prompt, so
 re-scoring is deterministic; runs resume after interruptions; and the full
 run$\to$score$\to$report flow is covered by end-to-end tests with fake services and a mock LLM. The
+report also writes the paper's tables (Tables~\ref{tab:pilot} and~\ref{tab:verifier-judge}). The
 pilot's raw exams, judge verdicts and report are released with the code.
 
 \textbf{Limitations.} The pilot covers one short Hungarian document on which naive RAG sees three of
