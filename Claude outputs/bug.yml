@@ -1,0 +1,45 @@
+name: Bug report
+description: Something is broken or behaves unexpectedly.
+title: "[Bug] "
+labels: ["type:bug"]
+body:
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module
+      options: [Platform, Gateway, Wellspring, RuneCarver, Bifrost, Heimdall, Forge, Skald, Frontend, Shared, AI Core, Privacy]
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Never attach real user documents. Use synthetic or public test files only.
+      placeholder: |
+        1. make up TIER=gpu8
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      placeholder: "GPU tier (gpu8 / gpu12 / cloud), OS, commit SHA"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Redact any document content before pasting.
+      render: text

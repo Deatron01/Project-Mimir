@@ -1,0 +1,29 @@
+name: Research spike
+description: Time-boxed investigation that ends in an ADR.
+title: "[R?] Spike: "
+labels: ["type:spike"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question to answer
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Options to compare
+  - type: textarea
+    id: output
+    attributes:
+      label: Expected output
+      value: "ADR in docs/adr/ with a recommendation and measured results."
+    validations:
+      required: true
+  - type: dropdown
+    id: timebox
+    attributes:
+      label: Time-box
+      options: ["1 day", "2 days", "3 days (max)"]
+    validations:
+      required: true

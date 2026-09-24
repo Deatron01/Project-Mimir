@@ -1,7 +1,7 @@
 # Mimir evaluation dataset. Paths are relative to this file.
 # Freeze before the first paper run: set version to eval-v1 and do not edit afterwards
 # (changes go into eval-v2). See dataset/README.md for how to add documents.
-version: eval-v0-pilot
+version: eval-v1
 
 # Imported datasets (python -m mimir_eval import eduqg|milqa). Missing files are skipped.
 include:

@@ -1,0 +1,77 @@
+{
+  "run_id": "E5c_20260923_222135",
+  "config": {
+    "name": "E5c",
+    "description": "Naive RAG, fixed 800-character chunks",
+    "dataset": "dataset/manifest.yaml",
+    "documents": "all",
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "exam": {
+      "n_questions": 10,
+      "types": [
+        "mcq"
+      ],
+      "difficulty": "from_document",
+      "language": "from_document"
+    },
+    "pipeline": {
+      "kind": "naive_direct",
+      "retrieval_k": 3,
+      "retrieval_probe": true,
+      "probe_k": 10
+    },
+    "chunking": {
+      "mode": "fixed",
+      "method": "percentile",
+      "threshold": null,
+      "target_size": 800,
+      "overlap": 0,
+      "encoder": "window"
+    },
+    "generator": {
+      "provider": "ollama",
+      "model": "qwen2.5:7b",
+      "temperature": 0.2,
+      "num_ctx": 16384,
+      "timeout_s": 600
+    },
+    "services": {
+      "wellspring": "http://localhost:8001",
+      "runecarver": "http://localhost:8002",
+      "bifrost": "http://localhost:8003",
+      "timeout_s": 600,
+      "poll_interval_s": 2.0
+    },
+    "monitor_vram": true,
+    "_config_path": "configs\\e5c_chunk_fixed.yaml"
+  },
+  "dataset_version": "eval-v0-pilot",
+  "n_documents": 1,
+  "seeds": [
+    1,
+    2,
+    3
+  ],
+  "git": {
+    "commit": "8ff9b6d514270a05a2946c867c80326727b609b7",
+    "branch": "feat/frontend-v1-workspace",
+    "dirty": true
+  },
+  "python": "3.11.0",
+  "host": "PC",
+  "started": "2026-09-23T22:21:35",
+  "generator": {
+    "provider": "ollama",
+    "model": "qwen2.5:7b",
+    "temperature": 0.2,
+    "num_ctx": 16384
+  },
+  "finished": "2026-09-23T22:22:29",
+  "status_counts": {
+    "ok": 3
+  }
+}

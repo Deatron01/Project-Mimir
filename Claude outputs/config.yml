@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Semester roadmap
+    url: https://github.com/Deatron01/Project-Mimir/blob/main/docs/ROADMAP.md
+    about: Check the roadmap before opening a new issue.
