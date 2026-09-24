@@ -60,7 +60,8 @@ def cmd_run(a) -> int:
 
 def cmd_score(a) -> int:
     from .scoring import score_run
-    jc = {"provider": a.judge_provider, "model": a.judge_model}
+    jc = {"provider": a.judge_provider, "model": a.judge_model, "context": a.judge_context,
+          "reasoning": None if a.judge_reasoning == "none" else a.judge_reasoning}
     for rd in a.run_dirs:
         score_run(rd, judge_cfg=jc, use_judge=not a.no_judge, embedder=a.embedder, max_exams=a.max_exams,
                   workers=a.workers)
@@ -109,7 +110,7 @@ def cmd_view(a) -> int:
 
 def cmd_report(a) -> int:
     from .report import build_report
-    build_report(a.results, a.name, a.arms, a.out)
+    build_report(a.results, a.name, a.arms, a.out, a.ratings)
     return 0
 
 
@@ -135,6 +136,10 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("run_dirs", nargs="+")
     s.add_argument("--judge-provider", default=JUDGE_DEFAULTS["provider"])
     s.add_argument("--judge-model", default=JUDGE_DEFAULTS["model"])
+    s.add_argument("--judge-context", choices=["question", "document"], default=JUDGE_DEFAULTS["context"],
+                   help="source shown to the judge: the question's chunks (fast, default) or the whole document")
+    s.add_argument("--judge-reasoning", choices=["low", "medium", "high", "none"],
+                   default=JUDGE_DEFAULTS["reasoning"] or "none", help="gpt-oss reasoning effort (default low)")
     s.add_argument("--no-judge", action="store_true", help="only metrics that need no LLM")
     s.add_argument("--embedder", default="e5", help="e5 (default) | bow (tests only) | a HF model name")
     s.add_argument("--max-exams", type=int)
@@ -175,6 +180,8 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--name", help="subfolder, e.g. pilot")
     s.add_argument("--arms", nargs="+", help="only these arms (default: latest run of every arm)")
     s.add_argument("--out", default="report")
+    s.add_argument("--ratings", default="ratings/ratings.csv",
+                   help="rate-import output for the judge-teacher agreement table (skipped if missing)")
     s.set_defaults(fn=cmd_report)
 
     s = sub.add_parser("analyze", help="tables, statistics and figures")
