@@ -159,6 +159,25 @@ and the median duration of recent jobs, kept separately for local and server mod
 turns this into a step list, a progress bar and a countdown, so a teacher waiting one or two minutes
 knows what is happening.
 
+\textbf{Remaining-time estimate.} Progress $p$ starts from a floor per stage (retrieving 0.05,
+generating 0.15, validating 0.92). While the model streams, $p = 0.15 + 0.77\,\min(0.97,
+c/\hat{c})$, where $c$ is the number of characters received and $\hat{c}$ the median output length
+of recent jobs. With elapsed time $e$ and $\hat{T}$ the median duration of the last 20 successful jobs
+at the same location (local or server), the remaining time is
+\begin{equation}
+\hat{r} = \max\!\left(3,\;
+\begin{cases}
+\hat{T}-e & p<0.25\\[2pt]
+\tfrac12\big(e\tfrac{1-p}{p} + \hat{T}-e\big) & p\ge 0.25,\ e<\hat{T}\\[2pt]
+e\tfrac{1-p}{p} & \text{otherwise}
+\end{cases}\right)\text{s}.
+\end{equation}
+Early in a job only history is informative; once enough output has streamed, the observed pace is
+averaged in, and a job that overruns its history is extrapolated from its own pace alone. The floor
+of 3\,s avoids announcing completion before it happens, and the browser counts $\hat{r}$ down between
+two-second polls. Hard-coded fallback results are excluded from the history so that failures do not
+make future estimates optimistic. The statistics contain only durations and lengths, never content.
+
 \section{Blueprint Pipeline}
 \label{sec:pipeline}
 
@@ -250,6 +269,31 @@ Duplicate & -- & Too similar to an accepted question \\
 definitions and typed relations per 3{,}000-character batch. Graph concepts replace the planner
 call, sibling concepts (same parent, different fact) are offered as distractor ideas, and 1-hop
 neighbour chunks join the context.
+
+\textbf{Expected cost.} The pipeline trades LLM calls for control. Table~\ref{tab:cost} gives the
+number of calls per 10-question exam implied by the design: a lower bound when every question passes
+on the first attempt, and the count when every slot needs its one retry (a replacement concept adds
+up to three more calls per slot). The graph arm adds one extraction call per $\approx$3{,}000
+characters, i.e.\ about 3 calls for the median dataset document and 23 for the longest. The measured
+counts per arm are reported with the results.
+
+\begin{table}[t]
+\centering
+\caption{LLM calls per 10-question exam implied by the design (not measured).}
+\label{tab:cost}
+\footnotesize
+\begin{tabular}{@{}lccl@{}}
+\toprule
+Arm & All pass & One retry per slot & Composition \\
+\midrule
+E0 & 1 & 1 & whole exam \\
+E1 & 11 & 11 & plan + 1 per question \\
+E2f & 21 & 41 & plan + (write, ground) \\
+E2 & 31 & 61 & plan + (write, ground, blind) \\
+E3 & $30+g$ & $60+g$ & graph ($g$) replaces plan \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{algorithm}[t]
 \caption{Blueprint generation for one exam}
@@ -534,6 +578,40 @@ for small effects, and the server arms use a 12-document subset. Wikipedia and O
 cleaner than typical lecture notes. The Hungarian and English subsets come from different sources,
 so language effects are confounded with source. Finally, real authentication and per-user ownership
 checks are still in development; until then the service is operated for a closed user group.
+
+\textbf{Privacy versus quality.} The local-only mode is only useful if it is good enough. We
+therefore state the decision rule in advance: if the local blueprint arm (E2) is not significantly
+worse than the server model with the naive pipeline (E4) on the paired documents, and its
+grounding rate is at least as high, local processing becomes the recommended default and the
+university server an opt-in. If it is worse, the processing-location notice and the per-upload
+model choice let teachers make that trade-off per document rather than per deployment.
+
+\textbf{Depending on a shared model server.} The university GenAI server is convenient but not
+under our control: in September 2026 two of its large models (Qwen3.5-122B and nemotron) were
+withdrawn, which silently changed what the production fallback chain called and forced the server
+arms to be re-pointed. \Mimir{} therefore reads the list of server models from deployment
+configuration and publishes it through \texttt{GET /models} instead of hard-coding it, records the
+model that actually produced each exam in its metadata and PDF, and treats a model that is not
+listed as an explicit error. For research use, the model identifier stored with every run is what
+makes results from different months comparable at all.
+
+\textbf{Reproducibility.} Every run stores its resolved configuration, the git commit, the dataset
+version and the generator settings next to the results; judge answers are cached by a hash of model,
+prompt version, reasoning level and prompt, so re-scoring is deterministic and free. Runs resume
+after interruptions, and infrastructure failures are kept separate from model failures. The dataset
+consists of the authors' own texts and openly licensed material (CC~BY~4.0 OpenStax via EduQG,
+CC~BY-SA~4.0 Wikipedia via MILQA), so the manifests and reference questions can be released with
+the code.
+
+\textbf{Future work.} Three directions follow from the design. First, \emph{topic workspaces}: the
+frontend already implements persistent topics with several documents, isolated chat sessions and
+per-topic retrieval against a mock API; the backend requires hard tenant filtering in the vector
+store, per-topic encryption keys with crypto-shredding on deletion, and an inactivity purge, which
+changes the retention model from ``per job'' to ``per topic'' and needs an updated DPIA. Second,
+\emph{adaptive verification}: the verifier's pass rate per check can decide when the blind answer
+test is worth its extra call, turning the fast/thorough switch into a per-question decision. Third,
+\emph{classroom validation}: item statistics from real exams (difficulty and discrimination indices)
+would show whether questions judged grounded and well-formed also measure what teachers intend.
 
 \section{Conclusion}
 
