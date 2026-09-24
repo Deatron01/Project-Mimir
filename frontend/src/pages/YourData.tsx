@@ -16,12 +16,13 @@ import { downloadBlob } from '../api/hooks/tests';
 import { api, apiUrl, authFetch } from '../api/client';
 import { errorFromResponse, unwrap } from '../api/errors';
 import { OPTIONS_KEY } from '../components/workspace/GenerationOptionsForm';
+import { MODEL_KEY } from '../components/generation/ModelSelect';
 import { MOCK_DB_KEY_NAME } from '../mocks/constants';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import { formatDate } from '../utils/format';
 
 // Every key Mimir writes to browser storage. Keep in sync with the privacy notice (compliance docs, section "Cookies & storage").
-const STORAGE_KEYS = ['mimir-theme', 'mimir-lang', LEGACY_USER_KEY, OPTIONS_KEY, MOCK_DB_KEY_NAME];
+const STORAGE_KEYS = ['mimir-theme', 'mimir-lang', LEGACY_USER_KEY, OPTIONS_KEY, MODEL_KEY, MOCK_DB_KEY_NAME];
 
 const readStorage = () =>
   STORAGE_KEYS.map((key) => {

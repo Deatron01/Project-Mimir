@@ -100,4 +100,27 @@ describe('mock API contract', () => {
     expect(test.saved).toBe(false);
     expect(test.exam.questions[0].citations[0].file_id).toBe('fil_demo');
   });
+
+  it('lists models, runs the chosen one and reports timing while running (FE-11)', async () => {
+    await loginDemo();
+    const models = unwrap(await api().GET('/models'));
+    expect(models.models.map((m) => m.location)).toContain('local');
+    const opts = { count: 3, types: ['mcq' as const], difficulty: 'easy' as const, exam_language: 'en' as const, mode: 'fast' as const };
+    const path = { params: { path: { topicId: 'top_demo', sessionId: 'ses_demo' } } };
+    expect(await code(api().POST('/topics/{topicId}/sessions/{sessionId}/messages', { ...path, body: { content: 'x', intent: 'generate', options: { ...opts, model: 'nope' } } }))).toBe(
+      'MODEL_UNAVAILABLE',
+    );
+    const r = unwrap(await api().POST('/topics/{topicId}/sessions/{sessionId}/messages', { ...path, body: { content: 'x', intent: 'generate', options: { ...opts, model: 'local' } } }));
+    let job = unwrap(await api().GET('/jobs/{jobId}', { params: { path: { jobId: r.job_id } } }));
+    let sawTiming = false;
+    for (let i = 0; i < 80 && job.status !== 'succeeded'; i += 1) {
+      await new Promise((res) => setTimeout(res, 40));
+      job = unwrap(await api().GET('/jobs/{jobId}', { params: { path: { jobId: r.job_id } } }));
+      if (job.status === 'running' && job.started_at && job.eta_seconds != null) sawTiming = true;
+    }
+    expect(job.status).toBe('succeeded');
+    expect(sawTiming).toBe(true);
+    const test = unwrap(await api().GET('/topics/{topicId}/tests/{testId}', { params: { path: { topicId: 'top_demo', testId: job.result!.test_id! } } }));
+    expect(test.model_used).toBe('qwen2.5:7b');
+  });
 });

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { Link, useBlocker, useParams } from 'react-router-dom';
-import { ArrowLeft, Download, ShieldAlert, Star } from 'lucide-react';
+import { ArrowLeft, Bot, Download, ShieldAlert, Star } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
@@ -91,11 +91,18 @@ export default function TestDetail({ topic }: { topic: Topic }) {
         <Link to={`/topics/${topic.id}/tests`} className="inline-flex items-center gap-1 text-sm font-medium text-muted hover:text-accent">
           <ArrowLeft size={16} aria-hidden="true" /> {t('workspace.test.back')}
         </Link>
-        {test.data.saved && (
-          <span className="inline-flex items-center gap-1 rounded-full border border-success/50 bg-success/10 px-3 py-1 text-xs font-semibold text-success">
-            <Star size={12} aria-hidden="true" /> {t('workspace.tests.savedBadge')}
-          </span>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          {test.data.model_used && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-border/50 bg-background/50 px-3 py-1 text-xs text-muted">
+              <Bot size={12} aria-hidden="true" /> {t('models.madeWith', { model: test.data.model_used })}
+            </span>
+          )}
+          {test.data.saved && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-success/50 bg-success/10 px-3 py-1 text-xs font-semibold text-success">
+              <Star size={12} aria-hidden="true" /> {t('workspace.tests.savedBadge')}
+            </span>
+          )}
+        </div>
       </div>
 
       <p className="flex items-start gap-2 rounded-2xl border border-border/40 bg-surface/30 p-3 text-xs text-muted">

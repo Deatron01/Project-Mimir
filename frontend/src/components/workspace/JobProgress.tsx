@@ -1,11 +1,13 @@
 import { Loader2, XCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ProgressBar from '../common/ProgressBar';
+import TimeEstimate from '../common/TimeEstimate';
+import useNow from '../../hooks/useNow';
 import { useCancelJob, useJob } from '../../api/hooks/jobs';
 import { useErrorText } from '../common/ErrorNotice';
 import { useToast } from '../common/Toaster';
 
-/** Live status of one job: queue position, stage and progress, with cancel. */
+/** Live status of one job: queue position, stage, progress, elapsed and remaining time, with cancel. */
 export default function JobProgress({ jobId, compact }: { jobId: string; compact?: boolean }) {
   const { t } = useTranslation();
   const job = useJob(jobId);
@@ -13,6 +15,8 @@ export default function JobProgress({ jobId, compact }: { jobId: string; compact
   const toast = useToast();
   const errorText = useErrorText();
   const j = job.data;
+  const running = j?.status === 'running';
+  const now = useNow(Boolean(running && j?.started_at));
   if (!j || j.status === 'succeeded') return null;
   if (j.status === 'cancelled' || j.status === 'failed') {
     return (
@@ -46,6 +50,13 @@ export default function JobProgress({ jobId, compact }: { jobId: string; compact
         )}
       </div>
       <ProgressBar value={j.status === 'queued' ? null : j.progress} label={label} />
+      {running && j.started_at && (
+        <TimeEstimate
+          elapsedS={(now - Date.parse(j.started_at)) / 1000}
+          // The server's estimate, counted down since the last update (SSE or poll).
+          remainingS={j.eta_seconds == null ? null : Math.max(j.eta_seconds - (now - job.dataUpdatedAt) / 1000, 1)}
+        />
+      )}
     </div>
   );
 }

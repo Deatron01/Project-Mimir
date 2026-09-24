@@ -27,6 +27,7 @@ import {
 } from './db';
 import { createJob, eventsSince, subscribe } from './runner';
 import { exportExam } from './exporters';
+import { MOCK_MODELS } from './constants';
 
 const ACCESS_TTL_MS = 15 * 60_000;
 const LATENCY = () => delay(import.meta.env.MODE === 'test' ? 0 : 120 + Math.random() * 180);
@@ -93,6 +94,8 @@ function validGenOptions(o: GenerationOptions | undefined): string | null {
   if (!['fast', 'thorough'].includes(o.mode)) return 'mode invalid';
   return null;
 }
+
+const knownModel = (id: string | undefined) => !id || id === 'auto' || MOCK_MODELS.models.some((m) => m.id === id);
 
 export function makeHandlers(base: string): HttpHandler[] {
   const u = (p: string) => `${base}${p}`;
@@ -544,6 +547,7 @@ export function makeHandlers(base: string): HttpHandler[] {
       if (b.intent === 'generate') {
         const problem = validGenOptions(b.options);
         if (problem) return err(400, 'VALIDATION_FAILED', problem, { fields: { options: problem } });
+        if (!knownModel(b.options?.model)) return err(400, 'MODEL_UNAVAILABLE', 'Unknown model');
       }
       const ready = db.files.filter((f) => f.topic_id === o.topic.id && f.status === 'ready' && (!b.options?.file_ids?.length || b.options.file_ids.includes(f.id)));
       if (!ready.length) return err(409, 'FILE_NOT_READY', 'No processed documents in this topic yet');
@@ -701,6 +705,13 @@ export function makeHandlers(base: string): HttpHandler[] {
         }))
         .filter((g) => g.tests.length);
       return HttpResponse.json({ groups });
+    }),
+
+    // ------------------------------------------------------------ models
+    http.get(u('/models'), async ({ request }) => {
+      const a = auth(request);
+      if ('res' in a) return a.res;
+      return HttpResponse.json(MOCK_MODELS);
     }),
 
     // ------------------------------------------------------------ jobs

@@ -457,6 +457,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/models": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Models that can write a test (FE-11 / BIF-09). Server models run on the university GenAI server, so the document text leaves this deployment; with LOCAL_ONLY they are not listed (GDPR-06). */
+        get: operations["listModels"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/topics/{topicId}/events": {
         parameters: {
             query?: never;
@@ -485,7 +502,7 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /** @enum {string} */
-        ErrorCode: "VALIDATION_FAILED" | "UNSUPPORTED_FILE_TYPE" | "AUTH_REQUIRED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "EMAIL_NOT_VERIFIED" | "FORBIDDEN" | "TOPIC_NOT_FOUND" | "FILE_NOT_FOUND" | "SESSION_NOT_FOUND" | "TEST_NOT_FOUND" | "JOB_NOT_FOUND" | "TOPIC_DELETING" | "FILE_NOT_READY" | "EMAIL_TAKEN" | "JOB_IN_PROGRESS" | "FILE_TOO_LARGE" | "TOPIC_QUOTA_EXCEEDED" | "TOPIC_STORAGE_EXCEEDED" | "NO_TEXT_EXTRACTED" | "GENERATION_INVALID" | "RATE_LIMITED" | "TOO_MANY_JOBS" | "LLM_UNAVAILABLE" | "CONSENT_REQUIRED" | "INTERNAL";
+        ErrorCode: "VALIDATION_FAILED" | "UNSUPPORTED_FILE_TYPE" | "AUTH_REQUIRED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "EMAIL_NOT_VERIFIED" | "FORBIDDEN" | "TOPIC_NOT_FOUND" | "FILE_NOT_FOUND" | "SESSION_NOT_FOUND" | "TEST_NOT_FOUND" | "JOB_NOT_FOUND" | "TOPIC_DELETING" | "FILE_NOT_READY" | "EMAIL_TAKEN" | "JOB_IN_PROGRESS" | "FILE_TOO_LARGE" | "TOPIC_QUOTA_EXCEEDED" | "TOPIC_STORAGE_EXCEEDED" | "NO_TEXT_EXTRACTED" | "GENERATION_INVALID" | "RATE_LIMITED" | "TOO_MANY_JOBS" | "LLM_UNAVAILABLE" | "CONSENT_REQUIRED" | "MODEL_UNAVAILABLE" | "INTERNAL";
         Error: {
             error: {
                 code: components["schemas"]["ErrorCode"];
@@ -619,6 +636,8 @@ export interface components {
             mode: "fast" | "thorough";
             /** @description Limit retrieval to these files. Omit for all ready files. */
             file_ids?: string[];
+            /** @description Model id from GET /models; omit or "auto" for the deployment default. */
+            model?: string;
         };
         MessageInput: {
             content: string;
@@ -678,6 +697,8 @@ export interface components {
             created_at: string;
             /** Format: date-time */
             updated_at: string;
+            /** @description Model that wrote the test (shown in the UI and the export; AI Act art. 50). */
+            model_used?: string | null;
         };
         Test: components["schemas"]["TestSummary"] & {
             exam: components["schemas"]["Exam"];
@@ -715,6 +736,32 @@ export interface components {
             } | null;
             /** Format: date-time */
             created_at: string;
+            /**
+             * Format: date-time
+             * @description When the job left the queue.
+             */
+            started_at?: string | null;
+            /** @description Estimated seconds until the job finishes; null while unknown. */
+            eta_seconds?: number | null;
+        };
+        ModelOption: {
+            id: string;
+            label: string;
+            /**
+             * @description external = university GenAI server (data leaves this deployment)
+             * @enum {string}
+             */
+            location: "external" | "local";
+        };
+        ModelList: {
+            local_only: boolean;
+            external_available: boolean;
+            default: string;
+            models: components["schemas"]["ModelOption"][];
+            estimates_s?: {
+                external?: number;
+                local?: number;
+            };
         };
         /** @description Payload of an SSE `data:` line. Which fields are set depends on the event name. */
         TopicEvent: {
@@ -1686,6 +1733,26 @@ export interface operations {
                 };
             };
             409: components["responses"]["Error"];
+        };
+    };
+    listModels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Available models and typical generation times. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelList"];
+                };
+            };
         };
     };
     topicEvents: {

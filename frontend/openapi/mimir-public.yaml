@@ -454,6 +454,16 @@ paths:
         '202': { description: Cancellation requested., content: { application/json: { schema: { $ref: '#/components/schemas/Job' } } } }
         '409': { $ref: '#/components/responses/Error' }
 
+  /models:
+    get:
+      tags: [jobs]
+      operationId: listModels
+      description: >-
+        Models that can write a test (FE-11 / BIF-09). Server models run on the university GenAI server, so the
+        document text leaves this deployment; with LOCAL_ONLY they are not listed (GDPR-06).
+      responses:
+        '200': { description: Available models and typical generation times., content: { application/json: { schema: { $ref: '#/components/schemas/ModelList' } } } }
+
   /topics/{topicId}/events:
     parameters: [{ $ref: '#/components/parameters/TopicId' }]
     get:
@@ -486,7 +496,7 @@ components:
   schemas:
     ErrorCode:
       type: string
-      enum: [VALIDATION_FAILED, UNSUPPORTED_FILE_TYPE, AUTH_REQUIRED, TOKEN_EXPIRED, INVALID_CREDENTIALS, EMAIL_NOT_VERIFIED, FORBIDDEN, TOPIC_NOT_FOUND, FILE_NOT_FOUND, SESSION_NOT_FOUND, TEST_NOT_FOUND, JOB_NOT_FOUND, TOPIC_DELETING, FILE_NOT_READY, EMAIL_TAKEN, JOB_IN_PROGRESS, FILE_TOO_LARGE, TOPIC_QUOTA_EXCEEDED, TOPIC_STORAGE_EXCEEDED, NO_TEXT_EXTRACTED, GENERATION_INVALID, RATE_LIMITED, TOO_MANY_JOBS, LLM_UNAVAILABLE, CONSENT_REQUIRED, INTERNAL]
+      enum: [VALIDATION_FAILED, UNSUPPORTED_FILE_TYPE, AUTH_REQUIRED, TOKEN_EXPIRED, INVALID_CREDENTIALS, EMAIL_NOT_VERIFIED, FORBIDDEN, TOPIC_NOT_FOUND, FILE_NOT_FOUND, SESSION_NOT_FOUND, TEST_NOT_FOUND, JOB_NOT_FOUND, TOPIC_DELETING, FILE_NOT_READY, EMAIL_TAKEN, JOB_IN_PROGRESS, FILE_TOO_LARGE, TOPIC_QUOTA_EXCEEDED, TOPIC_STORAGE_EXCEEDED, NO_TEXT_EXTRACTED, GENERATION_INVALID, RATE_LIMITED, TOO_MANY_JOBS, LLM_UNAVAILABLE, CONSENT_REQUIRED, MODEL_UNAVAILABLE, INTERNAL]
     Error:
       type: object
       required: [error]
@@ -622,6 +632,7 @@ components:
         exam_language: { $ref: '#/components/schemas/Language' }
         mode: { type: string, enum: [fast, thorough] }
         file_ids: { type: array, items: { type: string }, description: Limit retrieval to these files. Omit for all ready files. }
+        model: { type: string, description: 'Model id from GET /models; omit or "auto" for the deployment default.' }
     MessageInput:
       type: object
       required: [content, intent]
@@ -692,6 +703,7 @@ components:
         saved: { type: boolean }
         created_at: { type: string, format: date-time }
         updated_at: { type: string, format: date-time }
+        model_used: { type: [string, 'null'], description: Model that wrote the test (shown in the UI and the export; AI Act art. 50). }
     Test:
       allOf:
         - $ref: '#/components/schemas/TestSummary'
@@ -728,6 +740,24 @@ components:
             message_id: { type: string }
             download_url: { type: string }
         created_at: { type: string, format: date-time }
+        started_at: { type: [string, 'null'], format: date-time, description: When the job left the queue. }
+        eta_seconds: { type: [number, 'null'], description: Estimated seconds until the job finishes; null while unknown. }
+    ModelOption:
+      type: object
+      required: [id, label, location]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        location: { type: string, enum: [external, local], description: 'external = university GenAI server (data leaves this deployment)' }
+    ModelList:
+      type: object
+      required: [local_only, external_available, default, models]
+      properties:
+        local_only: { type: boolean }
+        external_available: { type: boolean }
+        default: { type: string }
+        models: { type: array, items: { $ref: '#/components/schemas/ModelOption' } }
+        estimates_s: { type: object, properties: { external: { type: number }, local: { type: number } } }
     TopicEvent:
       description: Payload of an SSE `data:` line. Which fields are set depends on the event name.
       type: object

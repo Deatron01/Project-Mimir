@@ -241,10 +241,6 @@
     "thinking": "Gondolkodom…",
     "disclaimer": "A Mimir AI hibázhat. Kérjük, vizsgáztatás előtt ellenőrizze a generált tartalmat.",
     "status": {
-      "extracting": "Szöveg kinyerése a dokumentumból…",
-      "chunking": "Szövegrészek elemzése és darabolása…",
-      "indexing": "Tudásbázis építése (vektorizálás)…",
-      "generating": "A mesterséges intelligencia dolgozik (ez 1–2 percig is tarthat)…",
       "exporting": "Dokumentum véglegesítése és exportálása…"
     },
     "errors": {
@@ -255,7 +251,8 @@
       "start": "Hiba a feladat indítása közben.",
       "generate": "Hiba az AI generálás során.",
       "export": "Hiba a PDF generálása során.",
-      "exportPrefix": "Hiba történt az exportálás során: {{message}}"
+      "exportPrefix": "Hiba történt az exportálás során: {{message}}",
+      "cancelled": "Leállítottad a várakozást. Az eredményt nem kapod meg; bármikor indíthatsz új generálást."
     },
     "ready": "Elkészültek a kérdések! Az EU AI Act 14. cikke értelmében (emberi felügyelet) kérlek, ellenőrizd és szerkeszd a tartalmat a véglegesítés és az exportálás előtt.",
     "approved": "A vizsgaanyag ellenőrzése megtörtént és véglegesítésre került. Alább letöltheted a kész PDF-et.",
@@ -266,7 +263,9 @@
       "label": "Megerősítem, hogy jogosult vagyok ennek a dokumentumnak a feldolgozására, és nem tartalmaz különleges személyes adatot (pl. egészségügyi adatot) vagy diákokra vonatkozó adatot.",
       "details": "A dokumentumot csak a teszt elkészítéséhez használjuk, és utána automatikusan töröljük. A feldolgozáshoz a szöveg egyes részeit az Óbudai Egyetem nyelvi modellje is megkaphatja, ha a szolgáltatás nem helyi módban fut.",
       "more": "Adatkezelési tájékoztató",
-      "required": "Feltöltés előtt kérlek, erősítsd meg a fenti nyilatkozatot."
+      "required": "Feltöltés előtt kérlek, erősítsd meg a fenti nyilatkozatot.",
+      "detailsLocal": "A dokumentumot csak a teszt elkészítéséhez használjuk, és utána automatikusan töröljük. A feldolgozás teljes egészében ezen a szerveren, helyi nyelvi modellel történik; a szöveg nem kerül külső szolgáltatóhoz.",
+      "detailsExternal": "A dokumentumot csak a teszt elkészítéséhez használjuk, és utána automatikusan töröljük. A szöveg releváns részeit az Óbudai Egyetem GenAI szerverén futó nyelvi modell dolgozza fel (ha az nem elérhető, a helyi modell). Ha nem szeretnéd, válaszd a helyi modellt."
     },
     "v1": {
       "sessions": "Beszélgetések",
@@ -395,7 +394,7 @@
   "legal": {
     "privacy": {
       "title": "Adatkezelési tájékoztató",
-      "updated": "Hatályos: 2026. szeptember 22-től · 1.0-s verzió (tervezet)",
+      "updated": "Hatályos: 2026. szeptember 24-től · 1.1-es verzió (tervezet)",
       "intro": "Ez a tájékoztató elmondja, milyen személyes adatokat kezel a Mimir AI tesztgeneráló szolgáltatás, mire használja őket, meddig őrzi meg és milyen jogaid vannak. A Mimir alapelve a „zéró megőrzés”: a feltöltött dokumentumaidat csak a teszt elkészítéséhez használjuk, utána töröljük.",
       "sections": [
         {
@@ -479,7 +478,7 @@
               ],
               [
                 "Beállítások a böngésződben",
-                "Színpaletta és mód (mimir-theme), nyelv (mimir-lang), bejelentkezési állapot (mimir_user)",
+                "Színpaletta és mód (mimir-theme), nyelv (mimir-lang), bejelentkezési állapot (mimir_user), utolsó tesztbeállítások (mimir-gen-options), választott nyelvi modell (mimir-model)",
                 "A választott beállítások megjegyzése, a munkamenet fenntartása",
                 "A kért szolgáltatáshoz feltétlenül szükséges tárolás (az ePrivacy-irányelv 5. cikk (3) bekezdése szerinti kivétel); nem igényel hozzájárulást",
                 "A saját eszközödön, amíg törlöd vagy kijelentkezel"
@@ -499,7 +498,7 @@
           "list": [
             "Tárhely- és szerverszolgáltató: [KITÖLTENDŐ: név, székhely] – a szolgáltatás futtatása.",
             "Cloudflare, Inc. (USA) – biztonságos hálózati hozzáférés (Cloudflare Tunnel); a forgalom technikai adatait (pl. IP-cím) kezeli.",
-            "Óbudai Egyetem GenAI szolgáltatása (genai.uni-obuda.hu) – ha a szolgáltatás nem kizárólag helyi módban fut, a dokumentumból kiválasztott szövegrészeket és a kérésedet a teszt és a minőségellenőrzés elkészítéséhez az egyetem által üzemeltetett nyelvi modell dolgozza fel. [KITÖLTENDŐ: az egyetemmel kötött megállapodás megnevezése]",
+            "Óbudai Egyetem GenAI szolgáltatása (genai.uni-obuda.hu) – ha a szolgáltatás nem kizárólag helyi módban fut, a dokumentumból kiválasztott szövegrészeket és a kérésedet a teszt és a minőségellenőrzés elkészítéséhez az egyetem által üzemeltetett nyelvi modell dolgozza fel. Minden feltöltés előtt az oldal megmutatja, hol dolgozzuk fel a dokumentumot, és választhatod helyette a helyi modellt; ekkor a szöveg nem hagyja el az üzemeltető szerverét. [KITÖLTENDŐ: az egyetemmel kötött megállapodás megnevezése]",
             "E-mail-küldő szolgáltató: [KITÖLTENDŐ] – a fiók megerősítéséhez és jelszó-visszaállításhoz szükséges levelek kiküldése.",
             "Helyi mód: ha az üzemeltető bekapcsolja a LOCAL_ONLY beállítást, a dokumentum szövege nem hagyja el az üzemeltető saját szerverét."
           ],
@@ -606,7 +605,8 @@
       "mimir-lang": "Nyelv",
       "mimir_user": "Bejelentkezési állapot (e-mail cím)",
       "mimir-gen-options": "Utolsó tesztbeállítások",
-      "mimir-mock-db": "Demóadatok (csak mock módban)"
+      "mimir-mock-db": "Demóadatok (csak mock módban)",
+      "mimir-model": "Választott nyelvi modell"
     },
     "empty": "Nincs tárolt adat.",
     "export": "Adataim letöltése (JSON)",
@@ -674,7 +674,8 @@
     "TOO_MANY_JOBS": "Már 3 feladatod fut. Várd meg, amíg valamelyik befejeződik.",
     "LLM_UNAVAILABLE": "A nyelvi modell most nem érhető el. Próbáld újra néhány perc múlva.",
     "CONSENT_REQUIRED": "Kérjük, erősítsd meg, hogy feltöltheted ezeket a dokumentumokat.",
-    "INTERNAL": "Szerverhiba. Kérjük, próbáld újra később."
+    "INTERNAL": "Szerverhiba. Kérjük, próbáld újra később.",
+    "MODEL_UNAVAILABLE": "A választott modell nem érhető el. Válassz másikat, vagy hagyd automatikuson."
   },
   "topics": {
     "title": "Témák",
@@ -936,5 +937,50 @@
     },
     "demoAccount": "Demófiók: demo@mimir.hu / mimir-demo-2026",
     "reset": "Demóadatok visszaállítása"
+  },
+  "progress": {
+    "label": "A teszt elkészítése",
+    "elapsed": "Eltelt: {{time}}",
+    "remaining": "Még kb. {{time}}",
+    "estimating": "Becslés készül…",
+    "overdue": "A szokásosnál tovább tart – a nagy terhelés vagy egy hosszabb dokumentum lassíthatja.",
+    "duration": {
+      "s": "{{s}} mp",
+      "m": "{{m}} perc",
+      "ms": "{{m}} perc {{s}} mp"
+    },
+    "phase": {
+      "extracting": "Szöveg kinyerése a dokumentumból…",
+      "chunking": "A szöveg elemzése és darabolása…",
+      "indexing": "Tudásbázis építése…",
+      "generating": "A kérdések megírása…"
+    },
+    "step": {
+      "extracting": "Szöveg kinyerése",
+      "chunking": "Darabolás",
+      "indexing": "Tudásbázis",
+      "generating": "Kérdések megírása"
+    },
+    "state": {
+      "done": "kész",
+      "active": "folyamatban",
+      "todo": "hátravan"
+    },
+    "location": {
+      "external": "Egyetemi szerver: {{model}}",
+      "local": "Helyi modell: {{model}}"
+    },
+    "stop": "Várakozás leállítása",
+    "readyTitle": "✓ Elkészült a teszt – Mimir"
+  },
+  "models": {
+    "label": "Modell",
+    "autoServer": "Automatikus (egyetemi szerver, helyi tartalék)",
+    "autoLocal": "Automatikus (helyi modell)",
+    "groupServer": "Egyetemi szerver",
+    "groupLocal": "Helyi (ezen a gépen fut)",
+    "leavesMachine": "Az adat elhagyja ezt a szervert",
+    "staysLocal": "Az adat ezen a szerveren marad",
+    "madeWith": "Készítette: {{model}}"
   }
 }

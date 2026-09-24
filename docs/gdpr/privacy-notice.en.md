@@ -1,6 +1,6 @@
 # Privacy notice
 
-Effective from 22 September 2026 · version 1.0 (draft) · Magyar változat: [privacy-notice.hu.md](privacy-notice.hu.md)
+Effective from 24 September 2026 · version 1.1 (draft) · Magyar változat: [privacy-notice.hu.md](privacy-notice.hu.md)
 
 > This file mirrors the `legal.privacy` block of `frontend/src/locales/en/translation.json`; the website shows the same text. Update both together.
 
@@ -32,7 +32,7 @@ This notice explains what personal data the Mimir AI test generation service pro
 | AI operations log | Job ID, model name, prompt version, cryptographic fingerprints (SHA-256) and lengths of the request and context, quality score, time – without the document text | Quality assurance, traceability and debugging of the AI system | Legitimate interest – GDPR Art. 6(1)(f) | 30 days |
 | Server logs | Shortened (anonymised) IP address, time, requested path without parameters, status code, response time | Security, abuse detection, troubleshooting | Legitimate interest – GDPR Art. 6(1)(f) | At most 14 days |
 | Contact | Name, email address, message content | Answering your enquiry | Legitimate interest – GDPR Art. 6(1)(f), or steps prior to a contract – Art. 6(1)(b) | 1 year after the enquiry is closed |
-| Settings in your browser | Palette and mode (mimir-theme), language (mimir-lang), sign-in state (mimir_user) | Remembering your choices, keeping you signed in | Storage strictly necessary for the service you requested (exemption under Art. 5(3) of the ePrivacy Directive); no consent needed | On your own device, until you clear it or sign out |
+| Settings in your browser | Palette and mode (mimir-theme), language (mimir-lang), sign-in state (mimir_user), last test settings (mimir-gen-options), chosen language model (mimir-model) | Remembering your choices, keeping you signed in | Storage strictly necessary for the service you requested (exemption under Art. 5(3) of the ePrivacy Directive); no consent needed | On your own device, until you clear it or sign out |
 
 ## 4. Other people's personal data in uploaded documents
 
@@ -44,7 +44,7 @@ If you do upload a document containing such data, you (or your institution) must
 
 - Hosting / server provider: [TO BE COMPLETED: name, address] – runs the service.
 - Cloudflare, Inc. (USA) – secure network access (Cloudflare Tunnel); processes technical traffic data such as IP addresses.
-- Óbuda University GenAI service (genai.uni-obuda.hu) – unless the service runs in local-only mode, selected passages of your document and your request are processed by a language model operated by the university to generate and quality-check the test. [TO BE COMPLETED: name of the agreement with the university]
+- Óbuda University GenAI service (genai.uni-obuda.hu) – unless the service runs in local-only mode, selected passages of your document and your request are processed by a language model operated by the university to generate and quality-check the test. Before every upload the page shows where the document will be processed, and you can choose the local model instead; the text then does not leave the operator's server. [TO BE COMPLETED: name of the agreement with the university]
 - Email delivery provider: [TO BE COMPLETED] – sends account confirmation and password reset emails.
 - Local-only mode: when the operator enables LOCAL_ONLY, document text never leaves the operator's own server.
 

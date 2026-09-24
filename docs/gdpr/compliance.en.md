@@ -34,7 +34,7 @@ This is the internal documentation the operator of Mimir needs under the GDPR (R
 
 Consequences:
 
-- Institutional use needs a **data processing agreement** (Art. 28) between the institution and the operator. A template is Planned (GDPR-08, issue #80).
+- Institutional use needs a **data processing agreement** (Art. 28) between the institution and the operator. A draft template is in [dpa-template.en.md](dpa-template.en.md) (needs legal review before use; GDPR-08, issue #80).
 - If Mimir is operated *by* Óbuda University itself, the university is the controller and the GenAI service is internal. Section 5 then changes accordingly.
 
 ## 2. Data inventory
@@ -50,7 +50,8 @@ Consequences:
 | Saved tests | Skald storage (PDF + SQLite row with owner email) | Yes |
 | AI audit log | Postgres `audit_logs` (hashes and metadata only) | Pseudonymous (job ID) |
 | Server logs | Nginx and container stdout | Yes (shortened IP) |
-| Browser storage: `mimir-theme`, `mimir-lang`, `mimir_user` | User's own browser | `mimir_user` contains the email |
+| Job timing statistics (duration, stage, output length in characters) | Bifrost memory, lost on restart | No (no content, no user link) |
+| Browser storage: `mimir-theme`, `mimir-lang`, `mimir_user`, `mimir-gen-options`, `mimir-model` | User's own browser | `mimir_user` contains the email |
 
 ## 3. Record of processing activities (Art. 30)
 
@@ -65,7 +66,7 @@ Consequences:
 | 5 | Security logging | Security, abuse detection | Visitors | Shortened IP, time, path without query, status | Art. 6(1)(f) | Hosting, Cloudflare | Cloudflare (DPF / SCC) | Max 14 days | IP truncation, no query strings |
 | 6 | Contact | Answer enquiries | Enquirers | Name, email, message | Art. 6(1)(f) / (b) | Email provider | No | 1 year after closure | Access control |
 
-A legitimate interest assessment (balancing test) is required for activities 4, 5 and 6. Short version: the interests (security, service quality) are necessary, the data is minimised (no content, shortened IP), retention is short and users can object. Write it up in full before launch (Planned, GDPR-08 #80).
+A legitimate interest assessment (balancing test) is required for activities 4, 5 and 6. Short version: the interests (security, service quality) are necessary, the data is minimised (no content, shortened IP), retention is short and users can object. The full assessment is drafted in [lia.en.md](lia.en.md) (needs legal review; GDPR-08 #80).
 
 ## 4. Retention schedule and deletion mechanisms
 
@@ -178,7 +179,7 @@ Example: the unauthenticated `/api/v1/tests` endpoint (see the roadmap audit) wo
 
 ## 11. AI Act touchpoints
 
-- **Transparency (Art. 50):** users must know they are interacting with an AI system and that questions are AI-generated. **Implemented:** chat disclaimer, privacy notice section 7, and the PDF metadata page stating the content was made with an AI assistant.
+- **Transparency (Art. 50):** users must know they are interacting with an AI system and that questions are AI-generated. **Implemented:** chat disclaimer, privacy notice section 7, and the PDF metadata page stating the content was made with an AI assistant and which model wrote it. The editor also shows the model on each result. (Fixed 2026-09-24: the old chat's export dropped this metadata, so the PDF had no disclosure page.)
 - **Human oversight:** the editor forces a review step before export. **Implemented.**
 - **Risk class:** annex III lists AI used to *evaluate learning outcomes* or *steer the learning process* in education as **high-risk**. Test *generation* for teachers who review everything is outside that, but **automatic grading of student answers would move Mimir into the high-risk category**. Do not add grading without a new assessment.
 - **Logging:** the metadata-only audit log supports traceability without storing content.
@@ -197,6 +198,7 @@ Example: the unauthenticated `/api/v1/tests` endpoint (see the roadmap audit) wo
 | Saved tests retention (12 months) | Skald | Implemented | GDPR-03 #75 |
 | Access logs: no query strings, truncated IP | Nginx | Implemented | GDPR-05 #77 |
 | Local-only mode (no external AI) | Bifrost, Heimdall, Wellspring, compose | Implemented (default off) | GDPR-06 #78 |
+| Processing location shown before every upload; user can pick the local model; server models marked "data leaves this server" | Chat page, generation settings, Bifrost `GET /api/v1/models` | Implemented | GDPR-06 #78, FE-11 |
 | Stop tracking stored user data in git | `.gitignore`, `git rm --cached` | Implemented | PLT-01 #1 |
 | Rewrite git history to remove old user data | Repository | Planned (needs team coordination and force push) | PLT-01 #1 |
 | Real authentication and ownership checks | Auth service, gateway, Skald | Planned | GW-01 #8, GW-02 #9, SKA-02 #45 |
@@ -213,8 +215,10 @@ Example: the unauthenticated `/api/v1/tests` endpoint (see the roadmap audit) wo
 | Crypto-shredding on topic delete; key backups max 7 days | Privacy | Planned | TOP-21 #125 |
 | Encrypted volumes and key-management runbook | Operations | Planned | TOP-23 #127 |
 | Privacy notice and pack updated for topics | Docs | Planned (before topics ship) | TOP-17 #121 |
-| Processor agreements (hosting, university, email) and institutional DPA template | Legal | Planned | R6 #98, GDPR-08 #80 |
-| Legitimate interest assessment, full DPIA before rollout | Legal | Planned | GDPR-08 #80 |
+| Processor agreements (hosting, university, email) | Legal | Planned | R6 #98 |
+| Institutional DPA template | Legal | Draft ready, legal review needed ([dpa-template.en.md](dpa-template.en.md)) | GDPR-08 #80 |
+| Legitimate interest assessment | Legal | Draft ready, legal review needed ([lia.en.md](lia.en.md)) | GDPR-08 #80 |
+| Full DPIA before rollout | Legal | Planned | GDPR-08 #80 |
 | Log rotation | `docker-compose.yml` (10 MB × 3 per container); 14-day time limit on the host | Partly implemented | GDPR-05 #77 |
 
 ## 13. Fields still to complete

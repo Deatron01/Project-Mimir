@@ -241,10 +241,6 @@
     "thinking": "Thinking…",
     "disclaimer": "Mimir AI can make mistakes. Please check the generated content before using it in an exam.",
     "status": {
-      "extracting": "Extracting text from the document…",
-      "chunking": "Analysing and splitting the text…",
-      "indexing": "Building the knowledge base (vectorising)…",
-      "generating": "The AI is working (this can take 1–2 minutes)…",
       "exporting": "Finalising and exporting the document…"
     },
     "errors": {
@@ -255,7 +251,8 @@
       "start": "Error while starting the job.",
       "generate": "Error during AI generation.",
       "export": "Error while generating the PDF.",
-      "exportPrefix": "Export failed: {{message}}"
+      "exportPrefix": "Export failed: {{message}}",
+      "cancelled": "You stopped waiting. This result will not be shown; you can start a new generation at any time."
     },
     "ready": "Your questions are ready! Under Article 14 of the EU AI Act (human oversight), please review and edit the content before finalising and exporting it.",
     "approved": "The exam has been reviewed and finalised. You can download the PDF below.",
@@ -266,7 +263,9 @@
       "label": "I confirm that I am entitled to process this document and that it contains no special category data (e.g. health data) or data about students.",
       "details": "The document is used only to create your test and is deleted automatically afterwards. Unless the service runs in local mode, parts of the text may be processed by Óbuda University's language model.",
       "more": "Privacy notice",
-      "required": "Please confirm the statement above before uploading."
+      "required": "Please confirm the statement above before uploading.",
+      "detailsLocal": "The document is used only to create your test and is deleted automatically afterwards. Processing happens entirely on this server with a local language model; the text is not sent to any external provider.",
+      "detailsExternal": "The document is used only to create your test and is deleted automatically afterwards. Relevant parts of the text are processed by a language model on Óbuda University's GenAI server (or the local model if that is unavailable). If you prefer not to, choose the local model."
     },
     "v1": {
       "sessions": "Conversations",
@@ -395,7 +394,7 @@
   "legal": {
     "privacy": {
       "title": "Privacy notice",
-      "updated": "Effective from 22 September 2026 · version 1.0 (draft)",
+      "updated": "Effective from 24 September 2026 · version 1.1 (draft)",
       "intro": "This notice explains what personal data the Mimir AI test generation service processes, why, for how long, and what your rights are. Mimir follows a \"zero retention\" principle: the documents you upload are used only to create your test and are deleted afterwards.",
       "sections": [
         {
@@ -479,7 +478,7 @@
               ],
               [
                 "Settings in your browser",
-                "Palette and mode (mimir-theme), language (mimir-lang), sign-in state (mimir_user)",
+                "Palette and mode (mimir-theme), language (mimir-lang), sign-in state (mimir_user), last test settings (mimir-gen-options), chosen language model (mimir-model)",
                 "Remembering your choices, keeping you signed in",
                 "Storage strictly necessary for the service you requested (exemption under Art. 5(3) of the ePrivacy Directive); no consent needed",
                 "On your own device, until you clear it or sign out"
@@ -499,7 +498,7 @@
           "list": [
             "Hosting / server provider: [TO BE COMPLETED: name, address] – runs the service.",
             "Cloudflare, Inc. (USA) – secure network access (Cloudflare Tunnel); processes technical traffic data such as IP addresses.",
-            "Óbuda University GenAI service (genai.uni-obuda.hu) – unless the service runs in local-only mode, selected passages of your document and your request are processed by a language model operated by the university to generate and quality-check the test. [TO BE COMPLETED: name of the agreement with the university]",
+            "Óbuda University GenAI service (genai.uni-obuda.hu) – unless the service runs in local-only mode, selected passages of your document and your request are processed by a language model operated by the university to generate and quality-check the test. Before every upload the page shows where the document will be processed, and you can choose the local model instead; the text then does not leave the operator's server. [TO BE COMPLETED: name of the agreement with the university]",
             "Email delivery provider: [TO BE COMPLETED] – sends account confirmation and password reset emails.",
             "Local-only mode: when the operator enables LOCAL_ONLY, document text never leaves the operator's own server."
           ],
@@ -606,7 +605,8 @@
       "mimir-lang": "Language",
       "mimir_user": "Sign-in state (email address)",
       "mimir-gen-options": "Last test settings",
-      "mimir-mock-db": "Demo data (mock mode only)"
+      "mimir-mock-db": "Demo data (mock mode only)",
+      "mimir-model": "Chosen language model"
     },
     "empty": "Nothing stored.",
     "export": "Download my data (JSON)",
@@ -674,7 +674,8 @@
     "TOO_MANY_JOBS": "You already have 3 tasks running. Wait for one to finish.",
     "LLM_UNAVAILABLE": "The language model is not available right now. Try again in a few minutes.",
     "CONSENT_REQUIRED": "Please confirm that you may upload these documents.",
-    "INTERNAL": "Server error. Please try again later."
+    "INTERNAL": "Server error. Please try again later.",
+    "MODEL_UNAVAILABLE": "The chosen model is not available. Pick another one or leave it on automatic."
   },
   "topics": {
     "title": "Topics",
@@ -936,5 +937,50 @@
     },
     "demoAccount": "Demo account: demo@mimir.hu / mimir-demo-2026",
     "reset": "Reset demo data"
+  },
+  "progress": {
+    "label": "Creating the test",
+    "elapsed": "Elapsed: {{time}}",
+    "remaining": "About {{time}} left",
+    "estimating": "Estimating…",
+    "overdue": "Taking longer than usual – heavy load or a longer document can slow it down.",
+    "duration": {
+      "s": "{{s}} sec",
+      "m": "{{m}} min",
+      "ms": "{{m}} min {{s}} sec"
+    },
+    "phase": {
+      "extracting": "Extracting text from the document…",
+      "chunking": "Analysing and splitting the text…",
+      "indexing": "Building the knowledge base…",
+      "generating": "Writing the questions…"
+    },
+    "step": {
+      "extracting": "Extract text",
+      "chunking": "Split text",
+      "indexing": "Knowledge base",
+      "generating": "Write questions"
+    },
+    "state": {
+      "done": "done",
+      "active": "in progress",
+      "todo": "to do"
+    },
+    "location": {
+      "external": "University server: {{model}}",
+      "local": "Local model: {{model}}"
+    },
+    "stop": "Stop waiting",
+    "readyTitle": "✓ Your test is ready – Mimir"
+  },
+  "models": {
+    "label": "Model",
+    "autoServer": "Automatic (university server, local fallback)",
+    "autoLocal": "Automatic (local model)",
+    "groupServer": "University server",
+    "groupLocal": "Local (runs on this machine)",
+    "leavesMachine": "Data leaves this server",
+    "staysLocal": "Data stays on this server",
+    "madeWith": "Made with: {{model}}"
   }
 }

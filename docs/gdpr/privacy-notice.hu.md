@@ -1,6 +1,6 @@
 # Adatkezelési tájékoztató
 
-Hatályos: 2026. szeptember 22-től · 1.0-s verzió (tervezet) · English version: [privacy-notice.en.md](privacy-notice.en.md)
+Hatályos: 2026. szeptember 24-től · 1.1-es verzió (tervezet) · English version: [privacy-notice.en.md](privacy-notice.en.md)
 
 > Ezt a fájlt a `frontend/src/locales/hu/translation.json` `legal.privacy` blokkjából generáltuk; a weboldal ugyanezt a szöveget mutatja. Módosítás esetén mindkettőt frissíteni kell.
 
@@ -32,7 +32,7 @@ Ez a tájékoztató elmondja, milyen személyes adatokat kezel a Mimir AI tesztg
 | AI működési napló | Feladatazonosító, modell neve, promptverzió, a kérés és a kontextus kriptográfiai lenyomata (SHA-256) és hossza, minőségi pontszám, időpont – a dokumentum szövege nélkül | Az AI-rendszer minőségének, nyomonkövethetőségének és hibakeresésének biztosítása | Jogos érdek – GDPR 6. cikk (1) f) | 30 nap |
 | Szervernaplók | Rövidített (anonimizált) IP-cím, időpont, a kért útvonal paraméterek nélkül, válaszkód, válaszidő | Biztonság, visszaélések felderítése, hibaelhárítás | Jogos érdek – GDPR 6. cikk (1) f) | Legfeljebb 14 nap |
 | Kapcsolatfelvétel | Név, e-mail cím, az üzenet tartalma | Válaszadás a megkeresésedre | Jogos érdek – GDPR 6. cikk (1) f), illetve szerződés előkészítése – 6. cikk (1) b) | Az ügy lezárásától számított 1 év |
-| Beállítások a böngésződben | Színpaletta és mód (mimir-theme), nyelv (mimir-lang), bejelentkezési állapot (mimir_user) | A választott beállítások megjegyzése, a munkamenet fenntartása | A kért szolgáltatáshoz feltétlenül szükséges tárolás (az ePrivacy-irányelv 5. cikk (3) bekezdése szerinti kivétel); nem igényel hozzájárulást | A saját eszközödön, amíg törlöd vagy kijelentkezel |
+| Beállítások a böngésződben | Színpaletta és mód (mimir-theme), nyelv (mimir-lang), bejelentkezési állapot (mimir_user), utolsó tesztbeállítások (mimir-gen-options), választott nyelvi modell (mimir-model) | A választott beállítások megjegyzése, a munkamenet fenntartása | A kért szolgáltatáshoz feltétlenül szükséges tárolás (az ePrivacy-irányelv 5. cikk (3) bekezdése szerinti kivétel); nem igényel hozzájárulást | A saját eszközödön, amíg törlöd vagy kijelentkezel |
 
 ## 4. Mások személyes adatai a feltöltött dokumentumokban
 
@@ -44,7 +44,7 @@ Ha mégis ilyen adatot tartalmazó dokumentumot töltesz fel, neked (vagy az int
 
 - Tárhely- és szerverszolgáltató: [KITÖLTENDŐ: név, székhely] – a szolgáltatás futtatása.
 - Cloudflare, Inc. (USA) – biztonságos hálózati hozzáférés (Cloudflare Tunnel); a forgalom technikai adatait (pl. IP-cím) kezeli.
-- Óbudai Egyetem GenAI szolgáltatása (genai.uni-obuda.hu) – ha a szolgáltatás nem kizárólag helyi módban fut, a dokumentumból kiválasztott szövegrészeket és a kérésedet a teszt és a minőségellenőrzés elkészítéséhez az egyetem által üzemeltetett nyelvi modell dolgozza fel. [KITÖLTENDŐ: az egyetemmel kötött megállapodás megnevezése]
+- Óbudai Egyetem GenAI szolgáltatása (genai.uni-obuda.hu) – ha a szolgáltatás nem kizárólag helyi módban fut, a dokumentumból kiválasztott szövegrészeket és a kérésedet a teszt és a minőségellenőrzés elkészítéséhez az egyetem által üzemeltetett nyelvi modell dolgozza fel. Minden feltöltés előtt az oldal megmutatja, hol dolgozzuk fel a dokumentumot, és választhatod helyette a helyi modellt; ekkor a szöveg nem hagyja el az üzemeltető szerverét. [KITÖLTENDŐ: az egyetemmel kötött megállapodás megnevezése]
 - E-mail-küldő szolgáltató: [KITÖLTENDŐ] – a fiók megerősítéséhez és jelszó-visszaállításhoz szükséges levelek kiküldése.
 - Helyi mód: ha az üzemeltető bekapcsolja a LOCAL_ONLY beállítást, a dokumentum szövege nem hagyja el az üzemeltető saját szerverét.
 

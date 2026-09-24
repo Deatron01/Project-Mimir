@@ -21,6 +21,7 @@ import {
   type MockTest,
 } from './db';
 import { answerQuestion, generateExam, regenerateQuestion } from './generator';
+import { MOCK_MODELS } from './constants';
 
 /** Speeds the simulation up in unit/E2E tests. */
 let SPEED = 1;
@@ -132,11 +133,20 @@ export function resumeJobs(): void {
     });
 }
 
+/** Remaining time from the pace so far (the real backend blends this with its history of job durations). */
+function etaSeconds(job: MockJob): number | null {
+  if (!job.started_at || job.progress < 0.05) return null;
+  const elapsed = (Date.now() - Date.parse(job.started_at)) / 1000;
+  return Math.max(1, Math.round((elapsed * (1 - job.progress)) / job.progress));
+}
+
 async function step(job: MockJob, stage: string, progress: number, ms: number): Promise<boolean> {
   if (cancelled(job)) return false;
   job.status = 'running';
+  job.started_at ??= now();
   job.stage = stage;
   job.progress = progress;
+  job.eta_seconds = etaSeconds(job);
   pushJob(job);
   await sleep(ms);
   return !cancelled(job);
@@ -230,7 +240,9 @@ async function runGenerate(job: MockJob) {
   const db = getDb();
   const opts = job.payload.options as GenerationOptions;
   const lang = opts.exam_language;
-  const slow = opts.mode === 'thorough' ? 2 : 1;
+  const model = MOCK_MODELS.models.find((m) => m.id === opts.model);
+  const local = model ? model.location === 'local' : !MOCK_MODELS.external_available;
+  const slow = (opts.mode === 'thorough' ? 2 : 1) * (local ? 1.5 : 1);
   if (!(await step(job, 'retrieving', 0.1, 700))) return undefined;
   const steps = Math.min(6, Math.max(2, Math.ceil(opts.count / 3)));
   for (let i = 0; i < steps; i += 1) {
@@ -254,6 +266,7 @@ async function runGenerate(job: MockJob) {
     saved: false,
     created_at: now(),
     updated_at: now(),
+    model_used: model?.label ?? MOCK_MODELS.models[0].label,
     exam,
   };
   db.tests.push(test);
