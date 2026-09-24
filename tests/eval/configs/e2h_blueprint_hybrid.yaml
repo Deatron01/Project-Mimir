@@ -1,8 +1,8 @@
 # E2h - E2 with hybrid retrieval (BM25 + dense, reciprocal rank fusion) - AI-05 / BIF-05.
 name: E2h
 description: "Blueprint + verifier, hybrid retrieval"
-seeds: [1, 2, 3]
+seeds: [1]
 exam: {n_questions: 10, types: [mcq]}
-pipeline: {kind: blueprint, retrieval: hybrid, retrieval_k: 3, verifier: true, blind_test: true, max_retries: 2, graph: false}
+pipeline: {kind: blueprint, retrieval: hybrid, retrieval_k: 3, verifier: true, blind_test: true, max_retries: 1, graph: false}
 chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
-generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 16384}
+generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 8192}

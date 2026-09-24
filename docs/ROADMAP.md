@@ -383,32 +383,29 @@ Run the same eval on the current pipeline first (S3) to get the baseline; the co
 | [AI-10](https://github.com/Deatron01/Project-Mimir/issues/70) | Job state machine in Forge; resumable steps; Fast/Thorough modes | P1 | 5 | S4 |
 | [AI-11](https://github.com/Deatron01/Project-Mimir/issues/71) | Single-question regenerate endpoint for the editor | P1 | 2 | S5 |
 | [AI-12](https://github.com/Deatron01/Project-Mimir/issues/72) | Ablation study: graph on/off, verifier on/off, model tiers | P2 | 3 | S6 |
-| AI-13 (no issue yet) | TDK report: judge-human agreement table (Krippendorff α, Cohen κ, Spearman) from `rate-import` output | P0 | 2 | S5 |
-| AI-14 (no issue yet) | TDK report: significance table for the key pairs (E1–E0, E2–E1, E3–E2, E4–E0) with Holm-corrected p and rank-biserial r | P0 | 1 | S5 |
-| AI-15 (no issue yet) | TDK report: Hungarian vs English breakdown (quality index and metrics per language) | P1 | 1 | S5 |
-| AI-16 (no issue yet) | TDK report: dataset table (documents, gold questions, language, length, licence per source) | P1 | 1 | S5 |
-| AI-17 (no issue yet) | TDK report: example questions (one good, one bad per method, with the judge's reasoning) for the error analysis | P1 | 2 | S5 |
-| AI-18 (no issue yet) | Eval speed-ups: judge `Reasoning: low` + per-question context, `num_ctx` 8192, `max_retries` 1, one seed for blueprint arms, server arms on a subset | P0 | 2 | S5 |
+| AI-13 (no issue yet) | ✅ Done 2026-09-24: TDK report: judge-human agreement table (Krippendorff α, Cohen κ, Spearman) from `rate-import` output | P0 | 2 | S5 |
+| AI-14 (no issue yet) | ✅ Done 2026-09-24: TDK report: significance table for the key pairs (E1–E0, E2–E1, E3–E2, E4–E0) with Holm-corrected p and rank-biserial r | P0 | 1 | S5 |
+| AI-15 (no issue yet) | ✅ Done 2026-09-24: TDK report: Hungarian vs English breakdown (quality index and metrics per language) | P1 | 1 | S5 |
+| AI-16 (no issue yet) | ✅ Done 2026-09-24: TDK report: dataset table (documents, gold questions, language, length, licence per source) | P1 | 1 | S5 |
+| AI-17 (no issue yet) | ✅ Done 2026-09-24: TDK report: example questions (one good, one bad per method, with the judge's reasoning) for the error analysis | P1 | 2 | S5 |
+| AI-18 (no issue yet) | ✅ Done 2026-09-24: Eval speed-ups: judge `Reasoning: low` + per-question context, `num_ctx` 8192, `max_retries` 1, one seed for blueprint arms, server arms on a subset | P0 | 2 | S5 |
 | AI-19 (no issue yet) | Freeze the dataset as `eval-v1`, full run of all arms (rerun E2, E2f, E2h, E3 after the format fix), then teacher rating (2–3 raters, 30–50 questions each) | P0 | 3 | S5–S6 |
 
-### TDK evaluation: remaining work (planned, not implemented)
+### TDK evaluation: remaining work
 
 State on 2026-09-24: the harness (`tests/eval`), all experiment arms (E0–E5c), the 39-document dataset
-and the Hungarian report (`python -m mimir_eval report`: 2 tables, 6 figures, results text) are done.
+and the Hungarian report are done, including the AI-18 speed-ups and the AI-13 – AI-17 report sections
+(`tabla3_egyetertes` … `tabla6_adatkeszlet`, `abra7_nyelvek`, `peldak.md`; see `tests/eval/README.md`).
 The pilot run (1 document, 3 seeds) works end to end; its numbers are not final.
 
-What is still needed for the TDK paper, in order:
+What is still needed for the TDK paper (AI-19, needs the GPU machine and the teachers):
 
-1. **AI-18 speed-ups**, otherwise the full run takes days (the judge is ~14 s per call).
-2. **AI-13 – AI-17 report sections**, built while the full run is going:
-   - judge-human agreement (shows the LLM judge can be trusted; the committee will ask),
-   - significance table (the `analyze` step already computes it; the report does not show it yet),
-   - Hungarian vs English breakdown,
-   - dataset table for the methods chapter,
-   - example questions for the error analysis.
-3. **AI-19 full run**: freeze `eval-v1`, run every arm on all documents (at least 6, ideally all 39;
-   the paired Wilcoxon test needs 6+), rerun E2/E2f/E2h/E3, export blind rating sheets.
-4. When the ratings are back: `rate-import`, then `report` rebuilds every table, figure and the text.
+1. Freeze the dataset: set `version: eval-v1` in `tests/eval/dataset/manifest.yaml` and stop editing it.
+2. Full run: `run_all.ps1` (E0/E5 on all 39 documents x 3 seeds, blueprint arms 1 seed, E4/E4b on the
+   12-document subset); the E2/E2f/E2h/E3 results from before the format fix are not reused.
+3. `rate-export` the blind rating sheets (2–3 raters, 30–50 questions each).
+4. When the ratings are back: `rate-import`, then `report` rebuilds every table, figure and the text,
+   now with the agreement table.
 
 ## 6. GDPR zero-retention and scalability
 

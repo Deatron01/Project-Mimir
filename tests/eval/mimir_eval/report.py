@@ -12,6 +12,11 @@ Writes, in Hungarian:
   abra4_minoseg_koltseg quality vs time per exam (what each gain costs)
   abra5_komponensek     E0 -> E1 -> E2 -> E3: what each added component contributes
   abra6_darabolas       chunking variants (if E5a-c were run)
+  tabla3_egyetertes     judge-teacher agreement: Krippendorff α, Spearman ρ, Cohen κ (needs ratings.csv)
+  tabla4_szignifikancia paired Wilcoxon for E1-E0, E2-E1, E3-E2, E4-E0, Holm p, rank-biserial r
+  tabla5_nyelvek        Hungarian vs English per arm (+ abra7_nyelvek)
+  tabla6_adatkeszlet    documents, gold questions, lengths and licence per source (+ adatkeszlet.csv)
+  peldak.md             one good and one bad question per arm with the judge's reasoning
   eredmenyek.md         a results-chapter draft with the numbers filled in
   eredmenyek_tabla.csv  the main table
 Every figure is saved as PNG (300 dpi) and PDF (vector) for Word or LaTeX.
@@ -32,6 +37,7 @@ import pandas as pd  # noqa: E402
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch  # noqa: E402
 
 from .config import resolve  # noqa: E402
+from .rubric import CRITERIA  # noqa: E402
 from .stats import bootstrap_ci, holm, paired_wilcoxon  # noqa: E402
 
 ARM_HU = {
@@ -484,9 +490,287 @@ def md_table(rows: list[list[str]]) -> list[str]:
     return ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)] + ["| " + " | ".join(r) + " |" for r in body]
 
 
+# ---------------------------------------------------------------- TDK sections (AI-13 - AI-17)
+KEY_PAIRS = [("E1", "E0"), ("E2", "E1"), ("E3", "E2"), ("E4", "E0")]   # (new, reference): what each step adds
+CRIT_HU = {"correctness": "Helyesség", "clarity": "Érthetőség", "distractor_quality": "Disztraktorok",
+           "bloom_fit": "Szintillesztés", "would_use": "Használná (igen/nem)"}
+LANG_HU = {"hu": "magyar", "en": "angol"}
+LENGTHS = [("short", "rövid"), ("medium", "közepes"), ("long", "hosszú")]
+
+
+def load_questions(results_root: Path, run_dirs) -> pd.DataFrame:
+    """questions.jsonl of the given run folders (arm taken from each row)."""
+    from .util import read_jsonl
+    rows = []
+    for rd in sorted(set(run_dirs)):
+        p = results_root / rd / "questions.jsonl"
+        if p.exists():
+            rows += read_jsonl(p)
+    return pd.DataFrame(rows)
+
+
+def table_significance(ex: pd.DataFrame, out: Path) -> tuple[pd.DataFrame, list[list[str]]] | None:
+    """AI-14: paired Wilcoxon over documents for the key steps, Holm-corrected over this family."""
+    arms = set(ex["arm"])
+    rows = []
+    for new, ref in KEY_PAIRS:
+        if new in arms and ref in arms:
+            a, b = per_doc(ex, "quality_index", ref), per_doc(ex, "quality_index", new)
+            common = a.index.intersection(b.index)
+            rows.append({"new": new, "ref": ref, **paired_wilcoxon(a.loc[common].values, b.loc[common].values)})
+    if not rows:
+        return None
+    df = pd.DataFrame(rows)
+    df["p_holm"] = holm(df["p"].tolist())
+    header = ["Összevetés", "Dokumentum (n)", "Referencia", "Új módszer", "Különbség", "Hatásméret (r)",
+              "p", "p (Holm)", "Szignifikáns"]
+    body, colors = [], {}
+    for i, r in enumerate(df.itertuples()):
+        sig = not math.isnan(r.p_holm) and r.p_holm < 0.05
+        verdict = "igen" if sig else ("nem (n < 6)" if r.n_pairs < 6 else "nem")
+        body.append([f"{r.new} vs {r.ref}", str(r.n_pairs), hu(r.mean_a), hu(r.mean_b),
+                     ("–" if math.isnan(r.mean_diff) else f"{'+' if r.mean_diff >= 0 else ''}{hu(r.mean_diff)}"),
+                     hu(r.r_rb), hu(r.p, 3), hu(r.p_holm, 3), verdict])
+        colors[(i, 8)] = "#1f7a3a" if sig else INK2
+    _draw_table(header, body, out, "tabla4_szignifikancia", set(), colors, left_cols={0},
+                title="Páros Wilcoxon-próbák a minőségi indexen (dokumentumonként)")
+    df.to_csv(out / "szignifikancia.csv", index=False, encoding="utf-8-sig")
+    return df, [header] + body
+
+
+def table_languages(ex: pd.DataFrame, summary: pd.DataFrame, metrics, out: Path) -> list[list[str]] | None:
+    """AI-15: quality index and every measure per language, per arm (descriptive: different documents)."""
+    if "language" not in ex:
+        return None
+    langs = [lang for lang in ("hu", "en") if lang in set(ex["language"].dropna())]
+    if len(langs) < 2:
+        return None
+    header = ["Módszer"] + [f"Index – {LANG_HU[lang]} (n)" for lang in langs] + ["Különbség (magyar − angol)"] + \
+             [f"{lab} (magyar / angol)" for _, lab in metrics]
+    body, vals = [], {}
+    for arm in summary["arm"]:
+        sub = ex[ex.arm == arm]
+        cells, qi = [label(arm)], {}
+        for lang in langs:
+            d = per_doc(sub[sub.language == lang], "quality_index", arm)
+            qi[lang] = d.mean() if len(d) else math.nan
+            cells.append(f"{hu(qi[lang])} ({len(d)})")
+        diff = qi["hu"] - qi["en"]
+        cells.append("–" if math.isnan(diff) else f"{'+' if diff >= 0 else ''}{hu(diff)}")
+        for col, _ in metrics:
+            cells.append(" / ".join(pct(per_doc(sub[sub.language == lang], col, arm).mean()) for lang in langs))
+        body.append(cells)
+        vals[arm] = qi
+    _draw_table(header, body, out, "tabla5_nyelvek", set(), left_cols={0},
+                title="Magyar és angol dokumentumok módszerenként")
+    fig_languages(vals, langs, out)
+    return [header] + body
+
+
+def fig_languages(vals: dict, langs: list[str], out: Path) -> None:
+    arms = list(vals)[::-1]
+    fig, ax = plt.subplots(figsize=(6.6, 0.5 * len(arms) + 1.2))
+    h = 0.38
+    for k, (lang, c) in enumerate(zip(langs, (BEST, "#9fc3ee"))):
+        ys = np.arange(len(arms)) + (k - 0.5) * h
+        xs = [vals[a][lang] for a in arms]
+        ax.barh(ys, np.nan_to_num(xs), h * 0.92, color=c, label=LANG_HU[lang])
+        for y, x in zip(ys, xs):
+            ax.text((0 if math.isnan(x) else x) + 0.01, y, hu(x), va="center", fontsize=7.5, color=INK2)
+    ax.set_yticks(range(len(arms)), [label(a) for a in arms], fontsize=8.5)
+    ax.set_xlim(0, 1.1)
+    ax.set_xlabel("Minőségi index (0–1), dokumentumonkénti átlag")
+    _comma(ax, "x")
+    ax.legend(frameon=False, fontsize=8, loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=2)
+    ax.xaxis.grid(True, color=GRID, lw=0.8)
+    ax.set_axisbelow(True)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+    ax.tick_params(axis="y", length=0)
+    fig.tight_layout()
+    _save(fig, out, "abra7_nyelvek")
+
+
+def _source_name(license_: str) -> str:
+    """'CC-BY-4.0 (OpenStax via EduQG)' -> 'OpenStax via EduQG'; 'own' -> 'saját'."""
+    if "(" in license_ and license_.endswith(")"):
+        return license_[license_.index("(") + 1:-1]
+    return "saját" if license_ in ("own", "") else license_
+
+
+def table_dataset(ex: pd.DataFrame, results_root: Path, out: Path) -> tuple[dict, list[list[str]]] | None:
+    """AI-16: documents, gold questions, language, length and licence per source (methods chapter)."""
+    from .dataset import load_dataset
+    run = ex["run_dir"].iloc[0]
+    cfg = json.loads((results_root / run / "run.json").read_text(encoding="utf-8"))["config"]
+    try:
+        ds = load_dataset(cfg["dataset"])
+    except (FileNotFoundError, KeyError) as e:
+        print(f"[report] dataset table skipped: {e}")
+        return None
+    used = set(ex["doc_id"])
+    docs = []
+    for d in ds.documents:
+        chars = d.extra.get("chars")
+        if chars is None:
+            try:
+                chars = len(d.read_text())
+            except (OSError, UnicodeDecodeError):
+                chars = math.nan
+        docs.append({"id": d.id, "forras": _source_name(d.license), "nyelv": d.language,
+                     "hossz": d.extra.get("length", ""), "tema": d.subject, "karakter": chars,
+                     "arany_kerdes": len(d.gold()), "licenc": d.license.split(" (")[0] or "–",
+                     "kiertekelve": d.id in used})
+    df = pd.DataFrame(docs)
+    df.to_csv(out / "adatkeszlet.csv", index=False, encoding="utf-8-sig")
+    header = ["Forrás", "Nyelv", "Dokumentum", "Rövid / közepes / hosszú", "Karakter (átlag)",
+              "Karakter (min–max)", "Arany kérdés", "Licenc", "Kiértékelve"]
+    body = []
+    groups = list(df.groupby(["forras", "nyelv"], sort=False))
+    for (src, lang), g in groups + [(("Összesen", "–"), df)]:
+        lens = " / ".join(str(int((g["hossz"] == k).sum())) for k, _ in LENGTHS)
+        c = pd.to_numeric(g["karakter"], errors="coerce")
+        body.append([src, LANG_HU.get(lang, lang), str(len(g)), lens,
+                     "–" if c.isna().all() else f"{c.mean():,.0f}".replace(",", " "),
+                     "–" if c.isna().all() else f"{c.min():,.0f}–{c.max():,.0f}".replace(",", " "),
+                     str(int(g["arany_kerdes"].sum())),
+                     ", ".join(sorted(set(g["licenc"]))) if src != "Összesen" else "–",
+                     str(int(g["kiertekelve"].sum()))])
+    _draw_table(header, body, out, "tabla6_adatkeszlet", {len(body) - 1}, left_cols={0},
+                title=f"Az értékelő adatkészlet ({ds.version})")
+    info = {"version": ds.version, "n_docs": len(df), "n_used": int(df["kiertekelve"].sum()),
+            "n_gold": int(df["arany_kerdes"].sum()),
+            "by_lang": {lang: int((df["nyelv"] == lang).sum()) for lang in df["nyelv"].unique()}}
+    return info, [header] + body
+
+
+def _judge_mean(row) -> float:
+    vals = [row.get(f"judge_{c}") for c in CRITERIA]
+    vals = [float(v) for v in vals if v is not None and not (isinstance(v, float) and math.isnan(v))]
+    return sum(vals) / len(vals) if vals else math.nan
+
+
+def pick_examples(qs: pd.DataFrame) -> dict[str, dict[str, dict]]:
+    """AI-17: per arm the best and the worst judged question. Good = grounded and not failed blind,
+    highest mean rubric score; bad = not grounded (or failed blind) first, then lowest score."""
+    out: dict[str, dict[str, dict]] = {}
+    if qs.empty or "grounded" not in qs:
+        return out
+    for arm, g in qs.groupby("arm", sort=False):
+        recs = [r for r in g.to_dict("records") if r.get("grounded") is not None
+                and not (isinstance(r.get("grounded"), float) and math.isnan(r["grounded"]))]
+        if not recs:
+            continue
+        for r in recs:
+            r["_score"] = _judge_mean(r)
+            b = r.get("blind_correct")
+            r["_blind_fail"] = b is not None and not pd.isna(b) and not bool(b)
+        s = lambda r: -1.0 if math.isnan(r["_score"]) else r["_score"]  # noqa: E731
+        good = [r for r in recs if r["grounded"] and not r["_blind_fail"]]
+        pick = {}
+        if good:
+            pick["jo"] = max(good, key=lambda r: (s(r), r["uid"]))
+        bad_pool = [r for r in recs if r is not pick.get("jo")]
+        if bad_pool:
+            pick["rossz"] = min(bad_pool, key=lambda r: (bool(r["grounded"]) and not r["_blind_fail"], s(r), r["uid"]))
+        out[arm] = pick
+    return out
+
+
+def _yes(v) -> str:
+    if v is None or (isinstance(v, float) and math.isnan(v)):
+        return "–"
+    return "igen" if bool(v) else "nem"
+
+
+def write_examples(qs: pd.DataFrame, order: list[str], out: Path) -> int:
+    ex = pick_examples(qs)
+    if not ex:
+        return 0
+    L = ["# Példakérdések a hibaelemzéshez", "",
+         "Módszerenként egy jó és egy rossz kérdés a független bíráló (LLM) értékelése alapján. Jó: a forrás "
+         "igazolja a megjelölt választ, a vak megoldás nem hibázott, és a legmagasabb a négy szempont átlaga. Rossz: "
+         "a forrás nem igazolja a választ (vagy a vak megoldó mást jelölt), azon belül a legalacsonyabb átlag.", ""]
+    rows = []
+    for arm in [a for a in order if a in ex]:
+        L += [f"## {label(arm)}", ""]
+        for kind, title in (("jo", "Jó példa"), ("rossz", "Rossz példa")):
+            q = ex[arm].get(kind)
+            if not q:
+                continue
+            L += [f"### {title} – `{q['doc_id']}`, seed {q['seed']}", "", f"**{q['text']}**", ""]
+            for i, o in enumerate(q.get("options") or []):
+                L.append(f"{'ABCDEFGH'[i]}. {o['text']}{' ✓' if o.get('correct') else ''}")
+            scores = ", ".join(f"{CRIT_HU[c].lower()} {q.get(f'judge_{c}')}" for c in CRITERIA
+                               if q.get(f"judge_{c}") is not None and not pd.isna(q.get(f"judge_{c}")))
+            L += ["", f"- Forrással igazolt: {_yes(q.get('grounded'))}; vakon megoldva: {_yes(q.get('blind_correct'))}"
+                  + (f"; pontszámok (1–5): {scores}" if scores else ""),
+                  f"- A bíráló indoklása: {q.get('judge_rationale') or '–'}"]
+            if q.get("key_evidence"):
+                L.append(f"- Alátámasztó mondat: „{q['key_evidence']}”")
+            L.append("")
+            rows.append({"modszer": arm, "tipus": kind, "uid": q["uid"], "kerdes": q["text"],
+                         "forrassal_igazolt": q.get("grounded"), "vakon_megoldva": q.get("blind_correct"),
+                         "atlag_pont": q["_score"], "indoklas": q.get("judge_rationale")})
+    (out / "peldak.md").write_text("\n".join(L), encoding="utf-8")
+    pd.DataFrame(rows).to_csv(out / "peldak.csv", index=False, encoding="utf-8-sig")
+    return len(rows)
+
+
+def _alpha_hu(a: float) -> str:
+    if math.isnan(a):
+        return "–"
+    return "megbízható" if a >= 0.8 else "elfogadható" if a >= 0.667 else "gyenge"
+
+
+def _rho_hu(r: float) -> str:
+    if math.isnan(r):
+        return "–"
+    if r < 0:
+        return "negatív"
+    return "erős" if r >= 0.7 else "közepes" if r >= 0.4 else "gyenge"
+
+
+def _kappa_hu(k: float) -> str:   # Landis & Koch (1977)
+    if math.isnan(k):
+        return "–"
+    for lim, t in ((0.81, "majdnem teljes"), (0.61, "jelentős"), (0.41, "közepes"), (0.21, "mérsékelt")):
+        if k >= lim:
+            return t
+    return "gyenge"
+
+
+def table_agreement(ratings_csv: Path, results_root: Path, out: Path) -> tuple[dict, list[list[str]]] | None:
+    """AI-13: do teachers agree with each other (Krippendorff α), and does the LLM judge agree with them
+    (Spearman ρ per criterion, Cohen κ for 'grounded' vs teacher correctness ≥ 4)?"""
+    from .analysis import human_analysis
+    r = pd.read_csv(ratings_csv)
+    qs = load_questions(results_root, r["run_id"].dropna().unique()) if "run_id" in r else pd.DataFrame()
+    res = human_analysis(str(ratings_csv), qs, out)
+    alphas, rhos = res.get("krippendorff_alpha", {}), res.get("judge_vs_teacher_spearman", {})
+    header = ["Szempont", "Tanárok egymás közt (α)", "α értelmezése", "Bíráló–tanár (ρ)", "p", "n kérdés",
+              "ρ, κ értelmezése"]
+    body = []
+    for c in CRITERIA + ["would_use"]:
+        a = alphas.get(c, math.nan)
+        rr = rhos.get(c, {"rho": math.nan, "p": math.nan, "n": 0})
+        body.append([CRIT_HU[c], hu(a), _alpha_hu(a), hu(rr["rho"]), hu(rr["p"], 3), str(rr["n"] or "–"),
+                     _rho_hu(rr["rho"])])
+    m = rhos.get("mean_of_criteria")
+    if m:
+        body.append(["A négy szempont átlaga", "–", "", hu(m["rho"]), hu(m["p"], 3), str(m["n"]), _rho_hu(m["rho"])])
+    k = res.get("grounded_vs_teacher_correct_kappa", math.nan)
+    body.append(["Helyes-e: bíráló „igazolt” vs tanár ≥ 4 (κ)", "–", "", hu(k), "", "", _kappa_hu(k)])
+    _draw_table(header, body, out, "tabla3_egyetertes", {len(body) - 1}, left_cols={0},
+                title=f"A tanárok és a bíráló egyetértése ({res['n_items']} kérdés, "
+                      f"{len(res['raters'])} értékelő)")
+    return res, [header] + body
+
+
 # ---------------------------------------------------------------- text
 def write_text(out: Path, ex, summary, metrics, best, sig, steps, has_chunk, pilot: bool,
-               best_local=None, rank_rows=None, win=None) -> None:
+               best_local=None, rank_rows=None, win=None, extra: dict | None = None) -> None:
+    extra = extra or {}
     b = summary.set_index("arm").loc[best]
     runner = summary.iloc[1] if len(summary) > 1 else None
     base = summary.set_index("arm").loc["E0"] if "E0" in set(summary["arm"]) else None
@@ -562,6 +846,7 @@ def write_text(out: Path, ex, summary, metrics, best, sig, steps, has_chunk, pil
               "A 6. ábra az alapmódszert hasonlítja össze különböző darabolási változatokkal: "
               + "; ".join(f"{a} ({ARM_HU[a][0].lower()}): {hu(s.loc[a, 'qi'])}"
                           for a in ("E5a", "E0", "E5b", "E5c") if a in s.index) + "."]
+    L += _extra_text(extra, summary)
     L += ["", "### Táblázatok és ábrák", "",
           "1. táblázat – A módszerek összesített rangsora (`tabla1_osszesito`).",
           "2. táblázat – A győztes összevetése az alapmódszerrel (`tabla2_gyoztes_vs_alap`).",
@@ -572,14 +857,71 @@ def write_text(out: Path, ex, summary, metrics, best, sig, steps, has_chunk, pil
           "5. ábra – Az egyes komponensek hozzájárulása (`abra5_komponensek`)."]
     if has_chunk:
         L.append("6. ábra – A darabolási változatok összehasonlítása (`abra6_darabolas`).")
+    if extra.get("agreement"):
+        L.append("3. táblázat – A tanárok és a bíráló egyetértése (`tabla3_egyetertes`).")
+    if extra.get("sig"):
+        L.append("4. táblázat – Páros Wilcoxon-próbák a fő lépésekre (`tabla4_szignifikancia`).")
+    if extra.get("lang"):
+        L += ["5. táblázat – Magyar és angol dokumentumok (`tabla5_nyelvek`).",
+              "7. ábra – Minőségi index nyelvenként (`abra7_nyelvek`)."]
+    if extra.get("dataset"):
+        L.append("6. táblázat – Az értékelő adatkészlet (`tabla6_adatkeszlet`).")
+    if extra.get("n_examples"):
+        L.append("Példakérdések a hibaelemzéshez: `peldak.md`.")
     L += ["", f"*Generálva: {date.today().isoformat()}, `python -m mimir_eval report`; adatok: "
           + ", ".join(sorted(ex["run_dir"].unique())) + "*", ""]
     (out / "eredmenyek.md").write_text("\n".join(L), encoding="utf-8")
 
 
+def _extra_text(extra: dict, summary: pd.DataFrame) -> list[str]:
+    L = []
+    if extra.get("dataset"):
+        info, rows = extra["dataset"]
+        langs = ", ".join(f"{n} {LANG_HU.get(lang, lang)}" for lang, n in info["by_lang"].items())
+        L += ["", "### Adatkészlet", "",
+              f"Az adatkészlet ({info['version']}) {info['n_docs']} dokumentumból áll ({langs}), összesen "
+              f"{info['n_gold']} arany (ember által írt) kérdéssel; ebben a jelentésben {info['n_used']} dokumentum "
+              "eredménye szerepel (6. táblázat).", "",
+              "**6. táblázat – Az értékelő adatkészlet** (`tabla6_adatkeszlet`)", ""] + md_table(rows)
+    if extra.get("agreement"):
+        res, rows = extra["agreement"]
+        k = res.get("grounded_vs_teacher_correct_kappa", math.nan)
+        m = (res.get("judge_vs_teacher_spearman") or {}).get("mean_of_criteria") or {"rho": math.nan}
+        L += ["", "### A bíráló megbízhatósága", "",
+              f"{len(res['raters'])} tanár {res['n_items']} kérdést értékelt vakon, ugyanazzal a skálával, mint a "
+              f"bíráló modell. A négy szempont átlagán a bíráló és a tanárok rangkorrelációja ρ = {hu(m['rho'])} "
+              f"({_rho_hu(m['rho'])}); a „helyes-e” döntésben Cohen-féle κ = {hu(k)} ({_kappa_hu(k)}). A tanárok "
+              "egymás közti egyetértését Krippendorff-féle α méri (3. táblázat).", "",
+              "**3. táblázat – A tanárok és a bíráló egyetértése** (`tabla3_egyetertes`)", ""] + md_table(rows)
+    else:
+        L += ["", "### A bíráló megbízhatósága", "",
+              "(A tanári értékelés még nem érkezett be; a `rate-import` után a `report` elkészíti a 3. táblázatot.)"]
+    if extra.get("sig"):
+        df, rows = extra["sig"]
+        n_sig = int((df["p_holm"] < 0.05).sum())
+        L += ["", "### Statisztikai próbák", "",
+              f"A fő lépéseket páros Wilcoxon-próbával hasonlítottuk össze a dokumentumonkénti minőségi indexen; a "
+              f"p-értékeket {az(str(len(df)))} {len(df)} összevetésre Holm-módszerrel korrigáltuk, a hatásméret a rangbiszeriális "
+              f"korreláció (r > 0: az új módszer jobb). Szignifikáns (p < 0,05): {n_sig} összevetés.", "",
+              "**4. táblázat – Páros Wilcoxon-próbák** (`tabla4_szignifikancia`)", ""] + md_table(rows)
+    if extra.get("lang"):
+        rows = extra["lang"]
+        L += ["", "### Magyar és angol dokumentumok", "",
+              "Az 5. táblázat és a 7. ábra nyelvenként mutatja az eredményeket. A két nyelv dokumentumai különbözők "
+              "(forrás, téma, hossz), ezért a különbség leíró jellegű, nem ok-okozati.", "",
+              "**5. táblázat – Magyar és angol dokumentumok** (`tabla5_nyelvek`)", ""] + md_table(rows)
+    if extra.get("n_examples"):
+        L += ["", "### Példák", "",
+              "Módszerenként egy jó és egy rossz kérdés a bíráló indoklásával a `peldak.md` fájlban található "
+              "(a hibaelemzés alapanyaga)."]
+    return L
+
+
 def build_report(results_root: str = "results", name: str | None = None, arms: list[str] | None = None,
-                 out_root: str = "report") -> Path:
-    ex = load_latest(resolve(results_root), arms)
+                 out_root: str = "report", ratings: str | None = "ratings/ratings.csv") -> Path:
+    """ratings: rate-import output; the agreement table (tabla3) is built only when the file exists."""
+    root = resolve(results_root)
+    ex = load_latest(root, arms)
     metrics = quality_metrics(ex)
     if not metrics:
         raise SystemExit("no quality metrics shared by all arms (were the runs scored with the judge?)")
@@ -601,7 +943,13 @@ def build_report(results_root: str = "results", name: str | None = None, arms: l
     fig_cost(summary, best, out)
     steps = fig_components(summary, out)
     has_chunk = fig_chunking(summary, out)
-    write_text(out, ex, summary, metrics, best, sig, steps, has_chunk, pilot, best_local, rank_rows, win)
+    extra = {"agreement": None, "sig": table_significance(ex, out), "lang": table_languages(ex, summary, metrics, out),
+             "dataset": table_dataset(ex, root, out)}
+    rpath = resolve(ratings) if ratings else None
+    if rpath and rpath.exists():
+        extra["agreement"] = table_agreement(rpath, root, out)
+    extra["n_examples"] = write_examples(load_questions(root, ex["run_dir"].unique()), list(summary["arm"]), out)
+    write_text(out, ex, summary, metrics, best, sig, steps, has_chunk, pilot, best_local, rank_rows, win, extra)
     tab = summary.rename(columns={"arm": "modszer", "qi": "minosegi_index"})
     tab.to_csv(out / "eredmenyek_tabla.csv", index=False, encoding="utf-8-sig")
     print(f"[report] best: {best} ({hu(summary.iloc[0]['qi'])}) from {len(summary)} methods, "

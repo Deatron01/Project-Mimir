@@ -1,8 +1,14 @@
-﻿# E4 - same as E0 but on the university GenAI server (RQ4: local vs server).
+# E4 - same as E0 but on the university GenAI server (RQ4: local vs server).
 # Once the blueprint pipeline exists, copy the best of E1-E3 here instead.
 # Data leaves the machine: only use documents whose license allows it.
 name: E4
 description: "Naive RAG on qwen38udq8xl (university GenAI server)"
+# Server arms run on a fixed 12-document subset (6 HU + 6 EN, short/medium/long), paired with E0/E2
+# on the same documents (AI-18): the server is slow and shared. Enough for the paired Wilcoxon test (6+).
+documents: [en-economics-short-01, en-humanities-medium-02, en-law-long-03, en-lifesciences-short-04,
+            en-economics-medium-05, en-humanities-long-06, hu-wiki-short-01-nurnbergi-per,
+            hu-wiki-medium-02-vaskapu-szoros, hu-wiki-long-03-sclerosis-multiplex, hu-wiki-short-04-liszt-ferenc,
+            hu-wiki-medium-05-lady-gaga, hu-wiki-long-06-kek-balna]
 seeds: [1, 2, 3]
 exam: {n_questions: 10, types: [mcq]}
 pipeline: {kind: naive_direct, retrieval_k: 3}

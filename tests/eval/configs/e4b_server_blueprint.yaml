@@ -1,10 +1,16 @@
-﻿# E4b - the blueprint pipeline (E2 settings) on the university GenAI server (RQ4 with the new pipeline).
+# E4b - the blueprint pipeline (E2 settings) on the university GenAI server (RQ4 with the new pipeline).
 # Replace the pipeline block with the best of E1-E3 once those results are in.
 # Data leaves the machine: only use documents whose license allows it.
 name: E4b
 description: "Blueprint + verifier on qwen38udq8xl (university GenAI server)"
-seeds: [1, 2, 3]
+# Server arms run on a fixed 12-document subset (6 HU + 6 EN, short/medium/long), paired with E0/E2
+# on the same documents (AI-18): the server is slow and shared. Enough for the paired Wilcoxon test (6+).
+documents: [en-economics-short-01, en-humanities-medium-02, en-law-long-03, en-lifesciences-short-04,
+            en-economics-medium-05, en-humanities-long-06, hu-wiki-short-01-nurnbergi-per,
+            hu-wiki-medium-02-vaskapu-szoros, hu-wiki-long-03-sclerosis-multiplex, hu-wiki-short-04-liszt-ferenc,
+            hu-wiki-medium-05-lady-gaga, hu-wiki-long-06-kek-balna]
+seeds: [1]
 exam: {n_questions: 10, types: [mcq]}
-pipeline: {kind: blueprint, retrieval: dense, retrieval_k: 3, verifier: true, blind_test: true, max_retries: 2, graph: false}
+pipeline: {kind: blueprint, retrieval: dense, retrieval_k: 3, verifier: true, blind_test: true, max_retries: 1, graph: false}
 chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
 generator: {provider: genai, model: "qwen38udq8xl", temperature: 0.2}

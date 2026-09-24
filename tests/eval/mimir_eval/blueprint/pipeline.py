@@ -4,7 +4,7 @@ verify -> assemble. Arms E1-E3 switch parts on and off through `pipeline:` confi
     verifier: false|true    E1 = false; E2/E3 = true (schema, meta-reference, citations,
                             grounding + distractor check, blind answer test; retries with feedback)
     blind_test: true        "Fast" mode = false (skips the blind answer call)
-    max_retries: 2          per slot, then one replacement concept, then keep best attempt (flagged)
+    max_retries: 1          per slot, then one replacement concept, then keep best attempt (flagged)
     graph: false|true       E3: concept graph as planner input, graph distractors, 1-hop chunks
     retrieval: dense|hybrid dense = Bifrost /search; hybrid = BM25 + dense with RRF
     retrieval_k: 3
@@ -34,7 +34,7 @@ BLOOM_MIX = {
     "medium": {"understand": 0.4, "apply": 0.4, "analyze": 0.2},
     "hard": {"apply": 0.3, "analyze": 0.4, "evaluate": 0.3},
 }
-DEFAULTS = {"verifier": False, "blind_test": True, "max_retries": 2, "graph": False, "retrieval": "dense",
+DEFAULTS = {"verifier": False, "blind_test": True, "max_retries": 1, "graph": False, "retrieval": "dense",
             "retrieval_k": 3, "spare_concepts": 3, "dedupe_threshold": 0.9, "embedder": "e5",
             "overview_chars": 12000, "graph_batch_chars": 3000, "max_context_chars": 6000}
 LETTERS = "ABCDEFGH"

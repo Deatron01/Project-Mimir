@@ -44,7 +44,7 @@ DEFAULTS: dict = {
         "provider": "ollama",     # ollama | genai | openai_compat | mock
         "model": "qwen2.5:7b",
         "temperature": 0.2,
-        "num_ctx": 16384,
+        "num_ctx": 8192,          # every prompt fits; 16384 only made Ollama slower (AI-18)
         "timeout_s": 600,
     },
     "services": {
@@ -62,7 +62,10 @@ JUDGE_DEFAULTS: dict = {
     "model": "gpt-oss:120b",      # use a different family than the generator
     "temperature": 0.0,
     "timeout_s": 300,
-    "max_context_chars": 24000,   # grounding uses the full document when it fits
+    "max_context_chars": 24000,   # cap on the source text shown to the judge
+    "context": "question",        # question: the chunks the question was written from (else the retrieved
+                                  # context); document: the full document when it fits (slower, judge-v1)
+    "reasoning": "low",           # gpt-oss reasoning effort, sent as "Reasoning: <level>"; None = model default
 }
 
 PROVIDERS: dict = {

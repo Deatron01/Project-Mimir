@@ -170,3 +170,96 @@ def test_resume_retries_failed(workspace, monkeypatch):
     from mimir_eval.scoring import latest_exams
     latest = latest_exams(read_jsonl(rd / "exams.jsonl"))
     assert len(latest) == 6 and all(e["status"] == "ok" for e in latest)
+
+
+def test_report_sections(tmp_path, monkeypatch):
+    """report: every TDK table (agreement, significance, languages, dataset) and the example questions."""
+    from mimir_eval.report import build_report
+    monkeypatch.setattr(runner_mod, "MimirServices", FakeServices)
+    llm_mod.set_mock_handler(mock_llm)
+    docs = "[hu-coffee, hu-immune, hu-gametheory, en-economics-short-01, en-law-short-07, en-lifesciences-short-04]"
+    runs = []
+    try:
+        for name, model in (("E0", "bad"), ("E1", "good")):
+            p = tmp_path / f"{name}.yaml"
+            p.write_text(f"""name: {name}
+documents: {docs}
+seeds: [1]
+exam: {{n_questions: 3, types: [mcq]}}
+pipeline: {{kind: naive_direct, retrieval_k: 2, probe_k: 3}}
+generator: {{provider: mock, model: {model}}}
+monitor_vram: false
+""", encoding="utf-8")
+            rd = runner_mod.run_experiment(str(p), results_root=tmp_path / "results")
+            score_run(rd, judge_cfg={"provider": "mock", "model": "judge"}, embedder="bow")
+            runs.append(rd)
+    finally:
+        llm_mod.set_mock_handler(None)
+
+    rdir = tmp_path / "ratings"
+    export_sheets([str(r) for r in runs], str(rdir), n_per_run=6, n_raters=2, n_calibration=0)
+    rng = random.Random(5)
+    for sheet in sorted(rdir.glob("rater_*.xlsx")):
+        wb = load_workbook(sheet)
+        for row in wb["Értékelés"].iter_rows(min_row=2):
+            for c in row[10:14]:
+                c.value = rng.randint(1, 5)
+            row[14].value = rng.choice(["igen", "nem"])
+        wb.save(sheet)
+    ratings = import_sheets([str(s) for s in sorted(rdir.glob("rater_*.xlsx"))],
+                            str(rdir / "rating_key.csv"), str(rdir / "ratings.csv"))
+
+    out = build_report(str(tmp_path / "results"), "t", out_root=str(tmp_path / "report"), ratings=str(ratings))
+    for f in ("tabla3_egyetertes.png", "tabla4_szignifikancia.png", "tabla5_nyelvek.png", "abra7_nyelvek.png",
+              "tabla6_adatkeszlet.png", "adatkeszlet.csv", "szignifikancia.csv", "peldak.md", "peldak.csv"):
+        assert (out / f).exists(), f
+    text = (out / "eredmenyek.md").read_text(encoding="utf-8")
+    for h in ("A bíráló megbízhatósága", "Statisztikai próbák", "Magyar és angol", "Adatkészlet", "E1 vs E0"):
+        assert h in text, h
+    assert "PILOT" not in text                        # 6 documents: enough for the paired test
+    import pandas as pd
+    ds = pd.read_csv(out / "adatkeszlet.csv")
+    assert ds["kiertekelve"].sum() == 6 and len(ds) > 6
+    ex = pd.read_csv(out / "peldak.csv")
+    assert set(ex["modszer"]) == {"E0", "E1"}
+
+    # without ratings the agreement table is skipped, not an error
+    out2 = build_report(str(tmp_path / "results"), "t2", out_root=str(tmp_path / "report"), ratings=None)
+    assert not (out2 / "tabla3_egyetertes.png").exists()
+    assert "még nem érkezett be" in (out2 / "eredmenyek.md").read_text(encoding="utf-8")
+
+
+def test_pick_examples_prefers_grounded_and_blind_ok():
+    import pandas as pd
+    from mimir_eval.report import pick_examples
+    base = {"arm": "E0", "judge_clarity": 4, "judge_distractor_quality": 4, "judge_bloom_fit": 4}
+    qs = pd.DataFrame([
+        {**base, "uid": "a", "grounded": True, "blind_correct": False, "judge_correctness": 5},
+        {**base, "uid": "b", "grounded": True, "blind_correct": True, "judge_correctness": 4},
+        {**base, "uid": "c", "grounded": False, "blind_correct": True, "judge_correctness": 5},
+        {**base, "uid": "d", "grounded": True, "blind_correct": True, "judge_correctness": 2},
+    ])
+    p = pick_examples(qs)["E0"]
+    assert p["jo"]["uid"] == "b"       # a has a higher score but failed the blind test
+    assert p["rossz"]["uid"] == "a"    # a failed check (a, c) beats a merely low score (d); then lowest score
+
+
+def test_judge_question_context_and_reasoning(tmp_path):
+    from mimir_eval.judge import Judge
+    seen = []
+    llm_mod.set_mock_handler(lambda m, meta: seen.append(m) or json.dumps({"answer": "A"}))
+    try:
+        exam = {"doc_text": "D" * 100, "chunks": ["c0", "c1", "c2"], "context_text": "ctx"}
+        j = Judge({"provider": "mock", "model": "j", "max_context_chars": 1000, "reasoning": "low",
+                   "context": "question"}, tmp_path / "cache.jsonl")
+        assert j.source_for(exam, {"context_ids": [2, 0]}) == ("c2\n\nc0", "question_context")
+        assert j.source_for(exam, {}) == ("ctx", "retrieved_context")
+        j._ask("blind", "p")
+        assert seen[0][0]["content"].startswith("Reasoning: low\n")
+        jd = Judge({"provider": "mock", "model": "j", "max_context_chars": 1000, "reasoning": None,
+                    "context": "document"}, tmp_path / "cache2.jsonl")
+        assert jd.source_for(exam, {"context_ids": [2]}) == ("D" * 100, "document")
+        jd._ask("blind", "p")
+        assert not seen[1][0]["content"].startswith("Reasoning")
+    finally:
+        llm_mod.set_mock_handler(None)

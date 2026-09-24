@@ -101,7 +101,7 @@ level matched to the difficulty (easy: remember/understand; medium: understand/a
 apply/analyze/evaluate). For each slot it retrieves the concept's chunks plus the top-k search hits,
 generates one question with chunk citations, and (E2+) verifies it: shape, meta-reference,
 citations, then an LLM grounding + distractor check, then a blind answer test. A failed check goes
-back to the generator as feedback (max 2 retries, a wider retrieval net when the key was not
+back to the generator as feedback (max 1 retry, a wider retrieval net when the key was not
 supported), then one spare concept is tried, and as a last resort the best attempt is kept and marked
 `verified: false`, so the question count is always met. Near-duplicates (embedding similarity > 0.9)
 are regenerated. E3 builds a session-scoped concept graph (one call per ~3,000 characters): graph
@@ -111,7 +111,7 @@ unverified questions.
 
 **Cost:** E0 makes 1 LLM call per exam; E2 makes roughly 3–5 calls per question (about 40–60 for 10
 questions), and E3 adds the graph calls. Measure the real time per exam with
-`--max-docs 1` first, then plan the full runs; the blueprint arms on 36 documents x 3 seeds are
+`--max-docs 1` first, then plan the full runs; the blueprint arms (one seed) on all documents are
 overnight jobs on an 8 GB GPU. `--docs` and `--resume` let you split them across sessions.
 
 ## Running everything
@@ -131,12 +131,27 @@ python -m mimir_eval report --name pilot        # latest run of every arm -> rep
 python -m mimir_eval view                        # results\viewer.html: read the generated exams
 ```
 
-`report\<name>\` gets `tabla1_osszesito` (ranking with the winner), `tabla2_gyoztes_vs_alap`
-(winner vs E0), `abra1`–`abra6` (PNG 300 dpi + PDF) and `eredmenyek.md` (results text for the paper).
-With fewer than 6 documents everything is marked PILOT.
+`report\<name>\` gets (PNG 300 dpi + PDF, and the text in `eredmenyek.md`):
 
-Planned (not implemented, see ROADMAP AI-13 – AI-19): judge-human agreement table, significance table,
-Hungarian vs English breakdown, dataset table, example questions, run speed-ups, full `eval-v1` run.
+| File | Content |
+| --- | --- |
+| `tabla1_osszesito` | ranking with the winner |
+| `tabla2_gyoztes_vs_alap` | winner vs E0 |
+| `tabla3_egyetertes` | judge-teacher agreement (Krippendorff α, Spearman ρ, Cohen κ); only when `ratings\ratings.csv` exists (`--ratings` for another path) |
+| `tabla4_szignifikancia` | paired Wilcoxon for E1–E0, E2–E1, E3–E2, E4–E0, Holm-corrected p, rank-biserial r |
+| `tabla5_nyelvek`, `abra7_nyelvek` | Hungarian vs English, per arm |
+| `tabla6_adatkeszlet`, `adatkeszlet.csv` | documents, gold questions, lengths and licence per source |
+| `abra1`–`abra6` | methods diagram, ranking, measures, cost, components, chunking |
+| `peldak.md` | one good and one bad question per arm with the judge's reasoning (error analysis) |
+
+With fewer than 6 documents everything is marked PILOT. Still to do (ROADMAP AI-19): freeze `eval-v1`,
+full run, teacher rating.
+
+**Speed settings (AI-18).** The judge sees only the chunks a question was written from (or the retrieved
+context for E0) and runs gpt-oss with `Reasoning: low`; `score --judge-context document
+--judge-reasoning none` restores the slower judge-v1 setup. Generators use `num_ctx` 8192, the verifier
+retries once (`max_retries: 1`), the blueprint arms run one seed, and E4/E4b run on a fixed
+12-document subset (6 HU + 6 EN) so they stay paired with E0/E2.
 
 ## What gets measured
 

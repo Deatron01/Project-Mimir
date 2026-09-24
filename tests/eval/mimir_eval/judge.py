@@ -5,8 +5,12 @@
 2. blind   (does NOT see the key): answer the question from the source; correct if it picks
    the keyed option. Skipped for open questions.
 
-Results are cached on disk by a hash of (judge model, prompt version, prompt), so re-scoring
-a run only pays for new questions.
+Results are cached on disk by a hash of (judge model, prompt version, reasoning level, prompt), so
+re-scoring a run only pays for new questions.
+
+Speed (AI-18): by default the judge sees only the chunks the question was written from (not the
+whole document) and runs gpt-oss with "Reasoning: low"; `context: document` and `reasoning: null`
+restore the slower judge-v1 behaviour.
 """
 from __future__ import annotations
 
@@ -82,18 +86,27 @@ class Judge:
         self.cache = {r["key"]: r["value"] for r in read_jsonl(cache_path)}
         self.calls = 0
         self._lock = threading.Lock()   # judge_question is called from several threads
+        self.reasoning = cfg.get("reasoning")
+        self.context_mode = cfg.get("context", "question")
+        if self.context_mode not in ("question", "document"):
+            raise ValueError(f"unknown judge context: {self.context_mode}")
+        self.system = f"Reasoning: {self.reasoning}\n{SYSTEM}" if self.reasoning else SYSTEM
 
     def describe(self) -> dict:
-        return {**self.llm.describe(), "prompt_version": JUDGE_PROMPT_VERSION}
+        return {**self.llm.describe(), "prompt_version": JUDGE_PROMPT_VERSION, "reasoning": self.reasoning,
+                "context": self.context_mode}
 
     def _ask(self, kind: str, prompt: str) -> dict:
-        key = sha1(self.llm.provider, self.llm.model, JUDGE_PROMPT_VERSION, kind, prompt)
+        parts = [self.llm.provider, self.llm.model, JUDGE_PROMPT_VERSION]
+        if self.reasoning:   # judge-v1 cache keys (no reasoning level) stay valid
+            parts.append(f"reasoning={self.reasoning}")
+        key = sha1(*parts, kind, prompt)
         if key in self.cache:
             return self.cache[key]
         value: dict = {"_error": "not run"}
         for _ in range(2):  # one retry for unparsable output
             try:
-                res = self.llm.chat([{"role": "system", "content": SYSTEM}, {"role": "user", "content": prompt}],
+                res = self.llm.chat([{"role": "system", "content": self.system}, {"role": "user", "content": prompt}],
                                     json_mode=True, seed=0)
                 with self._lock:
                     self.calls += 1
@@ -110,17 +123,19 @@ class Judge:
         return value
 
     def source_for(self, exam: dict, q: dict | None = None) -> tuple[str, str]:
-        """Full document when it fits; else the chunks this question was written from; else the
-        retrieved context the generator saw."""
+        """context=question: the chunks this question was written from, else the retrieved context the
+        generator saw, else the document. context=document: the full document when it fits first."""
         doc = exam.get("doc_text") or ""
         lim = self.cfg["max_context_chars"]
-        if doc and len(doc) <= lim:
+        if self.context_mode == "document" and doc and len(doc) <= lim:
             return doc, "document"
         chunks = exam.get("chunks") or []
         ids = [i for i in ((q or {}).get("context_ids") or []) if isinstance(i, int) and 0 <= i < len(chunks)]
         if ids:
             return "\n\n".join(chunks[i] for i in ids)[:lim], "question_context"
-        return exam.get("context_text", "")[:lim], "retrieved_context"
+        if exam.get("context_text"):
+            return exam["context_text"][:lim], "retrieved_context"
+        return doc[:lim], "document"
 
     def judge_question(self, exam: dict, q: dict) -> dict:
         source, source_kind = self.source_for(exam, q)
