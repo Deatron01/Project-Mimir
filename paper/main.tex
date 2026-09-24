@@ -11,22 +11,20 @@
 \usepackage{multirow}
 \usepackage{xcolor}
 \usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
-\usetikzlibrary{arrows.meta,positioning,fit,backgrounds}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
 \usepackage[hidelinks]{hyperref}
 \usepackage{url}
 
-% Numbers that only the full eval-v1 run can provide are typeset in red with \tbd{}.
-% Fill them from report/<name>/eredmenyek_tabla.csv and szignifikancia.csv (see README.md).
+% Results that only the planned experiments can provide are typeset in red with \tbd{}.
+% See EXPERIMENT_PLAN.md for the runs that produce each number.
 \newcommand{\tbd}[1]{\textcolor{red}{#1}}
 \newcommand{\Mimir}{\textsc{Mimir}}
 
 \begin{document}
 
-\title{\Mimir{}: Verifiable, Privacy-Preserving Exam\\Generation with Local Language Models}
+\title{Do Teachers Need a Data Centre? Verifiable Exam\\Question Generation with Small Language Models\\on Consumer GPUs}
 
 \author{
 \IEEEauthorblockN{[Author 1], [Author 2], [Author 3]}
@@ -38,152 +36,184 @@
 \maketitle
 
 \begin{abstract}
-Teachers increasingly use large language models (LLMs) to draft exam questions, but the typical
-``upload a document, get a quiz'' workflow gives no guarantee that the keyed answer is supported by
-the source, sends the material to third-party services, and is rarely evaluated in languages other
-than English. We present \Mimir{}, an open microservice system that generates multiple-choice exams
-from a teacher's own documents in Hungarian and English. \Mimir{} replaces single-shot
-retrieval-augmented generation with a \emph{blueprint} pipeline: a planner allocates concepts,
-question types and Bloom levels to slots; each question is written from its own retrieved passages
-with chunk citations; and a verifier chain checks grounding, distractors and blind answerability,
-feeding failures back to the generator. The system runs on an 8\,GB consumer GPU, keeps uploaded
-content only for the duration of a job, and makes human review mandatory before export. We describe
-a reproducible evaluation protocol with 12 experiment arms, a 39-document bilingual dataset with 326
-human-written reference questions, an LLM judge from a different model family, and a blind teacher
-rating. Building the harness already exposed two defects that silently invalidated earlier
-measurements: a hard-coded fallback exam that was counted as model output, and a chunker encoder
-that truncated every document after 512 tokens---an estimated 68--71\,\% of the average dataset
-document. The full comparison of the arms is reported with the protocol described here.
+Large language models (LLMs) can draft exam questions from a teacher's own material, but current
+tools rely on large models hosted in data centres. For schools this means recurring cost, sending
+teaching material to third parties, and dependence on services they do not control. We ask whether a
+single consumer graphics card with 8--12\,GB of memory is enough. Our hypothesis is that a small,
+4-bit quantised model can compensate for its size with more inference-time computation: a
+\emph{blueprint} pipeline plans the exam, writes one question at a time from retrieved passages with
+citations, and verifies each question for grounding, distractor validity and blind answerability
+before a teacher sees it. We evaluate this on 39 Hungarian and English documents with 326
+human-written reference questions, against a large model on a university GPU server, measuring
+question quality with a cross-family LLM judge validated by teachers, and cost as peak GPU memory,
+time and energy per exam. We test whether the local pipeline is non-inferior to the server model
+within a margin of half a question per ten-question exam, and whether a verified 7B model
+outperforms an unverified 14B model at equal memory budget. \tbd{[Main results: quality ratio,
+non-inferiority outcome, energy and time per exam.]}
 \end{abstract}
 
 \begin{IEEEkeywords}
-automatic question generation, retrieval-augmented generation, LLM-as-a-judge, educational
-technology, Hungarian NLP, GDPR, EU AI Act
+question generation, small language models, quantisation, consumer hardware, test-time compute,
+LLM-as-a-judge, educational technology, Hungarian
 \end{IEEEkeywords}
 
 \section{Introduction}
 
-Writing good multiple-choice questions is slow: the stem must be unambiguous, exactly one option must
-be correct according to the course material, and the distractors must be plausible but provably
-wrong. Automatic question generation (AQG) has a long history in education~\cite{kurdi2020systematic},
-and general-purpose LLMs have made it accessible to every teacher. The common implementation is naive
-retrieval-augmented generation (RAG)~\cite{lewis2020rag}: split the document, retrieve the top-$k$
-passages for the teacher's request, and ask the model for the whole exam in one call.
+Writing multiple-choice questions is time-consuming for teachers: each question needs an unambiguous
+stem, exactly one key that the course material supports, and distractors that are plausible but wrong.
+LLMs can draft such questions~\cite{kurdi2020systematic,alhazmi2024distractor}, and most reported
+systems rely on large models hosted in data centres. For a school this is a real constraint:
+per-request cost, the transfer of teaching material (which may contain personal data) to external
+processors, and availability decided elsewhere. A consumer graphics card with 8--12\,GB of memory,
+by contrast, costs a few hundred euros, fits in an ordinary workstation, and keeps all data on site.
 
-This design has three weaknesses in a school setting. \emph{Correctness is not checked}: nothing
-verifies that the keyed option is supported by the source or that distractors are actually false.
-\emph{Control is weak}: the requested number of questions, types and difficulty are only suggested
-in the prompt. \emph{Privacy is an afterthought}: teaching materials may contain personal data, yet
-they are sent to external APIs and often kept. Evaluation is a further gap: published AQG
-results are dominated by English, while our users teach in Hungarian.
+The question is whether such a card produces questions a teacher would use. It can only run models
+of roughly 3--14 billion parameters, quantised to 4 or 8 bits, with a limited context. Evaluations of
+quantised models report small losses on general benchmarks~\cite{li2024evalquant,kurtic2025bf16,kurt2026quant},
+and small models can generate educational questions after task-specific
+fine-tuning~\cite{fawzi2023small,fawzi2024towards} or with careful prompting~\cite{jaldi2026small}.
+It is not known whether a quantised small model, used \emph{without} fine-tuning, can match a large
+model on the full task of writing grounded exam questions from a teacher's document---especially in
+a lower-resourced language such as Hungarian~\cite{ligetinagy2024hulu}---or what it costs in time
+and energy on the teacher's own hardware.
 
-\Mimir{} addresses these points with the following contributions:
+We approach this as a trade between parameters and inference-time computation. Work on test-time
+compute shows that a smaller model given more inference calls can outperform a larger
+one~\cite{snell2025scaling}, and self-verification reduces factual errors~\cite{madaan2023selfrefine,dhuliawala2024cove}.
+Exam writing suits this well: the exam structure can be planned explicitly, and each question can be
+checked against its source. We therefore pair a small local model with a \emph{blueprint} pipeline
+that plans, retrieves per question, cites sources and verifies, and we measure what this buys and
+costs. We study four research questions:
+
 \begin{itemize}
-\item A \textbf{blueprint pipeline} (plan $\rightarrow$ retrieve per slot $\rightarrow$ generate with
-citations $\rightarrow$ verify $\rightarrow$ assemble) that guarantees the requested exam shape by
-construction and verifies every question before a human sees it (Section~\ref{sec:pipeline}).
-\item A \textbf{privacy-by-design deployment} on an 8\,GB GPU: zero retention of uploaded content, an
-optional local-only mode, a visible processing location and model choice before each upload, and
-mandatory human review (Section~\ref{sec:privacy}).
-\item A \textbf{reproducible bilingual evaluation protocol}: 12 arms, 39 documents with 326 reference
-questions, a cross-family LLM judge, document-level statistics and a blind teacher rating
-(Section~\ref{sec:eval}).
-\item \textbf{Diagnostic findings} from building the harness: two defects that made earlier
-end-to-end measurements invalid, and how the harness now detects them (Section~\ref{sec:results}).
+\item[\textbf{RQ1}] How large is the quality gap between a quantised small model on a consumer GPU
+and a large server-hosted model when both use naive retrieval-augmented generation?
+\item[\textbf{RQ2}] Does spending inference-time compute on planning and verification close this
+gap, and at what cost in time, memory and energy per exam?
+\item[\textbf{RQ3}] At a fixed memory budget, is it better to use a larger model or to spend the
+same hardware on verification (7B with verification vs.\ 14B without)?
+\item[\textbf{RQ4}] Does the LLM judge agree with teachers well enough to support these conclusions?
 \end{itemize}
+
+We state our expectations before running the main experiments. \textbf{H1:} with naive generation,
+the server model outperforms every local model, mainly in grounding and distractor validity.
+\textbf{H2:} the 4-bit 7B model with blueprint and verification is non-inferior to the server model
+with naive generation. \textbf{H3:} at the 12\,GB tier, the verified 7B model outperforms the
+unverified 14B model. \textbf{H4:} verification helps small models more than large ones, i.e.\ the gain
+from verification shrinks as model size grows.
+
+Our contributions are: (i) a memory-budget analysis of which model configurations fit 8 and 12\,GB
+consumer GPUs for this task; (ii) a blueprint-and-verify generation pipeline designed for small
+local models; (iii) a bilingual evaluation that reports quality together with peak memory, time and
+energy per exam, with pre-specified non-inferiority tests against a server model; and (iv) the
+open-source system, configurations and dataset manifests to reproduce it.
 
 \section{Related Work}
 
-Surveys of educational AQG~\cite{kurdi2020systematic} note that most systems target English and are
-evaluated with reference-overlap metrics or small human studies that rarely check answer
-correctness. RAG~\cite{lewis2020rag} grounds generation in retrieved text; graph-based variants build
-an entity graph over the corpus to answer questions that need global context~\cite{edge2024graphrag}.
-Hybrid retrieval combines lexical BM25~\cite{robertson2009bm25} with dense embeddings, typically
-fused with reciprocal rank fusion (RRF)~\cite{cormack2009rrf}. For Hungarian, multilingual E5
-embeddings~\cite{wang2024me5} are a strong open choice, and MILQA~\cite{novak2023milqa} provides
-question--answer pairs over Hungarian Wikipedia; EduQG~\cite{hadifar2023eduqg} provides
-multiple-choice questions over English OpenStax textbooks. Using LLMs as judges scales evaluation
-and correlates reasonably with humans~\cite{zheng2023judge}, but judges prefer their own
-generations~\cite{panickssery2024selfpref}, which motivates judging with a model from a different
-family and validating the judge against teachers. Cognitive levels are commonly expressed with the
-revised Bloom taxonomy~\cite{anderson2001bloom}.
+\textbf{LLM-based question generation.} Surveys of educational question
+generation~\cite{kurdi2020systematic} and distractor generation~\cite{alhazmi2024distractor} note that
+evaluation often relies on reference-overlap metrics or small human studies that rarely verify answer
+correctness. Most recent LLM studies use large proprietary models. Fawzi et al.\ showed that small
+models can reach comparable quality after further pre-training and
+fine-tuning~\cite{fawzi2023small,fawzi2024towards}; Jaldi et al.\ compared small and large models for
+Bloom-aligned assessment design and the reliability of model-based judging~\cite{jaldi2026small}. We
+differ in using off-the-shelf quantised models without fine-tuning, generating from arbitrary teacher
+documents, and measuring hardware cost alongside quality.
 
-\section{System Architecture}
-\label{sec:arch}
+\textbf{Quantisation and consumer hardware.} Post-training quantisation reduces memory with limited
+accuracy loss: 4-bit weight-only formats are often close to 8-bit~\cite{li2024evalquant,kurtic2025bf16},
+and the llama.cpp K-quants used by consumer runtimes have been evaluated systematically on 8B
+models~\cite{kurt2026quant}. Energy measurements of 1--7B models on a consumer GPU show that
+architecture and quantisation, not only size, determine energy per token~\cite{zahl2026energy}. These
+studies use general benchmarks; we measure the cost of a complete, multi-call generation task.
 
-\Mimir{} is a set of FastAPI microservices behind an Nginx gateway, with a React/TypeScript frontend
-(Fig.~\ref{fig:arch}). \emph{Wellspring} extracts text from PDF, DOCX and plain-text files.
-\emph{RuneCarver} splits it into semantic chunks: sentences are embedded with
-multilingual-E5~\cite{wang2024me5}, and cuts are placed where the cosine distance between
-neighbouring sentences exceeds a percentile (or mean\,+\,$k\sigma$) threshold, within a target
-chunk size. \emph{Bifrost} embeds and indexes the chunks in Qdrant, retrieves context and runs the
-generation job, streaming from the university GenAI server or a local Ollama model. \emph{Heimdall}
-validates the output schema and scores quality. \emph{The Forge} orchestrates background work and
-keeps a metadata-only audit log. \emph{Skald} renders the reviewed exam as PDF or Moodle XML.
+\textbf{Test-time compute and verification.} Allocating more inference computation can be more
+effective than scaling parameters~\cite{snell2025scaling}; iterative self-feedback~\cite{madaan2023selfrefine}
+and verification questions~\cite{dhuliawala2024cove} improve factuality. Retrieval-augmented
+generation~\cite{lewis2020rag} grounds outputs in documents. Our verifier combines these ideas for
+exam questions: it checks each question against the passages it cites and asks the model to answer
+the question blind.
 
-\begin{figure}[t]
-\centering
-\begin{tikzpicture}[
-  box/.style={draw, rounded corners=2pt, align=center, font=\scriptsize, minimum height=8.5mm, inner sep=1.5pt, text width=15mm},
-  svc/.style={box, fill=blue!7},
-  ext/.style={box, fill=gray!12, dashed},
-  arr/.style={-{Stealth[length=1.5mm]}, semithick}]
-\node[box, fill=green!10] (ui) at (0,0) {Browser: consent, review};
-\node[svc] (well) at (2.1,0) {Wellspring\\text extraction};
-\node[svc] (rune) at (4.2,0) {RuneCarver\\chunking};
-\node[svc] (bif) at (6.3,0) {Bifrost\\RAG, jobs};
-\node[ext] (qd) at (4.2,1.3) {Qdrant\\(per job)};
-\node[ext] (llm) at (6.3,1.3) {LLM: Ollama or univ.\ server};
-\node[svc] (skald) at (0,-1.3) {Skald\\PDF, Moodle XML};
-\node[svc] (heim) at (6.3,-1.3) {Heimdall, Forge\\QA, audit log};
-\draw[arr] (ui) -- (well);
-\draw[arr] (well) -- (rune);
-\draw[arr] (rune) -- (bif);
-\draw[arr] (bif) -- (llm);
-\draw[arr] (bif) -- (qd);
-\draw[arr] (bif) -- (heim);
-\draw[arr] (ui) -- node[right, font=\tiny] {approved exam} (skald);
-\end{tikzpicture}
-\caption{\Mimir{} services behind the Nginx gateway. The draft exam lives in the browser during
-review; uploaded content lives only in service memory and a per-job vector collection that is
-cleared when the job ends.}
-\label{fig:arch}
-\end{figure}
+\textbf{Lower-resourced languages.} Hungarian is morphologically rich and has far less training data
+than English. Benchmarks such as HuLU~\cite{ligetinagy2024hulu} and question-answering corpora such as
+MILQA~\cite{novak2023milqa} exist, but we know of no evaluation of exam question generation in
+Hungarian, and small multilingual models are the most likely to degrade in such a language. We
+therefore evaluate every system on Hungarian and English documents and report the languages
+separately.
 
-\textbf{Hardware target.} The whole stack, including a 7B generator (Qwen2.5-7B~\cite{qwen25} in
-Ollama) and the E5 encoder, is sized for an 8\,GB consumer GPU; the embedding models run on CPU in
-float32. Generation jobs are asynchronous: \texttt{POST /generate} returns a job id, and
-\texttt{GET /status} reports the stage (retrieving, generating, validating), the progress derived
-from the length of the streamed output, and a remaining-time estimate blended from the observed pace
-and the median duration of recent jobs, kept separately for local and server models. The frontend
-turns this into a step list, a progress bar and a countdown, so a teacher waiting one or two minutes
-knows what is happening.
+\textbf{Evaluation with LLM judges.} LLM judges scale evaluation and correlate with
+humans~\cite{zheng2023judge} but prefer their own model family~\cite{panickssery2024selfpref}. We
+therefore use a judge from a different family than every generator and validate it against teachers.
 
-\textbf{Remaining-time estimate.} Progress $p$ starts from a floor per stage (retrieving 0.05,
-generating 0.15, validating 0.92). While the model streams, $p = 0.15 + 0.77\,\min(0.97,
-c/\hat{c})$, where $c$ is the number of characters received and $\hat{c}$ the median output length
-of recent jobs. With elapsed time $e$ and $\hat{T}$ the median duration of the last 20 successful jobs
-at the same location (local or server), the remaining time is
+\section{Method}
+
+\subsection{The memory budget of a consumer GPU}
+
+A single consumer GPU must hold the quantised weights $W_q$, the key--value (KV) cache for the
+context, and runtime buffers $R$:
 \begin{equation}
-\hat{r} = \max\!\left(3,\;
-\begin{cases}
-\hat{T}-e & p<0.25\\[2pt]
-\tfrac12\big(e\tfrac{1-p}{p} + \hat{T}-e\big) & p\ge 0.25,\ e<\hat{T}\\[2pt]
-e\tfrac{1-p}{p} & \text{otherwise}
-\end{cases}\right)\text{s}.
+M \approx W_q + 2\,L\,h_{kv}\,d_h\,b\,C + R \;\le\; M_{\mathrm{GPU}},
 \end{equation}
-Early in a job only history is informative; once enough output has streamed, the observed pace is
-averaged in, and a job that overruns its history is extrapolated from its own pace alone. The floor
-of 3\,s avoids announcing completion before it happens, and the browser counts $\hat{r}$ down between
-two-second polls. Hard-coded fallback results are excluded from the history so that failures do not
-make future estimates optimistic. The statistics contain only durations and lengths, never content.
+with $L$ layers, $h_{kv}$ key--value heads of dimension $d_h$, $b$ bytes per cache element and
+context length $C$. Grouped-query attention keeps the cache small for the Qwen2.5
+family~\cite{qwen25}: 56\,KiB per token for the 7B model versus 128\,KiB for Llama-3.1-8B~\cite{grattafiori2024llama3}.
+Table~\ref{tab:budget} applies this to the configurations we study, with $C=8{,}192$ tokens (enough
+for every prompt in our pipelines) and $R\approx0.6$\,GB. A 4-bit 7B model fits an 8\,GB card with
+room for the operating system; a 4-bit 14B model or an 8-bit 7B model needs a 12\,GB card. We run
+text embeddings and all other services on the CPU so that the GPU holds only the language model, and
+we record the measured peak memory for every exam.
 
-\section{Blueprint Pipeline}
-\label{sec:pipeline}
+\begin{table}[t]
+\centering
+\caption{Estimated GPU memory at an 8{,}192-token context (fp16 KV cache, $R\approx0.6$\,GB).
+Measured peaks are reported with the results.}
+\label{tab:budget}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Model & Quant. & Weights & KV/token & KV@8k & Total & Tier \\
+\midrule
+Qwen2.5-3B  & Q4\_K\_M & 1.9\,GB & 36\,KiB  & 0.3\,GB & 2.8\,GB  & 8\,GB \\
+Qwen2.5-7B  & Q4\_K\_M & 4.7\,GB & 56\,KiB  & 0.5\,GB & 5.8\,GB  & 8\,GB \\
+Llama-3.1-8B & Q4\_K\_M & 4.9\,GB & 128\,KiB & 1.1\,GB & 6.6\,GB  & 8\,GB \\
+Qwen2.5-7B  & Q8\_0    & 8.1\,GB & 56\,KiB  & 0.5\,GB & 9.2\,GB  & 12\,GB \\
+Qwen2.5-14B & Q4\_K\_M & 9.0\,GB & 192\,KiB & 1.6\,GB & 11.2\,GB & 12\,GB \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-The naive baseline (arm E0) retrieves the top three chunks for the request and asks for the whole
-exam in one call. The blueprint pipeline (Fig.~\ref{fig:pipelines}, Algorithm~\ref{alg:blueprint}) instead makes
-the exam structure explicit.
+\subsection{Baseline: naive retrieval-augmented generation}
+
+The document is split into semantic chunks (sentence embeddings with multilingual
+E5~\cite{wang2024me5}, cut where neighbouring sentences diverge). The three chunks most similar to the
+teacher's request are retrieved, and the model writes the whole exam in one call. This is the typical
+design of current tools and serves both as the baseline and, on the server, as the reference
+system.
+
+\subsection{Blueprint generation with verification}
+
+The blueprint pipeline (Fig.~\ref{fig:pipelines}) moves work from the model's parameters to explicit
+steps, each short enough for a small model and a small context.
+
+\emph{Planning.} One call proposes $n+3$ concepts that cover the document, each with the chunks that
+support it. Slots are filled greedily so that uncovered chunks are preferred, and each slot receives a
+question type and a Bloom level~\cite{anderson2001bloom} drawn from a difficulty-dependent mix. The
+requested number and type of questions is thus guaranteed by construction.
+
+\emph{Per-question generation.} For each slot, the concept's chunks are combined with the top-$k$
+retrieved passages, and the model writes one question that must cite the chunks supporting its key.
+
+\emph{Verification.} Rule checks run first (answer shape, references to ``the text'', valid
+citations). An LLM call then checks that the cited chunks support the key and refute every
+distractor, and a second call answers the question \emph{blind}---from the cited text, without the
+key---and must pick the keyed option. A failing question is regenerated once with the verifier's
+feedback, then replaced by a spare concept; as a last resort the best attempt is kept and flagged for
+the teacher. Near-duplicate questions are regenerated.
+
+For a ten-question exam, the naive baseline makes one call, planning alone makes 11, and full
+verification makes at least 31 (61 when every question needs its retry). The question is whether
+these extra, short calls on a small model are worth more than a larger model.
 
 \begin{figure*}[t]
 \centering
@@ -193,172 +223,57 @@ the exam structure explicit.
   hl/.style={box, fill=blue!8, draw=blue!60!black},
   arr/.style={-{Stealth[length=1.6mm]}, semithick},
   lab/.style={font=\footnotesize\bfseries, anchor=west}]
-\node[lab] at (-1.2, 1.35) {E0 -- naive RAG};
+\node[lab] at (-1.2, 1.35) {Naive RAG (baseline and server reference)};
 \node[box] (n1) at (0.4,0.45) {Document};
 \node[box, right=of n1] (n2) {Semantic chunks};
 \node[box, right=of n2] (n3) {Top-3 chunks for the request};
 \node[box, right=of n3, text width=30mm] (n4) {1 LLM call: whole exam};
 \node[box, right=of n4] (n5) {Exam};
 \foreach \a/\b in {n1/n2,n2/n3,n3/n4,n4/n5} \draw[arr] (\a) -- (\b);
-\node[lab] at (-1.2, -0.75) {E1--E3 -- blueprint};
+\node[lab] at (-1.2, -0.75) {Blueprint with verification (small local model)};
 \node[box] (b1) at (0.4,-1.7) {Document + chunks};
-\node[hl, right=of b1] (b2) {Concept graph (E3)};
-\node[box, right=of b2] (b3) {Planner: concept, type, Bloom level};
-\node[box, right=of b3] (b4) {Per-slot retrieval (dense / hybrid)};
+\node[box, right=of b1] (b3) {Planner: concept, type, Bloom level};
+\node[box, right=of b3] (b4) {Per-slot retrieval};
 \node[box, right=of b4] (b5) {1 question with citations};
-\node[hl, below=5mm of b5] (b6) {Verifier (E2, E3)};
+\node[hl, below=5mm of b5] (b6) {Verifier: grounding, blind answer};
 \node[box, right=of b5] (b7) {Assemble: dedupe, easy$\to$hard};
-\foreach \a/\b in {b1/b2,b2/b3,b3/b4,b4/b5,b5/b7} \draw[arr] (\a) -- (\b);
+\foreach \a/\b in {b1/b3,b3/b4,b4/b5,b5/b7} \draw[arr] (\a) -- (\b);
 \draw[arr] (b5.south) -- (b6.north);
 \draw[arr, blue!60!black] (b6.west) -- (b6.west -| b4.south) -- node[left, font=\scriptsize, align=right] {failure:\\feedback, retry} (b4.south);
 \begin{scope}[on background layer]
-\node[draw=gray!60, dashed, rounded corners, fit=(b4)(b5)(b6), inner sep=2.5mm, label={[font=\scriptsize, text=gray]above:for each slot}] {};
+\node[draw=gray!60, dashed, rounded corners, fit=(b4)(b5)(b6), inner sep=2.5mm, label={[font=\scriptsize, text=gray]above:for each question}] {};
 \end{scope}
 \end{tikzpicture}
-\caption{Naive RAG (top) versus the blueprint pipeline (bottom). Blue: components switched on and off
-by the experiment arms. The blueprint fixes the exam structure before any question is written and
-verifies each question against its own cited context.}
+\caption{The two generation strategies. The blueprint replaces one long call by many short calls
+(planning, one question at a time, verification), trading inference computation for model size.}
 \label{fig:pipelines}
 \end{figure*}
 
-\textbf{Planner.} One LLM call proposes $n+3$ concepts that cover the document, each with the chunk
-identifiers that support it and an importance score. Slots are filled greedily, preferring concepts
-that touch chunks not yet covered, so the exam spreads over the whole document; the three spare
-concepts serve as replacements. Each slot receives a question type and a Bloom
-level~\cite{anderson2001bloom} drawn by largest-remainder allocation from a difficulty-dependent mix
-(easy: remember/understand; medium: understand/apply/analyse; hard: apply/analyse/evaluate). The
-requested count and types are therefore met by construction, not by prompting.
+\subsection{Deployment configuration}
 
-\textbf{Per-slot retrieval and generation.} For each slot the concept's own chunks are combined with
-the top-$k$ search hits for the concept (dense E5 search, or BM25 and dense fused with
-RRF~\cite{cormack2009rrf} in the hybrid arm). The generator writes \emph{one} question per call and
-must cite the chunk identifiers that support the key.
+All local models run in the Ollama runtime with GGUF weights. Q4\_K\_M is a 4-bit ``K-quant'' that
+keeps selected tensors at higher precision and is the default for consumer use; Q8\_0 is an 8-bit
+format close to the unquantised model~\cite{kurt2026quant}. Only one model is resident on the GPU at a
+time and requests are processed one by one, so the generator never competes with another model for
+memory; the verifier uses the same model as the generator with a different prompt, which avoids
+swapping models between steps. The E5 embedding model, the vector index and all services run on the
+CPU. The context is set per request to 8{,}192 tokens; the longest prompt in either pipeline, a planning
+call over a 12{,}000-character overview of the document, stays within it.
 
-\textbf{Verifier chain.} Checks run cheapest first: shape (four options with one key for MCQ),
-meta-references (``according to the text\ldots''), valid citations, then an LLM check that the cited
-chunks support the key and refute every distractor, and finally a \emph{blind answer test}: the
-model answers the question from the cited text without seeing the key and must pick the keyed
-option. A failed check is returned to the generator as feedback. After the retry budget the slot
-switches to a spare concept; as a last resort the best attempt is kept and flagged
-\texttt{verified=false}, so the teacher sees which questions need attention. Near-duplicates
-(embedding similarity $>0.9$) are regenerated. Table~\ref{tab:verifier} lists the checks and
-the feedback each one returns.
+\section{Experimental Setup}
 
-\begin{table}[t]
-\centering
-\caption{Verifier checks, in execution order. Cheap rule checks run first so that malformed
-questions never cost an LLM call.}
-\label{tab:verifier}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.1cm}c>{\raggedright\arraybackslash}p{4.5cm}@{}}
-\toprule
-Check & LLM & Feedback to the generator on failure \\
-\midrule
-Shape & -- & MCQ: 4 options, 1 key; TF: 2 options; open: 1 key \\
-Meta-reference & -- & Rephrase as a standalone exam question \\
-Citations & -- & Cite at least one chunk from the given context \\
-Grounding and distractors & 1 & Key not supported by the cited chunks, or a distractor may be true; question ambiguous \\
-Blind answer & 1 & An independent solver chose another option; make the key unambiguous \\
-Duplicate & -- & Too similar to an accepted question \\
-\bottomrule
-\end{tabular}
-\end{table}
+\subsection{Data}
 
-\textbf{Concept graph (E3).} A GraphRAG-style~\cite{edge2024graphrag} variant extracts concepts,
-definitions and typed relations per 3{,}000-character batch. Graph concepts replace the planner
-call, sibling concepts (same parent, different fact) are offered as distractor ideas, and 1-hop
-neighbour chunks join the context.
-
-\textbf{Expected cost.} The pipeline trades LLM calls for control. Table~\ref{tab:cost} gives the
-number of calls per 10-question exam implied by the design: a lower bound when every question passes
-on the first attempt, and the count when every slot needs its one retry (a replacement concept adds
-up to three more calls per slot). The graph arm adds one extraction call per $\approx$3{,}000
-characters, i.e.\ about 3 calls for the median dataset document and 23 for the longest. The measured
-counts per arm are reported with the results.
+Table~\ref{tab:dataset} summarises the 39 documents. English documents come from OpenStax textbooks
+via EduQG~\cite{hadifar2023eduqg} and Hungarian ones from Wikipedia via MILQA~\cite{novak2023milqa},
+selected as short, medium and long and filtered to reference questions whose evidence sentence occurs
+in the document; three short Hungarian teaching texts were written by the authors. Reference questions
+are used for retrieval recall and similarity, not as generation targets. The dataset is frozen before
+the main runs.
 
 \begin{table}[t]
 \centering
-\caption{LLM calls per 10-question exam implied by the design (not measured).}
-\label{tab:cost}
-\footnotesize
-\begin{tabular}{@{}lccl@{}}
-\toprule
-Arm & All pass & One retry per slot & Composition \\
-\midrule
-E0 & 1 & 1 & whole exam \\
-E1 & 11 & 11 & plan + 1 per question \\
-E2f & 21 & 41 & plan + (write, ground) \\
-E2 & 31 & 61 & plan + (write, ground, blind) \\
-E3 & $30+g$ & $60+g$ & graph ($g$) replaces plan \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{algorithm}[t]
-\caption{Blueprint generation for one exam}
-\label{alg:blueprint}
-\small
-\begin{algorithmic}[1]
-\Require chunks $C$, count $n$, types $T$, difficulty $d$, retries $r$
-\State $K \gets \textsc{Plan}(C, n+3)$ \Comment{concepts with chunk ids}
-\State $S \gets \textsc{Allocate}(K, n, T, \textsc{BloomMix}(d))$
-\ForAll{slot $s \in S$}
-  \For{$a = 0 \ldots r$}
-    \State $X \gets \textsc{Retrieve}(s.\mathit{concept}) \cup s.\mathit{chunks}$
-    \State $q \gets \textsc{Generate}(s, X, \mathit{feedback})$
-    \State $\mathit{feedback} \gets \textsc{Verify}(q, X)$ \Comment{shape, cites, grounding, blind}
-    \If{$\mathit{feedback} = \emptyset \wedge \neg\textsc{Dup}(q)$} accept $q$; \textbf{break}
-    \EndIf
-  \EndFor
-  \If{not accepted} try a spare concept, else keep best $q$ as unverified \EndIf
-\EndFor
-\State \Return questions ordered easy $\rightarrow$ hard, with citations
-\end{algorithmic}
-\end{algorithm}
-
-\section{Privacy and Trust by Design}
-\label{sec:privacy}
-
-\Mimir{} is built for use under the GDPR~\cite{gdpr2016} and the transparency and human-oversight
-duties of the EU AI Act~\cite{aiact2024}.
-
-\textbf{Zero retention.} Uploaded bytes, extracted text, chunks, embeddings and prompts exist only in
-service memory for the duration of a job; Bifrost clears the vector store when a job ends or fails,
-and job results expire after 60 minutes. The audit log stores the job id, model, prompt version,
-quality score and SHA-256 fingerprints and lengths of the request and context---never content. Access
-logs keep shortened IP addresses and no query strings. Nothing from uploads is backed up.
-
-\textbf{Processing location.} A \texttt{LOCAL\_ONLY} switch disables every external model call.
-Otherwise the upload screen names where the document will be processed, a model selector groups
-models into ``university server'' and ``local'', and server models carry a ``data leaves this
-server'' badge. The upload requires an explicit confirmation that the user may process the
-document and that it contains no special-category or student data.
-
-\textbf{Human oversight and transparency.} Generated questions open in an editor (reorder, edit,
-change the key, regenerate one question, view the cited source passage) and cannot be exported
-without approval. The exported PDF states that the content was produced with an AI assistant and
-names the model. Saving a test is opt-in, with a 12-month maximum retention. A compliance pack
-(record of processing, retention schedule, DPIA screening, breach procedure) with a draft
-data-processing-agreement template and a legitimate-interest assessment is maintained with the code.
-
-\section{Evaluation Protocol}
-\label{sec:eval}
-
-The harness (\texttt{tests/eval}) runs in three steps: \emph{run} generates exams for every
-document$\times$seed of an arm, \emph{score} computes metrics and calls the judge, and \emph{analyze}
-/ \emph{report} produce tables, tests and figures. Each run stores its resolved configuration, git
-commit and dataset version; judge answers are cached, so re-scoring is free.
-
-\textbf{Dataset.} Table~\ref{tab:dataset} summarises the 39 documents. EduQG~\cite{hadifar2023eduqg}
-and MILQA~\cite{novak2023milqa} importers pick short, medium and long documents and keep only
-reference questions whose evidence sentences occur in the document; reference questions are used
-for gold similarity and retrieval recall, not as targets. The dataset is frozen as \texttt{eval-v1}
-before the full run.
-
-\begin{table}[t]
-\centering
-\caption{Evaluation dataset (39 documents, 326 reference questions).}
+\caption{Evaluation data: 39 documents, 326 reference questions.}
 \label{tab:dataset}
 \footnotesize
 \setlength{\tabcolsep}{3.5pt}
@@ -375,257 +290,267 @@ Total & & 39 & 15/12/12 & 7{,}919 & 326 \\
 \end{tabular}
 \end{table}
 
-\textbf{Arms.} Table~\ref{tab:arms} lists the experiment arms. All local arms use Qwen2.5-7B with
-temperature 0.2 and a context window of 8{,}192 tokens. The naive and chunking arms run three seeds
-per document; the more expensive blueprint arms run one seed; the server arms run on a fixed paired
-subset of 12 documents (6 HU, 6 EN).
+\subsection{Systems and hardware}
+
+Table~\ref{tab:systems} lists the compared systems. Local systems run in Ollama with GGUF weights on
+an 8\,GB (\tbd{RTX 3070 Ti}) or 12\,GB (\tbd{RTX 3060}) card, one request at a time, temperature 0.2,
+an 8{,}192-token context. The server reference runs a large \tbd{[model, size]} on the university's
+GPU server. Each system writes a ten-question multiple-choice exam per document, with three seeds for
+single-call systems and one for the multi-call ones.
 
 \begin{table}[t]
 \centering
-\caption{Experiment arms. Each changes one factor.}
-\label{tab:arms}
+\caption{Hardware and measurement protocol.}
+\label{tab:hw}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{6.4cm}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{6.0cm}@{}}
 \toprule
-Arm & Configuration \\
+Item & Setting \\
 \midrule
-E0 & Naive RAG: top-3 chunks, whole exam in one call (reference) \\
-E1 & Blueprint: planner + per-slot retrieval, one question per call \\
-E2 & E1 + verifier chain, 1 retry, blind answer test (``thorough'') \\
-E2f & E2 without the blind answer test (``fast'') \\
-E2h & E2 with hybrid BM25 + dense retrieval (RRF) \\
-E3 & E2 + concept graph \\
-E4 / E4b & E0 / E2 with a large model on the university server \\
-E5a & E0 with the legacy 512-token chunk encoder \\
-E5b / E5c & E0 with a mean+1.5$\sigma$ cut rule / fixed 800-char chunks \\
+8\,GB tier & \tbd{GPU, CPU, RAM, driver, OS} \\
+12\,GB tier & \tbd{GPU, CPU, RAM, driver, OS} \\
+Runtime & Ollama \tbd{version}, GGUF, context 8{,}192, one request at a time \\
+Warm-up & One unmeasured exam per system to load the model \\
+Memory & Peak used GPU memory, sampled every 0.5\,s; idle baseline recorded \\
+Energy & Board power at 2\,Hz, integrated per exam; idle power subtracted and reported \\
+Offloading & Runtime report checked: 100\,\% of layers on the GPU, else the run is marked \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Metrics.} \emph{Format compliance} is the share of exams with exactly the requested number
-and shape of questions; an unparsable output or Bifrost's hard-coded error exam counts as a failed
-exam, while infrastructure errors are excluded and retried. The judge scores, per question,
-\emph{grounding} (the source supports the key, with a quoted sentence), \emph{distractor validity}
-(each distractor is false and on topic) and four 1--5 rubric scores (correctness, clarity, distractor
-quality, Bloom fit); in a second call it answers the question \emph{blind} from the source, giving
-\emph{blind answerability}. Automatic metrics add the meta-reference rate, duplicate rate, section
-coverage, similarity to the reference questions, retrieval recall@$k$ and MRR against the gold
-evidence sentences, and cost (time, LLM calls, peak VRAM). The \emph{quality index} is the mean of
-the four measures every arm has: format compliance, grounding, blind answerability and distractor
-validity.
+\begin{table}[t]
+\centering
+\caption{Compared systems. L = local consumer GPU, S = university GPU server.}
+\label{tab:systems}
+\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}llll@{}}
+\toprule
+ID & Model (quantisation) & Pipeline & GPU \\
+\midrule
+L7-naive & Qwen2.5-7B (Q4\_K\_M) & naive RAG & 8\,GB \\
+L7-plan & Qwen2.5-7B (Q4\_K\_M) & blueprint, no verifier & 8\,GB \\
+L7-verify & Qwen2.5-7B (Q4\_K\_M) & blueprint + verifier & 8\,GB \\
+L3-verify & Qwen2.5-3B (Q4\_K\_M) & blueprint + verifier & 8\,GB \\
+L8-verify & Llama-3.1-8B (Q4\_K\_M) & blueprint + verifier & 8\,GB \\
+L7q8-verify & Qwen2.5-7B (Q8\_0) & blueprint + verifier & 12\,GB \\
+L14-naive & Qwen2.5-14B (Q4\_K\_M) & naive RAG & 12\,GB \\
+L14-verify & Qwen2.5-14B (Q4\_K\_M) & blueprint + verifier & 12\,GB \\
+S-naive & \tbd{server model} & naive RAG & server \\
+S-verify & \tbd{server model} & blueprint + verifier & server \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\textbf{Judge.} The judge is gpt-oss-120b~\cite{gptoss2025}, a different model family from the Qwen
-generators, to avoid self-preference~\cite{panickssery2024selfpref}; the harness warns when judge and
-generator share a family. It sees the chunks each question was written from (or the retrieved
-context for E0) and runs with low reasoning effort to keep a full run tractable.
+\subsection{Measures}
 
-\textbf{Statistics.} Documents are the unit of analysis: metrics are averaged over seeds and
-questions per document. We report means with 10{,}000-resample bootstrap 95\,\%
-CIs~\cite{efron1993}, paired Wilcoxon signed-rank tests~\cite{wilcoxon1945} over documents with Holm
-correction~\cite{holm1979} for the key steps (E1--E0, E2--E1, E3--E2, E4--E0), and the matched-pairs
-rank-biserial correlation~\cite{kerby2014} as effect size. Fewer than six paired documents can never
-reach $p<0.05$ with this test, so pilot runs are labelled as such by the report generator.
+\textbf{Quality.} Per exam, \emph{format compliance} is 1 if the exam has exactly the requested
+number and shape of questions (unparsable output and error placeholders count as failures). Per
+question, the judge decides \emph{grounding} (the source supports the key; it must quote the
+supporting sentence), \emph{distractor validity} (each distractor is false and on topic), and
+\emph{blind answerability} (answering from the source without the key picks the keyed option), and
+gives 1--5 scores for correctness, clarity, distractor quality and Bloom fit. The \emph{quality index}
+is the mean of the four binary-based rates. Automatic measures add duplicate rate, section coverage
+and retrieval recall against the reference evidence.
 
-\textbf{Teacher rating.} Blind rating sheets sample 15 questions per arm round-robin over
-documents, shuffled per rater, without arm labels, using the same rubric as the judge plus a
-``would use'' item. Agreement between teachers is measured with Krippendorff's
-$\alpha$~\cite{krippendorff2004}; judge--teacher agreement with Spearman's $\rho$ per criterion and
-Cohen's $\kappa$ for judge ``grounded'' versus teacher correctness $\geq 4$.
+\textbf{Cost.} For every exam we record wall-clock time, LLM calls and tokens, output throughput
+(tokens/s from the runtime), peak GPU memory, and GPU energy, integrated from board power sampled at
+2\,Hz with \texttt{nvidia-smi} as in~\cite{zahl2026energy}; idle power is measured before each run and
+reported separately.
+
+\textbf{Judge and teachers.} The judge is gpt-oss-120b~\cite{gptoss2025}, a different model family
+from all generators, run on the server only for evaluation. Three teachers rate a blind, shuffled
+sample of 15 questions per system on the same rubric; Krippendorff's $\alpha$~\cite{krippendorff2004}
+measures their agreement, and Spearman's $\rho$ and Cohen's $\kappa$ measure agreement between judge
+and teachers.
+
+\subsection{Analysis}
+
+Documents are the unit of analysis: measures are averaged over questions and seeds per document. We
+report means with 95\,\% bootstrap confidence intervals over documents~\cite{efron1993}.
+
+\emph{Differences} (RQ1, RQ3) are tested with paired Wilcoxon signed-rank tests~\cite{wilcoxon1945},
+Holm-corrected~\cite{holm1979}, with the rank-biserial correlation as effect size~\cite{kerby2014}.
+
+\emph{Non-inferiority} (RQ2): the local system is non-inferior to the server reference if the lower
+bound of the one-sided 95\,\% bootstrap interval of the paired difference in quality index lies above
+$-\delta$, with $\delta=0.05$ fixed in advance. Since each component is a rate over ten questions,
+$\delta$ corresponds to half a question per exam. We also report the \emph{gap closure}
+$(Q_{\text{L-verify}}-Q_{\text{L-naive}})/(Q_{\text{S-naive}}-Q_{\text{L-naive}})$.
+
+\emph{Measurement validity.} Two defects found while building the harness would have biased the
+comparison and are fixed: a hard-coded error exam returned when all model calls failed was counted as
+a result, and the chunker embedded only the first 512 tokens of each document---an estimated
+68--71\,\% of the average dataset document received no semantic signal. The error exam is now flagged
+and counted as a failure, and the chunker works in 512-token windows.
 
 \section{Results}
 \label{sec:results}
 
-\subsection{Diagnostic findings}
+\tbd{All numbers in this section are produced by the experiments in EXPERIMENT\_PLAN.md; red values
+are placeholders.}
 
-Building the harness produced two findings that change how earlier measurements must be read.
-
-\textbf{Fallback exams counted as results.} When every model call fails, Bifrost returns a
-hard-coded one-question exam asking the user to retry. An end-to-end test run on 3 May 2026 reported
-the generation step for all three pilot documents as successful in 4.0--9.0\,s, but each ``exam''
-was this fallback (one question instead of the requested four). Because the payload is valid JSON of
-the right schema, latency and schema checks alone could not reveal it. The fallback is now marked
-\texttt{is\_fallback}, the test client flags it, and the harness counts it as a failed exam.
-
-\textbf{Chunker truncation.} RuneCarver embedded the whole document in one encoder pass with a
-512-token limit; every sentence after roughly the first page received a zero vector, so cut points
-beyond that were driven by the size limit, not topic changes. At 4.0--4.5 characters per token the
-window covers about 2{,}000--2{,}300 characters, which means that on average an estimated
-68--71\,\% of each dataset document's text (median 71--74\,\%) was chunked without semantic signal,
-and 31--33 of the 39 documents lost more than half. The encoder now works in $\leq$512-token
-windows (identical output on short texts; covered by a unit test); arm E5a keeps the old encoder to
-measure the effect. Fig.~\ref{fig:lengths} shows how far the dataset documents extend past the
-old encoder window.
+\begin{table}[t]
+\centering
+\caption{Quality and cost per system (document means). Index with 95\,\% CI.}
+\label{tab:main}
+\footnotesize
+\setlength{\tabcolsep}{2.2pt}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+System & Index [CI] & Ground. & Blind & VRAM & min/exam & Wh/exam \\
+\midrule
+L7-naive    & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
+L7-plan     & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
+L7-verify   & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
+L3-verify   & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
+L8-verify   & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
+L7q8-verify & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
+L14-naive   & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
+L14-verify  & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
+S-naive     & \tbd{--} & \tbd{--} & \tbd{--} & --       & \tbd{--} & --       \\
+S-verify    & \tbd{--} & \tbd{--} & \tbd{--} & --       & \tbd{--} & --       \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{figure}[t]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-  width=\columnwidth, height=4.6cm,
-  ymode=log, xmin=0, xmax=40, ymin=1000, ymax=100000,
-  xlabel={Document (sorted by length)}, ylabel={Characters},
+  width=\columnwidth, height=4.4cm,
+  xmin=0, xmax=12, ymin=0, ymax=1,
+  xlabel={Peak GPU memory (GB)}, ylabel={Quality index},
   xlabel style={font=\footnotesize}, ylabel style={font=\footnotesize},
-  tick label style={font=\scriptsize},
-  legend style={font=\scriptsize, at={(0.02,0.98)}, anchor=north west, draw=none, fill=white, fill opacity=0.8, text opacity=1},
-  legend cell align=left]
-\addplot[only marks, mark=square*, mark size=1.8pt, black!70] coordinates {(1,1696) (2,1923) (3,2295)};
-\addplot[only marks, mark=*, mark size=1.8pt, blue!70!black] coordinates {(12,5843) (13,5963) (14,5972) (15,6000) (17,6558) (25,16661) (26,16844) (27,24937) (35,61045) (36,64623) (37,65246) (39,68063)};
-\addplot[only marks, mark=triangle*, mark size=2.1pt, orange!85!black] coordinates {(4,2394) (5,3785) (6,3808) (7,4294) (8,4404) (9,5226) (10,5728) (11,5801) (16,6455) (18,6945) (19,7834) (20,7919) (21,8225) (22,9543) (23,13511) (24,13677) (28,25228) (29,28749) (30,29046) (31,40112) (32,47992) (33,52013) (34,55924) (38,65288)};
-\addplot[fill=red!12, draw=none, forget plot] coordinates {(0,2048) (40,2048) (40,2304) (0,2304)} -- cycle;
-\legend{Own (HU), EduQG (EN), MILQA (HU)}
-\node[font=\scriptsize, text=red!70!black, anchor=south west] at (axis cs:17,2304) {512-token window ($\approx$2.0--2.3k chars)};
+  tick label style={font=\scriptsize}, grid=major, grid style={gray!20}]
+\addplot[dashed, gray] coordinates {(8,0) (8,1)};
+\addplot[dashed, gray] coordinates {(12,0) (12,1)};
+\node[font=\scriptsize, text=gray, anchor=north east] at (axis cs:8,0.98) {8\,GB};
+\node[font=\scriptsize, text=gray, anchor=north east] at (axis cs:12,0.98) {12\,GB};
+\node[font=\footnotesize, text=red, align=center] at (axis cs:5,0.5) {pending: one point per local system,\\server reference as a horizontal line};
 \end{axis}
 \end{tikzpicture}
-\caption{Length of the 39 dataset documents. With the legacy encoder, only text inside the shaded
-band received semantic embeddings; 35 documents are longer than 3{,}000 characters.}
-\label{fig:lengths}
+\caption{Quality versus peak GPU memory. \tbd{Filled after the main runs.}}
+\label{fig:pareto}
 \end{figure}
 
-\subsection{Naive pipeline latency}
+\textbf{RQ1: the gap.} Comparing L7-naive and L14-naive with S-naive shows how much quality a
+consumer GPU loses when the model is simply asked for the exam. We report the paired difference in
+quality index and its components, and whether the loss lies in grounding, distractors or format.
+\tbd{[Result.]}
 
-Table~\ref{tab:latency} shows a successful end-to-end run of the naive pipeline on a
-1{,}221-character Hungarian text (3 chunks, 1 question, university GenAI server). Model generation
-dominates: 88\,\% of the 15.4\,s total. This motivates the asynchronous job design and the progress
-and time-estimate display, and it bounds the cost of the blueprint pipeline, which makes roughly 3--5
-LLM calls per question instead of one call per exam.
+\textbf{RQ2: closing the gap.} L7-verify is compared with S-naive under the non-inferiority criterion,
+and the gap closure is reported with the time, memory and energy it costs (Table~\ref{tab:main},
+Fig.~\ref{fig:pareto}). L7-plan separates the effect of planning from that of verification.
+\tbd{[Result.]}
 
 \begin{table}[t]
 \centering
-\caption{Stage latency of one naive end-to-end run (27 March 2026).}
-\label{tab:latency}
+\caption{Where the time goes: share of calls and time per stage for L7-verify (median exam).}
+\label{tab:stages}
 \footnotesize
-\begin{tabular}{@{}llr@{}}
+\begin{tabular}{@{}lccc@{}}
 \toprule
-Service & Stage & Time (s) \\
+Stage & Calls & Time share & Output tokens \\
 \midrule
-Wellspring & Text extraction (1{,}221 chars) & 0.039 \\
-RuneCarver & Semantic chunking (3 chunks) & 1.303 \\
-Bifrost & Embedding + indexing & 0.559 \\
-Bifrost & LLM generation (1 question) & 13.478 \\
-Skald & PDF rendering & 0.009 \\
-\midrule
- & Total & 15.387 \\
+Planning & 1 & \tbd{--} & \tbd{--} \\
+Question writing & \tbd{--} & \tbd{--} & \tbd{--} \\
+Grounding check & \tbd{--} & \tbd{--} & \tbd{--} \\
+Blind answer & \tbd{--} & \tbd{--} & \tbd{--} \\
+Retries and replacements & \tbd{--} & \tbd{--} & \tbd{--} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Comparison of the arms}
+The cost of verification is broken down by stage in Table~\ref{tab:stages}; this shows which check
+could be dropped or made adaptive if time matters more than the last points of quality, and it
+converts the time per exam into a capacity estimate (exams per GPU-hour).
 
-Table~\ref{tab:main} is the main comparison. It is produced by the \texttt{report} command from
-the frozen \texttt{eval-v1} run; the values shown in red are placeholders until that run and the
-teacher rating are complete. We commit to reporting it in this form, including null results.
+\textbf{RQ3: parameters or verification.} At the 12\,GB tier, L14-naive and L7-verify (or
+L7q8-verify) use comparable memory. If verification is the better use of the hardware,
+L7-verify should outperform L14-naive; L14-verify shows whether the two add up, and L3-verify and
+L8-verify show how far down in size and across model families the effect holds.
+\tbd{[Result.]}
+
+\textbf{RQ4: judge validity.} Table~\ref{tab:agree} reports teacher agreement and judge--teacher
+agreement per criterion. \tbd{[Result.]} If judge--teacher agreement is low for a criterion, conclusions
+for that criterion are drawn from the teacher ratings only.
 
 \begin{table}[t]
 \centering
-\caption{Quality by arm (document means, 95\,\% bootstrap CI for the index). Red: pending full run.}
-\label{tab:main}
+\caption{Agreement between teachers ($\alpha$) and between judge and teachers ($\rho$, $\kappa$).}
+\label{tab:agree}
 \footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lcccccr@{}}
+\begin{tabular}{@{}lccc@{}}
 \toprule
-Arm & Format & Ground. & Blind & Distr. & Index [CI] & min/exam \\
+Criterion & Teachers $\alpha$ & Judge--teacher $\rho$ & $n$ \\
 \midrule
-E0  & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-E1  & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-E2  & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-E2f & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-E2h & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-E3  & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-E4  & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-E4b & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-E5a & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
+Correctness & \tbd{--} & \tbd{--} & \tbd{--} \\
+Clarity & \tbd{--} & \tbd{--} & \tbd{--} \\
+Distractor quality & \tbd{--} & \tbd{--} & \tbd{--} \\
+Bloom fit & \tbd{--} & \tbd{--} & \tbd{--} \\
+Would use (yes/no) & \tbd{--} & -- & \tbd{--} \\
+\midrule
+\multicolumn{2}{@{}l}{Grounded vs.\ teacher correctness $\ge 4$ ($\kappa$)} & \tbd{--} & \tbd{--} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The analysis answers four questions: whether explicit planning improves format compliance and
-coverage over naive RAG (E1 vs.\ E0); whether verification improves grounding and blind
-answerability, and at what cost in time and calls (E2 vs.\ E1, E2f); whether hybrid retrieval and
-the concept graph add to that (E2h, E3 vs.\ E2); and whether a 7B local model with the blueprint
-pipeline can match a large server model with the naive one (E2 vs.\ E4), which decides whether a
-privacy-preserving local deployment is viable. Results are also broken down by language, since the
-Hungarian and English documents differ in source and length and the differences are therefore
-descriptive.
+\textbf{Error analysis.} For each system we inspect the questions that failed grounding or the blind
+test and code the failure: key not in the source, two defensible options, distractor true, question
+answerable without the source, or wrong language or format. The distribution of these codes shows
+whether small models fail differently from the server model, which matters for how much a teacher's
+review has to catch. \tbd{[Result.]}
 
-\subsection{Implementation and quality assurance}
+\textbf{Language.} All analyses are repeated for the Hungarian and English subsets. Because the
+subsets differ in source and length, differences between languages are descriptive.
 
-The evaluation harness has 32 unit and end-to-end tests; the end-to-end tests run the full
-run$\to$score$\to$rate$\to$analyze$\to$report flow with fake services and a mock LLM, so the
-statistics and report tables are tested without a GPU. The job tracker behind the progress display
-and the model endpoints are covered by service tests with a fake clock. The frontend is typed
-against an OpenAPI contract and has 48 component and contract tests and 17 browser end-to-end
-tests, including an automated accessibility scan (axe) in each of the 12 colour-palette and
-light/dark combinations; a CI script checks WCAG~AA contrast for all of them, and a key-parity
-check keeps the Hungarian and English interface strings (669 keys) in sync. These checks keep the
-system usable while the evaluation changes the pipeline underneath it.
+\section{Discussion}
 
-\section{Discussion and Limitations}
+\textbf{What the answer means for schools.} If the non-inferiority test succeeds, a school can write
+exams of comparable quality on a workstation GPU, at the energy and waiting time reported in
+Table~\ref{tab:main}, without sending teaching material off site. If it fails, the size of the gap and
+where it lies (grounding, distractors, format) show whether a teacher's review can realistically
+absorb it, and whether a 12\,GB card is the minimum. A single consumer GPU processes one exam at a time;
+scaling to many concurrent users requires more GPUs or a server, which is an operational rather than
+a research question.
 
-\textbf{Measurement before modelling.} The two diagnostic findings are the most transferable lesson.
-Both defects produced plausible artefacts---a fast, schema-valid response and a normal-looking
-chunking---and would have biased any comparison built on them. Explicit failure states (a flagged
-fallback, per-stage status), before/after arms for every fix and a harness with end-to-end tests
-with fake services and a mock LLM made them visible.
+\textbf{Why structure should help small models.} Each step of the blueprint pipeline needs only a
+short context and a narrow skill---proposing concepts, writing one question, judging support for one
+key---while the naive prompt asks for planning, writing and self-consistency in one pass over a long
+output. The same property keeps the KV cache small, which is what makes the 8\,GB tier possible.
 
-\textbf{Judge validity.} An LLM judge is a proxy. We mitigate self-preference by using another model
-family, anchor grounding with a quoted evidence sentence, and validate the judge against blind
-teacher ratings; if agreement is low, the teacher ratings take precedence. Showing the judge only the
-question's own context makes it faster but can miss contradictions elsewhere in the document.
-
-\textbf{Scope.} The questions are multiple choice; true/false and open questions are supported by the
-system but not evaluated here. Documents are the unit of analysis, so 39 documents limit the power
-for small effects, and the server arms use a 12-document subset. Wikipedia and OpenStax text is
-cleaner than typical lecture notes. The Hungarian and English subsets come from different sources,
-so language effects are confounded with source. Finally, real authentication and per-user ownership
-checks are still in development; until then the service is operated for a closed user group.
-
-\textbf{Privacy versus quality.} The local-only mode is only useful if it is good enough. We
-therefore state the decision rule in advance: if the local blueprint arm (E2) is not significantly
-worse than the server model with the naive pipeline (E4) on the paired documents, and its
-grounding rate is at least as high, local processing becomes the recommended default and the
-university server an opt-in. If it is worse, the processing-location notice and the per-upload
-model choice let teachers make that trade-off per document rather than per deployment.
-
-\textbf{Depending on a shared model server.} The university GenAI server is convenient but not
-under our control: in September 2026 two of its large models (Qwen3.5-122B and nemotron) were
-withdrawn, which silently changed what the production fallback chain called and forced the server
-arms to be re-pointed. \Mimir{} therefore reads the list of server models from deployment
-configuration and publishes it through \texttt{GET /models} instead of hard-coding it, records the
-model that actually produced each exam in its metadata and PDF, and treats a model that is not
-listed as an explicit error. For research use, the model identifier stored with every run is what
-makes results from different months comparable at all.
-
-\textbf{Reproducibility.} Every run stores its resolved configuration, the git commit, the dataset
-version and the generator settings next to the results; judge answers are cached by a hash of model,
-prompt version, reasoning level and prompt, so re-scoring is deterministic and free. Runs resume
-after interruptions, and infrastructure failures are kept separate from model failures. The dataset
-consists of the authors' own texts and openly licensed material (CC~BY~4.0 OpenStax via EduQG,
-CC~BY-SA~4.0 Wikipedia via MILQA), so the manifests and reference questions can be released with
-the code.
-
-\textbf{Future work.} Three directions follow from the design. First, \emph{topic workspaces}: the
-frontend already implements persistent topics with several documents, isolated chat sessions and
-per-topic retrieval against a mock API; the backend requires hard tenant filtering in the vector
-store, per-topic encryption keys with crypto-shredding on deletion, and an inactivity purge, which
-changes the retention model from ``per job'' to ``per topic'' and needs an updated DPIA. Second,
-\emph{adaptive verification}: the verifier's pass rate per check can decide when the blind answer
-test is worth its extra call, turning the fast/thorough switch into a per-question decision. Third,
-\emph{classroom validation}: item statistics from real exams (difficulty and discrimination indices)
-would show whether questions judged grounded and well-formed also measure what teachers intend.
+\textbf{Threats to validity.} \emph{Internal:} the multi-call systems run one seed per document and the
+single-call systems three, so their seed variance is estimated differently; the server's load and the
+consumer GPU's thermal state can affect time and energy, which is why we warm up, subtract idle power
+and report medians. \emph{Construct:} the judge sees only each question's cited context and may miss
+contradictions elsewhere in the document, and the quality index weights its four components equally;
+the teacher rating and per-component results guard against both. Energy is measured at the GPU board
+and excludes the rest of the machine. \emph{External:} the evaluation covers multiple-choice questions
+from 39 documents; Wikipedia and textbook text is cleaner than typical lecture notes; Hungarian and
+English documents come from different sources; and the results hold for the models and runtime
+version tested, which change quickly. We do not fine-tune; fine-tuned small
+models~\cite{fawzi2024towards} may close the gap at lower inference cost and are complementary.
 
 \section{Conclusion}
 
-\Mimir{} shows that exam generation from teachers' own material can be structured, verifiable and
-privacy-preserving on commodity hardware: a blueprint guarantees the requested exam, a verifier
-chain checks every question against its cited source, uploaded content is not retained, and a
-teacher approves every question before use. Its evaluation protocol---bilingual data with reference
-questions, single-factor arms, a cross-family judge validated by teachers, and document-level
-statistics---already caught two defects that would have invalidated a naive comparison. The code,
-configurations and dataset manifests are released with the system so that the comparison can be
-reproduced and extended.
+We asked whether exam generation needs a data centre. We formulated the memory budget of the task on
+8 and 12\,GB consumer GPUs, designed a pipeline that trades model size for short, verifiable
+inference steps, and set up a bilingual evaluation that measures quality together with memory, time
+and energy per exam, with a pre-specified non-inferiority margin against a large server model.
+\tbd{[Summary of findings.]} The code, configurations and dataset manifests are released for
+reproduction.
+
+\section*{Ethical Considerations}
+Local processing keeps teaching material on the school's hardware; uploaded documents are deleted
+after each job, and no student data is processed. All generated questions require teacher review
+before use, and exported exams state that they were drafted with an AI system and by which model, in
+line with the transparency and human-oversight duties of the EU AI Act~\cite{aiact2024}. The
+evaluation documents are the authors' own or openly licensed (CC~BY~4.0, CC~BY-SA~4.0).
 
 \section*{Acknowledgment}
-[To be completed: funding, access to the university GenAI service, teacher raters.]
+[To be completed: funding, access to the university GPU server, teacher raters.]
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

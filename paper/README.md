@@ -1,48 +1,32 @@
 # Conference paper
 
-`main.tex` is a 6-page IEEE conference paper (IEEEtran, two columns) about Mimir: system, blueprint
-pipeline, privacy design and the TDK evaluation protocol. `main.pdf` is the compiled version.
+`main.tex`: "Do Teachers Need a Data Centre? Verifiable Exam Question Generation with Small Language
+Models on Consumer GPUs". An IEEE conference paper (IEEEtran, two columns, 6-page target) on whether
+an 8–12 GB consumer GPU can produce exam questions of server-model quality, and at what cost in
+memory, time and energy. `main.pdf` is the compiled draft.
+
+**Status:** method and experimental design are written; results are red `\tbd{}` placeholders.
+The experiments that produce them are in [`EXPERIMENT_PLAN.md`](EXPERIMENT_PLAN.md), which is
+waiting for approval.
 
 ## Build
 
 ```bash
-latexmk -pdf main.tex        # needs TeX Live with IEEEtran, pgfplots, algorithms/algorithmicx
+latexmk -pdf main.tex        # TeX Live with IEEEtran and pgfplots; or upload the folder to Overleaf
 ```
 
-On Windows, MiKTeX installs the missing packages on first build, or upload the folder to Overleaf.
-
-## Before submission
-
-1. **Run the full evaluation** (ROADMAP AI-19; commands in `tests/eval/README.md`), then fill
-   Table VI ("Quality by arm"). Every value there is a red `\tbd{--}` placeholder. Take the values from
-   `tests/eval/report/<name>/eredmenyek_tabla.csv`:
-
-   | Table VI column | CSV column |
-   | --- | --- |
-   | Format | `format_compliant` |
-   | Ground. | `grounding_rate` |
-   | Blind | `blind_answerability` |
-   | Distr. | `distractor_validity` |
-   | Index [CI] | `minosegi_index` [`ci_lo`, `ci_hi`] |
-   | min/exam | `ido_median_s` / 60 |
-
-   Then add one or two sentences of findings under Table VI, with p-values and effect sizes from
-   `szignifikancia.csv`. If the teacher rating is done, cite the agreement numbers from
-   `tabla3_egyetertes`. Remove the `\tbd` sentence ("values shown in red are placeholders").
-2. **Fill the placeholders**: authors, affiliation and e-mails in `\author`, and the acknowledgment.
-3. Check the venue's page limit and template; IEEEtran conference format is used here.
-
-## Where the numbers come from
-
-Only numbers that exist in the repository are used; nothing is estimated from model outputs.
+## Where each number comes from
 
 | Paper | Source |
 | --- | --- |
-| Table III (dataset), Fig. 3 | `tests/eval/dataset/manifest*.yaml` (39 documents, 326 reference questions) |
-| 68–71 % of text past the encoder window | Computed from document lengths at 4.0–4.5 characters per token (512 tokens ≈ 2,048–2,304 characters); an estimate, as stated in the text |
-| Fallback exams counted as results | `tests/Test_Result_20260503_130508/` (all three `*_Generated.json` are the hard-coded error exam) |
-| Table V (latency) | `tests/Test_Result_20260327_125252/e2e_report_20260327_125252.md` |
-| Table II (LLM calls per exam) | Derived from the pipeline design (`tests/eval/mimir_eval/blueprint/pipeline.py`), not measured |
-| Remaining-time formula | `services/bifrost/jobs.py` |
-| Arms, metrics, statistics | `tests/eval/configs/*.yaml`, `tests/eval/mimir_eval/` |
-| Test counts (Section VII-D) | `tests/eval/tests_unit` (32), `frontend` Vitest (48) and Playwright (17), as of 24 Sep 2026 |
+| Table I (memory budget) | Computed from the models' published architectures (layers, key–value heads, head size) and the GGUF file sizes; runtime overhead assumed 0.6 GB. Estimates, as the caption says; measured peaks come from the runs |
+| Table II (dataset) | `tests/eval/dataset/manifest*.yaml` (39 documents, 326 reference questions) |
+| 68–71 % of text past the 512-token window | Document lengths at 4.0–4.5 characters per token; an estimate |
+| Tables III–VII, Fig. 2, all red values | Runs R0–R6 in `EXPERIMENT_PLAN.md`, via `python -m mimir_eval report` |
+
+## Before submission
+
+1. Run the plan, then fill the red values (or `\input` the tables that `report` will write, see plan item I6).
+2. Fill in authors, affiliation, e-mails, hardware (Table III), the server model name and the acknowledgment.
+3. Check the venue's template and page limit.
+4. Check each reference against the published version (several are 2026 arXiv preprints).
