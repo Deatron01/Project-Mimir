@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Fehér cápa",
+    "nehezseg": "hard",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Fehér cápa"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Melyik a legveszélyesebb cápafaj, ami emberekre is támad?",
+      "helyes_valasz": "A fehér cápa",
+      "evidence": [
+        "A fehér cápa a legnagyobb, ragadozó életmódot folytató porcos hal, és a Földön őt tekintik az emberre nézve a legveszélyesebb cápafajnak."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik a legveszedelmesebb cápafaj?",
+      "helyes_valasz": "a fehér cápa",
+      "evidence": [
+        "A világon a legtöbb embert ért cápatámadásért a fehér cápa felel – 2012-ben 272 hivatalos eset –, de alig fordul elő halálos kimenetelű."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki rendezte A cápa című filmet?",
+      "helyes_valasz": "Steven Spielberg",
+      "evidence": [
+        "Peter Benchley Cápa (Jaws (wd)) című regényében, amelyből Steven Spielberg rendezésében forgatott híres film, a A cápa (Jaws) készült, ezt az állatot „vérszomjas emberevőként” mutatták be."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mekkorára nő egy tigriscápa?",
+      "helyes_valasz": "A tigriscápa bebizonyított adatok szerint elérheti az 5,5 méteres hosszúságot és az 1524 kilogrammos testtömeget. Azonban megerősítetlen beszámolókból 7,4 méteres és 3110 kilogrammos tigriscápa is létezik.",
+      "evidence": [
+        "A tigriscápa bebizonyított adatok szerint elérheti az 5,5 méteres hosszúságot és az 1524 kilogrammos testtömeget. Azonban megerősítetlen beszámolókból 7,4 méteres és 3110 kilogrammos tigriscápa is létezik."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik cápafaj támadja meg leggyakrabban az embert?",
+      "helyes_valasz": "a fehér cápa",
+      "evidence": [
+        "Az ember azonban nem jellemző táplálékforrása, bár ennek némileg ellentmond, hogy a nem provokált cápatámadások többségéért a fehér cápa a felelős, és az embert ért cápatámadásokban is a legtöbbször ez a cápafaj az érintett."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mennyi húst képes megenni a fehér cápa egyszerre?",
+      "helyes_valasz": "akár több száz kilogrammot",
+      "evidence": [
+        "Egy alkalommal akár több száz kilogramm táplálékot is képes elfogyasztani."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "John McCoskernek mi a foglalkozása?",
+      "helyes_valasz": "tengerbiológus",
+      "evidence": [
+        "Az 1980-as években, a Kaliforniai Tudományos Akadémia (angolul California Academy of Sciences (wd)) tengerbiológus igazgatója, John McCosker szerint, az egyedül fürdőzőket cápatámadás esetén senki sem tudja kimenteni, emiatt nagyobb a valószínűsége a halálnak, míg a csoportban fürdőzőket a többiek kihúzhatják a partra."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mi lehet az oka annak, hogy a fehér cápa támadása a legtöbb esetben nem halálos az emberre nézve?",
+      "helyes_valasz": "a fehér cápa nem kedveli az ember izét",
+      "evidence": [
+        "Eme adatoktól eltérően vannak olyan kutatók, akik úgy vélik, hogy a kevés haláleset nem azért történik, mert a fehér cápa nem kedveli az ember izét, hanem a próbakóstolás után az áldozat valamilyen módon megszabadul – vagy kiúszik ő maga, vagy valaki más menti ki. Az 1980-as években, a Kaliforniai Tudományos Akadémia (angolul California Academy of Sciences (wd)) tengerbiológus igazgatója, John McCosker szerint, az egyedül fürdőzőket cápatámadás esetén senki sem tudja kimenteni, emiatt nagyobb a valószínűsége a halálnak, míg a csoportban fürdőzőket a többiek kihúzhatják a partra. McCosker és Timothy C. Tricas – utóbbi a Hawaii Egyetem (University of Hawaii (wd)) egyik írója és professzora – általános mintát dolgozott ki a fehér cápa támadásáról; ebben a fehér cápa rátámad áldozatára, utána pedig kivárja, hogy az elvérezzen vagy legalább eléggé legyengüljön. Az embernek az a képessége, hogy ilyenkor pánikszerűen el akarja hagyni a vizet, esetleg a társai segítenek is ebben, zavart okoz a fehér cápának, hiszen második támadásra vagy az áldozat elfogyasztásra már így nem tud sort keríteni."
+      ],
+      "type": "open",
+      "kerdestipus": "multispan"
+    },
+    {
+      "id": null,
+      "kerdes": "Az 1990 és 2011 között történt 139 provokálatlan fehércápa-támadás hány százaléka volt halálos kimenetelű?",
+      "helyes_valasz": "1990 és 2011 között 139 provokálatlan fehér cápatámadás történt, ezekből 29 volt halálos kimenetelű.",
+      "evidence": [
+        "1990 és 2011 között 139 provokálatlan fehér cápatámadás történt, ezekből 29 volt halálos kimenetelű."
+      ],
+      "type": "open",
+      "kerdestipus": "Aritmetika:Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Hogyan lehet megkülönböztetni egymástól a tigriscápát és a fehér cápát?",
+      "helyes_valasz": "A tigriscápa általában kisebb méretű, könnyebb és karcsúbb testfelépítésű, mint a szóban forgó porcos hal.",
+      "evidence": [
+        "A tigriscápa általában kisebb méretű, könnyebb és karcsúbb testfelépítésű, mint a szóban forgó porcos hal."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

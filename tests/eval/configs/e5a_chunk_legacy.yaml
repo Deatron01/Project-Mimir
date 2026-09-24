@@ -1,0 +1,9 @@
+# E5a - the OLD RuneCarver sentence encoder (single pass, truncated at 512 tokens), to show the
+# effect of the fix on long documents. Compare with E0 (same everything, fixed encoder).
+name: E5a
+description: "Naive RAG, legacy 512-token chunker encoder"
+seeds: [1, 2, 3]
+exam: {n_questions: 10, types: [mcq]}
+pipeline: {kind: naive_direct, retrieval_k: 3}
+chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000, encoder: legacy}
+generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 16384}

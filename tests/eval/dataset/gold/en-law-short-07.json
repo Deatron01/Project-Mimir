@@ -1,0 +1,62 @@
+{
+  "teszt_metaadatok": {
+    "tema": "business law i essentials ch. 1, 1.3 Important Business Laws and Regulations",
+    "nehezseg": "medium",
+    "nyelv": "en",
+    "forras": "EduQG / OpenStax business_law_i_essentials chapter 1"
+  },
+  "kerdesek": [
+    {
+      "id": "fs-idm374558080",
+      "kerdes": "The legislature of the state of Wyoming enacts a new statute that sets standards for the liability of businesses selling defective products. What is this statute apply in?",
+      "helyes_valasz": "Wyoming only.",
+      "disztraktorok": [
+        "only Wyoming and its bordering states.",
+        "all states.",
+        "all states but only to matters not covered by other states’ laws."
+      ],
+      "evidence": [
+        "Product liability involves a legal action against a company by a consumer for a defective product that caused loss or harm to the customer."
+      ]
+    },
+    {
+      "id": "fs-idm273602176",
+      "kerdes": "Some of the rights in the Constitution’s Bill of Rights extends to Corporations.",
+      "helyes_valasz": "True.",
+      "disztraktorok": [
+        "False."
+      ],
+      "evidence": [
+        "Additionally, the Constitution’ s Bill of Rights extends some protections to business entities that are also constitutionally guaranteed to individuals"
+      ]
+    },
+    {
+      "id": "fs-idm271886464",
+      "kerdes": "Forms of Alternative Dispute Resolution (“ADR”) include all of the following except which one?",
+      "helyes_valasz": "Litigation.",
+      "disztraktorok": [
+        "Mediation.",
+        "Settlement.",
+        "Arbitration."
+      ],
+      "evidence": [
+        "Many states now require companies to resolve legal disputes using ADR before the initiation of any lawsuit to encourage speedy resolution, cost and time containment, and reduced judicial dockets.",
+        "Traditional litigation remains an option in most cases if other efforts fail or are refused."
+      ]
+    },
+    {
+      "id": "fs-idm275523344",
+      "kerdes": "Which of the following is NOT a consequence of being convicted of a crime?",
+      "helyes_valasz": "Damages.",
+      "disztraktorok": [
+        "Prison.",
+        "Fines.",
+        "Community service."
+      ],
+      "evidence": [
+        "Criminal consequences may include penalties, such as prison, fines and / or community service.",
+        "In addition to criminal liability, civil law remedies are usually available, e. g., the award of damages and injunctions, which may include penalties."
+      ]
+    }
+  ]
+}

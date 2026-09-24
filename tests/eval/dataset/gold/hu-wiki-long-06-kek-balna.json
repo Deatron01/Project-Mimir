@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Kék bálna",
+    "nehezseg": "medium",
+    "nyelv": "hu",
+    "forras": "Hungarian Wikipedia (full article, fetched 2026-09-23): Kék bálna; gold questions from MILQA"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Milyen cet a kék bálna?",
+      "helyes_valasz": "sziláscet",
+      "evidence": [
+        "Mint a legtöbb sziláscet esetében, a kék bálna legfőbb táplálékát a kisméretű rákok adják,"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Létezik vagy létezett-e valaha 30 méternél hosszabb állat?",
+      "helyes_valasz": "A kék bálna a 30 méteres hosszával és a 173 tonnás testtömegével a legnagyobb ismert állat, ami valaha is létezett.",
+      "evidence": [
+        "A kék bálna a 30 méteres hosszával és a 173 tonnás testtömegével a legnagyobb ismert állat, ami valaha is létezett."
+      ],
+      "type": "open",
+      "kerdestipus": "Nem"
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen mértani alakzathoz hasonlít a kék bálna teste?",
+      "helyes_valasz": "kúphoz",
+      "evidence": [
+        "Ennek a hatalmas állatnak a teste hosszú és kúpszerű."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor veszélyesek az óriás hajók a kék bálnákra?",
+      "helyes_valasz": "amikor összeütköznek vele",
+      "evidence": [
+        "A kék bálnát az óriás hajók is megsebezhetik, vagy akár meg is ölhetik, amikor összeütköznek vele."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik állat jelent veszélyt a kék bálnára?",
+      "helyes_valasz": "a kardszárnyú delfin",
+      "evidence": [
+        "Hatalmas mérete, ereje és sebessége miatt a kék bálnának nincs, vagy alig van természetes ellensége. A National Geographic Magazine-ban ismertetnek egy esetet, amikor Alsó-Kaliforniánál (Baja California) egy kék bálnára kardszárnyú delfinek támadtak. Bár az orkáknak nem sikerült azonnal megölniük áldozatukat, a kék bálnán olyan mély sebeket ejtettek, amelyek aztán a bálna halálát okozták. A kék bálnák egynegyede visel kardszárnyú delfinek által okozott sebnyomokat."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz:multispan"
+    },
+    {
+      "id": null,
+      "kerdes": "Mivel táplálkozik az óriásbálna?",
+      "helyes_valasz": "legfőbb táplálékát a kisméretű rákok adják",
+      "evidence": [
+        "A kék bálna vagy óriás bálna (Balaenoptera musculus) az emlősök (Mammalia) osztályának párosujjú patások (Artiodactyla) rendjébe, ezen belül a barázdásbálna-félék (Balaenopteridae) családjába tartozó faj.\nA kék bálna a 30 méteres hosszával és a 173 tonnás testtömegével a legnagyobb ismert állat, ami valaha is létezett.\nTeste hosszú és karcsú, többféle kékesszürke árnyalattal. Testének felső része sötétebb, alsó része pedig világosabb. A kék bálnának jelenleg három alfaját különböztetik meg: a B. m. musculus-t az Atlanti- és Csendes-óceán északi részén; a B. m. intermediát a Déli-óceánban és a törpe kék bálnát (B. m. brevicauda) az Indiai-óceánban és a Csendes-óceán déli részén. A három valószínű alfaj mellett lehet, hogy az Indiai-óceán egyik kék bálna állománya egy negyedik alfajt alkot, melynek neve B. m. indica. Mint a legtöbb sziláscet esetében, a kék bálna legfőbb táplálékát a kisméretű rákok adják, melyeknek gyűjtőnevük krill, más néven világítórákok."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz:multispan"
+    },
+    {
+      "id": null,
+      "kerdes": "Mivel táplálkozik a kék bálna?",
+      "helyes_valasz": "krillel",
+      "evidence": [
+        "A vizek felmelegedése és a sótartalom csökkenése jelentősen megváltoztathatja a táplálékul szolgáló krill előfordulási helyét és állomány sűrűségét."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen a kék bálna torka?",
+      "helyes_valasz": "igen szűk",
+      "evidence": [
+        "Torka igen szűk, ezért csak kisebb állatokat tud lenyelni."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mi található a bálna testének alsó részén?",
+      "helyes_valasz": "narancsszín-barna vagy sárga foltozás",
+      "evidence": [
+        "mivel a bálna testének alsó részén narancsszín-barna vagy sárga foltozás van; ez a kovamoszatoknak köszönhető."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz:multispan"
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen tárgyak veszélyeztetik a kék bálákat?",
+      "helyes_valasz": "az óriás hajók",
+      "evidence": [
+        "A kék bálnát az óriás hajók is megsebezhetik, vagy akár meg is ölhetik, amikor összeütköznek vele. Az állat a halászhálókba is begabalyodhat. Az egyre erősebb óceáni hangzavar, amelyhez a szonárok is hozzájárulnak, elfedik a bálnák közti társalgó hangokat. Ha a szonár aktiválva van, a kék bálnák abbahagyják a táplálkozásra hívó „D” hangsorozatot, bár a szonár frekvenciája (1–8 kHz) messze esik a bálnák által kiadott hangok frekvenciájától (25–100 Hz)."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz:multispan"
+    }
+  ]
+}

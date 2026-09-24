@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Törökország",
+    "nehezseg": "easy",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Törökország"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Milyen gyökerei vannak a szeldzsuk építészetnek?",
+      "helyes_valasz": "perzsa, görög, római, örmény és bizánci",
+      "evidence": [
+        "A török építészet formavilágának alapjai a nép ősi nomád életmódjára vezethetők vissza. Ezeket a motívumokat is felhasználta a perzsa, görög, római, örmény és bizánci hatásokat mutató szeldzsuk építészet, mely főképpen medreszéiről (iskola), karavánszerájairól és türbéiről nevezetes."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Kiknek a nevéhez fűződik a török \"második nacionalista építészet\"?",
+      "helyes_valasz": "Sedad Hakki Eldem",
+      "evidence": [
+        "Később számos irányzat jött létre, mint például a Sedad Hakki Eldem, illetve a német Paul Bonatz nevével fémjelzett „második nacionalista építészet”, vagy a hatvanas években népszerű újregionalizmus."
+      ],
+      "type": "open",
+      "kerdestipus": "multispan"
+    },
+    {
+      "id": null,
+      "kerdes": "Törökországban van felvételi vizsga az associate's degree végzettséget kínáló oktatási intézményekbe?",
+      "helyes_valasz": "A törökországi egyetemek többféle képzést ajánlanak: kétéves felsőfokú képzettséget adó tanfolyamokat (associate's degree), melyre szakközépiskolai bizonyítvánnyal rendelkezők jelentkezhetnek felvételi vizsga nélkül; 4 éves alapképzést (bachelor's degree), 2 éves mesterképzést (master's degree), 4 éves doktori képzést és egyéb posztgraduális képzéseket.",
+      "evidence": [
+        "A törökországi egyetemek többféle képzést ajánlanak: kétéves felsőfokú képzettséget adó tanfolyamokat (associate's degree), melyre szakközépiskolai bizonyítvánnyal rendelkezők jelentkezhetnek felvételi vizsga nélkül; 4 éves alapképzést (bachelor's degree), 2 éves mesterképzést (master's degree), 4 éves doktori képzést és egyéb posztgraduális képzéseket."
+      ],
+      "type": "open",
+      "kerdestipus": "Nem"
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen típusú képzéseket kínálnak a török egyetemek?",
+      "helyes_valasz": "A törökországi egyetemek többféle képzést ajánlanak: kétéves felsőfokú képzettséget adó tanfolyamokat (associate's degree), melyre szakközépiskolai bizonyítvánnyal rendelkezők jelentkezhetnek felvételi vizsga nélkül; 4 éves alapképzést (bachelor's degree), 2 éves mesterképzést (master's degree), 4 éves doktori képzést és egyéb posztgraduális képzéseket.",
+      "evidence": [
+        "A törökországi egyetemek többféle képzést ajánlanak: kétéves felsőfokú képzettséget adó tanfolyamokat (associate's degree), melyre szakközépiskolai bizonyítvánnyal rendelkezők jelentkezhetnek felvételi vizsga nélkül; 4 éves alapképzést (bachelor's degree), 2 éves mesterképzést (master's degree), 4 éves doktori képzést és egyéb posztgraduális képzéseket."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Törökországban kik jelentkezhetnek az associate's degree végzettséget biztosító intézményekbe?",
+      "helyes_valasz": "szakközépiskolai bizonyítvánnyal rendelkezők",
+      "evidence": [
+        "A törökországi egyetemek többféle képzést ajánlanak: kétéves felsőfokú képzettséget adó tanfolyamokat (associate's degree), melyre szakközépiskolai bizonyítvánnyal rendelkezők jelentkezhetnek felvételi vizsga nélkül; 4 éves alapképzést (bachelor's degree), 2 éves mesterképzést (master's degree), 4 éves doktori képzést és egyéb posztgraduális képzéseket."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyek a legszebb oszmán mecsetek?",
+      "helyes_valasz": "az Edirnei Szelim-mecset",
+      "evidence": [
+        "A legjellemzőbb oszmán épületek az impozáns mecsetek, mint például az Edirnei Szelim-mecset, vagy az isztambuli Kék mecset, illetve a pompázatos szultáni és főúri paloták."
+      ],
+      "type": "open",
+      "kerdestipus": "multispan"
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik török városban van a híres Kék mecset?",
+      "helyes_valasz": "Isztambulban",
+      "evidence": [
+        "A legjellemzőbb oszmán épületek az impozáns mecsetek, mint például az Edirnei Szelim-mecset, vagy az isztambuli Kék mecset, illetve a pompázatos szultáni és főúri paloták."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen építészeti stílus volt jellemző Törökországban a XX. század elején?",
+      "helyes_valasz": "a monumentális nacionalista építészet",
+      "evidence": [
+        "A 20. század elején a nemzeti érzelmek feltámadása hozta létre a monumentális nacionalista építészetet, melynek gyökerei a klasszikus oszmán építészetig nyúlnak vissza."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen stílusban építkeztek Ankarában az 1930-as években?",
+      "helyes_valasz": "funkcionalista, eklektikusságot mellőző stílusban",
+      "evidence": [
+        "Az 1930-as évekre a funkcionalista, eklektikusságot mellőző építészet volt a jellemző, ahogy azt Ankara épületei is jól mutatják."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik városban van a Közel-Keleti Műszaki Egyetem?",
+      "helyes_valasz": "Ankara",
+      "evidence": [
+        "2016-ban az ország tíz legjobb egyeteme közé a következők tartoztak:\nKözel-keleti Műszaki Egyetem (Orta Doğu Teknik Üniversitesi; ODTÜ; Ankara)\nSabancı Egyetem (Sabancı Üniversitesi, Isztambul)\nBilkent Egyetem (İhsan Doğramacı Bilkent Üniversitesi, Ankara)\nBoğaziçi Egyetem (Boğaziçi Üniversitesi, Isztambul)\nIsztambuli Műszaki Egyetem (İstanbul Teknik Üniversitesi, Isztambul)\nİzmiri Műszaki Egyetem (İzmir Yüksek Teknoloji Enstitüsü, İzmir)\nÖzyeğin Egyetem (Özyeğin Üniversitesi, Isztambul)\nKoç Egyetem (Koç Üniversitesi, Isztambul)\nTOBB Gazdasági és Műszaki Egyetem )TOBB Ekonomi Ve Teknoloji Üniversitesi, Ankara)"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+Link to Learning
+
+This  video  illustrates the stages of the lysogenic life cycle of a bacteriophage and the transition to a lytic phase.
+
+Check Your Understanding
+
+Is a latent phage undetectable in a bacterium?
+
+Transduction
+
+Transduction occurs when a bacteriophage transfers bacterial DNA from one bacterium to another during sequential infections. There are two types of transduction: generalized and specialized transduction. During the lytic cycle of viral replication, the virus hijacks the host cell, degrades the host chromosome, and makes more viral genomes. As it assembles and packages DNA into the phage head, packaging occasionally makes a mistake. Instead of packaging viral DNA, it takes a random piece of host DNA and inserts it into the capsid. Once released, this virion will then inject the former host’s DNA into a newly infected host. The asexual transfer of genetic information can allow for DNA recombination to occur, thus providing the new host with new genes (e.g., an antibiotic-resistance gene, or a sugar-metabolizing gene).  Generalized transduction  occurs when a random piece of bacterial chromosomal DNA is transferred by the phage during the lytic cycle.  Specialized transduction  occurs at the end of the lysogenic cycle, when the prophage is excised and the bacteriophage enters the lytic cycle. Since the phage is integrated into the host genome, the prophage can replicate as part of the host. However, some conditions (e.g., ultraviolet light exposure or chemical exposure) stimulate the prophage to undergo induction, causing the phage to excise from the genome, enter the lytic cycle, and produce new phages to leave host cells. During the process of excision from the host chromosome, a phage may occasionally remove some bacterial DNA near the site of viral integration. The phage and host DNA from one end or both ends of the integration site are packaged within the capsid and are transferred to the new, infected host. Since the DNA transferred by the phage is not randomly packaged but is instead a specific piece of DNA near the site of integration, this mechanism of gene transfer is referred to as specialized transduction (see  Figure 6.9 ). The DNA can then recombine with host chromosome, giving the latter new characteristics. Transduction seems to play an important role in the evolutionary process of bacteria, giving them a mechanism for asexual exchange of genetic information.
+
+Check Your Understanding
+
+Which phage life cycle is associated with which forms of transduction?
+
+Life Cycle of Viruses with Animal Hosts
+
+Lytic animal viruses  follow similar infection stages to bacteriophages: attachment, penetration, biosynthesis, maturation, and release (see  Figure 6.10 ). However, the mechanisms of penetration, nucleic-acid biosynthesis, and release differ between bacterial and animal viruses. After binding to host receptors, animal viruses enter through  endocytosis  (engulfment by the host cell) or through  membrane fusion  (viral envelope with the host cell membrane). Many viruses are host specific, meaning they only infect a certain type of host; and most viruses only infect certain types of cells within tissues. This specificity is called a  tissue tropism . Examples of this are demonstrated by the  poliovirus , which exhibits tropism for the tissues of the brain and spinal cord, or the  influenza virus , which has a primary tropism for the respiratory tract.
+
+Animal viruses do not always express their genes using the normal flow of genetic information—from DNA to RNA to protein. Some viruses have a  dsDNA  genome like cellular organisms and can follow the normal flow. However, others may have  ssDNA ,  dsRNA , or  ssRNA  genomes. The nature of the genome determines how the genome is replicated and expressed as viral proteins. If a genome is ssDNA, host enzymes will be used to synthesize a second strand that is complementary to the genome strand, thus producing dsDNA. The dsDNA can now be replicated, transcribed, and translated similar to host DNA.
+
+If the viral genome is RNA, a different mechanism must be used. There are three types of RNA genome: dsRNA,  positive (+) single-strand (+ssRNA)  or  negative (−) single-strand RNA (−ssRNA) . If a virus has a +ssRNA genome, it can be translated directly to make viral proteins. Viral genomic +ssRNA acts like cellular mRNA. However, if a virus contains a −ssRNA genome, the host ribosomes cannot translate it until the −ssRNA is replicated into +ssRNA by viral  RNA-dependent RNA polymerase (RdRP)  (see  Figure 6.11 ). The RdRP is brought in by the virus and can be used to make +ssRNA from the original −ssRNA genome. The RdRP is also an important enzyme for the replication of dsRNA viruses, because it uses the negative strand of the double-stranded genome as a template to create +ssRNA. The newly synthesized +ssRNA copies can then be translated by cellular ribosomes.
+
+An alternative mechanism for viral nucleic acid synthesis is observed in the  retrovirus es , which are +ssRNA viruses (see  Figure 6.12 ). Single-stranded RNA viruses such as HIV carry a special enzyme called  reverse transcriptase  within the capsid that synthesizes a complementary ssDNA (cDNA) copy using the +ssRNA genome as a template. The ssDNA is then made into dsDNA, which can integrate into the host chromosome and become a permanent part of the host. The integrated viral genome is called a  provirus . The virus now can remain in the host for a long time to establish a chronic infection. The provirus stage is similar to the prophage stage in a bacterial infection during the lysogenic cycle. However, unlike prophage, the provirus does not undergo excision after splicing into the genome.
+
+Check Your Understanding
+
+Is RNA-dependent RNA polymerase made from a viral gene or a host gene?
+
+Persistent Infections

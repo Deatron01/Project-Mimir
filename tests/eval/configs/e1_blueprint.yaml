@@ -1,0 +1,9 @@
+# E1 - blueprint pipeline without verifier: planner (1 call) + per-slot retrieval + one question
+# per call. Only JSON/shape errors and near-duplicates trigger a retry.
+name: E1
+description: "Planner + per-slot retrieval + one question per call, no verifier"
+seeds: [1, 2, 3]
+exam: {n_questions: 10, types: [mcq]}
+pipeline: {kind: blueprint, retrieval: dense, retrieval_k: 3, verifier: false, graph: false}
+chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
+generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 16384}

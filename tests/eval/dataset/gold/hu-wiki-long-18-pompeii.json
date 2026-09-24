@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Pompeii",
+    "nehezseg": "hard",
+    "nyelv": "hu",
+    "forras": "Hungarian Wikipedia (full article, fetched 2026-09-23): Pompeii; gold questions from MILQA"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Az ókori Pompeiiben ki lehetett tagja a tízek tanácsának?",
+      "helyes_valasz": "jó hírnévnek örvendő, jó mesterséget űző, gazdag városlakók",
+      "evidence": [
+        "Tagjai jó hírnévnek örvendő, jó mesterséget űző, gazdag városlakók lehettek."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen funkciót töltött be az ókori Pompejiben a négyek tanácsa?",
+      "helyes_valasz": "elsősorban jogalkotási és bíráskodási szerepük volt",
+      "evidence": [
+        "A négyek tanácsának tagjait évente újraválasztották és elsősorban jogalkotási és bíráskodási szerepük volt, ugyanakkor ők felügyelték a város pénzügyeit is."
+      ],
+      "type": "open",
+      "kerdestipus": "multispan"
+    },
+    {
+      "id": null,
+      "kerdes": "Az ókori Pompeii bazilikája milyen célokat szolgált?",
+      "helyes_valasz": "A bazilika a legjelentősebb épületek egyike Pompeiiben. A város egykori bíróságának adott otthont, illetve gazdasági életének központja volt.",
+      "evidence": [
+        "A bazilika a legjelentősebb épületek egyike Pompeiiben. A város egykori bíróságának adott otthont, illetve gazdasági életének központja volt."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hogy néz ki a Pompeii Udvar a londoni Kristálypalotában?",
+      "helyes_valasz": "A londoni Kristálypalotában létesített Pompeii Udvar (Pompeian Court) inkább egy eszményi építmény, mintsem a pompeii építészet újraalkotása.",
+      "evidence": [
+        "A londoni Kristálypalotában létesített Pompeii Udvar (Pompeian Court) inkább egy eszményi építmény, mintsem a pompeii építészet újraalkotása."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Az ókori Pompeii bazilikája mikor épült?",
+      "helyes_valasz": "feltehetően Kr. e. 120-ban",
+      "evidence": [
+        "Az épület görög építészeti vonásokat mutat, feltehetően Kr. e. 120-ban építették az oszkok."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mi volt a feladata a tízek tanácsának az ókori Pompeiiben?",
+      "helyes_valasz": "Ez utóbbi ellenőrizte a város életének minden szektorát.",
+      "evidence": [
+        "Ez utóbbi ellenőrizte a város életének minden szektorát."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen közigazgatási szervei voltak az ókori Pompejinek?",
+      "helyes_valasz": "a népgyűlés vagy populus",
+      "evidence": [
+        "a népgyűlés vagy populus"
+      ],
+      "type": "open",
+      "kerdestipus": "multispan"
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik pompeii épület ihlette az aschaffenburgi Pompejanumot?",
+      "helyes_valasz": "a Dioszkuroszok háza",
+      "evidence": [
+        "Egyetlen nagy kivétel a Friedrich von Gartner által épített Pompejanum Aschaffenburgban: ez a Dioszkuroszok házából merített ihletet."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Hogy nézett ki az ókori Pompeji gyűlésterme?",
+      "helyes_valasz": "A gyűlésterem a fórum délkeleti oldalán található. Valószínűleg ebben az épületben tartották meg a városi választásokat. A választók észak felől közelíthették meg öt bejáraton keresztül az épületet, majd a nyugati oldalon távozhattak, szintén öt kijáraton át a Via dell'Abbondanza irányában. Az épület déli oldalán egy tribün található, ahonnan a megbízott városvezetők figyelhették a szavazás lefolyását. A belső falakat és a padlót eredetileg márványburkolat díszítette.",
+      "evidence": [
+        "A gyűlésterem a fórum délkeleti oldalán található. Valószínűleg ebben az épületben tartották meg a városi választásokat. A választók észak felől közelíthették meg öt bejáraton keresztül az épületet, majd a nyugati oldalon távozhattak, szintén öt kijáraton át a Via dell'Abbondanza irányában. Az épület déli oldalán egy tribün található, ahonnan a megbízott városvezetők figyelhették a szavazás lefolyását. A belső falakat és a padlót eredetileg márványburkolat díszítette."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki építette az aschaffenburgi Pompejanumot?",
+      "helyes_valasz": "Friedrich von Gartner",
+      "evidence": [
+        "Egyetlen nagy kivétel a Friedrich von Gartner által épített Pompejanum Aschaffenburgban: ez a Dioszkuroszok házából merített ihletet."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

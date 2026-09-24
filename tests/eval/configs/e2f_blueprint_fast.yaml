@@ -1,0 +1,8 @@
+# E2f - "Fast" mode: E2 without the blind answer test (cheaper; shows what that check adds).
+name: E2f
+description: "Blueprint + verifier, blind answer test off"
+seeds: [1, 2, 3]
+exam: {n_questions: 10, types: [mcq]}
+pipeline: {kind: blueprint, retrieval: dense, retrieval_k: 3, verifier: true, blind_test: false, max_retries: 2, graph: false}
+chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
+generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 16384}

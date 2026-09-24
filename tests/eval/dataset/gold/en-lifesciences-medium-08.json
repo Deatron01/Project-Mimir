@@ -1,0 +1,80 @@
+{
+  "teszt_metaadatok": {
+    "tema": "anatomy and physiology ch. 23, 23.4 The Stomach",
+    "nehezseg": "medium",
+    "nyelv": "en",
+    "forras": "EduQG / OpenStax anatomy_and_physiology chapter 23"
+  },
+  "kerdesek": [
+    {
+      "id": "fs-id1866214",
+      "kerdes": "Which of these cells secrete hormones?",
+      "helyes_valasz": "enteroendocrine cells",
+      "disztraktorok": [
+        "parietal cells",
+        "mucous neck cells",
+        "chief cells"
+      ],
+      "evidence": [
+        "Enteroendocrine cells — Finally, enteroendocrine cells found in the gastric glands secrete various hormones into the interstitial fluid of the lamina propria."
+      ],
+      "bloom_szint": "Emlékezés"
+    },
+    {
+      "id": "fs-id2293827",
+      "kerdes": "What do parietal cells secrete?",
+      "helyes_valasz": "gastrin",
+      "disztraktorok": [
+        "hydrochloric acid",
+        "pepsin",
+        "pepsinogen"
+      ],
+      "evidence": [
+        "Gastrin stimulates the secretion of gastric acid by the parietal cells of the stomach mucosa."
+      ],
+      "bloom_szint": "Emlékezés"
+    },
+    {
+      "id": "fs-id1541092",
+      "kerdes": "In which part of the alimentary canal does most digestion occur?",
+      "helyes_valasz": "proximal small intestine",
+      "disztraktorok": [
+        "stomach",
+        "distal small intestine",
+        "ascending colon"
+      ],
+      "evidence": [
+        "Chyme released from the stomach enters the small intestine, which is the primary digestive organ in the body.",
+        "Not only is this where most digestion occurs, it is also where practically all absorption occurs."
+      ],
+      "bloom_szint": "Emlékezés"
+    },
+    {
+      "id": "fs-id1865612",
+      "kerdes": "During gastric emptying, through what is chyme released into the duodenum?",
+      "helyes_valasz": "pyloric sphincter",
+      "disztraktorok": [
+        "esophageal hiatus",
+        "pyloric antrum",
+        "pyloric canal"
+      ],
+      "evidence": [
+        "In a process called gastric emptying, rhythmic mixing waves force about 3 mL of chyme at a time through the pyloric sphincter and into the duodenum."
+      ]
+    },
+    {
+      "id": "fs-id1652176",
+      "kerdes": "Where does the majority of chemical digestion in the stomach occur?",
+      "helyes_valasz": "fundus and body",
+      "disztraktorok": [
+        "cardia and fundus",
+        "body and pylorus",
+        "body"
+      ],
+      "evidence": [
+        "The much larger glands of the fundus and body of the stomach, the site of most chemical digestion, produce most of the gastric secretions."
+      ],
+      "bloom_szint": "Emlékezés"
+    }
+  ]
+}

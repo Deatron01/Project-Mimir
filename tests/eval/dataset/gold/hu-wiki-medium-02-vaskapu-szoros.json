@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Vaskapu-szoros",
+    "nehezseg": "easy",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Vaskapu-szoros"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Milyen sebességgel tudták felvontatni az uszályokat a Vaskapun a szabályozás után?",
+      "helyes_valasz": "óránként 2 kilométeres sebességgel",
+      "evidence": [
+        "A szerkezet a csatornában óránként 2 kilométeres sebességgel tudott haladni a 18 km/óra gyorsaságú sodrással szemben."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mennyi sziklát kellett kitermelni a Vaskapu szabályozásához?",
+      "helyes_valasz": "389 ezer köbmétert",
+      "evidence": [
+        "A partról és a sekély vízből 227 ezer köbméter sziklát kellett kitermelni, 162 ezer köbmétert pedig a zúgó áradatban kellett felrobbantani."
+      ],
+      "type": "open",
+      "kerdestipus": "Aritmetika:Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Mennyi víz van felduzzasztva a Vaskapu I gátja mögött?",
+      "helyes_valasz": "2 milliárd köbméter",
+      "evidence": [
+        "A rendszer 33 méteres magasra duzzasztott 2 milliárd köbméter vizet."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen hosszú volt a Vaskapuban lefektetett sodronykötél?",
+      "helyes_valasz": "2760 méter",
+      "evidence": [
+        "A folyam medrébe a hajózócsatorna felső részénél rögzített, 2760 méter hosszú, egyedi szerkezetű, 33,5 milliméter vastag sodronyt fektettek le,"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "A Vaskapun kívül hol jut még ki a Kárpát-medenccéből folyó?",
+      "helyes_valasz": "a Szurdok-szoroson",
+      "evidence": [
+        "A Vaskapu a Kárpát-medence legnagyobb részének egyetlen kifolyása a világtenger irányába, további kifolyások a Szurdok-szoros (Zsil folyó), a 352-360 méter tengerszint feletti magasságon lévő Vöröstoronyi-szoros (Olt) és a a Dunajec-áttörés Lengyelországban."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz:multispan"
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor alakult meg a DDSG?",
+      "helyes_valasz": "1829. március 13 -án",
+      "evidence": [
+        "Létrejött a Császári és Királyi Első Szabadalmazott Duna Gőzhajózási Társaság, a DDSG (Erste Donau-Dampfschiffahrts Gesellschaft), amely 1829. március 13 -án tartotta alakuló ülését."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mennyi sziklát kellett a Duna medréből kirobbantani a Vaskapu szabályozásakor?",
+      "helyes_valasz": "162 ezer köbmétert",
+      "evidence": [
+        "A partról és a sekély vízből 227 ezer köbméter sziklát kellett kitermelni, 162 ezer köbmétert pedig a zúgó áradatban kellett felrobbantani."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik hegységbe tartozik a Miroč-hegység?",
+      "helyes_valasz": "a Szerb-érchegységbe",
+      "evidence": [
+        "A szurdokvölgyet északról a Mehádiai-hegység, a Déli-Kárpátok része, délről a Szerb-érchegység egy része (Šomrda, Veliki Greben és Miroč hegységek) határolja."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Hová tartozik a Mehádiai-hegység?",
+      "helyes_valasz": "a Déli-Kárpátokhoz",
+      "evidence": [
+        "szurdokvölgyet északról a Mehádiai-hegység, a Déli-Kárpátok része, délről a Szerb-érchegység egy része (Šomrda, Veliki Greben és Miroč hegységek) határolja."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor jött létre a Vaskapu?",
+      "helyes_valasz": "a miocén és pliocén korban létezett Pannon-tenger megszűnésével párhuzamosan",
+      "evidence": [
+        "A Vaskapu a Kárpát-medence területén a miocén és pliocén korban létezett Pannon-tenger megszűnésével párhuzamosan jött létre."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

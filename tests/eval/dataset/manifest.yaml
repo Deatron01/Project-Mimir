@@ -1,0 +1,51 @@
+# Mimir evaluation dataset. Paths are relative to this file.
+# Freeze before the first paper run: set version to eval-v1 and do not edit afterwards
+# (changes go into eval-v2). See dataset/README.md for how to add documents.
+version: eval-v0-pilot
+
+# Imported datasets (python -m mimir_eval import eduqg|milqa). Missing files are skipped.
+include:
+  - manifest_eduqg.yaml   # 12 EN documents, OpenStax via EduQG (CC BY 4.0)
+  - manifest_milqa.yaml   # 24 HU documents, Wikipedia via MILQA (CC BY-SA 4.0) - run the importer
+
+documents:
+  - id: hu-coffee
+    path: ../../TestDocs/EasyDoc.txt
+    language: hu
+    subject: humanities
+    difficulty: easy
+    length: short
+    license: own
+    public: true
+    gold: gold/hu-coffee.json
+
+  - id: hu-immune
+    path: ../../TestDocs/MediumDoc.txt
+    language: hu
+    subject: life_sciences
+    difficulty: medium
+    length: short
+    license: own
+    public: true
+    gold: gold/hu-immune.json
+
+  - id: hu-gametheory
+    path: ../../TestDocs/HardDoc.txt
+    language: hu
+    subject: economics
+    difficulty: hard
+    length: short
+    license: own
+    public: true
+    gold: gold/hu-gametheory.json
+
+  # Template for new documents (copy, uncomment, fill in):
+  # - id: hu-law-gdpr-art5            # lowercase, unique, never renamed later
+  #   path: docs/hu-law-gdpr-art5.txt # put the file under dataset/docs/
+  #   language: hu                    # hu | en
+  #   subject: law                    # life_sciences | engineering | humanities | law | economics
+  #   difficulty: medium              # easy | medium | hard (the exam difficulty requested)
+  #   length: medium                  # short (1-2 p) | medium (3-8 p) | long (10-25 p)
+  #   license: public-domain          # own | CC-BY-SA | public-domain | permission:<who> | local-only
+  #   public: true                    # may it go into the released dataset?
+  #   gold: gold/hu-law-gdpr-art5.json  # optional; 8-10 questions with evidence sentences

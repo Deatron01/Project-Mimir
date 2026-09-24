@@ -1,0 +1,76 @@
+{
+  "teszt_metaadatok": {
+    "tema": "business law i essentials ch. 10, 10.2 Regulatory Agencies",
+    "nehezseg": "hard",
+    "nyelv": "en",
+    "forras": "EduQG / OpenStax business_law_i_essentials chapter 10"
+  },
+  "kerdesek": [
+    {
+      "id": "fs-212325356",
+      "kerdes": "Which of the following the Bureau of Economics does NOT concentrate on?",
+      "helyes_valasz": "Lower prices for consumers.",
+      "disztraktorok": [
+        "Consumer protection investigation.",
+        "Rulemaking.",
+        "Economic impact of government regulation."
+      ],
+      "evidence": [
+        "And, lastly, the Bureau of Economics concentrates on consumer protection investigation, rulemaking, and the economic impact of government regulations on businesses and consumers."
+      ]
+    },
+    {
+      "id": "fs-212325318356",
+      "kerdes": "Which of the following is valid defense under Title VII?",
+      "helyes_valasz": "Congress.",
+      "disztraktorok": [
+        "The president.",
+        "The judicial branch.",
+        "The Constitution."
+      ],
+      "evidence": [
+        "Although administrative agencies are created by Congress, most administrative agencies are part of the executive branch of the government."
+      ]
+    },
+    {
+      "id": "fs-2123253183560",
+      "kerdes": "Who appoints leaders to run administrative agencies?",
+      "helyes_valasz": "The President.",
+      "disztraktorok": [
+        "Congress.",
+        "The judges.",
+        "None of these are correct."
+      ],
+      "evidence": [
+        "The executive branch of government of the United States is headed by the president of the United States.",
+        "As a result of being part of the executive branch of government, the leaders of administrative agencies are generally appointed by the executive branch."
+      ]
+    },
+    {
+      "id": "fs-212318356",
+      "kerdes": "What does the FDA stand for?",
+      "helyes_valasz": "The Food and Drug Administration.",
+      "disztraktorok": [
+        "The First Drug Administration.",
+        "The Federal Drug Administration.",
+        "The Food and Diet Administration."
+      ],
+      "evidence": [
+        "One well-known federal agency is the Food and Drug Administration (FDA)."
+      ]
+    },
+    {
+      "id": "fs-21232538356",
+      "kerdes": "What is called the process of assigning authority to administrative agencies?",
+      "helyes_valasz": "A delegation.",
+      "disztraktorok": [
+        "An assignment.",
+        "A directive.",
+        "A passing."
+      ],
+      "evidence": [
+        "Assigning this authority to agencies is called delegation."
+      ]
+    }
+  ]
+}

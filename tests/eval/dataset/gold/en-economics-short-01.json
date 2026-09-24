@@ -1,0 +1,90 @@
+{
+  "teszt_metaadatok": {
+    "tema": "principles of accounting, volume 1: financial accounting ch. 3, 3.5 Use Journal Entries to Record Transactions and Post to T-Accounts",
+    "nehezseg": "easy",
+    "nyelv": "en",
+    "forras": "EduQG / OpenStax principles_of_accounting,_volume_1:_financial_accounting chapter 3"
+  },
+  "kerdesek": [
+    {
+      "id": "fs-idm639056224",
+      "kerdes": "Which of these transactions requires a credit entry to Revenue?",
+      "helyes_valasz": "received cash from services performed this month",
+      "disztraktorok": [
+        "collected balance due from customers",
+        "received cash from bank loan",
+        "refunded a customer for a defective product"
+      ],
+      "evidence": [
+        "Service Revenue increases equity; therefore, Service Revenue increases on the credit side."
+      ]
+    },
+    {
+      "id": "fs-idm418486352",
+      "kerdes": "Which of these accounts is a liability?",
+      "helyes_valasz": "Accounts Payable",
+      "disztraktorok": [
+        "Accounts Receivable",
+        "Supplies",
+        "Salaries Expense"
+      ],
+      "evidence": [
+        "This creates a liability for the company, Accounts Payable.",
+        "Accounts Payable recognized the liability the company had to the supplier to pay for the equipment."
+      ]
+    },
+    {
+      "id": "fs-idm359950400",
+      "kerdes": "What is the impact on the accounting equation when an accounts receivable is collected?",
+      "helyes_valasz": "both sides increase",
+      "disztraktorok": [
+        "both sides decrease",
+        "only the Asset side changes",
+        "the total of neither side changes"
+      ],
+      "evidence": [
+        "Accounts Receivable is an asset account.",
+        "Asset accounts increase on the debit side."
+      ]
+    },
+    {
+      "id": "fs-idm391680368",
+      "kerdes": "Which of the following accounts is increased by a debit?",
+      "helyes_valasz": "Supplies",
+      "disztraktorok": [
+        "Common Stock",
+        "Accounts Payable",
+        "Service Revenue"
+      ],
+      "evidence": [
+        "Supplies is an asset that is increasing on the debit side."
+      ]
+    },
+    {
+      "id": "fs-idm397220320",
+      "kerdes": "Which of the following accounts will normally have a debit balance?",
+      "helyes_valasz": "Supplies",
+      "disztraktorok": [
+        "Common Stock",
+        "Fees Earned",
+        "Accounts Payable"
+      ],
+      "evidence": [
+        "Supplies is an asset that is increasing on the debit side."
+      ]
+    },
+    {
+      "id": "fs-idm623443312",
+      "kerdes": "What is the impact on the accounting equation when a current month’s utility expense is paid?",
+      "helyes_valasz": "both sides decrease",
+      "disztraktorok": [
+        "both sides increase",
+        "only the Asset side changes",
+        "neither side changes"
+      ],
+      "evidence": [
+        "Utility Expense increases, and does so on the debit side of the accounting equation."
+      ]
+    }
+  ]
+}

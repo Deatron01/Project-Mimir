@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Asperger-szindróma",
+    "nehezseg": "easy",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Asperger-szindróma"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Mi az oka, hogy az Asperger-szindróma gyakoriságára jelentősen eltérő becslések születnek?",
+      "helyes_valasz": "az egységes kritériumrendszer hiánya",
+      "evidence": [
+        "A különbségek részben az egységes kritériumrendszer hiányából erednek."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Ki írta le először az Asperger-szindrómát?",
+      "helyes_valasz": "dr. Hans Asperger osztrák pszichiáter és gyermekorvos",
+      "evidence": [
+        "A rendellenességet dr. Hans Asperger osztrák pszichiáter és gyermekorvos írta le először 1944-ben; ő az autisztikus pszichopátia nevet adta neki."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hogyan viselkedik egy Asperger-szindrómás ember?",
+      "helyes_valasz": "Jellemző a szociális interakciók minőségbeli hiányossága ezek közül legalább két területen: a viselkedési minta, testbeszéd zavart, például kerüli a szemkontaktust, vagy helytelenül alkalmazza a társas interakciókat szabályozó gesztusokat; kapcsolatteremtő képessége korához képest fejletlen; nincsenek spontán vágyai arra, hogy másokkal együtt tevékenykedjen; nem akar társas, vagy érzelmi kapcsolatokban részt venni.\nViselkedési mintája korlátozott, behatárolt és ismétlődő, melyre érdeklődési és aktivitási formák esetében legalább az alábbi jellemzők közül valamelyik ráillik: belefeledkezik egy vagy több sztereotipikus és korlátozott érdeklődési területbe, mely nagy mértékben eltér a normálistól; ragaszkodik speciális, semmi haszonnal nem járó rutinokhoz vagy rituálékhoz; folyamatosan foglalkozik egyes tárgyak vagy részeik vizsgálatával.",
+      "evidence": [
+        "Jellemző a szociális interakciók minőségbeli hiányossága ezek közül legalább két területen: a viselkedési minta, testbeszéd zavart, például kerüli a szemkontaktust, vagy helytelenül alkalmazza a társas interakciókat szabályozó gesztusokat; kapcsolatteremtő képessége korához képest fejletlen; nincsenek spontán vágyai arra, hogy másokkal együtt tevékenykedjen; nem akar társas, vagy érzelmi kapcsolatokban részt venni.\nViselkedési mintája korlátozott, behatárolt és ismétlődő, melyre érdeklődési és aktivitási formák esetében legalább az alábbi jellemzők közül valamelyik ráillik: belefeledkezik egy vagy több sztereotipikus és korlátozott érdeklődési területbe, mely nagy mértékben eltér a normálistól; ragaszkodik speciális, semmi haszonnal nem járó rutinokhoz vagy rituálékhoz; folyamatosan foglalkozik egyes tárgyak vagy részeik vizsgálatával."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen gyakori az Asperger-szindróma?",
+      "helyes_valasz": "A gyakoriságot illető becslések meglehetősen eltérőek. Egy 2003-as áttekintés szerint a tanulmányokban a gyakoriság 0,03 ezreléktől 4,84 ezrelékig terjedt, ahol is az autizmus és az Asperger-szindróma aránya 1,5:1 és 16:1 között volt. Az átlagos arány 5:1, amit összevetve az autizmusra kapott 1,3 ezrelékes becsléssel 0,26 ezrelék adódik az Asperger-szindrómára.\nA különbségek részben az egységes kritériumrendszer hiányából erednek. Például egy viszonylag kicsi, 2007-es finn tanulmány szerint, ahol a mintát 5484 nyolcéves gyerek alkotta, ezerből 2,9 mutatta az ICD-10 szerinti tüneteket; 2,7 felelt meg a Gillberg-Gillberg kritériumoknak; 2,5 felelt meg a DSM-IV előírásainak és 1,6 a Szatmári-féle diagnózisnak. Összesítve, a gyerekek 4,3 ezreléke volt Asperger-szindrómás a különböző kritériumok szerint. A fiúk között több az Asperger-szindrómás; a Gillberg-Gillberg diagnózis szerint becsülve a nemek aránya 1,6:1 és 4:1 közötti.",
+      "evidence": [
+        "A gyakoriságot illető becslések meglehetősen eltérőek. Egy 2003-as áttekintés szerint a tanulmányokban a gyakoriság 0,03 ezreléktől 4,84 ezrelékig terjedt, ahol is az autizmus és az Asperger-szindróma aránya 1,5:1 és 16:1 között volt. Az átlagos arány 5:1, amit összevetve az autizmusra kapott 1,3 ezrelékes becsléssel 0,26 ezrelék adódik az Asperger-szindrómára.\nA különbségek részben az egységes kritériumrendszer hiányából erednek. Például egy viszonylag kicsi, 2007-es finn tanulmány szerint, ahol a mintát 5484 nyolcéves gyerek alkotta, ezerből 2,9 mutatta az ICD-10 szerinti tüneteket; 2,7 felelt meg a Gillberg-Gillberg kritériumoknak; 2,5 felelt meg a DSM-IV előírásainak és 1,6 a Szatmári-féle diagnózisnak. Összesítve, a gyerekek 4,3 ezreléke volt Asperger-szindrómás a különböző kritériumok szerint. A fiúk között több az Asperger-szindrómás; a Gillberg-Gillberg diagnózis szerint becsülve a nemek aránya 1,6:1 és 4:1 közötti."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki használta először az Asperger-szindróma elnevezést?",
+      "helyes_valasz": "dr. Lorna Wing angol pszichiáter és pszichológus",
+      "evidence": [
+        "A rendellenességet dr. Hans Asperger osztrák pszichiáter és gyermekorvos írta le először 1944-ben; ő az autisztikus pszichopátia nevet adta neki. Róla nevezte el a szindrómát dr. Lorna Wing angol pszichiáter és pszichológus, aki egy 1981-es írásában használta először a kifejezést."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mi jellemző az Asperger-szindrómás emberekre?",
+      "helyes_valasz": "A Diagnostic and Statistical Manual of Mental Disorders (DSM-IV) 299.80-as szakasza alapján megadja a kritériumokat, amiknek alapján a szindróma diagnosztizálható.\nJellemző a szociális interakciók minőségbeli hiányossága ezek közül legalább két területen: a viselkedési minta, testbeszéd zavart, például kerüli a szemkontaktust, vagy helytelenül alkalmazza a társas interakciókat szabályozó gesztusokat; kapcsolatteremtő képessége korához képest fejletlen; nincsenek spontán vágyai arra, hogy másokkal együtt tevékenykedjen; nem akar társas, vagy érzelmi kapcsolatokban részt venni.\nViselkedési mintája korlátozott, behatárolt és ismétlődő, melyre érdeklődési és aktivitási formák esetében legalább az alábbi jellemzők közül valamelyik ráillik: belefeledkezik egy vagy több sztereotipikus és korlátozott érdeklődési területbe, mely nagy mértékben eltér a normálistól; ragaszkodik speciális, semmi haszonnal nem járó rutinokhoz vagy rituálékhoz; folyamatosan foglalkozik egyes tárgyak vagy részeik vizsgálatával.\nMindezek jelentős gondokat okoznak a társas kapcsolatokban, az iskolában vagy a munkában.",
+      "evidence": [
+        "A Diagnostic and Statistical Manual of Mental Disorders (DSM-IV) 299.80-as szakasza alapján megadja a kritériumokat, amiknek alapján a szindróma diagnosztizálható.\nJellemző a szociális interakciók minőségbeli hiányossága ezek közül legalább két területen: a viselkedési minta, testbeszéd zavart, például kerüli a szemkontaktust, vagy helytelenül alkalmazza a társas interakciókat szabályozó gesztusokat; kapcsolatteremtő képessége korához képest fejletlen; nincsenek spontán vágyai arra, hogy másokkal együtt tevékenykedjen; nem akar társas, vagy érzelmi kapcsolatokban részt venni.\nViselkedési mintája korlátozott, behatárolt és ismétlődő, melyre érdeklődési és aktivitási formák esetében legalább az alábbi jellemzők közül valamelyik ráillik: belefeledkezik egy vagy több sztereotipikus és korlátozott érdeklődési területbe, mely nagy mértékben eltér a normálistól; ragaszkodik speciális, semmi haszonnal nem járó rutinokhoz vagy rituálékhoz; folyamatosan foglalkozik egyes tárgyak vagy részeik vizsgálatával.\nMindezek jelentős gondokat okoznak a társas kapcsolatokban, az iskolában vagy a munkában."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hol találkozhatnak egymással virtuálisan az Asperger-szindrómás emberek?",
+      "helyes_valasz": "Egy külön szubkultúrát alakítottak ki maguknak az olyan találkozóhelyeken, mint a Wrongplanet weboldal.",
+      "evidence": [
+        "Egy külön szubkultúrát alakítottak ki maguknak az olyan találkozóhelyeken, mint a Wrongplanet weboldal."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor jelent meg a DSM legújabb, 5. kiadása?",
+      "helyes_valasz": "2013-ban",
+      "evidence": [
+        "A 2013-ban megjelent, jelenleg érvényes DSM-V megszüntette ezt a diagnózist, helyette bevezette az „autizmus spektrumzavar”-t (ASD), ami súlyosság szerint osztályoz, azonban a WHO által használt BNO-10-ben továbbra is szerepel."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Az Asperger-szindrómások szubkultúrájában hogyan gondolkodnak az autizmus spektrumról?",
+      "helyes_valasz": "Korábban az Asperger-szindrómások egymástól elszigetelten éltek, de ez az internet előretörésével megváltozott. Egy külön szubkultúrát alakítottak ki maguknak az olyan találkozóhelyeken, mint a Wrongplanet weboldal.\nAz Asperger-szindrómás egyén rövidítésére használt aspie szót Liane Holliday Willey vezette be 1999-ben. A társadalmi normáknak megfelelően fejlődő, autizmus- és Asperger-szindrómamentes egyéneket neurotipikusnak nevezik.\nEbben a kultúrában az autizmus spektrumot nem gyógyítandó betegségnek, vagy kiküszöbölendő fogyatékosságnak tekintik, hanem egy összetett jelenségnek, amit a maga teljességében kell tekinteni. Elvetik azt a nézetet, hogy van egy ideális agyberendezés; ehelyett toleranciát hirdetnek, és az úgynevezett neurodiverzitást tartják értéknek. Ez azt jelenti, hogy sokfélék vagyunk, sokféleképpen gondolkodunk, és ez a sokféleség érték, amit meg kell őrizni.\nEz a nézőpont alapot ad a kultúra hirdetésére, ünneplésére, és a küzdelemre a jogokért.",
+      "evidence": [
+        "Korábban az Asperger-szindrómások egymástól elszigetelten éltek, de ez az internet előretörésével megváltozott. Egy külön szubkultúrát alakítottak ki maguknak az olyan találkozóhelyeken, mint a Wrongplanet weboldal.\nAz Asperger-szindrómás egyén rövidítésére használt aspie szót Liane Holliday Willey vezette be 1999-ben. A társadalmi normáknak megfelelően fejlődő, autizmus- és Asperger-szindrómamentes egyéneket neurotipikusnak nevezik.\nEbben a kultúrában az autizmus spektrumot nem gyógyítandó betegségnek, vagy kiküszöbölendő fogyatékosságnak tekintik, hanem egy összetett jelenségnek, amit a maga teljességében kell tekinteni. Elvetik azt a nézetet, hogy van egy ideális agyberendezés; ehelyett toleranciát hirdetnek, és az úgynevezett neurodiverzitást tartják értéknek. Ez azt jelenti, hogy sokfélék vagyunk, sokféleképpen gondolkodunk, és ez a sokféleség érték, amit meg kell őrizni.\nEz a nézőpont alapot ad a kultúra hirdetésére, ünneplésére, és a küzdelemre a jogokért."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Szeret közösségben lenni egy Asperger-szindrómás gyerek?",
+      "helyes_valasz": "kapcsolatteremtő képessége korához képest fejletlen; nincsenek spontán vágyai arra, hogy másokkal együtt tevékenykedjen; nem akar társas, vagy érzelmi kapcsolatokban részt venni.",
+      "evidence": [
+        "kapcsolatteremtő képessége korához képest fejletlen; nincsenek spontán vágyai arra, hogy másokkal együtt tevékenykedjen; nem akar társas, vagy érzelmi kapcsolatokban részt venni."
+      ],
+      "type": "open",
+      "kerdestipus": "Nem"
+    }
+  ]
+}

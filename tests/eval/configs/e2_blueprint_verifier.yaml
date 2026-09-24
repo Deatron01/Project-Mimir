@@ -1,0 +1,9 @@
+# E2 - E1 + verifier chain ("Thorough" mode): schema, meta-reference, citations, grounding +
+# distractor check, blind answer test; max 2 retries per slot with feedback, then 1 replacement.
+name: E2
+description: "Blueprint + verifier (max 2 retries, blind answer test on)"
+seeds: [1, 2, 3]
+exam: {n_questions: 10, types: [mcq]}
+pipeline: {kind: blueprint, retrieval: dense, retrieval_k: 3, verifier: true, blind_test: true, max_retries: 2, graph: false}
+chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
+generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 16384}

@@ -1,0 +1,168 @@
+Despite the power of the conferences, however, the most important leadership position in the House is actually elected by the entire body of representatives. This position is called the  Speaker of the House  and is the only House officer mentioned in the Constitution. The Constitution does not require the Speaker to be a member of the House, although to date, all fifty-four Speakers have been. The Speaker is the presiding officer, the administrative head of the House, the partisan leader of the majority party in the House, and an elected representative of a single congressional district ( Figure 11.16 ). As a testament to the importance of the Speaker, since 1947, the holder of this position has been second in line to succeed the president in an emergency, after the vice president.
+
+The Speaker serves until his or her party loses, or until he or she is voted out of the position or chooses to step down. Republican Speaker John Boehner became the latest Speaker to walk away from the position when it appeared his position was in jeopardy. This event shows how the party conference (or caucus) oversees the leadership as much as, if not more than, the leadership oversees the party membership in the chamber. The Speaker is invested with quite a bit of power, such as the ability to assign bills to committees and decide when a bill will be presented to the floor for a vote. The Speaker also rules on House procedures, often delegating authority for certain duties to other members. He or she appoints members and chairs to committees, creates  select committee s  to fulfill a specific purpose and then disband, and can even select a member to be speaker  pro tempore , who acts as Speaker in the Speaker’s absence. Finally, when the Senate joins the House in a joint session, the Speaker presides over these sessions, because they are usually held in the House of Representatives.
+
+Below the Speaker, the majority and minority conferences each elect two leadership positions arranged in hierarchical order. At the top of the hierarchy are the floor leaders of each party. These are generally referred to as the majority and minority leaders. The  minority leader  has a visible if not always a powerful position. As the official leader of the opposition, he or she technically holds the rank closest to that of the Speaker, makes strategy decisions, and attempts to keep order within the minority. However, the majority rules the day in the House, like a cartel. On the majority side, because it holds the speakership, the  majority leader  also has considerable power. Historically, moreover, the majority leader tends to be in the best position to assume the speakership when the current Speaker steps down.
+
+Below these leaders are the two party’s respective  whip s . A whip’s job, as the name suggests, is to whip up votes and otherwise enforce party discipline. Whips make the rounds in Congress, telling members the position of the leadership and the collective voting strategy, and sometimes they wave various carrots and sticks in front of recalcitrant members to bring them in line. The remainder of the leadership positions in the House include a handful of chairs and assistantships.
+
+Like the House, the Senate also has majority and minority leaders and whips, each with duties very similar to those of their counterparts in the House. Unlike the House, however, the Senate doesn’t have a Speaker. The duties and powers held by the Speaker in the House fall to the majority leader in the Senate. Another difference is that, according to the U.S. Constitution, the Senate’s president is actually the elected vice president of the United States, but he or she may vote only in case of a tie. Apart from this and very few other exceptions, the president of the Senate does not actually operate in the Senate. Instead, the Constitution allows for the Senate to choose a  president  pro tempore —usually the most senior senator of the majority party—who presides over the Senate. Despite the title, the job is largely a formal and powerless role. The real power in the Senate is in the hands of the majority leader ( Figure 11.16 ) and the minority leader. Like the Speaker of the House, the majority leader is the chief spokesperson for the majority party, but unlike in the House he or she does not run the floor alone. Because of the traditions of unlimited debate and the filibuster, the majority and minority leaders often occupy the floor together in an attempt to keep things moving along. At times, their interactions are intense and partisan, but for the Senate to get things done, they must cooperate to get the sixty votes needed to run this super-majority legislative institution.
+
+THE COMMITTEE SYSTEM
+
+With 535 members in Congress and a seemingly infinite number of domestic, international, economic, agricultural, regulatory, criminal, and military issues to deal with at any given moment, the two chambers must divide their work based on specialization. Congress does this through the committee system. Specialized committees (or subcommittees) in both the House and the Senate are where bills originate and most of the work that sets the congressional agenda takes place. Committees are roughly approximate to a bureaucratic department in the executive branch. There are well over two hundred committees, subcommittees, select committees, and joint committees in the Congress. The core committees are called  standing committee s . There are twenty standing committees in the House and sixteen in the Senate ( Table 11.2 ).
+
+Congressional Standing and Permanent Select Committees
+
+House of Representatives
+
+Senate
+
+Agriculture
+
+Agriculture, Nutrition, and Forestry
+
+Appropriations
+
+Appropriations
+
+Armed Services
+
+Armed Services
+
+Budget
+
+Banking, Housing, and Urban Affairs
+
+Education and the Workforce
+
+Budget
+
+Energy and Commerce
+
+Commerce, Science, and Transportation
+
+Ethics
+
+Energy and Natural Resources
+
+Financial Services
+
+Environment and Public Works
+
+Foreign Affairs
+
+Ethics (select)
+
+Homeland Security
+
+Finance
+
+House Administration
+
+Foreign Relations
+
+Intelligence (select)
+
+Health, Education, Labor and Pensions
+
+Judiciary
+
+Homeland Security and Governmental Affairs
+
+Natural Resources
+
+Indian Affairs (select)
+
+Oversight and Government Reform
+
+Intelligence (select)
+
+Rules
+
+Judiciary
+
+Science, Space, and Technology
+
+Rules and Administration
+
+Small Business
+
+Small Business and Entrepreneurship
+
+Transportation and Infrastructure
+
+Veterans’ Affairs
+
+Veterans’ Affairs
+
+Ways and Means
+
+Table  11.2
+
+Members of both parties compete for positions on various committees. These positions are typically filled by majority and minority members to roughly approximate the ratio of majority to minority members in the respective chambers, although committees are chaired by members of the majority party. Committees and their chairs have a lot of power in the legislative process, including the ability to stop a bill from going to the floor (the full chamber) for a vote. Indeed, most bills die in committee. But when a committee is eager to develop legislation, it takes a number of methodical steps. It will reach out to relevant agencies for comment on resolutions to the problem at hand, such as by holding hearings with experts to collect information. In the Senate, committee hearings are also held to confirm presidential appointments ( Figure 11.17 ). After the information has been collected, the committee meets to discuss amendments and legislative language. Finally, the committee will send the bill to the full chamber along with a committee report. The report provides the majority opinion about why the bill should be passed, a minority view to the contrary, and estimates of the proposed law’s cost and impact.
+
+Four types of committees exist in the House and the Senate. The first is the standing, or permanent, committee. This committee is the first call for proposed bills, fewer than 10 percent of which are reported out of committee to the floor. The second type is the  joint committee . Joint committee members are appointed from both the House and the Senate, and are charged with exploring a few key issues, such as the economy and taxation. However, joint committees have no bill-referral authority whatsoever—they are informational only. A  conference committee  is used to reconcile different bills passed in both the House and the Senate. The conference committees are appointed on an ad hoc basis as necessary when a bill passes the House and Senate in different forms. Finally, ad hoc, special, or select committees are temporary committees set up to address specific topics. These types of committees often conduct special investigations, such as on aging or ethics.
+
+Committee hearings can become politically driven public spectacles. Consider the House Select Committee on Benghazi, the committee assembled by Republicans to further investigate the 2011 attacks on the U.S. Consulate in Benghazi, Libya. This prolonged investigation became particularly partisan as Republicans trained their guns on then-secretary of state Hillary Clinton, who was running for the presidency at the time. In two multi-hour hearings in which Secretary Clinton was the only witness, Republicans tended to grandstand in the hopes of gaining political advantage or tripping her up, while Democrats tended to use their time to ridicule Republicans ( Figure 11.18 ). 35  In the end, the long hearings uncovered little more than the elevated state of partisanship in the House, which had scarcely been a secret before.
+
+Members of Congress bring to their roles a variety of specific experiences, interests, and levels of expertise, and try to match these to committee positions. For example, House members from states with large agricultural interests will typically seek positions on the Agriculture Committee. Senate members with a background in banking or finance may seek positions on the Senate Finance Committee. Members can request these positions from their chambers’ respective leadership, and the leadership also selects the committee chairs.
+
+Committee chairs are very powerful. They control the committee’s budget and choose when the committee will meet, when it will hold hearings, and even whether it will consider a bill ( Figure 11.19 ). A chair can convene a meeting when members of the minority are absent or adjourn a meeting when things are not progressing as the majority leadership wishes. Chairs can hear a bill even when the rest of the committee objects. They do not remain in these powerful positions indefinitely, however. In the House, rules prevent committee chairs from serving more than six consecutive years and from serving as the chair of a subcommittee at the same time. A senator may serve only six years as chair of a committee but may, in some instances, also serve as a chair or ranking member of another committee.
+
+Because the Senate is much smaller than the House, senators hold more committee assignments than House members. There are sixteen standing committees in the Senate, and each position must be filled. In contrast, in the House, with 435 members and only twenty standing committees, committee members have time to pursue a more in-depth review of a policy. House members historically defer to the decisions of committees, while senators tend to view committee decisions as recommendations, often seeking additional discussion that could lead to changes.
+
+Link to Learning
+
+Take a look at the  scores of committees  in the  House  and Senate. The late House Speaker Tip O’Neill once quipped that if you didn’t know a new House member’s name, you could just call him Mr. Chairperson. 
+11.5   The Legislative Process
+
+Learning Objectives
+
+By the end of this section, you will be able to:
+
+Explain the steps in the classic bill-becomes-law diagram
+
+Describe the modern legislative processes that alter the classic process in some way
+
+A dry description of the function of congressional leadership and the many committees and subcommittees in Congress may suggest that the drafting and amending of legislation is a finely tuned process that has become ever more refined over the course of the last few centuries. In reality, however, committees are more likely to kill legislation than to pass it. And the last few decades have seen a dramatic transformation in the way Congress does business. Creative interpretations of rules and statues have turned small loopholes into the large gateways through which much congressional work now gets done. In this section, we will explore both the traditional legislative route by which a bill becomes a law and the modern incarnation of the process. We will also learn how and why the transformation occurred.
+
+THE CLASSIC LEGISLATIVE PROCESS
+
+The traditional process by which a bill becomes a law is called the  classic legislative process . First, legislation must be drafted. Theoretically, anyone can do this. Much successful legislation has been initially drafted by someone who is not a member of Congress, such as a think tank or advocacy group, or the president. However, Congress is under no obligation to read or introduce this legislation, and only a bill introduced by a member of Congress can hope to become law. Even the president must rely on legislators to introduce his or her legislative agenda.
+
+Technically, bills that raise revenue, like tax bills, must begin in the House. This exception is encoded within the Constitution in  Article I , Section 7, which states, “All Bills for raising Revenue shall originate in the House of Representatives; but the Senate may propose or concur with amendments as on other Bills.” Yet, despite the seemingly clear language of the Constitution, Congress has found ways to get around this rule.
+
+Once legislation has been proposed, however, the majority leadership consults with the  parliamentarian  about which committee to send it to. Each chamber has a  parliamentarian , an advisor, typically a trained lawyer, who has studied the long and complex rules of the chamber. While Congress typically follows the advice of its parliamentarians, it is not obligated to, and the parliamentarian has no power to enforce his or her interpretation of the rules. Once a committee has been selected, the committee chair is empowered to move the bill through the committee process as he or she sees fit. This occasionally means the chair will refer the bill to one of the committee’s subcommittees.
+
+Whether at the full committee level or in one of the subcommittees, the next step is typically to hold a hearing on the bill. If the chair decides to not hold a hearing, this is tantamount to killing the bill in committee. The hearing provides an opportunity for the committee to hear and evaluate expert opinions on the bill or aspects of it. Experts typically include officials from the agency that would be responsible for executing the bill, the bill’s sponsors from Congress, and industry lobbyists, interest groups, and academic experts from a variety of relevant fields. Typically, the committee will also accept written statements from the public concerning the bill in question. For many bills, the hearing process can be very routine and straightforward.
+
+Once hearings have been completed, the bill enters the  markup  stage. This is essentially an amending and voting process. In the end, with or without amendments, the committee or subcommittee will vote. If the committee decides not to advance the bill at that time, it is tabled.  Tabling a bill  typically means the bill is dead, but there is still an option to bring it back up for a vote again. If the committee decides to advance the bill, however, it is printed and goes to the chamber, either the House or the Senate. For the sake of example, we will assume that a bill goes first to the House (although the reverse could be true, and, in fact, bills can move simultaneously through both chambers). Before it reaches the House floor, it must first go through the House Committee on Rules. This committee establishes the rules of debate, such as time limits and limits on the number and type of amendments. After these rules have been established, the bill moves through the floor, where it is debated and amendments can be added. Once the limits of debate and amendments have been reached, the House holds a vote. If a simple majority, 50 percent plus 1, votes to advance the bill, it moves out of the House and into the Senate.
+
+Once in the Senate, the bill is placed on the calendar so it can be debated. Or, more typically, the Senate will also consider the bill (or a companion version) in its own committees. Since the Senate is much smaller than the House, it can afford to be much more flexible in its rules for debate. Typically, senators allow each other to talk and debate as long as the speaker wants, though they can agree as a body to create time limits. But without these limits, debate continues until a motion to table has been offered and voted on.
+
+This flexibility about speaking in the Senate gave rise to a unique tactic, the  filibuster . The word “filibuster” comes from the Dutch word  vrijbuiter , which means pirate. And the name is appropriate, since a senator who launches a filibuster virtually hijacks the floor of the chamber by speaking for long periods of time, thus preventing the Senate from closing debate and acting on a bill. The tactic was perfected in the 1850s as Congress wrestled with the complicated issue of slavery. After the Civil War, the use of the filibuster became even more common. Eventually, in 1917, the Senate passed Rule 22, which allowed the chamber to hold a  cloture  vote to end debate. To invoke cloture, the Senate had to get a two-thirds majority. This was difficult to do, but it generally did prevent anyone from hijacking the Senate floor, with the salient exception of Senator Strom Thurmond’s record twenty-four-hour filibuster of the  Civil Rights Act . In 1975, after the heightened partisanship of the civil rights era, the Senate further weakened the filibuster by reducing the number needed for cloture from two-thirds to three-fifths, or sixty votes, where it remains today (except for judicial nominations for which only fifty-five votes are needed to invoke cloture). Moreover, filibusters are not permitted on the annual budget reconciliation act (the  Reconciliation Act  of 2010 was the act under which the implementing legislation for Obamacare was passed).
+
+Milestone The Noble History of the Filibuster? When most people think of the Senate filibuster, they probably picture actor Jimmy Stewart standing exasperated at a podium and demanding the Senate come to its senses and do the right thing. Even for those not familiar with the classic Frank Capra film  Mr. Smith Goes to Washington , the image of a heroic single senator sanding up to the power of the entire chamber while armed only with oratorical skill naturally tends to inspire. Unfortunately, the history of the filibuster is less heartwarming.
+
+This is not to say that noble causes haven’t been championed by filibustering senators; they most certainly have. But they have largely been overshadowed by the outright ridiculous and sometimes racist filibusters of the twentieth century. In the first category, the fifteen-and-a-half-hour marathon of Senator Huey  Long  of Louisiana stands out: Hoping to retain the need for Senate confirmation of some jobs he wanted to keep from his political enemies, Long spent much of his filibuster analyzing the Constitution, talking about his favorite recipes, and telling amusing stories, as was his custom.
+
+In a defining moment for the filibuster, Senator Strom  Thurmond  of South Carolina spoke for twenty-four hours and eighteen minutes against a weak civil rights bill in 1957. A vocal proponent of segregation and white supremacy, Thurmond had made no secret of his views and had earlier run for the presidency on a segregationist platform. Nor was Thurmond the first to use the filibuster to preserve segregation and prevent the expansion of civil rights for African Americans. Groups of dedicated southern senators used the filibuster to prevent the passage of anti-lynching legislation on multiple occasions during the first half of the twentieth century. Later, when faced with the 1964 Civil Rights Act, southern senators staged a fifty-seven-day filibuster to try and kill it. But the momentum of the nation was against them. The bill passed over their obstructionism and helped to reduce segregation.
+
+Is the filibuster the tool of the noble minority attempting to hold back the tide of a powerful minority? Or does its history as a weapon supporting segregation expose it as merely a tactic of obstruction?
+
+Because both the House and the Senate can and often do amend bills, the bills that pass out of each chamber frequently look different. This presents a problem, since the Constitution requires that both chambers pass identical bills. One simple solution is for the first chamber to simply accept the bill that ultimately makes it out of the second chamber. Another solution is for first chamber to further amend the second chamber’s bill and send it back to the second chamber. Congress typically takes one of these two options, but about one in every eight bills cannot be resolved in this way. These bills must be sent to a conference committee that negotiates a reconciliation both chambers can accept without amendment. Only then can the bill progress to the president’s desk for signature or veto. If the president does veto the bill, both chambers must muster a two-thirds vote to overcome the veto and make the bill law without presidential approval ( Figure 11.20 ).
+
+Link to Learning
+
+For one look at the classic legislative process, visit  YouTube  to view “I’m Just a Bill” from the ABC  Schoolhouse Rock!  series.
+
+MODERN LEGISLATION IS DIFFERENT
+
+For much of the nation’s history, the process described above was the standard method by which a bill became a law. Over the course of the last three and a half decades, however, changes in rules and procedure have created a number of alternate routes. Collectively, these different routes constitute what some political scientists have described as a new but unorthodox legislative process. According to political scientist Barbara Sinclair, the primary trigger for the shift away from the classic legislative route was the budget reforms of the 1970s. The 1974  Budget and Impoundment Control Act  gave Congress a mechanism for making large, all-encompassing, budget decisions. In the years that followed, the budget process gradually became the vehicle for creating comprehensive policy changes. One large step in this transformation occurred in 1981 when President Ronald Reagan’s administration suggested using the budget to push through his economic reforms.
+
+The benefit of attaching the reforms to the budget resolution was that Congress could force an up or down (yea or nay) vote on the whole package. Such a packaged bill is called an  omnibus bill . 36  Creating and voting for an  omnibus bill  allows Congress to quickly accomplish policy changes that would have taken many votes and the expending of great political capital over a long period of time. This and successive similar uses of the budget process convinced many in Congress of the utility of this strategy. During the contentious and ideologically divided 1990s, the budget process became the common problem-solving mechanism in the legislature, thus laying the groundwork for the way legislation works today.
+
+An important characteristic feature of modern legislating is the greatly expanded power and influence of the party leadership over the control of bills. One reason for this change was the heightened partisanship that stretches back to the 1980s and is still with us today. With such high political stakes, the party leadership is reluctant to simply allow the committees to work things out on their own. In the House, the leadership uses special rules to guide bills through the legislative process and toward a particular outcome. Uncommon just a few decades ago, these now widely used rules restrict debate and options, and are designed to focus the attention of members.
+
+The practice of multiple referrals, with which entire bills or portions of those bills are referred to more than one committee, greatly weakened the different specialization monopolies committees held primarily in the House but also to an extent in the Senate. With less control over the bills, committees naturally reached out to the leadership for assistance. Indeed, as a testament to its increasing control, the leadership may sometimes avoid committees altogether, preferring to work things out on the floor. And even when bills move through the committees, the leadership often seeks to adjust the legislation before it reaches the floor.
