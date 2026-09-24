@@ -8,12 +8,8 @@ class LLMJudge:
         self.genai_url = "https://genai.uni-obuda.hu/api/chat/completions"
         
         # Szigorúan a legintelligensebb modellekkel kezdünk (minőség > sebesség)
-        self.models_to_try = [
-            "Qwen3.5-122B",          # Legjobb logikai képességek RAG-hoz
-            "gpt-oss:120b",          # Második számú gigamodell
-            "nemotron-3-super:120b", # Harmadik számú biztonsági háló
-            "gpt-oss:20b"            # Kisebb szerveres fallback
-        ]
+        # Elérhető szervermodellek (2026-09: Qwen3.5-122B / nemotron már nincs fent). GENAI_MODELS env.
+        self.models_to_try = [m.strip() for m in os.getenv("GENAI_MODELS", "gpt-oss:120b,Qwen3.8-Flash-Next,gpt-oss:20b").split(",") if m.strip()]
 
     async def evaluate_coherence(self, chunk_text: str) -> int:
         """Értékeli a szövegdarab koherenciáját 1-től 10-ig valós LLM segítségével."""
@@ -83,14 +79,14 @@ class LLMJudge:
                         continue
 
         # 2. Fallback a lokális Ollama-ra (Javított URL formátummal)
-        print("⚠️ Heimdall: Külső API sikertelen. Próbálkozás lokális Ollama-val (qwen2.5:14b)...")
+        print(f"⚠️ Heimdall: Külső API sikertelen. Próbálkozás lokális Ollama-val ({os.getenv('OLLAMA_MODEL', 'qwen2.5:7b')})...")
         try:
             ollama_url = os.getenv("OLLAMA_URL", "http://host.docker.internal:11434/api/generate")
             async with httpx.AsyncClient() as client:
                 ollama_response = await client.post(
                     ollama_url,
                     json={
-                        "model": "qwen2.5:14b", # Lokális erős fallback
+                        "model": os.getenv("OLLAMA_MODEL", "qwen2.5:7b"),  # README: 7b fér el 8 GB VRAM-ban
                         "prompt": prompt,
                         "stream": False,
                         "format": "json",

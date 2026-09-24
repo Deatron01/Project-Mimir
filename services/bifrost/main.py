@@ -5,6 +5,7 @@ from typing import List, Dict, Any
 import torch
 from transformers import AutoTokenizer, AutoModel
 from vector_db import RAGVectorStore
+from prompts import build_naive_prompt
 import os
 import json
 import httpx
@@ -41,6 +42,9 @@ vector_store = RAGVectorStore(vector_size=768)
 LOCAL_ONLY = os.getenv("LOCAL_ONLY", "false").strip().lower() in ("1", "true", "yes")
 # A generált tesztek (feladateredmények) legfeljebb ennyi ideig maradnak a memóriában.
 JOB_TTL_SECONDS = int(os.getenv("JOB_TTL_SECONDS", "3600"))
+# Lokális Ollama modell és cím (README: qwen2.5:7b fér el 8 GB VRAM-ban; a 14b nem).
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:7b")
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://host.docker.internal:11434/api/generate")
 
 generation_jobs = {}
 _job_created_at = {}
@@ -119,57 +123,15 @@ async def _run_generation(job_id: str, request: GenerateRequest):
         context_text = "\n\n".join([res.payload.get("text", "") for res in results])
         
         # 3. Dinamikus Prompt (a te eredeti promptod marad változatlan)
-        prompt = f"""Te egy kiemelkedő tudású oktatásmódszertani szakértő és professzionális vizsgakészítő vagy.
-
-        KÖTELEZŐ SZABÁLYOK, AMIKET SZIGORÚAN BE KELL TARTANOD:
-        1. ZÉRÓ HALLUCINÁCIÓ: KIZÁRÓLAG a megadott KONTEXTUS alapján dolgozz! Ha a kontextus nem tartalmazza a választ, ne találj ki semmit!
-        2. FELHASZNÁLÓI UTASÍTÁS KÖVETÉSE: Alább a FELADAT részben megkapod a felhasználó pontos kérését. Ebből kell kiolvasnod, hogy HÁNY DARAB és MILYEN TÍPUSÚ (pl. feleletválasztós, igaz-hamis, kifejtős) kérdést kér. Pontosan a kért mennyiséget és típust generáld le!
-        3. DISZTRAKTOROK: Feleletválasztós (mcq) kérdés esetén 1 helyes és 3 hihető, de helytelen válasz legyen.
-        4. NO LATEX: Szigorúan TILOS LaTeX formázást vagy dollárjeleket ($) használni!
-        5. META-REFERENCIA TILALOM: Szigorúan TILOS a dokumentum szerkezetére kérdezni (pl. "Mi van a 4.3 pontban?"). Úgy fogalmazz, mintha egy általános vizsgát írnál.
-
-        KONTEXTUS:
-        {context_text}
-
-        FELADAT (A felhasználó pontos kérése):
-        "{request.query}"
-
-        KIMENETI FORMÁTUM:
-        A válaszod KIZÁRÓLAG egy tiszta, érvényes JSON objektum lehet! Szigorúan TILOS markdown formázást (```json) és megjegyzéseket (//) használni!
-        
-        A struktúrának pontosan így kell kinéznie:
-        {{
-            "title": "Mimir AI Vizsga",
-            "format": "{request.format}",
-            "questions": [
-                {{
-                    "type": "mcq",
-                    "text": "A pontos és egyértelmű kérdés szövege?",
-                    "answers": [
-                        {{"text": "Helyes válasz", "is_correct": true}},
-                        {{"text": "Helytelen válasz 1", "is_correct": false}},
-                        {{"text": "Helytelen válasz 2", "is_correct": false}},
-                        {{"text": "Helytelen válasz 3", "is_correct": false}}
-                    ]
-                }}
-            ]
-        }}
-
-        SZABÁLYOK A VÁLASZOKHOZ:
-        - Ha a típus "mcq" (feleletválasztós): kövesd a fenti példát (1 true, 3 false).
-        - Ha a típus "tf" (igaz-hamis): pontosan 2 válasz legyen (az egyik true, a másik false).
-        - Ha a típus "open" (kifejtős): pontosan 1 válasz legyen (is_correct: true), ami a megoldókulcsot tartalmazza.
-        """
+        prompt = build_naive_prompt(context_text, request.query, request.format)
         
         # 4. Hívás az Óbudai Egyetem GenAI szerveréhez (Modell lista iterációja)
         genai_url = "https://genai.uni-obuda.hu/api/chat/completions"
         api_key = os.getenv("OE_GENAI_API_KEY")
         
-        models_to_try = [
-            "Qwen3.5-122B", 
-            "gpt-oss:120b", 
-            "nemotron-3-super:120b"
-        ]
+        # A szerveren elérhető modellek változnak (2026-09: a Qwen3.5-122B és a nemotron már nincs fent,
+        # lásd GET /api/models). Sorrend: GENAI_MODELS env, vesszővel elválasztva.
+        models_to_try = [m.strip() for m in os.getenv("GENAI_MODELS", "gpt-oss:120b,Qwen3.8-Flash-Next").split(",") if m.strip()]
         
         genai_success = False
 
@@ -245,14 +207,14 @@ async def _run_generation(job_id: str, request: GenerateRequest):
                         
         # 5. Lokális Ollama Fallback (Csak akkor fut le, ha a GenAI_success False maradt)
         if not genai_success:
-            print("⚠️ Az összes külső szerveres modell elhasalt vagy nincs API kulcs. Próbálkozás lokális Ollama-val (qwen2.5:14b)...")
+            print(f"⚠️ Az összes külső szerveres modell elhasalt vagy nincs API kulcs. Próbálkozás lokális Ollama-val ({OLLAMA_MODEL})...")
             try:
-                ollama_url = "http://host.docker.internal:11434/api/generate"
+                ollama_url = OLLAMA_URL
                 async with httpx.AsyncClient(trust_env=False) as client:
                     ollama_response = await client.post(
                         ollama_url,
                         json={
-                            "model": "qwen2.5:14b",
+                            "model": OLLAMA_MODEL,
                             "prompt": prompt,
                             "stream": False,
                             "format": "json",
@@ -273,12 +235,12 @@ async def _run_generation(job_id: str, request: GenerateRequest):
                             cleaned_local = cleaned_local[start:end+1]
                         
                         local_json = json.loads(cleaned_local)
-                        print("✅ Sikeres generálás lokális Ollama (qwen2.5:14b) modellel!")
+                        print(f"✅ Sikeres generálás lokális Ollama ({OLLAMA_MODEL}) modellel!")
                         
-                        await send_audit_log(job_id, request.query, prompt, context_text, "qwen2.5:14b (local fallback)", cleaned_local)
+                        await send_audit_log(job_id, request.query, prompt, context_text, f"{OLLAMA_MODEL} (local fallback)", cleaned_local)
                         
                         local_json["metadata"] = {
-                            "model_used": "qwen2.5:14b (local fallback)", 
+                            "model_used": f"{OLLAMA_MODEL} (local fallback)", 
                             "tokens_generated": "N/A", 
                             "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                             "system_prompt_version": "v1.0"
@@ -305,7 +267,9 @@ async def _run_generation(job_id: str, request: GenerateRequest):
                             {"text": "Hiba történt", "is_correct": False}
                         ]
                     }
-                ]
+                ],
+                "metadata": {"model_used": "fallback_hardcoded", "is_fallback": True,
+                             "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
             }
             await send_audit_log(job_id, request.query, prompt, context_text, "fallback_hardcoded", json.dumps(fallback_json))
             generation_jobs[job_id] = {"status": "completed", "data": fallback_json}
