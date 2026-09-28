@@ -1,0 +1,71 @@
+% =====================================================================
+\chapter{Összefoglalás és további munka}
+\label{ch:osszefoglalas}
+% =====================================================================
+
+\section{Összefoglalás}
+
+Dolgozatunkban a vizsgakérdés-generálás négy gyakorlati problémájából indultunk ki: a kulcsok
+helyessége nincs ellenőrizve (P1), a vizsga szerkezete és lefedettsége nincs kontrollálva (P2), a
+tananyag egy harmadik félhez kerül (P3), és a módszer nagy, távoli modellekre támaszkodik (P4). Ezekre a
+\Mimir{} rendszerrel válaszoltunk, amely az egyetlen promptot explicit, ellenőrizhető módszerrel váltja
+fel, és egyetlen fogyasztói GPU-n, adatmegőrzés nélkül fut.
+
+A munka eredményei a következőkben foglalhatók össze.
+
+\begin{enumerate}[label=(\arabic*)]
+\item \textbf{Formális modell.} A „jó vizsga” fogalmát mérhető, forrásalapú predikátumokra bontottuk
+(formai helyesség, alátámasztottság, disztraktor-validitás, vak megoldhatóság, lefedettség,
+szivárgás), a generálást korlátos optimalizálási feladatként írtuk fel, és bizonyítottuk a vizsgaterv
+két szerkezeti tulajdonságát: a Bloom-kiosztás kvótatulajdonságát és a mohó slotkiosztás
+lefedettségi alsó korlátját.
+\item \textbf{Generálási módszer.} Kidolgoztuk és implementáltuk a tervezésvezérelt, forráshivatkozásos
+csővezetéket: ablakozott szemantikus darabolás, lefedettségvezérelt vizsgaterv, slotonkénti sűrű vagy
+hibrid visszakeresés, egyenkénti forráshoz kötött generálás, legolcsóbbtól a legdrágábbig rendezett
+ellenőrző lánc visszacsatolással, tartalékfogalmakkal és javító hívással, valamint munkamenet-hatókörű
+fogalomgráf.
+\item \textbf{Adatvédő architektúra.} A mikroszolgáltatás-architektúra zéró adatmegőrzéssel,
+ujjlenyomatokra épülő naplózással és kapcsolható, kizárólag helyi üzemmóddal működik; a GPU-memóriaigény
+analitikus modelljét mérésekkel validáltuk: a 7B generátor és futtatókörnyezete 5,4--5,9\,GiB-ot foglal,
+így 8\,GB-os kártyán is fut.
+\item \textbf{Kiértékelési módszertan.} Tizenöt egytényezős kísérleti kart, 39 dokumentumos kétnyelvű
+adatkészletet 326 referenciakérdéssel, modellcsaládon kívüli bírót, közös bíró--oktató rubrikát és
+dokumentumszintű statisztikát tartalmazó, nyílt és reprodukálható keretrendszert hoztunk létre.
+\item \textbf{Pilot eredmények.} A tervezés a helyi modell alátámasztottságát 67-ről 73\,\%-ra, vak
+megoldhatóságát 85-ről 93\,\%-ra, disztraktor-validitását 80-ról 87\,\%-ra és lefedettségét 50-ről
+58\,\%-ra javította; a nagy szervermodell a legmagasabb minőséget (0,99), de a legalacsonyabb
+lefedettséget (25\,\%) érte el; az azonos modellel végzett önellenőrzés a bíróval csak véletlenszintű
+egyezést mutatott; a visszacsatolási hurok a kulcs kérdésbe szivárgását idézte elő, amely az automatikus
+mutatókat és a bírót egyaránt félrevezette; a futásról futásra jelentkező zaj ($\approx0{,}07$) pedig
+megmutatta, hogy egyetlen dokumentumon a legtöbb különbség nem értelmezhető.
+\end{enumerate}
+
+A kutatási kérdésekre a pilot alapján a következő előzetes válaszokat adhatjuk. \textbf{RQ1:} a
+tervezés érvényesebb és jobban lefedő vizsgát eredményezett; a hatás iránya a várt, nagysága azonban
+egyetlen dokumentumon a zajsávon belül van. \textbf{RQ2:} a tervezés 23 hívásért mérhető javulást hozott;
+az önellenőrzés 60--100 hívásért nem hozott, a fogalomgráf pedig csak a szivárgás torzításával együtt
+javított; a rögzített darabolás a duplikátumokat megháromszorozta. \textbf{RQ3:} a helyi 7B modell a
+szervermodell minőségi indexét 0,09--0,11-re közelítette meg, 8\,GB alatti memóriaigénnyel.
+
+\section{További munka}
+
+A közvetlen folytatás a fő vizsgálat lefuttatása \az{\ref{ch:kiertekeles}}.~fejezetben rögzített
+protokoll szerint: mind a 15 kar a 39 dokumentumon, a bíró validálása három oktató vak értékelésével, és \az{\ref{tab:fo-vizsgalat}}.~táblázat kitöltése. Ezen túl a következő irányokat tartjuk ígéretesnek.
+
+\begin{itemize}
+\item \textbf{Független ellenőrző.} Ha az eltérő modellcsaládba tartozó ellenőrző (\arm{E2x}) sem
+független a generátortól, természetes nyelvi következtetésre (NLI) tanított kisebb osztályozó vagy a
+FActScore-hoz hasonló atomi tényellenőrzés~\cite{min2023factscore} lehet a következő lépés.
+\item \textbf{A megvalósult Bloom-szint ellenőrzése.} A pilot szerint a kis modell a kért kognitív
+szintet nem valósítja meg megbízhatóan; egy szintosztályozó ellenőrzés az ellenőrző láncba illeszthető.
+\item \textbf{Adaptív ellenőrzés.} Az ellenőrzés költségét csökkentené, ha csak a bizonytalan
+kérdésekre futna (pl.\ a kulcs lexikális alátámasztottsága vagy a generátor bizonyossága alapján).
+\item \textbf{Nyelvi összevetés.} Az angol dokumentumok egy részének magyar fordítása lehetővé tenné a
+nyelv hatásának a forrástól független mérését.
+\item \textbf{További kérdéstípusok és tanórai kipróbálás.} Az igaz--hamis és a kifejtős kérdések
+kiértékelése, valamint a generált vizsgák pszichometriai elemzése (nehézségi és diszkriminációs index,
+nem funkcionáló disztraktorok) valós hallgatói válaszokon.
+\end{itemize}
+
+A \Mimir{} nyílt forráskódú: a kód, a konfigurációk, az adatkészlet-manifesztek és a pilot nyers
+kimenetei a reprodukáláshoz rendelkezésre állnak.

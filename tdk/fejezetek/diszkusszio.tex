@@ -1,0 +1,86 @@
+% =====================================================================
+\chapter{Diszkusszió}
+\label{ch:diszkusszio}
+% =====================================================================
+
+\section{Miért módszer, és nem prompt?}
+
+A dolgozat központi állítása, hogy a vizsgagenerálás megbízhatóságát nem egy jobb prompt, hanem a
+feladat explicit, ellenőrizhető lépésekre bontása biztosítja. A pilot három ponton támasztja alá ezt
+az érvelést. \emph{Először}, ugyanaz a 7B modell pusztán a tervezés hatására alátámasztottabb,
+vakon jobban megoldható, jobb disztraktorú és jobban lefedő vizsgát írt; a különbség nem a modell
+tudásából, hanem a feladat szerkezetéből ered. \emph{Másodszor}, egy lényegesen nagyobb modell,
+amely a dokumentumot (visszakeresett formában) egyben kapta meg, szintén a dokumentum egyetlen
+részére koncentrált -- a lefedettség tehát nem a modell méretével, hanem a feladat megfogalmazásával
+kontrollálható. \emph{Harmadszor}, a kérdésenkénti forráshivatkozás lehetővé tette, hogy egy olvasó --
+a kiértékelésben a bíró, a gyakorlatban az oktató -- minden kulcsot a saját forrásával szemben
+ellenőrizzen; éppen ez tárta fel a naiv alapvonal hibás kulcsait és az ellenőrző karok szivárgó
+kérdéseit.
+
+A pilot a módszer határait is megmutatta. Az ellenőrzés a hívásszámot 60--100-szorosára növelte, és
+ha az ellenőrző ugyanaz a 7B modell, mint a generátor, ez a többletköltség nem jár többletinformációval.
+A fő vizsgálatban ezért nem a tervezés, hanem az ellenőrzés az a komponens, amelynek bizonyítania kell a
+helyét. Ha az \arm{E2x} kar (eltérő modellcsaládba tartozó ellenőrző) sem mutat pozitív egyezést a
+bíróval, akkor a helyi telepítés helyes konfigurációja a tervezett, ellenőrzés nélküli csővezeték
+(\arm{E1}), a forráshivatkozás megjelenítésével és az oktatói ellenőrzéssel mint egyetlen
+ellenőrzési réteggel.
+
+\section{A mérés mint kutatási eredmény}
+
+A pilot talán legfontosabb eredménye módszertani: a mérés három különböző ponton torzított volna,
+ha nem validáljuk. A tartalékvizsga-hiba a generálási sikert, a csonkolt kódoló a darabolás
+minőségét, a szivárgás pedig a tartalmi mutatókat és a bíró ítéletét torzította -- mindhárom
+esetben \emph{felfelé}, vagyis jobb eredményt mutatva a valósnál. A három hiba közös vonása, hogy a
+mérőrendszer „működött”: nem adott hibaüzenetet, és hihető számokat állított elő. Ebből az a
+módszertani tanulság következik, hogy a nyelvi modellekre épülő rendszerek kiértékelésében a nyers
+kimenetek kézi átolvasása és a mutatók szélsőértékeinek tudatos vizsgálata nem helyettesíthető
+automatizmussal; a mi esetünkben a legjobb helyi alátámasztottsági értéket (\arm{E3}, 87\,\%) éppen
+egy hibamód okozta.
+
+A futásról futásra jelentkező zaj ($\approx0{,}07$) becslése hasonló tanulság: a kevés dokumentumon,
+kevés ismétléssel mért különbségek jelentős része zaj lehet.
+
+\section{Az érvényességet veszélyeztető tényezők}
+\label{sec:validitas}
+
+A tapasztalati szoftvertechnológiai kutatás szokásos felosztását~\cite{wohlin2012experimentation}
+követve négy érvényességi dimenziót vizsgálunk.
+
+\paragraph{Belső érvényesség.} Az egytényezős kísérleti terv a karok közötti különbséget egyetlen
+tényezőhöz köti, ám a tényezők nem mindig függetlenek: az ellenőrzés például a kérdések hosszát és
+formáját is megváltoztatja, ami közvetve hat a bíró érthetőségi ítéletére. A GPU-következtetés
+nemdeterminisztikussága miatt azonos konfiguráció mellett is eltérő kimenetek születnek; ezt a
+dokumentumszintű aggregálás és a dokumentumok számának növelése kezeli. A pilot és a fő vizsgálat
+között a csővezeték változott (szivárgási szabályok, javító hívás, $r=1$), így a két vizsgálat
+eredményei nem közvetlenül összevethetők; a pilot eredményei az akkori implementációra vonatkoznak.
+
+\paragraph{Konstrukciós érvényesség.} A minőségi index négy egyenlő súlyú komponense közül a formai
+megfelelés vizsgaszintű bináris változó, a másik három kérdésszintű ráta; ezért egyetlen formai hiba
+aránytalanul nagy hatású. Ezt tudatosan vállaljuk (egy hibás formájú kérdés a gyakorlatban
+használhatatlanná teszi a vizsgát), de minden komponenst külön is közlünk. A lefedettség az
+embedding-térbeli legközelebbi darabra épül, ami csak közelítése annak, hogy a kérdés „miről szól”.
+Az alátámasztottság és a vak megoldhatóság a bíró ítéletén alapul; a bíró a kérdés kontextusát látja,
+így a dokumentum más részeiben lévő ellentmondást nem veheti észre, és -- amint a szivárgás
+megmutatta -- a formailag hibás, de „igaz” kérdéseket nem bünteti. A bíró validálása az oktatói
+értékeléssel ezért a fő vizsgálat elengedhetetlen része.
+
+\paragraph{Külső érvényesség.} A pilot egyetlen rövid, könnyű magyar szövegen futott, amelyen a naiv
+alapvonal a négy darabból hármat lát -- ez a tervezés számára a legkedvezőtlenebb helyzet, hosszabb
+dokumentumokon nagyobb különbség várható. A fő adatkészlet magyar és angol részhalmaza eltérő
+forrásból származik (Wikipédia és tankönyv), így a nyelv hatása a forrás hatásával keveredik. Csak
+feleletválasztós kérdéseket értékelünk; az igaz--hamis és a kifejtős kérdések minősége külön vizsgálatot
+igényel. Az eredmények a vizsgált modellekre (Qwen2.5-7B, Llama-3.1-8B, a szervermodell) vonatkoznak;
+egy másik modellcsalád eltérően viselkedhet.
+
+\paragraph{Következtetési érvényesség.} A dokumentumszintű nemparaméteres tesztek konzervatívak;
+a 39 dokumentum közepes hatásméretek kimutatására elegendő, kis hatások kimutatására nem. A több
+összehasonlítást Holm-korrekcióval kezeljük. A bootstrap-intervallumok kis mintán alulfedhetnek, ezért a
+pontbecslések mellett mindig a dokumentumszintű eloszlást is közöljük.
+
+\section{Etikai és jogi megfontolások}
+
+A rendszer hallgatói adatot nem kezel, a feltöltött dokumentumok a feladat végén törlődnek
+(\ref{sec:zero}.~szakasz), minden generált kérdés oktatói jóváhagyást igényel, az export pedig feltünteti
+az MI-közreműködést és a modellt~\cite{aiact2024}. A kiértékelő dokumentumok saját vagy nyílt licencű
+(CC BY 4.0, CC BY-SA 4.0) művek; a szerverkarok és a bíró az egyetem saját GenAI-infrastruktúráján futnak.
+A rendszer célja a vázlatírás gyorsítása és ellenőrizhetővé tétele, nem az oktatói döntés kiváltása.

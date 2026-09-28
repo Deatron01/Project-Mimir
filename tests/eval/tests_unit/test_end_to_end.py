@@ -152,6 +152,16 @@ def test_full_pipeline(workspace):
     assert "|A|" not in text and runs["A"].name not in text
     assert norm_text("Értékelés")  # sanity
 
+    # results viewer: one page with the embedded data, statistics for both arms
+    from mimir_eval.viewer import build_viewer
+    page = build_viewer(str(tmp / "results")).read_text(encoding="utf-8")
+    data = json.loads(page.split('<script id="data" type="application/json">')[1].split("</script>")[0].replace("<\\/", "</"))
+    assert {r["arm"] for r in data["summary"]} == {"A", "B"}
+    assert all(r["n_docs"] == 3 and r["seeds"] == [1, 2] for r in data["summary"])
+    assert set(data["perdoc"]["B"]) == {"hu-coffee", "hu-immune", "hu-gametheory"}
+    q = data["runs"][0]["exams"][0]["questions"][0]
+    assert {"dup_of", "is_question", "grounded", "options"} <= set(q)
+
 
 def test_resume_retries_failed(workspace, monkeypatch):
     tmp, cfgs = workspace

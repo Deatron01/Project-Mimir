@@ -1,0 +1,260 @@
+% =====================================================================
+\chapter{Rendszerarchitektúra és helyi üzemeltetés}
+\label{ch:architektura}
+% =====================================================================
+
+Ebben a fejezetben a \Mimir{} rendszer felépítését mutatjuk be abból a szempontból, amely a
+kutatási kérdések szempontjából releváns: hogyan valósítja meg a rendszer a helyi futtatást (P4), a
+zéró adatmegőrzést (P3) és a mérhetőséget. A felhasználói felület és az exportálók részleteit csak a
+teljesség kedvéért érintjük.
+
+\section{Tervezési célok}
+
+A P1--P4 problémákból és az AI Act emberi felügyeletre vonatkozó elvárásából~\cite{aiact2024} öt
+tervezési célt vezettünk le. \Az{\ref{tab:celok}}.~táblázat ezeket a közvetlen megközelítéssel veti össze.
+
+\begin{table}[htbp]
+\centering
+\caption{Tervezési célok: a dokumentum csevegő LLM-nek való átadása és a \Mimir{} összevetése.}
+\label{tab:celok}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\toprule
+Cél & Dokumentum $\to$ csevegő LLM & \Mimir{} \\
+\midrule
+G1 Ellenőrizhető & A kulcs nincs ellenőrizve, nincs forráshivatkozás & Minden kérdés darabokra hivatkozik; alátámasztottsági és vak megoldási ellenőrzés; az ellenőrzésen át nem jutott kérdés megjelölve \\
+G2 Kontrollált & Darabszám, típus, nehézség csak kérés & A terv rögzíti a darabszámot, típusokat, Bloom-szinteket; lefedettségvezérelt fogalomválasztás \\
+G3 Adatvédő & Az anyag a szolgáltatóhoz kerül & Helyi modell; a tartalom a feladat végén törlődik; kapcsolható kizárólag helyi mód \\
+G4 Megvalósítható & Hosszú kontextus, nagy modell & Rövid hívások 8\,192--16\,384 tokenes kontextusban; 7B modell 8\,GB-on \\
+G5 Felügyelt & A kimenet változtatás nélkül használható & Kötelező oktatói jóváhagyás szerkesztőben, a hivatkozott forrással; MI-közreműködés jelölése az exportban \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Mikroszolgáltatás-architektúra}
+
+A rendszer lazán csatolt, konténerizált szolgáltatásokból áll, amelyeket egy Nginx-alapú API-átjáró
+fog össze (\ref{fig:architektura}.~ábra). A szolgáltatások az északi mitológia tudással kapcsolatos
+alakjairól kapták nevüket; feladatukat \az{\ref{tab:szolgaltatasok}}.~táblázat foglalja össze. Minden
+szolgáltatás FastAPI-alapú Python-alkalmazás, egységes \code{/health} végponttal és verziózott
+\code{/api/v1} felülettel, így a kiértékelő keretrendszer ugyanazokat a végpontokat hívja, mint az
+éles frontend.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  svc/.style={draw, rounded corners=2pt, align=center, font=\footnotesize, minimum height=11mm, text width=25mm, fill=blue!6, draw=blue!50!black},
+  ui/.style={svc, fill=white, draw=black},
+  store/.style={draw, cylinder, shape border rotate=90, aspect=0.18, align=center, font=\footnotesize, minimum height=11mm, text width=19mm, fill=gray!10},
+  ext/.style={svc, dashed, fill=orange!8, draw=orange!70!black},
+  gpu/.style={svc, fill=green!8, draw=green!45!black, thick},
+  arr/.style={-{Stealth[length=1.6mm]}, semithick},
+  darr/.style={{Stealth[length=1.6mm]}-{Stealth[length=1.6mm]}, semithick}]
+% sor 0
+\node[ui]  (fe)    at (0,0)    {Webes felület\\(React, TypeScript)};
+\node[ui]  (gw)    at (3.4,0)  {API-átjáró\\(Nginx, TLS)};
+\node[svc] (bif)   at (6.8,0)  {\textbf{Bifrost}\\RAG-karmester,\\feladatkezelés};
+\node[svc] (heim)  at (10.2,0) {\textbf{Heimdall}\\séma- és\\minőségszűrés};
+\node[ext] (genai) at (12.6,2.0) {Egyetemi GenAI-\\szerver\\(opcionális)};
+% sor +1
+\node[svc] (well)  at (5.1,2.0) {\textbf{Wellspring}\\szövegkinyerés\\(PDF, DOCX, OCR)};
+\node[svc] (rune)  at (8.5,2.0) {\textbf{RuneCarver}\\szemantikus\\darabolás (E5)};
+% sor -1
+\node[svc]   (skald) at (0,-2.0)   {\textbf{Skald}\\export: JSON,\\Moodle XML, PDF};
+\node[svc]   (forge) at (3.4,-2.0) {\textbf{The Forge}\\feladatsor,\\audit napló};
+\node[gpu]   (oll)   at (6.8,-2.0) {\textbf{Ollama}\\Qwen2.5-7B Q4\_K\_M\\(egyetlen GPU)};
+\node[store] (qd)    at (10.2,-2.0) {Qdrant\\(memóriában)};
+% sor -2
+\node[store] (minio) at (0,-3.9)   {MinIO (S3)};
+\node[store] (pg)    at (3.4,-3.9) {PostgreSQL};
+% élek
+\draw[arr]  (fe) -- (gw);
+\draw[arr]  (gw) -- (bif);
+\draw[darr] (bif) -- (well);
+\draw[darr] (bif) -- (rune);
+\draw[darr] (bif) -- (heim);
+\draw[darr] (bif) -- (oll);
+\draw[darr] (bif.south east) -- (qd.north west);
+\draw[arr]  (gw.south west) -- (skald.north east);
+\draw[arr]  (bif.south west) -- (forge.north east);
+\draw[darr] (forge) -- (pg);
+\draw[darr] (skald) -- (minio);
+\draw[arr, dashed, orange!70!black] (bif.north east) -- node[above, sloped, font=\scriptsize, pos=0.55]{ha nincs LOCAL\_ONLY} (genai.west);
+\begin{scope}[on background layer]
+\node[draw=gray!60, dashed, rounded corners, fit=(well)(rune)(bif)(heim)(oll)(qd), inner sep=2.5mm,
+  label={[font=\scriptsize, text=gray!70!black]below:feladat-hatókörű tartalom (zéró megőrzés)}] {};
+\end{scope}
+\end{tikzpicture}}
+\caption{A \Mimir{} szolgáltatásai és adatfolyama. A szaggatott keretben lévő komponensek a
+feltöltött tartalmat kizárólag a feladat élettartama alatt, memóriában tartják; a nyelvi modell
+az egyetlen GPU-t használó összetevő.}
+\label{fig:architektura}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\caption{A \Mimir{} szolgáltatásai és kutatási szempontból releváns felelősségeik.}
+\label{tab:szolgaltatasok}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+Szolgáltatás & Felelősség \\
+\midrule
+Wellspring & Szövegkinyerés PDF-ből (PyMuPDF), DOCX-ből és szövegfájlból. Oldalanként olvashatósági arányt
+számol (értelmes karakterek aránya a nem szóköz karakterek között); $0{,}85$ alatt az oldalt képként
+dolgozza fel: helyi módban Tesseract OCR-rel, egyébként látás--nyelvi modellel. \\
+RuneCarver & Mondatfelbontás, ablakozott mondatbeágyazás (multilingual-E5-base), szemantikus
+darabolás méretfüggő küszöbbel (\ref{sec:darabolas}.~szakasz). \\
+Bifrost & A generálás karmestere: aszinkron feladatkezelés lejárati idővel, indexelés a vektortárba,
+visszakeresés, promptépítés, modellválasztás (helyi vagy szerver), audit metaadatok küldése. \\
+Heimdall & A modellválaszok JSON-sémájának és koherenciájának szűrése; a szervermodell
+elérhetetlensége esetén helyi tartalék. \\
+The Forge & PostgreSQL-alapú feladatsor zárolásmentes kiosztással; audit napló kizárólag
+metaadatokkal és SHA-256 ujjlenyomatokkal; megőrzési idő utáni automatikus törlés. \\
+Skald & Exportálás JSON, Moodle XML (CDATA, MathJax) és nyomtatható PDF formátumba; az MI-közreműködés
+és a modell nevének feltüntetése. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Feladatkezelés és párhuzamosság}
+
+A generálás percekig tarthat (\ref{ch:eredmenyek}.~fejezet), ezért a Bifrost aszinkron feladatmodellt
+használ: a \code{POST /api/v1/generate} kérés azonnal egy feladatazonosítót ad vissza, az állapot
+pedig a \code{GET /api/v1/status/\{job\_id\}} végponton kérdezhető le, amely a haladást és a becsült
+hátralévő időt is közli. A feladatok egy memóriabeli tárban élnek, amely minden hozzáféréskor törli a
+lejárati időn ($\mathrm{TTL}=3600$\,s) túli bejegyzéseket.
+
+A CPU- és GPU-igényes háttérmunkát a The Forge osztja ki a munkásoknak egy PostgreSQL-táblán alapuló
+sorral. A kiosztás a \code{SELECT \dots{} FOR UPDATE SKIP LOCKED} záradékra~\cite{postgres2024skiplocked}
+épül: minden munkás egy tranzakcióban kiválasztja a legrégebbi, még nem zárolt, várakozó feladatot,
+zárolja, állapotát \emph{feldolgozás alatt}-ra állítja, majd a befejezés után \emph{kész}-re. A
+\code{SKIP LOCKED} miatt a párhuzamos munkások nem várnak egymás zárjaira, és egy feladatot pontosan egy
+munkás kap meg, külön üzenetközvetítő (pl.\ RabbitMQ) nélkül. Mivel a GPU egyetlen modellt futtat, a
+generálási feladatok párhuzamossága szándékosan egy; a párhuzamos munkások a CPU-igényes kinyerést és
+darabolást gyorsítják.
+
+\section{Adatvédelem: zéró megőrzés}
+\label{sec:zero}
+
+A G3 cél megvalósítása az adatminimalizálás és a tárolási korlátozás GDPR-elvein~\cite{gdpr2016}
+alapul. \Az{\ref{tab:eletciklus}}.~táblázat a feldolgozás során keletkező összes adatfajta életciklusát
+összegzi.
+
+\begin{table}[htbp]
+\centering
+\caption{Adatfajták életciklusa a \Mimir{} rendszerben.}
+\label{tab:eletciklus}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+Adat & Tárolás helye & Élettartam \\
+\midrule
+Feltöltött fájl bájtjai & szolgáltatás memóriája & a kinyerési kérés végéig \\
+Kinyert szöveg, darabok & szolgáltatás memóriája & a feladat végéig \\
+Beágyazások & Qdrant, memóriában & a következő feladat indexelése előtt a gyűjtemény törlődik \\
+Promptok, kontextus & szolgáltatás memóriája & a modellhívás végéig \\
+Generált vizsga (vázlat) & feladattár & $\mathrm{TTL}=60$ perc, majd automatikus törlés \\
+Jóváhagyott, mentett vizsga & MinIO/SQLite & beállítható megőrzési idő, oktatói törlés \\
+Audit napló & PostgreSQL & csak metaadatok és ujjlenyomatok; megőrzési idő után törlés \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Az audit napló kulcsszerepet játszik a reprodukálhatóságban és az elszámoltathatóságban, ugyanakkor
+nem tartalmazhat tananyagot. Ezért a napló egy bejegyzése a
+\begin{equation}
+a=\bigl(\textit{job\_id},\;\textit{modell},\;\textit{promptverzió},\;\textit{minőségi pontszám},\;
+h(u),\;h(p),\;h(x),\;|u|,\;|x|\bigr)
+\end{equation}
+rekord, ahol $u$ a felhasználói kérés, $p$ a teljes prompt, $x$ a visszakeresett kontextus, $h$ a SHA-256
+lenyomatfüggvény, $|\cdot|$ pedig a karakterhossz. A lenyomat alapján utólag igazolható, hogy két futás
+ugyanazzal a kontextussal és prompttal dolgozott-e, a tartalom azonban nem állítható vissza belőle. A
+rendszer induláskor a korábbi, még tartalmat is tároló naplósorok szöveges mezőit kiüríti, és óránként
+törli a megőrzési időn túli sorokat.
+
+A \code{LOCAL\_ONLY} kapcsoló minden külső modellhívást letilt: ilyenkor a látás--nyelvi modell helyett
+Tesseract OCR, a szervermodell helyett a helyi Ollama fut, a modellválasztó végpont pedig csak helyi
+modellt kínál. Kapcsoló nélkül a feltöltési képernyő megnevezi, hol történik a feldolgozás, és az oktató
+választhatja a helyi modellt.
+
+\section{Erőforrás-modell: a GPU-memória költségvetése}
+\label{sec:vram}
+
+A G4 cél kvantitatív kérdés: befér-e a generátor egy 8\,GB-os kártyára úgy, hogy mellette az asztali
+környezet is fut? A dekódolás közbeni memóriaigényt három tag határozza meg:
+\begin{equation}
+M(\mathrm{ctx}) \;=\; W \;+\; \mathrm{ctx}\cdot \underbrace{2\,L\,H_{kv}\,d_h\,\beta}_{\textstyle m_{kv}} \;+\; M_0,
+\label{eq:vram}
+\end{equation}
+ahol $W$ a kvantált súlyok mérete, $L$ a rétegek, $H_{kv}$ a kulcs--érték fejek száma, $d_h$ a fejdimenzió,
+$\beta$ a gyorsítótár elemeinek mérete bájtban (fp16 esetén $\beta=2$), a $2$-es szorzó a kulcs és az érték
+tárolását jelöli, $M_0$ pedig a futtatókörnyezet és a számítási pufferek többletköltsége. A
+csoportosított lekérdezésű figyelem~\cite{ainslie2023gqa} lényege éppen az, hogy $H_{kv}$ a
+lekérdezőfejek számánál jóval kisebb. A Qwen2.5-7B~\cite{qwen25} architektúrájára ($L=28$, $H_{kv}=4$,
+$d_h=128$) a tokenenkénti gyorsítótár
+\begin{equation}
+m_{kv}=2\cdot 28\cdot 4\cdot 128\cdot 2\ \text{B}=57\,344\ \text{B}=56\ \text{KiB},
+\end{equation}
+így $16\,384$ tokenes kontextusnál a KV-gyorsítótár $56\cdot 16\,384\ \text{KiB}=896\ \text{MiB}$.
+\Az{\ref{tab:budget}}.~táblázat a modell alapján becsült memóriaigényt mutatja több lehetséges helyi
+generátorra.
+
+\begin{table}[htbp]
+\centering
+\caption{Becsült GPU-memóriaigény 8\,192 tokenes kontextusnál, fp16 KV-gyorsítótárral és
+$M_0\approx0{,}6$\,GB futtatókörnyezeti többlettel. A súlyok a GGUF-fájlok mérete, a gyorsítótár a
+publikált architektúrákból számolt érték.}
+\label{tab:budget}
+\small
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Modell & Kvantálás & $L/H_{kv}$ & Súlyok & $m_{kv}$ & Összesen & Kártya \\
+\midrule
+Qwen2.5-3B  & Q4\_K\_M & 36/2 & 1,9\,GB & 36\,KiB  & 2,8\,GB  & 8\,GB \\
+Qwen2.5-7B  & Q4\_K\_M & 28/4 & 4,7\,GB & 56\,KiB  & 5,8\,GB  & 8\,GB \\
+Llama-3.1-8B~\cite{grattafiori2024llama3} & Q4\_K\_M & 32/8 & 4,9\,GB & 128\,KiB & 6,6\,GB & 8\,GB \\
+Qwen2.5-7B  & Q8\_0    & 28/4 & 8,1\,GB & 56\,KiB  & 9,2\,GB  & 12\,GB \\
+Qwen2.5-14B & Q4\_K\_M & 48/8 & 9,0\,GB & 192\,KiB & 11,2\,GB & 12\,GB \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A modell szerint a 3--8 milliárd paraméteres modellek 4 bites kvantálással elférnek egy 8\,GB-os
+kártyán, a 14B modell vagy a 8 bites 7B modell viszont már 12\,GB-ot igényel. A becslést a pilot
+vizsgálatban mért értékekkel validáltuk (\ref{tab:vram-meres}.~táblázat): minden kar első vizsgájánál,
+amikor a modell még nem volt betöltve, az alapszint $1\,612$--$1\,931$\,MiB volt (asztali környezet), a
+generálás alatti csúcs pedig $7\,022$--$7\,808$\,MiB. A modell és a futtatókörnyezet tehát
+$5\,400$--$5\,950$\,MiB-ot foglalt $16\,384$ tokenes kontextus mellett, ami \az{\eqref{eq:vram}} modell alapján várt $4{,}7\,\text{GB}+0{,}9\,\text{GiB}+M_0$ értékkel összhangban van, és
+a legrosszabb esetben is $\approx$380\,MiB tartalékot hagyott a $8\,192$\,MiB-os kártyán.
+
+\begin{table}[htbp]
+\centering
+\caption{Mért GPU-memória a pilot vizsgálatban (MiB), karonként az első, hidegindítású vizsga alapján.
+A különbség a modell és a futtatókörnyezet foglalása.}
+\label{tab:vram-meres}
+\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Kar & Alapszint & Csúcs & Különbség \\
+\midrule
+\arm{E1}  & 1\,612 & 7\,025 & 5\,413 \\
+\arm{E2}  & 1\,815 & 7\,761 & 5\,946 \\
+\arm{E2f} & 1\,931 & 7\,621 & 5\,690 \\
+\arm{E2h} & 1\,774 & 7\,175 & 5\,401 \\
+\arm{E3}  & 1\,739 & 7\,134 & 5\,395 \\
+\arm{E5a} & 1\,896 & 7\,369 & 5\,473 \\
+\arm{E5b} & 1\,899 & 7\,326 & 5\,427 \\
+\arm{E5c} & 1\,892 & 7\,292 & 5\,400 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A mérés egy fontos mellékhatásra is rámutat: a teljes dokumentumot egy promptban kapó alapvonal
+(\arm{B-doc-L}) számára a kontextus növelése nem ingyenes. $32\,768$ tokenes kontextusnál a
+KV-gyorsítótár önmagában $1{,}75$\,GiB lenne, ami a mért csúcshoz adva már meghaladná a kártya
+kapacitását; ekkor a futtatókörnyezet a modell egy részét a CPU-ra helyezi, ami nagyságrendi lassulással
+jár. Ezért a helyi teljes dokumentumos alapvonal $16\,384$ tokenes kontextussal és $30\,000$ karakterre
+csonkolt dokumentummal fut, és a levágott rész arányát rögzítjük -- éppen ez az a korlát, amelyet egy kis
+helyi modell nem tud megkerülni, a tervezett csővezeték viszont igen, mert minden hívása rövid.

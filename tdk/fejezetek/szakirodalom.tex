@@ -1,0 +1,218 @@
+% =====================================================================
+\chapter{Szakirodalmi áttekintés}
+\label{ch:szakirodalom}
+% =====================================================================
+
+Ebben a fejezetben azokat a kutatási irányokat tekintjük át, amelyekre a \Mimir{} módszere és
+kiértékelése épül: az automatikus kérdés- és disztraktorgenerálást, a visszakereséssel kiegészített
+generálást, a hosszú kontextus problémáit, az ellenőrzést és önjavítást, a kis és kvantált modelleket,
+valamint a nyelvi modellekkel végzett kiértékelést. A fejezet végén összevetjük a meglévő
+megközelítéseket, és megfogalmazzuk a kutatási rést.
+
+\section{Automatikus kérdésgenerálás}
+
+Az automatikus kérdésgenerálás (\emph{automatic question generation}, AQG) több évtizedes múltra
+tekint vissza. Kurdi és munkatársai szisztematikus irodalmi áttekintése~\cite{kurdi2020systematic}
+93 oktatási célú AQG-rendszert elemzett, és három generációt különített el. Az \emph{első} generáció
+szabály- és sablonalapú: szintaktikai elemzéssel azonosítja a kérdezhető mondatrészeket, és
+transzformációs szabályokkal kérdő mondattá alakítja őket. Mitkov és Ha rendszere~\cite{mitkov2003computer}
+például főnévi csoportokat választ ki kulcsként, és a kulcshoz szemantikusan közeli fogalmakat
+(WordNet-szomszédokat) javasol disztraktornak. Heilman és Smith~\cite{heilman2010good} a túlgenerálás és
+rangsorolás elvét vezette be: a szabályok sok jelöltet állítanak elő, amelyeket egy statisztikai modell
+rangsorol. A \emph{második} generáció neurális szekvencia--szekvencia modelleket használ; Du és
+munkatársai~\cite{du2017learning} figyelemmechanizmusos kódoló--dekódoló hálózattal olvasásértési
+kérdéseket generáltak. A \emph{harmadik} generációt az előtanított transzformerek~\cite{vaswani2017attention,devlin2019bert}
+és a nagy nyelvi modellek~\cite{brown2020gpt3} jelentik, amelyek utasításkövetéssel, finomhangolás nélkül
+is képesek kérdés--válasz párokat írni.
+
+Az áttekintések visszatérő megállapítása, hogy a kiértékelés a terület gyenge pontja. Mulla és
+Gharpure~\cite{mulla2023aqg} szerint a rendszerek jelentős részét referencia-átfedésen alapuló
+metrikákkal (BLEU~\cite{papineni2002bleu}, ROUGE~\cite{lin2004rouge}) mérik, amelyek egy referenciakérdéshez
+való lexikális hasonlóságot jutalmaznak. Egy vizsgakérdés azonban akkor is kiváló lehet, ha egyetlen
+szava sem egyezik a referenciával, és akkor is használhatatlan, ha a kulcsa hibás. A humán értékelések jellemzően kis mintán, nem vakon
+történnek, és ritkán ellenőrzik a kulcs helyességét~\cite{kurdi2020systematic}. Munkánkban ezért a referenciakérdéseket nem célként, hanem csak a visszakeresés és a
+tematikus hasonlóság mérésére használjuk, a helyességet pedig explicit, forrásalapú predikátumokkal mérjük.
+
+\section{Disztraktorgenerálás és tesztelméleti követelmények}
+
+A feleletválasztós kérdés minőségét döntően a disztraktorok határozzák meg. Haladyna, Downing és
+Rodriguez~\cite{haladyna2002review} 31 kérdésírási irányelvet összegző munkája szerint a disztraktoroknak
+hihetőnek, egymást kölcsönösen kizárónak, a kulccsal azonos hosszúságúnak és nyelvtani formájúnak kell
+lenniük, és kerülni kell a „mindegyik fenti” típusú opciókat. Gierl és munkatársai~\cite{gierl2017distractors}
+áttekintése a disztraktorok kidolgozásának, elemzésének és felhasználásának gyakorlatát foglalja össze,
+és rámutat, hogy a nem funkcionáló (senki által nem választott) disztraktor gyakorlatilag csökkenti az
+opciók számát, így növeli a találgatás esélyét.
+
+Alhazmi és munkatársai~\cite{alhazmi2024distractor} a disztraktorgenerálás módszereit három csoportba
+sorolják: tudásbázis- és ontológiaalapú (hasonló fogalmak lexikai adatbázisból), korpuszalapú (disztribúciós
+hasonlóság) és generatív (neurális vagy LLM-alapú) módszerekre. Megállapításuk szerint a generatív
+módszerek a legfolyékonyabb disztraktorokat adják, ám gyakran előfordul, hogy egy disztraktor valójában
+szintén helyes, vagy nyilvánvalóan abszurd. A \Mimir{} ezt két ponton kezeli: a fogalomgráf-alapú változat
+a dokumentumból kinyert \emph{testvérfogalmakat} (azonos szülőfogalom alá tartozó fogalmakat) ajánlja
+disztraktor-ötletként, az ellenőrző pedig minden disztraktorra külön ítéletet kér arról, hogy a forrás
+szerint hamis-e.
+
+\section{A kognitív szint: Bloom taxonómiája}
+
+A kérdések nehézségének szabályozására a legelterjedtebb keret Bloom taxonómiája~\cite{bloom1956taxonomy}
+és annak Anderson és Krathwohl által átdolgozott változata~\cite{anderson2001bloom}. A revideált taxonómia
+kognitív dimenziója hat, egymásra épülő szintet különít el: emlékezés, megértés, alkalmazás, elemzés,
+értékelés és alkotás. A feleletválasztós formátum az első öt szint mérésére alkalmas; az alkotás
+jellemzően nyitott feladatot igényel. A \Mimir{} a kért nehézséghez egy Bloom-szinteloszlást rendel
+(\ref{sec:blueprint}.~szakasz), és ezt az eloszlást a legnagyobb maradék elvén diszkretizálja a
+vizsga slotjaira, így a nehézség a promptban tett kérés helyett a terv szerkezeti tulajdonsága lesz.
+
+\section{Visszakereséssel kiegészített generálás}
+
+A visszakereséssel kiegészített generálás (RAG) Lewis és munkatársai~\cite{lewis2020rag} munkájában
+jelent meg: egy sűrű visszakereső (DPR~\cite{karpukhin2020dpr}) a kérdéshez releváns szövegrészleteket
+keres egy külső korpuszból, és a generátor ezekre támaszkodva válaszol. Azóta a RAG a nyelvi modellek
+tényszerűségének növelésére szolgáló legelterjedtebb technikává vált; Gao és munkatársai
+áttekintése~\cite{gao2023ragsurvey} a „naiv”, a „fejlett” és a „moduláris” RAG paradigmáit különíti el.
+A naiv RAG egyetlen visszakeresést és egyetlen generálást végez; a fejlett RAG a visszakeresés előtt
+és után optimalizál (lekérdezés-átírás, újrarangsorolás); a moduláris RAG pedig tetszőleges sorrendben
+kombinálja a visszakeresési, generálási és ellenőrzési modulokat. A \Mimir{} tervezett csővezetéke
+ebben a terminológiában moduláris RAG: a visszakeresés a terv minden slotjára külön fut, és az ellenőrzés
+eredménye visszacsatol a visszakeresésre.
+
+\paragraph{Sűrű és lexikális visszakeresés.} A sűrű visszakeresés a szövegeket egy közös vektortérbe
+képezi. A mondatbeágyazások Sentence-BERT óta~\cite{reimers2019sbert} sziámi hálózatokkal, kontrasztív
+tanítással készülnek; az E5 modellcsalád~\cite{wang2022e5} gyengén felügyelt kontrasztív előtanítással
+készült, többnyelvű változata~\cite{wang2024me5} a magyart is támogatja. A lexikális visszakeresés
+klasszikus módszere a BM25~\cite{robertson2009bm25}, amely a kifejezésgyakoriságot telítő függvénnyel és
+dokumentumhossz-normalizálással súlyozza. A két módszer hibái eltérnek: a sűrű visszakeresés a
+szinonimákat és parafrázisokat kezeli jól, a lexikális a ritka szakkifejezéseket és tulajdonneveket. Az
+eredmények egyesítésére a reciprok rangfúzió (RRF)~\cite{cormack2009rrf} egyszerű és robusztus
+módszer, amely csak a rangokat használja, így nem igényli a heterogén pontszámok kalibrálását.
+
+\paragraph{Darabolás.} A visszakeresés egysége a darab (\emph{chunk}). A rögzített méretű ablakok
+egyszerűek, de mondatok és gondolatmenetek közepén vágnak. A szemantikus darabolás a szomszédos mondatok
+beágyazásainak távolságát figyeli, és ott vág, ahol a téma megváltozik. Qu, Tu és Bao~\cite{qu2024chunking}
+szisztematikusan vizsgálták, megéri-e a szemantikus darabolás számítási többletköltsége, és azt találták,
+hogy előnye adatkészletfüggő, és gyakran kisebb, mint várnánk. Ez indokolja, hogy a darabolási stratégiát
+mi is külön kísérleti karokkal (\arm{E5a--c}) vizsgáljuk, ahelyett hogy eleve jobbnak tekintenénk.
+
+\paragraph{Gráfalapú RAG.} Edge és munkatársai GraphRAG módszere~\cite{edge2024graphrag} a korpuszból
+nyelvi modellel entitás- és relációgráfot épít, a gráfot közösségekre bontja, és a közösségek
+összefoglalóival válaszol a korpusz egészére vonatkozó („globális”) kérdésekre. A módszer drága: a teljes
+korpuszt többször fel kell dolgozni. A \Mimir{} ennek egy könnyített, munkamenet-hatókörű változatát
+használja: a fogalomgráf egyetlen dokumentumra, kötegenként egy hívással készül, és csak a vizsga
+élettartamáig létezik.
+
+\section{Hosszú kontextus: az egylépéses alternatíva korlátai}
+
+A RAG alternatívája az, hogy a teljes dokumentumot egyetlen promptban adjuk át a modellnek -- ez
+felel meg az oktatók napi gyakorlatának. Liu és munkatársai~\cite{liu2024lost} kimutatták, hogy a
+modellek teljesítménye U alakú függvénye a releváns információ pozíciójának: a kontextus elején és végén
+elhelyezett információt jobban használják, mint a közepén lévőt („lost in the middle”). Hsieh és
+munkatársai RULER benchmarkja~\cite{hsieh2024ruler} szerint a legtöbb modell „tényleges” kontextushossza
+jóval rövidebb a névlegesnél. Vizsgagenerálásra vetítve ez azt jelenti, hogy a teljes dokumentumot kapó
+modell kérdései várhatóan a dokumentum elejére és végére tömörülnek, ami a lefedettség mérésével
+közvetlenül tesztelhető (\ref{h:lefed}.~hipotézis).
+
+\section{Hallucináció, ellenőrzés és önjavítás}
+
+Ji és munkatársai~\cite{ji2023hallucination} a hallucinációt úgy definiálják, mint a forrással
+ellentmondó (\emph{intrinzikus}) vagy abból nem igazolható (\emph{extrinzikus}) generált tartalmat. A
+kérdésgenerálásban mindkettő előfordul: a kulcs ellentmondhat a forrásnak, vagy olyan tényen alapulhat,
+amely a forrásban nem szerepel.
+
+A hallucináció csökkentésére az irodalom két nagy stratégiát javasol. Az \emph{önjavító} módszerek
+(Self-Refine~\cite{madaan2023selfrefine}) a modell saját visszajelzésére építve iteratívan javítják a
+kimenetet; a Chain-of-Verification~\cite{dhuliawala2024cove} ellenőrző kérdéseket generál, ezekre
+egymástól függetlenül válaszol, majd a válaszok alapján módosítja az eredeti kimenetet. A SelfCheckGPT~\cite{manakul2023selfcheck}
+mintavételezett válaszok konzisztenciájából becsüli a hallucinációt, a FActScore~\cite{min2023factscore}
+pedig atomi tényekre bontja a szöveget, és ezeket egyenként ellenőrzi egy tudásforrással szemben.
+Huang és munkatársai~\cite{huang2024selfcorrect} ugyanakkor kimutatták, hogy külső visszajelzés nélkül a
+modellek önjavítása érvelési feladatokban nem javít, sőt ronthat is. Snell és
+munkatársai~\cite{snell2025scaling} azt mutatták meg, hogy a következtetési időben elköltött számítás
+(több minta, ellenőrzés) bizonyos feladatokban helyettesítheti a modellméretet -- ez adja az elméleti
+alapját annak, hogy egy kis modell ellenőrző lánccal megközelítheti egy nagy modell minőségét.
+
+A \Mimir{} ellenőrző lánca e két irány metszetében helyezkedik el: külső, determinisztikus szabályokat
+(forma, meta-hivatkozás, hivatkozás, szivárgás, duplikátum) kombinál a forrással szembeni, nyelvi
+modellel végzett ítéletekkel (alátámasztottság, disztraktorok, vak megoldás). Pilot eredményeink
+(\ref{sec:verifier-eredmeny}.~szakasz) Huang és munkatársai megállapításával összhangban azt mutatják,
+hogy a generátorral azonos kis modellel végzett ítélet nem hordoz érdemi információt.
+
+\section{Kis nyelvi modellek és kvantálás}
+
+A helyi futtatás kulcskérdése a memória. Egy $P$ paraméteres modell súlyai 16 bites lebegőpontos
+ábrázolásban $2P$ bájtot foglalnak, ami 7 milliárd paraméternél 14\,GB -- ez nem fér el egy fogyasztói
+kártyán. A kvantálás a súlyokat alacsonyabb bitszámon tárolja: az LLM.int8()~\cite{dettmers2022int8}
+8 bites, a GPTQ~\cite{frantar2023gptq} 3--4 bites utólagos kvantálást vezetett be. A \texttt{llama.cpp}
+projekt~\cite{gerganov2023llamacpp} GGUF formátuma és csoportos K-kvantálása (pl.\ Q4\_K\_M) a helyi
+futtatás de facto szabványa lett; erre épül az általunk használt Ollama futtatókörnyezet~\cite{ollama2024}.
+Átfogó kiértékelések szerint a 4 bites súlykvantálás általános benchmarkokon csak kis
+pontosságvesztést okoz~\cite{li2024evalquant,kurtic2025bf16,kurt2026quant}. A memóriaigény másik összetevője a kulcs--érték (KV) gyorsítótár, amely a kontextushosszal
+lineárisan nő; a csoportosított lekérdezésű figyelem (GQA)~\cite{ainslie2023gqa} a KV-fejek számának
+csökkentésével ezt jelentősen mérsékli, a PagedAttention~\cite{kwon2023vllm} pedig a töredezettséget
+szünteti meg; a helyi futtatás energiaigényét fogyasztói hardveren Zähl és Hennig mérte~\cite{zahl2026energy}.
+
+Az oktatási kérdésgenerálásban Fawzi és munkatársai~\cite{fawzi2023small,fawzi2024towards} kimutatták,
+hogy kis modellek további előtanítással és finomhangolással a nagy modellekhez mérhető kérdéseket
+állíthatnak elő, Jaldi és munkatársai~\cite{jaldi2026small} pedig kis, privát modelleket hasonlítottak
+össze nagy modellekkel Bloom-szintekhez igazított értékelés tervezésében. A mi megközelítésünk ezektől
+abban tér el, hogy finomhangolás nélküli, általános célú modellt használunk, és a minőséget a
+\emph{módszer} szerkezetével (terv, forráshoz kötés, ellenőrzés) igyekszünk biztosítani.
+
+\begin{table}[tbp]
+\centering
+\caption{A kérdésgenerálási megközelítések összevetése a P1--P4 problémák szempontjából
+(\checkmark: megoldott, $\circ$: részben, --: nem kezelt).}
+\label{tab:irodalom-osszevetes}
+\small
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Megközelítés & \makecell{Kulcs\\ellenőrzése} & \makecell{Szerkezet,\\lefedettség} & \makecell{Helyi\\futás} & \makecell{Kis\\modell} & \makecell{Forrás-\\hivatkozás} & \makecell{Kulcs-\\validálás mérése}\\
+\midrule
+Szabály/sablon alapú~\cite{mitkov2003computer,heilman2010good} & $\circ$ & -- & \checkmark & \checkmark & $\circ$ & -- \\
+Neurális seq2seq~\cite{du2017learning} & -- & -- & \checkmark & \checkmark & -- & -- \\
+Dokumentum $\to$ csevegő LLM (status quo) & -- & -- & -- & -- & -- & -- \\
+Naiv RAG~\cite{lewis2020rag} & -- & -- & $\circ$ & $\circ$ & $\circ$ & -- \\
+Finomhangolt kis modell~\cite{fawzi2023small,fawzi2024towards} & -- & -- & \checkmark & \checkmark & -- & $\circ$ \\
+Önjavítás / CoVe~\cite{madaan2023selfrefine,dhuliawala2024cove} & $\circ$ & -- & -- & -- & -- & -- \\
+GraphRAG~\cite{edge2024graphrag} & -- & $\circ$ & -- & -- & $\circ$ & -- \\
+\midrule
+\textbf{\Mimir{} (jelen munka)} & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\section{Nyelvi modell mint bíró}
+
+A generált szöveg minőségének skálázható mérésére egyre elterjedtebb az erős nyelvi modell bíróként
+való alkalmazása (\emph{LLM-as-a-judge}). Zheng és munkatársai~\cite{zheng2023judge} szerint a GPT-4
+bíró ítéletei az emberi preferenciákkal közel akkora mértékben egyeznek, mint az emberek egymással;
+a G-Eval~\cite{liu2023geval} gondolatmenet-alapú, űrlapkitöltő értékeléssel javította az emberi
+egyezést. A bírók torzításai ugyanakkor jól dokumentáltak: pozíciós torzítás (az első vagy második
+válasz preferálása)~\cite{wang2024fair}, a hosszabb válaszok előnyben részesítése, és az
+\emph{önpreferencia}: Panickssery és munkatársai~\cite{panickssery2024selfpref} kimutatták, hogy a modellek
+felismerik és előnyben részesítik saját generálásaikat. Ebből két tervezési döntésünk következik: a
+bíró más modellcsaládba tartozik, mint bármelyik generátor (gpt-oss~\cite{gptoss2025} a Qwen- és
+Llama-generátorokkal szemben), a vak megoldási próbában pedig a válaszlehetőségek sorrendjét
+véletlenszerűen permutáljuk. A RAG-rendszerek referenciamentes kiértékelésére a RAGAS~\cite{es2024ragas}
+hasonló, nyelvi modellel számolt hűség- és relevanciamutatókat javasol; mi ezeket a vizsgakérdés
+speciális szerkezetéhez (kulcs, disztraktorok, vak megoldás) igazítottuk.
+
+\section{Magyar nyelvi erőforrások és szabályozási környezet}
+
+A magyar nyelv agglutináló morfológiája és viszonylag kis erőforrás-háttere külön kihívás. A HuLU
+benchmark~\cite{ligetinagy2024hulu} a magyar nyelvértési feladatok egységes kiértékelési keretét adja, a
+MILQA~\cite{novak2023milqa} pedig magyar Wikipédia-cikkekre épülő kérdés--válasz adatbázis, amelyet a
+referenciakérdések egyik forrásaként használunk. Tudomásunk szerint magyar nyelvű vizsgakérdés-generálásra
+még nem publikáltak rendszerszintű, szisztematikus kiértékelést.
+
+A tananyag felhőszolgáltatónak való átadása a GDPR~\cite{gdpr2016} értelmében adattovábbítás; az AI
+Act~\cite{aiact2024} az oktatási MI-rendszerek egy részét magas kockázatúnak minősíti, és emberi felügyeletet,
+valamint az MI-tartalom átláthatóságát várja el.
+
+\section{Összegzés és a kutatási rés}
+
+A P1--P4 szempontok szerinti összevetésből (\ref{tab:irodalom-osszevetes}.~táblázat) három hiányosság
+rajzolódik ki: (i) nincs olyan nyílt rendszer, amely a
+kérdésgenerálást explicit tervvel, forráshivatkozással és ellenőrzéssel, fogyasztói GPU-n futó kis modellel
+végezné; (ii) a kiértékelés ritkán méri a kulcs helyességét és a lefedettséget, és hiányoznak az egytényezős
+(ablációs) tervek; (iii) a magyar nyelvű vizsgagenerálás kiértékelése feltáratlan. Ezekre rendre \az{\ref{ch:modszer}}., \az{\ref{ch:kiertekeles}}.\ és \az{\ref{ch:eredmenyek}}.~fejezet ad választ.

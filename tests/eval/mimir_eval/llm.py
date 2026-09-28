@@ -44,7 +44,8 @@ class LLMError(RuntimeError):
 
 class LLMClient:
     def __init__(self, provider: str, model: str, temperature: float = 0.0, num_ctx: int = 16384,
-                 timeout_s: float = 600, max_retries: int = 2, stream: bool | None = None, **_):
+                 timeout_s: float = 600, max_retries: int = 2, stream: bool | None = None,
+                 think: bool | None = None, **_):
         if provider not in PROVIDERS:
             raise ValueError(f"unknown provider {provider}")
         self.provider = provider
@@ -53,6 +54,7 @@ class LLMClient:
         self.num_ctx = num_ctx
         self.timeout_s = timeout_s
         self.max_retries = max_retries
+        self.think = think
         self.stream = (provider == "genai") if stream is None else stream
         spec = PROVIDERS[provider]
         self.base_url = spec["base_url"].rstrip("/")
@@ -101,6 +103,8 @@ class LLMClient:
         if seed is not None:
             options["seed"] = seed
         body = {"model": self.model, "messages": messages, "stream": False, "options": options}
+        if self.think is not None:
+            body["think"] = self.think
         if json_mode:
             body["format"] = "json"
         with httpx.Client(timeout=self.timeout_s, trust_env=False) as c:

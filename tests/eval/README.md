@@ -130,7 +130,15 @@ restarted, because every step resumes:
 ```powershell
 .\run_all.ps1                                   # all arms, judge gpt-oss:120b
 .\run_all.ps1 -Arms E0,E2 -MaxDocs 2            # quick subset
+.\run_all.ps1 -Model gemma4:e4b -MaxDocs 6      # the local arms again with another Ollama model
 ```
+
+`-Model` (or `--model` on `check`/`run`) swaps the generator of the local arms and renames them, e.g.
+`E2` -> `E2-gemma4-e4b`, so both models' results live side by side in `results\`, the viewer and the
+report. The blueprint arms verify with the generator, so their verifier changes too (E2x keeps
+Llama-3.1-8B). Server arms (E4, E4b, B-doc-S) are skipped. Pull the model first (`ollama pull
+gemma4:e4b`); for thinking models `-Think off` turns the reasoning off. Use the same `-MaxDocs` as the
+run you compare against so the arms see the same documents.
 
 ## TDK report (Hungarian)
 
@@ -138,6 +146,13 @@ restarted, because every step resumes:
 python -m mimir_eval report --name pilot        # latest run of every arm -> report\pilot\
 python -m mimir_eval view                        # results\viewer.html: read the generated exams
 ```
+
+`results\viewer.html` is one offline page with four tabs: **Overview** (ranking with 95% CIs, duplicate and
+non-question rates, quality vs time, metric heatmap, automatic warnings about uneven document sets, seeds,
+failed exams and tiny retrieved chunks), **Documents** (document x arm matrix; per document the chunking and
+the retrieved chunks), **Compare arms** (paired per-document differences with an exact Wilcoxon test) and
+**Exams** (each exam as a printable test paper with a hidden answer key, or in review mode with the judge's
+verdicts). Re-run `view` after every `score`.
 
 `report\<name>\` gets (PNG 300 dpi + PDF, and the text in `eredmenyek.md`):
 

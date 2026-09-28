@@ -1,0 +1,266 @@
+% =====================================================================
+%  Óbudai Egyetem – 64. Tudományos Diákköri Konferencia (2026. ősz)
+%  TDK dolgozat: MIMIR – ellenőrizhető, adatvédelmet biztosító
+%  vizsgakérdés-generálás lokális nyelvi modellekkel
+%
+%  Fordítás:  latexmk -pdf main.tex      (pdflatex + biber)
+%  vagy:      pdflatex main && biber main && pdflatex main && pdflatex main
+% =====================================================================
+\documentclass[12pt,a4paper,oneside]{report}
+
+% ---------------------------------------------------------------------
+%  Kódolás, nyelv, betűkészlet
+% ---------------------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\def\magyarOptions{defaults=hu-min,postdescription=unchanged}
+\usepackage[english,magyar]{babel}
+\usepackage{mathptmx}                 % Times jellegű szövegtörzs
+\usepackage[scaled=0.92]{helvet}
+\usepackage{courier}
+\usepackage{microtype}
+
+% ---------------------------------------------------------------------
+%  Oldalkép: A4, 2,5 cm margó, másfeles sorköz
+% ---------------------------------------------------------------------
+\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm,headheight=15pt]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\setlist{itemsep=2pt,topsep=4pt,parsep=0pt}
+
+% ---------------------------------------------------------------------
+%  Matematika, ábrák, táblázatok, algoritmusok
+% ---------------------------------------------------------------------
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage[table]{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{siunitx}
+\sisetup{output-decimal-marker={,},group-separator={\,},group-minimum-digits=4}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds,shapes.geometric,calc,shadows}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage[ruled,vlined,linesnumbered,algochapter]{algorithm2e}
+\usepackage{listings}
+\usepackage{csquotes}
+
+% ---------------------------------------------------------------------
+%  Irodalomjegyzék (biblatex + biber, numerikus, megjelenési sorrend)
+% ---------------------------------------------------------------------
+\usepackage[backend=biber,style=numeric-comp,sorting=none,maxbibnames=6,minbibnames=3,
+            giveninits=true,url=false,doi=true,isbn=false,eprint=true]{biblatex}
+\addbibresource{references.bib}
+\DeclareFieldFormat{titlecase}{#1}
+
+% ---------------------------------------------------------------------
+%  Hiperhivatkozások (utolsóként)
+% ---------------------------------------------------------------------
+\usepackage[hidelinks,unicode,bookmarksnumbered]{hyperref}
+\usepackage{xurl}
+\hypersetup{pdftitle={MIMIR: ellenőrizhető, adatvédelmet biztosító vizsgakérdés-generálás lokális nyelvi modellekkel},
+            pdfsubject={TDK dolgozat, Óbudai Egyetem, 2026},
+            pdfkeywords={kérdésgenerálás, RAG, kis nyelvi modellek, verifikáció, LLM-bíró}}
+
+% ---------------------------------------------------------------------
+%  Címlap adatai – KITÖLTENDŐ
+% ---------------------------------------------------------------------
+\newcommand{\Kar}{[Kar neve, pl. Neumann János Informatikai Kar]}
+\newcommand{\Intezet}{[Intézet neve]}
+\newcommand{\SzerzoA}{[Szerző 1 neve]}
+\newcommand{\SzerzoAszak}{[szak, évfolyam]}
+\newcommand{\SzerzoB}{[Szerző 2 neve]}
+\newcommand{\SzerzoBszak}{[szak, évfolyam]}
+\newcommand{\Konzulens}{[Konzulens neve]}
+\newcommand{\KonzulensBeosztas}{[beosztás, intézet]}
+\newcommand{\Ev}{2026}
+
+\newcommand{\DolgozatCim}{Ellenőrizhető, adatvédelmet biztosító vizsgakérdés-generálás fogyasztói GPU-n futó kis nyelvi modellekkel}
+\newcommand{\DolgozatAlcim}{A \textsc{Mimir} tervezésvezérelt, forráshivatkozásos RAG-módszere és többkarú kísérleti kiértékelése}
+
+% ---------------------------------------------------------------------
+%  Saját makrók
+% ---------------------------------------------------------------------
+\newcommand{\Mimir}{\textsc{Mimir}}
+\newcommand{\tbd}[1]{\textcolor{red}{#1}}                   % csak a fő vizsgálat adatai
+\newcommand{\code}[1]{\texttt{\small #1}}
+\newcommand{\arm}[1]{\textsf{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\1}{\mathbb{1}}
+\newcommand{\Doc}{\mathcal{D}}
+\newcommand{\Chunks}{\mathcal{C}}
+\newcommand{\Exam}{\mathcal{X}}
+\newcommand{\argmax}{\operatorname*{arg\,max}}
+\newcommand{\argmin}{\operatorname*{arg\,min}}
+\DeclareMathOperator{\simop}{sim}
+
+\theoremstyle{definition}
+\newtheorem{definicio}{Definíció}[chapter]
+\newtheorem{hipotezis}{Hipotézis}
+\newtheorem{allitas}{Állítás}[chapter]
+\theoremstyle{remark}
+\newtheorem*{megjegyzes}{Megjegyzés}
+
+% algorithm2e magyarítás
+\SetAlgorithmName{Algoritmus}{algoritmus}{Algoritmusok jegyzéke}
+\SetKwInput{KwIn}{Bemenet}
+\SetKwInput{KwOut}{Kimenet}
+\SetKwInput{KwParam}{Paraméterek}
+\SetKw{KwRet}{visszatér}
+\SetKwFor{ForEach}{minden}{elemre}{vége}
+\SetKwFor{For}{ciklus}{:}{vége}
+\SetKwFor{While}{amíg}{:}{vége}
+\SetKwIF{If}{ElseIf}{Else}{ha}{akkor}{különben ha}{különben}{vége}
+\SetAlFnt{\small}
+\SetAlCapFnt{\small\bfseries}
+\SetAlCapNameFnt{\small}
+
+% listings – prompt- és konfigurációrészletek
+\lstset{basicstyle=\ttfamily\scriptsize,breaklines=true,columns=fullflexible,frame=single,
+        framerule=0.3pt,rulecolor=\color{gray!60},backgroundcolor=\color{gray!4},
+        literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ö}{{\"o}}1 {ő}{{\H{o}}}1
+                 {ú}{{\'u}}1 {ü}{{\"u}}1 {ű}{{\H{u}}}1 {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1
+                 {Ó}{{\'O}}1 {Ö}{{\"O}}1 {Ő}{{\H{O}}}1 {Ú}{{\'U}}1 {Ü}{{\"U}}1 {Ű}{{\H{U}}}1
+                 {–}{{--}}1 {„}{{,,}}1 {”}{{''}}1 {…}{{\ldots}}1}
+
+% Fejezetcímek
+\makeatletter
+\newcommand\MimirChapterHeads{%
+  \def\@makechapterhead##1{{\vspace*{-12pt}\normalfont\Large\bfseries
+    \ifnum\c@secnumdepth>\m@ne\thechapter.\hspace{0.6em}\fi ##1\par\nobreak\vspace{16pt}}}%
+  \def\@makeschapterhead##1{{\vspace*{-12pt}\normalfont\Large\bfseries ##1\par\nobreak\vspace{16pt}}}}
+\addto\extrasmagyar{\MimirChapterHeads}
+\AtBeginDocument{\MimirChapterHeads}
+\makeatother
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titleformat{\paragraph}[runin]{\normalfont\normalsize\bfseries}{\theparagraph}{0pt}{}
+\titlespacing*{\paragraph}{0pt}{1.2ex plus .5ex minus .2ex}{0.6em}
+
+% Élőfej / élőláb
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape\Mimir{} -- ellenőrizhető vizsgakérdés-generálás}
+\fancyhead[R]{\small\itshape\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\thepage}\renewcommand{\headrulewidth}{0pt}}
+
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+\setlength{\textfloatsep}{10pt plus 2pt minus 4pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.6}
+\renewcommand{\textfraction}{0.12}
+\renewcommand{\floatpagefraction}{0.75}
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{16pt plus 4pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
+\renewcommand{\arraystretch}{1.12}
+
+% =====================================================================
+\begin{document}
+
+% ------------------------------- CÍMLAP ------------------------------
+\begin{titlepage}
+\begin{center}
+\begin{singlespace}
+{\Large\bfseries ÓBUDAI EGYETEM\par}
+\vspace{2mm}
+{\large \Kar\par}
+{\normalsize \Intezet\par}
+\vspace{2mm}
+\rule{\textwidth}{0.6pt}\par
+\vspace{2.8cm}
+{\LARGE\bfseries TUDOMÁNYOS DIÁKKÖRI DOLGOZAT\par}
+\vspace{2.2cm}
+{\Large\bfseries \DolgozatCim\par}
+\vspace{6mm}
+{\large\itshape \DolgozatAlcim\par}
+\vfill
+\begin{tabular}{@{}p{0.47\textwidth}p{0.47\textwidth}@{}}
+\textbf{Szerzők:} & \textbf{Konzulens:}\\[1mm]
+\SzerzoA & \Konzulens\\
+\small\SzerzoAszak & \small\KonzulensBeosztas\\[3mm]
+\SzerzoB & \\
+\small\SzerzoBszak & \\
+\end{tabular}
+\vspace{2.4cm}
+
+{\large Budapest, \Ev\par}
+\vspace{2mm}
+{\small 64. Tudományos Diákköri Konferencia -- \Ev.\ őszi félév\par}
+\end{singlespace}
+\end{center}
+\end{titlepage}
+
+% ------------------------- ELŐLAPOK (római számozás) -----------------
+\pagenumbering{roman}
+\setcounter{page}{2}
+\input{fejezetek/osszefoglalo}
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Tartalomjegyzék}
+\begin{singlespace}
+\tableofcontents
+\end{singlespace}
+
+\input{fejezetek/jelolesek}
+
+% ----------------------------- FŐSZÖVEG ------------------------------
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\include{fejezetek/bevezetes}
+\include{fejezetek/szakirodalom}
+\include{fejezetek/formalizmus}
+\include{fejezetek/architektura}
+\include{fejezetek/modszertan}
+\include{fejezetek/kiertekeles}
+\include{fejezetek/eredmenyek}
+\include{fejezetek/diszkusszio}
+\include{fejezetek/osszefoglalas}
+
+% ----------------------------- JEGYZÉKEK -----------------------------
+\cleardoublepage
+\begin{singlespace}
+\printbibliography[heading=bibintoc,title={Irodalomjegyzék}]
+\end{singlespace}
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Ábrajegyzék}
+\begin{singlespace}
+\listoffigures
+\end{singlespace}
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Táblázatjegyzék}
+\begin{singlespace}
+\listoftables
+\end{singlespace}
+
+% ----------------------------- FÜGGELÉK ------------------------------
+\appendix
+\include{fejezetek/fuggelek}
+
+\end{document}

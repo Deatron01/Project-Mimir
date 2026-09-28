@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import copy
 import os
+import re
 from pathlib import Path
 
 import yaml
@@ -46,6 +47,7 @@ DEFAULTS: dict = {
         "temperature": 0.2,
         "num_ctx": 8192,          # every prompt fits; 16384 only made Ollama slower (AI-18)
         "timeout_s": 600,
+        "think": None,            # ollama only: True/False switches a thinking model's reasoning; None = model default
     },
     "services": {
         "wellspring": "http://localhost:8001",
@@ -88,12 +90,42 @@ def deep_merge(base: dict, override: dict) -> dict:
     return out
 
 
-def load_config(path: str | Path) -> dict:
+def model_tag(model: str) -> str:
+    """'gemma4:e4b' -> 'gemma4-e4b' (safe in arm names and folder names)."""
+    return re.sub(r"[^a-z0-9.]+", "-", model.lower()).strip("-")
+
+
+def apply_model(cfg: dict, model: str, tag: str | None = None, think: bool | None = None) -> dict:
+    """Run a local arm with another Ollama model: E2 -> E2-gemma4-e4b, everything else unchanged.
+
+    The verifier of the blueprint arms is the generator itself, so it changes too; E2x keeps its
+    other-family verifier. Arms on the university server or the Bifrost service are refused.
+    """
+    gen = cfg["generator"]
+    if cfg["pipeline"]["kind"] == "naive_service" or gen["provider"] != "ollama":
+        raise SystemExit(f"{cfg['name']} does not use a local Ollama generator; --model only applies to local arms")
+    old = gen["model"]
+    gen["model"] = model
+    if think is not None:
+        gen["think"] = think
+    cfg["base_arm"] = cfg["name"]
+    cfg["name"] = f"{cfg['name']}-{tag or model_tag(model)}"
+    desc = cfg.get("description") or ""
+    cfg["description"] = desc.replace(old, model) if old in desc else f"{desc} [generator: {model}]".strip()
+    return cfg
+
+
+def load_config(path: str | Path, model: str | None = None, tag: str | None = None,
+                think: bool | None = None) -> dict:
     path = Path(path)
     raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     cfg = deep_merge(DEFAULTS, raw)
     if not cfg["name"]:
         cfg["name"] = path.stem
+    if model:
+        apply_model(cfg, model, tag, think)
+    elif think is not None:
+        cfg["generator"]["think"] = think
     cfg["_config_path"] = str(path)
     validate(cfg)
     return cfg

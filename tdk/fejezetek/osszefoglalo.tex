@@ -1,0 +1,86 @@
+% ---------------------------------------------------------------------
+%  Tartalmi összefoglaló (magyar) és Abstract (angol)
+% ---------------------------------------------------------------------
+\chapter*{Tartalmi összefoglaló}
+\addcontentsline{toc}{chapter}{Tartalmi összefoglaló}
+\thispagestyle{plain}
+
+A feleletválasztós vizsgakérdések írása lassú és hibalehetőségekkel teli szakmai munka: a kérdésnek
+egyértelműnek kell lennie, pontosan egy válaszlehetőségnek kell a tananyag szerint helyesnek lennie, a
+disztraktoroknak pedig hihetőnek, de igazolhatóan hibásnak. A nagy nyelvi modellek (LLM) megjelenésével
+a legelterjedtebb gyakorlat az lett, hogy az oktató feltölti a jegyzetét egy felhőben futó csevegő
+asszisztensbe, és „tíz feleletválasztós kérdést” kér. Ez kényelmes, de négy lényeges hiányossága van:
+(P1) semmi sem ellenőrzi, hogy a megjelölt helyes válasz valóban következik-e a dokumentumból;
+(P2) a kérdések száma, típusa és nehézsége csak kérés, a hosszú bemenetet a modellek egyenetlenül
+használják, így a kérdések néhány szakaszra tömörülnek; (P3) a tananyag egy harmadik félhez kerül;
+(P4) a módszer nagy, távoli modellekre és hosszú kontextusra támaszkodik.
+
+Dolgozatunkban bemutatjuk a \Mimir{} rendszert, amely a fenti egyetlen promptot explicit, ellenőrizhető
+\emph{módszerrel} váltja fel, és egyetlen fogyasztói GPU-n futó, 7 milliárd paraméteres, 4 bitre kvantált
+nyelvi modellel működik. A módszer lépései: szemantikus darabolás ablakozott mondatbeágyazással;
+lefedettségvezérelt \emph{vizsgaterv} (blueprint), amely a fogalmakat, a kérdéstípusokat és a Bloom-szinteket
+a legnagyobb maradék elvén osztja ki a slotokra; slotonkénti visszakeresés (sűrű vagy BM25\,+\,sűrű,
+reciprok rangfúzióval); egyenként generált, forrásrészletekre hivatkozó kérdések; valamint a legolcsóbbtól
+a legdrágábbig rendezett ellenőrző lánc (forma, meta-hivatkozás, hivatkozás, alátámasztottság és
+disztraktorok, vak megoldhatóság, válaszszivárgás, duplikátum), amely hiba esetén visszacsatolással
+újrapróbálkozik. Egy fogalomgráf-alapú változat (GraphRAG-lite) a tervezőt, a disztraktorjavaslatokat
+és a kontextust gazdagítja. A rendszer mikroszolgáltatás-architektúrája zéró adatmegőrzést valósít meg:
+a feltöltött tartalom csak a feladat idejére létezik, a naplóban csak kriptográfiai ujjlenyomatok maradnak.
+
+Második hozzájárulásunk egy reprodukálható, nyílt kiértékelési \emph{módszertan}: tizenöt, egyszerre
+egy tényezőt változtató kísérleti kar; 39 magyar és angol dokumentumból, 326 referenciakérdésből álló
+adatkészlet; a generátoroktól eltérő modellcsaládba tartozó LLM-bíró; formálisan definiált mutatók
+(formai megfelelés, alátámasztottság, vak megoldhatóság, disztraktor-validitás, lefedettség, szivárgás);
+valamint dokumentumszintű statisztika (bootstrap konfidenciaintervallum, páros Wilcoxon-próba
+Holm-korrekcióval, rangbiszeriális hatásméret, Krippendorff-$\alpha$).
+
+Egy magyar nyelvű dokumentumon, tíz karral és három ismétléssel végzett pilot vizsgálat (300 kérdés)
+szerint a tervezés a helyi 7B modell alátámasztottságát 67-ről 73\,\%-ra, vak megoldhatóságát 85-ről
+93\,\%-ra, disztraktor-validitását 80-ról 87\,\%-ra, lefedettségét 50-ről 58\,\%-ra javította; egy nagy
+szervermodell ugyan a legmagasabb minőségi indexet (0,99) érte el, de kérdéseit a dokumentum darabjainak
+mindössze negyedéből merítette; a helyi modell a GPU-memóriából 5,4--5,9\,GB-ot foglalt, tehát 8\,GB-os
+kártyán is fut. A pilot két, korábbi méréseket érvénytelenítő mérési hibát és egy új hibamódot is feltárt:
+az azonos 7B modellel végzett önellenőrzés a bíró ítéletével csak véletlenszintű egyezést mutat
+(Cohen-$\kappa \in [-0{,}14;\,0{,}07]$), a visszacsatolási hurok pedig a modellt a forrásmondat szó szerinti
+átvételére, azaz a helyes válasz kérdésszövegbe szivárogtatására ösztönzi, amit a bíró sem büntet.
+Az egyetlen dokumentumon mért futásról futásra jelentkező zaj ($\approx$0,07) indokolja a 39 dokumentumos,
+dokumentumszintű statisztikára épülő fő vizsgálatot, amelynek protokollját részletesen rögzítjük.
+
+\medskip
+\noindent\textbf{Kulcsszavak:} automatikus kérdésgenerálás, visszakereséssel kiegészített generálás (RAG),
+kis nyelvi modellek, verifikáció, LLM-bíró, adatvédelem, oktatástechnológia, magyar nyelv
+
+% ---------------------------------------------------------------------
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\thispagestyle{plain}
+
+\begin{otherlanguage}{english}
+The most common way to obtain an exam from teaching material today is to upload the document to a
+hosted chat-based large language model (LLM) and ask for a test. This offers no evidence that the keyed
+answers are supported by the document, no control over which parts of the material are covered, and it
+discloses the material to a third party. We present \Mimir{}, an open system that generates
+multiple-choice exams from a teacher's own documents with a 4-bit, 7-billion-parameter model running on a
+single consumer GPU. \Mimir{} replaces the single prompt by an explicit method: semantic chunking with
+windowed sentence encoding, a coverage-driven exam \emph{blueprint} that allocates concepts, question
+types and Bloom levels to slots by the largest-remainder rule, per-slot dense or hybrid (BM25 + dense,
+reciprocal rank fusion) retrieval, per-question generation with chunk citations, and a cheapest-first
+verifier chain with feedback-driven retries, optionally enriched by a session-scoped concept graph. The
+microservice architecture retains no uploaded content beyond the lifetime of a job.
+
+We also contribute an evaluation methodology and open harness: fifteen single-factor experiment arms, a
+39-document Hungarian--English dataset with 326 reference questions, a cross-family LLM judge, formally
+defined measures and document-level statistics. A pilot on one Hungarian document (ten arms, three seeds,
+300 questions) shows that planning raised the local model's grounding from 67\,\% to 73\,\%, blind
+answerability from 85\,\% to 93\,\%, distractor validity from 80\,\% to 87\,\% and section coverage from
+50\,\% to 58\,\%; that a large server model scored highest (0.99) but drew its questions from a quarter of
+the document; and that the local model occupies 5.4--5.9\,GB of GPU memory. The pilot also exposed two
+measurement defects, a same-model verifier at chance-level agreement with the judge
+(Cohen's $\kappa$ from $-0.14$ to $0.07$) and an answer-leakage failure mode that inflates both automatic
+and LLM-judge scores. Run-to-run noise of about 0.07 on a single document motivates the 39-document main
+study, whose protocol we specify in full.
+
+\medskip
+\noindent\textbf{Keywords:} automatic question generation, retrieval-augmented generation, small language
+models, verification, LLM-as-a-judge, privacy, educational technology, Hungarian
+\end{otherlanguage}

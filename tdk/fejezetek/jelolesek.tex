@@ -1,0 +1,52 @@
+% ---------------------------------------------------------------------
+%  Rövidítések és jelölések
+% ---------------------------------------------------------------------
+\chapter*{Rövidítések és jelölések}
+\addcontentsline{toc}{chapter}{Rövidítések és jelölések}
+\thispagestyle{plain}
+
+\begin{singlespace}
+\subsection*{Rövidítések}
+\begin{longtable}{@{}p{3.4cm}p{11.4cm}@{}}
+AQG & \emph{Automatic Question Generation}, automatikus kérdésgenerálás\\
+BM25 & \emph{Best Matching 25}, valószínűségi relevanciakeretre épülő lexikális rangsoroló függvény\\
+CI & \emph{Confidence Interval}, konfidenciaintervallum\\
+E5 & \emph{EmbEddings from bidirEctional Encoder rEpresentations}, kontrasztív szövegbeágyazó modellcsalád\\
+GGUF & a \texttt{llama.cpp} kvantált modellformátuma\\
+GQA & \emph{Grouped-Query Attention}, csoportosított lekérdezésű figyelem\\
+GPU & \emph{Graphics Processing Unit}, grafikus feldolgozóegység\\
+GDPR & az EU 2016/679 általános adatvédelmi rendelete\\
+KV & \emph{key--value} (kulcs--érték) gyorsítótár a transzformer dekódolásakor\\
+LLM & \emph{Large Language Model}, nagy nyelvi modell\\
+MCQ & \emph{Multiple-Choice Question}, feleletválasztós kérdés\\
+MRR & \emph{Mean Reciprocal Rank}, átlagos reciprok rang\\
+Q4\_K\_M & 4 bites, csoportos K-kvantálás közepes változata (\texttt{llama.cpp})\\
+RAG & \emph{Retrieval-Augmented Generation}, visszakereséssel kiegészített generálás\\
+RQ & \emph{Research Question}, kutatási kérdés\\
+RRF & \emph{Reciprocal Rank Fusion}, reciprok rangfúzió\\
+SLM & \emph{Small Language Model}, kis nyelvi modell (itt: $\le$\,8 milliárd paraméter)\\
+VRAM & a GPU dedikált memóriája\\
+\end{longtable}
+
+\subsection*{Fontosabb jelölések}
+\begin{longtable}{@{}p{3.4cm}p{11.4cm}@{}}
+$\Doc$ & a forrásdokumentum (karaktersorozat)\\
+$S=(s_1,\dots,s_m)$ & a dokumentum mondatai\\
+$\Chunks=(c_1,\dots,c_K)$ & a dokumentum darabjai (\emph{chunk}), $K=|\Chunks|$\\
+$\phi(\cdot)\in\R^{d}$ & egységnyi normájú szövegbeágyazás ($d=768$, multilingual-E5-base)\\
+$\delta_i$ & a szomszédos mondatok koszinusz-távolsága, $\delta_i = 1-\langle \phi(s_i),\phi(s_{i+1})\rangle$\\
+$\tau$ & a darabolási alapküszöb (percentilis vagy $\mu+k\sigma$)\\
+$\sigma=(n,T,\lambda,\ell)$ & vizsgaspecifikáció: kérdésszám, típusok, nehézség, nyelv\\
+$q=(t,O,o^\star,R)$ & kérdés: törzs, válaszlehetőségek, kulcs, hivatkozott darabok\\
+$\Exam=(q_1,\dots,q_n)$ & a generált vizsga\\
+$\mathcal{B}=\{(\kappa_j,T_j,b_j)\}$ & a vizsgaterv slotjai: fogalom, típus, Bloom-szint\\
+$G(q),\,A(q),\,V(q)$ & alátámasztottság, vak megoldhatóság, disztraktor-validitás (bírói ítéletek)\\
+$F(\Exam)$ & formai megfelelés indikátora\\
+$\mathrm{Cov}(\Exam)$ & darablefedettség\\
+$Q(\Exam)$ & minőségi index, a négy ráta átlaga\\
+$L(q)$ & válaszszivárgás indikátora (kulcs a törzsben)\\
+$\kappa$ & Cohen-féle egyezési együttható (a szövegkörnyezetből egyértelmű, hogy nem fogalom)\\
+$\alpha$ & Krippendorff-féle megbízhatósági együttható\\
+$r_{rb}$ & páros rangbiszeriális hatásméret\\
+\end{longtable}
+\end{singlespace}

@@ -25,7 +25,7 @@ def cmd_check(a) -> int:
     from .dataset import load_dataset
     from .llm import LLMClient
     from .services import MimirServices
-    cfg = load_config(a.config)
+    cfg = load_config(a.config, model=a.model, tag=a.tag, think=_think(a.think))
     ok = True
     print(f"config: {cfg['name']}  pipeline={cfg['pipeline']['kind']}  chunking={cfg['chunking']['mode']}")
     ds = load_dataset(cfg["dataset"])
@@ -52,9 +52,21 @@ def cmd_check(a) -> int:
     return 0 if ok else 1
 
 
+def _think(v: str | None) -> bool | None:
+    return None if v in (None, "default") else v == "on"
+
+
+def _model_args(s) -> None:
+    s.add_argument("--model", help="run a local arm with this Ollama model instead, e.g. gemma4:e4b "
+                                   "(the arm is renamed, e.g. E2 -> E2-gemma4-e4b)")
+    s.add_argument("--tag", help="suffix for the renamed arm (default: from the model name)")
+    s.add_argument("--think", choices=["on", "off", "default"], help="Ollama thinking on/off for thinking models")
+
+
 def cmd_run(a) -> int:
     from .runner import run_experiment
-    run_experiment(a.config, a.results, resume=a.resume, only_docs=a.docs, max_docs=a.max_docs)
+    run_experiment(a.config, a.results, resume=a.resume, only_docs=a.docs, max_docs=a.max_docs,
+                   model=a.model, tag=a.tag, think=_think(a.think))
     return 0
 
 
@@ -122,6 +134,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("config")
     s.add_argument("--judge-provider", default=JUDGE_DEFAULTS["provider"])
     s.add_argument("--judge-model", default=None, help="also test this judge model")
+    _model_args(s)
     s.set_defaults(fn=cmd_check)
 
     s = sub.add_parser("run", help="generate exams for every document x seed")
@@ -130,6 +143,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--resume", help="existing run dir: only redo missing/failed exams")
     s.add_argument("--docs", nargs="+", help="only these document ids")
     s.add_argument("--max-docs", type=int, help="first N documents (smoke test)")
+    _model_args(s)
     s.set_defaults(fn=cmd_run)
 
     s = sub.add_parser("score", help="automatic metrics + LLM judge")

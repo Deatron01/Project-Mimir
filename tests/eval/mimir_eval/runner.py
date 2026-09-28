@@ -18,8 +18,9 @@ from .vram import VramMonitor, gpu_info, ollama_residency
 
 
 def run_experiment(config_path: str, results_root: str | Path = "results", resume: str | None = None,
-                   only_docs: list[str] | None = None, max_docs: int | None = None) -> Path:
-    cfg = load_config(config_path)
+                   only_docs: list[str] | None = None, max_docs: int | None = None,
+                   model: str | None = None, tag: str | None = None, think: bool | None = None) -> Path:
+    cfg = load_config(config_path, model=model, tag=tag, think=think)
     ds = load_dataset(cfg["dataset"])
     docs = ds.select(only_docs or cfg["documents"])
     if max_docs:

@@ -1,0 +1,467 @@
+% =====================================================================
+\chapter{A \Mimir{} generálási módszere}
+\label{ch:modszer}
+% =====================================================================
+
+Ez a fejezet a dolgozat módszertani magja. Először áttekintjük a két összehasonlított csővezetéket --
+a naiv RAG-alapvonalat és a tervezett (blueprint) csővezetéket --, majd lépésenként ismertetjük a
+darabolás, a tervezés, a visszakeresés, a generálás, az ellenőrzés és a fogalomgráf algoritmusait. A
+leírás a kiértékelő keretrendszer implementációját követi
+(\code{mimir\_eval/blueprint}), amelynek paraméterei \az{\ref{tab:parameterek}}.~táblázatban szerepelnek.
+
+\section{Áttekintés: naiv RAG és tervezett csővezeték}
+
+\Az{\ref{fig:pipelines}}.~ábra a két csővezetéket veti össze. A \emph{naiv RAG} (\arm{E0}) a
+kérésszöveghez legjobban hasonlító három darabot keresi vissza, és egyetlen hívásban kéri a teljes
+vizsgát. Ez a rendszer eredeti (v1) működése, és egyben a legolcsóbb ésszerű alapvonal. A \emph{tervezett
+csővezeték} (\arm{E1--E3}) ezzel szemben először explicit vizsgatervet készít, majd a terv minden
+slotjára külön visszakeresést, egyetlen kérdés generálását és -- az ellenőrző karokban --
+ellenőrzést végez.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  node distance=3mm and 3.5mm,
+  box/.style={draw, rounded corners=2pt, align=center, font=\footnotesize, minimum height=10mm, inner sep=2pt, text width=20mm},
+  hl/.style={box, fill=blue!8, draw=blue!60!black},
+  arr/.style={-{Stealth[length=1.6mm]}, semithick},
+  lab/.style={font=\footnotesize\bfseries, anchor=west}]
+\node[lab] at (-1.3, 1.45) {\arm{E0} -- naiv RAG (alapvonal)};
+\node[box] (n1) at (0.4,0.5) {Dokumentum};
+\node[box, right=of n1] (n2) {Szemantikus darabok};
+\node[box, right=of n2] (n3) {A kéréshez leg\-közelebbi 3 darab};
+\node[box, right=of n3, text width=33mm] (n4) {1 LLM-hívás:\\a teljes vizsga};
+\node[box, right=of n4] (n5) {Vizsga};
+\foreach \a/\b in {n1/n2,n2/n3,n3/n4,n4/n5} \draw[arr] (\a) -- (\b);
+\node[lab] at (-1.3, -0.75) {\arm{E1--E3} -- a \Mimir{} tervezett csővezetéke};
+\node[box] (b1) at (0.4,-1.75) {Dokumentum és darabok};
+\node[hl, right=of b1] (b2) {Fogalomgráf (\arm{E3})};
+\node[box, right=of b2] (b3) {Tervező: fogalom, típus, Bloom-szint};
+\node[box, right=of b3] (b4) {Slotonkénti keresés (sűrű / hibrid)};
+\node[box, right=of b4] (b5) {1 kérdés hivatkozásokkal};
+\node[hl, below=6mm of b5] (b6) {Ellenőrző lánc (\arm{E2}, \arm{E3})};
+\node[box, right=of b5] (b7) {Összeállítás; oktatói jóváhagyás};
+\foreach \a/\b in {b1/b2,b2/b3,b3/b4,b4/b5,b5/b7} \draw[arr] (\a) -- (\b);
+\draw[arr] (b5.south) -- (b6.north);
+\draw[arr, blue!60!black] (b6.west) -- (b6.west -| b4.south) -- node[left, font=\scriptsize, align=right] {hiba:\\visszajelzés,\\újrapróbálás} (b4.south);
+\begin{scope}[on background layer]
+\node[draw=gray!60, dashed, rounded corners, fit=(b4)(b5)(b6), inner sep=2.5mm, label={[font=\scriptsize, text=gray]above:minden slotra}] {};
+\end{scope}
+\end{tikzpicture}}
+\caption{A naiv RAG és a \Mimir{} tervezett csővezetéke. Kék: a kísérleti karokban ki- és
+bekapcsolt komponensek. A terv a vizsga szerkezetét még az első kérdés megírása előtt rögzíti, és
+minden kérdést a saját, hivatkozott kontextusával szemben ellenőriz.}
+\label{fig:pipelines}
+\end{figure}
+
+A két megközelítés közötti lényegi különbség nem a modell, hanem a feladat felbontása. A naiv
+alapvonalban a modellnek egyetlen hívásban kell eldöntenie, hány kérdést, milyen témákról, milyen
+nehézségben és milyen disztraktorokkal ír; a tervezett csővezetékben ezek közül a szerkezeti döntéseket
+(darabszám, típus, Bloom-szint, téma) determinisztikus kód hozza meg, és a modell feladata egy-egy rövid,
+jól körülhatárolt kérdés megírására szűkül, amelyhez csak a releváns kontextust kapja meg.
+
+\begin{table}[htbp]
+\centering
+\caption{A tervezett csővezeték paraméterei és alapértékei.}
+\label{tab:parameterek}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{4.1cm}c>{\raggedright\arraybackslash}X@{}}
+\toprule
+Paraméter & Alapérték & Jelentés \\
+\midrule
+\code{retrieval\_k} & 3 & visszakeresett darabok száma slotonként \\
+\code{retrieval} & dense & \code{dense}: Bifrost sűrű keresés; \code{hybrid}: BM25 + sűrű, RRF \\
+\code{spare\_concepts} & 3 & tartalékfogalmak száma ($n+3$ tervezett fogalom) \\
+\code{max\_retries} ($r$) & 1 (pilot: 2) & újrapróbálkozások slotonként visszajelzéssel \\
+\code{verifier} & ki/be & ellenőrző lánc (\arm{E1}: ki; \arm{E2}, \arm{E3}: be) \\
+\code{blind\_test} & be & vak megoldási próba (\arm{E2f}: ki) \\
+\code{leakage\_checks} & be & szivárgás- és kérdésforma-szabályok (a pilot után bevezetve) \\
+\code{repair} & be & javító hívás hibás formájú végső kérdésre (a pilot után bevezetve) \\
+\code{dedupe\_threshold} & 0,9 & duplikátumküszöb (koszinusz-hasonlóság) \\
+\code{overview\_chars} & 12\,000 & a tervezőnek átadott áttekintés karakterkerete \\
+\code{max\_context\_chars} & 6\,000 & slotonkénti kontextus karakterkerete \\
+\code{graph\_batch\_chars} & 3\,000 & fogalomgráf-kötegek mérete (\arm{E3}) \\
+generátor & Qwen2.5-7B & Q4\_K\_M, $T=0{,}2$, 8\,192--16\,384 tokenes kontextus \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Szövegkinyerés}
+
+A Wellspring szolgáltatás a PDF-oldalakat először szövegrétegük alapján olvassa ki. Minden oldalra
+kiszámítja az olvashatósági arányt,
+\begin{equation}
+\rho=\frac{|\{\,x\in\text{oldal}:\;x\in\Sigma_{\text{ért}}\,\}|}{|\{\,x\in\text{oldal}:\;x\text{ nem szóköz}\,\}|},
+\end{equation}
+ahol $\Sigma_{\text{ért}}$ a betűk, számjegyek és szokásos írásjelek halmaza. Ha $\rho<0{,}85$ (hibás
+kódolású vagy szkennelt oldal), az oldalt képként dolgozza fel: helyi módban Tesseract OCR-rel,
+egyébként egy látás--nyelvi modellel, amely a táblázatokat és listákat is megőrzi. A kiértékelésben
+a dokumentumok szövegesek, így ez az ág nem befolyásolja a mérést.
+
+\section{Szemantikus darabolás}
+\label{sec:darabolas}
+
+\subsection{Mondatbeágyazás ablakozással}
+
+A darabolás első lépése a mondatfelbontás, amely a mondatvégi írásjelekre és sortörésekre illeszkedő
+reguláris kifejezéssel, a karakterpozíciók megőrzésével bontja a szöveget. A mondatbeágyazás a
+multilingual-E5-base~\cite{wang2024me5} kódolóval, \emph{kontextuális} módon történik: a modell nem az
+egyes mondatokat, hanem hosszabb szövegablakokat kódol, és egy mondat beágyazása a mondatot alkotó
+tokenek utolsó rejtett állapotainak átlaga (\emph{mean pooling}). Formálisan, ha a $w$ ablakban a tokenek
+rejtett állapotai $h_1,\dots,h_{|w|}$, és $\mathcal{T}(s_i)$ az $s_i$ mondat karakterintervallumával
+átfedő tokenek indexhalmaza, akkor
+\begin{equation}
+\phi(s_i)=\frac{1}{|\mathcal{T}(s_i)|}\sum_{t\in\mathcal{T}(s_i)}h_t .
+\end{equation}
+Előnye, hogy egy mondat beágyazása a szomszédos mondatok kontextusát is tükrözi, így egy rövid,
+önmagában kétértelmű mondat is a témájához közel kerül.
+
+A kódoló legfeljebb 512 tokenes bemenetet fogad. Az eredeti implementáció a teljes dokumentumot
+\emph{egyetlen} menetben kódolta, csonkolással; minden mondat, amely a 512. token után kezdődött,
+üres tokenhalmazt, így nullvektort kapott. Az új, ablakozott kódoló (\ref{alg:chunk}.~algoritmus) a
+mondatokat mondathatáron vágott, legfeljebb 510 tokenes ablakokba csoportosítja, és ablakonként futtatja
+a modellt. Rövid, 512 tokennél rövidebb szövegen a két kódoló azonos eredményt ad -- ezt a pilotban
+ki is használtuk a futásról futásra jelentkező zaj becslésére (\ref{sec:zaj}.~szakasz).
+
+\begin{algorithm}[htbp]
+\caption{Szemantikus darabolás ablakozott mondatbeágyazással}
+\label{alg:chunk}
+\KwIn{szöveg $\Doc$; módszer $\in\{\text{percentilis},\text{szórás}\}$; küszöbparaméter $\theta$; célméret $\ell^{*}$ (karakter)}
+\KwOut{darabok $\Chunks=(c_1,\dots,c_K)$}
+$S=(s_1,\dots,s_m)\leftarrow\textsc{Mondatok}(\Doc)$\;
+\lIf{$m\le 1$}{\KwRet $(\Doc)$}
+\tcp{1. Ablakozás: mondathatáron, legfeljebb 510 token}
+$\mathcal{W}\leftarrow\emptyset$; $w\leftarrow()$; $\beta\leftarrow 0$\;
+\For{$i=1,\dots,m$}{
+  $\ell_i\leftarrow|\textsc{Tokenek}(s_i)|$\;
+  \lIf{$w\neq()$ \textbf{és} $\beta+\ell_i>510$}{$\mathcal{W}\leftarrow\mathcal{W}\cup\{w\}$; $w\leftarrow()$; $\beta\leftarrow0$}
+  $w\leftarrow w\,\|\,(i)$; $\beta\leftarrow\beta+\ell_i$\;
+}
+$\mathcal{W}\leftarrow\mathcal{W}\cup\{w\}$\;
+\tcp{2. Kontextuális mondatbeágyazás}
+\ForEach{$w\in\mathcal{W}$}{
+  $H\leftarrow\textsc{Kódoló}(\Doc[a_{w_1}:b_{w_{|w|}}])$ \tcp*{egy menet, $\le 512$ token}
+  \ForEach{$i\in w$}{$\phi(s_i)\leftarrow\textsc{Átlag}\{H_t: t\in\mathcal{T}(s_i)\}$ (üres esetén $\mathbf{0}$)}
+}
+\tcp{3. Küszöb és vágás méretfüggő érzékenységgel}
+$\delta_i\leftarrow 1-\cos(\phi(s_i),\phi(s_{i+1}))$ minden $i<m$ esetén\;
+$\tau\leftarrow P_{\theta}(\delta)$ ha percentilis, különben $\mu_\delta+\theta\,\sigma_\delta$\;
+$c\leftarrow(s_1)$; $\ell\leftarrow|s_1|$; $\Chunks\leftarrow()$\;
+\For{$i=1,\dots,m-1$}{
+  $\tau_{\text{eff}}\leftarrow\tau/\max(1,\,\ell/\ell^{*})$\;
+  \eIf{$\delta_i>\tau_{\text{eff}}$}{$\Chunks\leftarrow\Chunks\,\|\,(c)$; $c\leftarrow(s_{i+1})$; $\ell\leftarrow|s_{i+1}|$}
+      {$c\leftarrow c\,\|\,(s_{i+1})$; $\ell\leftarrow\ell+|s_{i+1}|$}
+}
+\KwRet $\Chunks\,\|\,(c)$\;
+\end{algorithm}
+
+\subsection{A vágási szabály}
+
+A vágás két összetevőből áll. Az \emph{alapküszöb} $\tau$ vagy a távolságok $\theta$-adik percentilise
+(alapérték: $\theta=85$, vagyis a legnagyobb 15\,\% szomszédos távolságnál vágunk), vagy a
+$\mu_\delta+\theta\sigma_\delta$ érték (az \arm{E5b} karban $\theta=1{,}5$). A \emph{méretfüggő
+érzékenység} a célméret ($\ell^{*}$) túllépésekor arányosan csökkenti a küszöböt:
+\begin{equation}
+\tau_{\text{eff}}(\ell)=\frac{\tau}{\max\bigl(1,\,\ell/\ell^{*}\bigr)} .
+\end{equation}
+Egy célméretnél rövidebb darab tehát csak valódi témaváltásnál zárul, a célméretet $x$-szeresen
+meghaladó darab viszont már $\tau/x$ távolságnál is. Ez a „puha korlát” megakadályozza a
+túlságosan hosszú darabokat anélkül, hogy a mondatok közepén vágna.
+
+\subsection{A csonkolt kódoló hibájának elemzése}
+\label{sec:csonkolt}
+
+A régi kódoló hibája a vágási szabályon keresztül nem nyilvánvaló módon torzít. A 512. token utáni
+mondatok nullvektort kapnak; a nullvektor normalizálás után is nulla, így bármely mondattal vett
+koszinusz-hasonlósága $0$, a távolság tehát $\delta_i=1$ minden érintett szomszédos párra. Ha a
+dokumentum nagyobbik része a határ után van, a távolságok több mint 15\,\%-a $1$, így a percentilis
+küszöb $\tau=1$ lesz, és a $\delta_i>\tau$ feltétel a célméret eléréséig soha nem teljesül. A célméret
+túllépése után viszont $\tau_{\text{eff}}<1=\delta_i$, így minden további mondatnál vágás történik.
+A dokumentum farka ezzel a tartalomtól független, \emph{méretalapú} darabolássá degenerál, a darabok
+beágyazása pedig (a mondatbeágyazásoktól függetlenül számolva) már nem tükrözi a vágás logikáját.
+$4{,}0$--$4{,}5$ karakter/token aránnyal becsülve a kiértékelő adatkészlet átlagos dokumentumának
+68--71\,\%-a esett a határ után, így a hiba a hosszabb dokumentumokon végzett minden korábbi mérést
+érintett. Az \arm{E5a} kar a régi kódolót szándékosan megtartja, hogy a hiba hatása a fő vizsgálatban
+számszerűsíthető legyen.
+
+\section{Indexelés és sűrű visszakeresés}
+
+A darabokat a Bifrost az E5 kódolóval beágyazza, és egy memóriában futó Qdrant~\cite{qdrant2024}
+gyűjteménybe tölti koszinusz-metrikával. A gyűjtemény minden új dokumentum indexelése előtt
+törlődik, így a vektortár mindig csak az aktuális feladat tartalmát tartalmazza (\ref{sec:zero}.~szakasz).
+A sűrű keresés a $q$ lekérdezésre a
+\begin{equation}
+\mathrm{top}_k(q)=\argmax_{I\subseteq\{1..K\},\,|I|=k}\;\sum_{i\in I}\cos\bigl(\phi(q),\phi(c_i)\bigr)
+\end{equation}
+indexhalmazt adja vissza, azaz a $k$ leghasonlóbb darabot.
+
+\section{Az alapvonalak}
+
+\paragraph{Naiv RAG (\arm{E0}).} A lekérdezés a felhasználói kérés szövege (pl.\ „10 feleletválasztós
+kérdés, könnyű nehézség”), a kontextus a $\mathrm{top}_3$ darab. A prompt (\ref{app-prompt}.~függelék)
+a rendszer éles, v1.0-s promptja: szigorú szabályokat ír elő (zéró hallucináció, a kért darabszám és
+típus betartása, egy helyes és három hihető disztraktor, meta-hivatkozás tilalma) és a kimeneti
+JSON-sémát. A generálás egyetlen hívás.
+
+\paragraph{Teljes dokumentum (\arm{B-doc-L}, \arm{B-doc-S}).} A status quo modellje: ugyanaz a prompt,
+de a kontextus a teljes kinyert dokumentum. A helyi változat 16\,384 tokenes kontextussal és 30\,000
+karakterre csonkolt dokumentummal, a szerverváltozat 80\,000 karakterig fut; a csonkolt arányt
+($\textit{truncated\_share}$) vizsgánként rögzítjük.
+
+\section{A vizsgaterv}
+\label{sec:blueprint}
+
+\subsection{Áttekintés és fogalomtervezés}
+
+A tervező egyetlen hívásban kapja meg a dokumentum \emph{áttekintését}: minden darab azonosítóját
+($C_0, C_1,\dots$) és a darab első $\max(120,\lfloor 12\,000/K\rfloor)$ karakterét. Az áttekintés így a
+dokumentum hosszától függetlenül korlátos méretű, és minden darab megjelenik benne -- ez a
+„lost in the middle” jelenség~\cite{liu2024lost} ellen hat, mert a modell nem egy hosszú, folytonos
+szöveget, hanem egy azonosítókkal tagolt, rövid felsorolást lát. A tervező $n+3$ fogalmat ad vissza,
+mindegyikhez egy rövid leírást (mit kell kérdezni), a fogalmat alátámasztó darabok azonosítóit és egy
+fontossági értéket ($1$: részlet, $2$: fontos, $3$: központi). Ha a tervező válasza értelmezhetetlen,
+a csővezeték darabonként egy álfogalomra esik vissza (a darab első nyolc szava), így a terv mindig
+létrejön.
+
+\subsection{Bloom-szintek kiosztása}
+
+A nehézséghez rendelt Bloom-eloszlásokat \az{\ref{tab:bloom}}.~táblázat mutatja. A diszkretizálás \az{\ref{all:kvota}}.~állítás szerinti legnagyobb maradék módszerrel történik; a kapott szinteket a
+véletlenmaggal megkeverjük (így a szintek nem a fogalmak fontossági sorrendjéhez kötődnek), a kész
+vizsgát pedig végül a Bloom-szintek szerint rendezzük, a könnyebbtől a nehezebb felé.
+
+\begin{table}[htbp]
+\centering
+\caption{A nehézségi szintekhez rendelt Bloom-eloszlások és a $n=10$ kérdéses vizsga kiosztása.}
+\label{tab:bloom}
+\small
+\begin{tabular}{@{}lccccc@{\qquad}c@{}}
+\toprule
+Nehézség & Emlékezés & Megértés & Alkalmazás & Elemzés & Értékelés & Kiosztás ($n=10$) \\
+\midrule
+Könnyű   & 0,5 & 0,5 & -- & -- & -- & (5, 5, 0, 0, 0) \\
+Közepes  & -- & 0,4 & 0,4 & 0,2 & -- & (0, 4, 4, 2, 0) \\
+Nehéz    & -- & -- & 0,3 & 0,4 & 0,3 & (0, 0, 3, 4, 3) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Mohó, lefedettségvezérelt slotkiosztás}
+
+A slotkiosztás (\ref{alg:blueprint}.~algoritmus) a fogalmakat fontosság szerint rendezi, majd
+mohón választ: minden lépésben azt a fogalmat, amely (i) érint még le nem fedett darabot, és ezen belül
+(ii) a legfontosabb. \Az{\ref{all:lefed}}.~állítás szerint ez legalább $\min(n,|U|)$ különböző darab
+lefedését garantálja. Ha kevesebb fogalom van, mint slot, a fogalmakat körbeforgatva újra
+felhasználjuk (eltérő Bloom-szinttel), így a slotok száma mindig pontosan $n$. A ki nem választott
+fogalmak alkotják a tartaléklistát.
+
+\begin{algorithm}[htbp]
+\caption{Vizsgaterv: Bloom-kiosztás és mohó, lefedettségvezérelt slotkiosztás}
+\label{alg:blueprint}
+\KwIn{fogalmak $\mathcal{K}$ (mindegyik $D(\kappa)$ darabhalmazzal és $\iota(\kappa)$ fontossággal); $n$; típusok $T$; nehézség $\lambda$; mag $\omega$}
+\KwOut{slotok $\mathcal{B}=((\kappa_j,T_j,b_j))_{j=1}^{n}$; tartalékfogalmak $\mathcal{S}$}
+\tcp{Bloom-szintek: legnagyobb maradék módszer}
+$p\leftarrow\textsc{BloomEloszlás}(\lambda)$; $c_b\leftarrow\lfloor np_b\rfloor$ minden $b$-re\;
+\ForEach{$b$ a $np_b-c_b$ törtrész szerint csökkenően, az első $n-\sum_b c_b$ szintre}{$c_b\leftarrow c_b+1$}
+$\mathbf{b}\leftarrow\textsc{Kever}_\omega\bigl(\text{minden } b \text{ szint } c_b\text{-szer}\bigr)$\;
+\tcp{Mohó lefedés}
+$\mathcal{P}\leftarrow\textsc{Rendez}(\mathcal{K},\;-\iota)$; $\mathcal{A}\leftarrow()$; $H\leftarrow\emptyset$\;
+\While{$\mathcal{P}\neq\emptyset$ \textbf{és} $|\mathcal{A}|<n$}{
+  $\kappa^{+}\leftarrow\argmax_{\kappa\in\mathcal{P}}\bigl(\1[D(\kappa)\setminus H\neq\emptyset],\;\iota(\kappa)\bigr)$ \tcp*{lexikografikus}
+  $\mathcal{P}\leftarrow\mathcal{P}\setminus\{\kappa^{+}\}$; $\mathcal{A}\leftarrow\mathcal{A}\,\|\,(\kappa^{+})$; $H\leftarrow H\cup D(\kappa^{+})$\;
+}
+$i\leftarrow 0$\;
+\While(\tcp*[f]{kevés fogalom: újrahasznosítás}){$|\mathcal{A}|<n$}{
+  $\mathcal{A}\leftarrow\mathcal{A}\,\|\,(\kappa_{(i \bmod |\mathcal{K}|)})$; $i\leftarrow i+1$\;
+}
+\KwRet $\mathcal{B}=\bigl((\mathcal{A}_j,\;T_{(j \bmod |T|)},\;\mathbf{b}_j)\bigr)_{j=1}^{n}$; $\mathcal{S}=\mathcal{P}$\;
+\end{algorithm}
+
+\section{Slotonkénti visszakeresés}
+
+Minden slot saját kontextust kap. A lekérdezés a fogalom neve és leírása („\emph{fogalom}: \emph{leírás}”),
+a kontextus pedig a fogalomhoz a tervező által rendelt első két darab, kiegészítve a keresés
+$\mathrm{top}_k$ eredményével (ismétlődés nélkül). A kontextus karakterkerete 6\,000 karakter, hogy a kis
+modell „kényelmi zónájában” maradjon: a darabokat sorrendben vesszük fel, amíg a keret engedi.
+Ha az ellenőrző azt jelzi, hogy a hivatkozott részlet nem igazolja a kulcsot, a következő kísérletben
+$k$ kettővel nő, vagyis a csővezeték szélesebb hálóval tér vissza a visszakereséshez.
+
+\subsection{Hibrid visszakeresés: BM25 és reciprok rangfúzió}
+
+A hibrid kar (\arm{E2h}) a sűrű rangsort egy lexikális BM25-rangsorral~\cite{robertson2009bm25} egyesíti.
+A $q$ lekérdezés és a $c$ darab BM25-pontszáma
+\begin{equation}
+\mathrm{BM25}(q,c)=\sum_{w\in q}\mathrm{idf}(w)\cdot
+\frac{f(w,c)\,(k_1+1)}{f(w,c)+k_1\Bigl(1-b+b\,\dfrac{|c|}{\overline{|c|}}\Bigr)},
+\qquad
+\mathrm{idf}(w)=\ln\Bigl(1+\frac{K-n_w+0{,}5}{n_w+0{,}5}\Bigr),
+\end{equation}
+ahol $f(w,c)$ a $w$ szó gyakorisága a darabban, $|c|$ a darab tokenhossza, $\overline{|c|}$ az átlagos
+darabhossz, $n_w$ a $w$-t tartalmazó darabok száma, $k_1=1{,}5$ és $b=0{,}75$. A magyar nyelv
+agglutináló morfológiája miatt a tokenizálás egyszerű, nyelvfüggetlen \emph{prefixtövesítést} alkalmaz:
+a hat karakternél hosszabb szavakat hatkarakteres előtagjukra vágja, így az
+„immunrendszer”, „immunrendszert”, „immunrendszerben” alakok közös kulcsot kapnak. A két rangsort a
+reciprok rangfúzió~\cite{cormack2009rrf} egyesíti:
+\begin{equation}
+\mathrm{RRF}(c)=\sum_{\rho\in\{\rho_{\text{sűrű}},\,\rho_{\text{BM25}}\}}\frac{1}{k_{\text{rrf}}+\rho(c)},
+\qquad k_{\text{rrf}}=60,
+\end{equation}
+ahol $\rho(c)$ a darab (1-től számozott) rangja az adott rangsorban; a BM25-rangsorból a nulla
+pontszámú darabok kimaradnak.
+
+\section{Forráshoz kötött kérdésgenerálás}
+
+A generátor egyetlen kérdést ír a slot terve szerint. A prompt (\ref{app-prompt}.~függelék) tartalmazza
+a fogalmat, a kérdezendő tartalmat, a típusszabályt, a Bloom-szint magyar leírását, a nehézséget és a
+nyelvet; megismétli az éles prompt szabályait (zéró hallucináció, LaTeX és meta-hivatkozás tilalma);
+felsorolja a már elfogadott kérdéseket (legfeljebb az utolsó 12-t), hogy a modell ne ismételje őket;
+és megköveteli a \code{citations} mezőt, amelyben a modell megnevezi a kulcsot igazoló darabok
+azonosítóit. Ha az előző kísérlet hibás volt, a prompt a hibák listáját is tartalmazza („\emph{Az előző
+próbálkozás hibás volt, javítsd:}”). A kérdések egyenkénti generálása kétféle előnnyel jár: a
+modellnek egyszerre csak egy döntést kell hoznia, és minden kérdés saját, ellenőrizhető
+forrásrészlethez kötődik (G1).
+
+\section{Az ellenőrző lánc}
+\label{sec:verifier}
+
+\subsection{Ellenőrzések a költség szerinti sorrendben}
+
+Az ellenőrzések a legolcsóbbtól a legdrágábbig futnak (\ref{tab:checks}.~táblázat); egy olcsó
+ellenőrzés hibája esetén a drága, nyelvi modellt igénylő ellenőrzések el sem indulnak. A szabályalapú
+ellenőrzések determinisztikusak, a modellalapúak a hivatkozott darabokat (ennek hiányában a teljes
+slotkontextust) kapják forrásként.
+
+\begin{table}[htbp]
+\centering
+\caption{Az ellenőrző lánc lépései végrehajtási sorrendben, a hiba esetén adott visszajelzéssel.}
+\label{tab:checks}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.4cm}c>{\raggedright\arraybackslash}X@{}}
+\toprule
+Ellenőrzés & LLM-hívás & Visszajelzés hiba esetén \\
+\midrule
+Forma ($\mathrm{Shape}$) & -- & feleletválasztós: 4 válasz, 1 helyes \\
+Meta-hivatkozás & -- & fogalmazd meg „a szöveg szerint” jellegű hivatkozás nélkül \\
+Szivárgás ($L$, $N$) \emph{(új)} & -- & a törzs nem tartalmazhatja a kulcsot, és kérdés legyen \\
+Hivatkozás & -- & hivatkozz a kontextus legalább egy darabjára \\
+Alátámasztottság és disztraktorok & 1 & a kulcsot a részlet nem igazolja / egy disztraktor igaz lehet / kétértelmű \\
+Vak megoldás & 1 & egy független megoldó más választ jelölt meg \\
+Duplikátum & -- & túl hasonló egy már elfogadott kérdéshez \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Az alátámasztottsági ellenőrzés egyetlen hívásban három ítéletet kér: igazolja-e a forrás a kulcsot
+(\code{key\_supported}), hamis-e minden disztraktor (\code{options\_wrong}), és kétértelmű-e a kérdés
+(\code{ambiguous}). A vak megoldás külön hívás, amelyben a modell a kulcs ismerete nélkül, véletlen
+permutációban látja az opciókat. Ha az ellenőrző modell nem elérhető, a kérdést nem blokkoljuk, de a
+kihagyott ellenőrzések számát rögzítjük. Az \arm{E2x} kar az ellenőrző hívásokat egy másik
+modellcsaládba tartozó modellel (Llama-3.1-8B~\cite{grattafiori2024llama3}) végzi, hogy elválassza az
+önellenőrzés és az ellenőrzés általános hatását.
+
+\subsection{Slotkitöltés visszacsatolással és tartalékokkal}
+
+\Az{\ref{alg:slot}}.~algoritmus egy slot kitöltését írja le. Egy slot legfeljebb $r+1$ kísérletet kap;
+minden kísérlet hibalistája a következő kísérlet promptjába kerül. Ha egyik kísérlet sem megy át, a
+slot egy tartalékfogalommal újraindul. Ha ez sem sikerül, a \emph{legjobb} kísérlet marad meg,
+\emph{nem ellenőrzöttként} megjelölve, hogy az oktató a szerkesztőben lássa. A „legjobb” a
+\begin{equation}
+\mathrm{rang}(q)=\bigl(\,1-\mathrm{Shape}(q),\;L(q),\;|\text{hibák}(q)|\,\bigr)
+\label{eq:rank}
+\end{equation}
+lexikografikus kulcs szerint legkisebb kísérlet: a formailag helyes kérdés mindig előnyt élvez, ezen belül a
+szivárgásmentes, végül a kevesebb hibát tartalmazó. Ha a megmaradt feleletválasztós kérdés formája
+mégis hibás, egyetlen \emph{javító} hívás pótolja a hiányzó disztraktorokat a tartalom és a kulcs
+megtartásával. \Az{\eqref{eq:rank}} kulcs és a javító hívás a pilot egyik hibájára adott válasz: ott
+egy-egy vizsgában hibás formájú végső kérdés maradt meg, ami a vizsga formai megfelelését nullára
+állította (\ref{sec:fallback}.~szakasz).
+
+\begin{algorithm}[htbp]
+\caption{Egy slot kitöltése ellenőrzéssel, visszacsatolással és tartalékfogalommal}
+\label{alg:slot}
+\KwIn{slot $(\kappa,T,b)$; elfogadott kérdések $\mathcal{Q}$; tartalékok $\mathcal{S}$; $r$; ellenőrzés be/ki}
+\KwOut{kérdés $q$ és \emph{ellenőrzött} jelző}
+\SetKwFunction{Fill}{Kitölt}
+\SetKwProg{Fn}{Függvény}{:}{}
+\Fn{\Fill{$\kappa$}}{
+  $\textit{visszajelzés}\leftarrow\varnothing$; $k'\leftarrow 0$; $q^{\text{best}}\leftarrow\bot$\;
+  \For{$a=0,\dots,r$}{
+    $X\leftarrow\textsc{SlotKontextus}(\kappa,\,k+k')$ \tcp*{$\le$ 6000 karakter}
+    $q\leftarrow\textsc{Generál}(\kappa,T,b,X,\mathcal{Q},\textit{visszajelzés})$\;
+    \lIf{$q=\bot$}{$\textit{visszajelzés}\leftarrow$ „érvénytelen JSON”; \textbf{folytat}}
+    $E\leftarrow\textsc{Ellenőriz}(q,X)$ \tcp*{\ref{tab:checks}.~táblázat, olcsótól drágáig}
+    \lIf{$\max_{q'\in\mathcal{Q}}\cos(\phi(q),\phi(q'))\ge0{,}9$}{$E\leftarrow E\cup\{\text{duplikátum}\}$}
+    \lIf{$E=\emptyset$}{\KwRet $(q,\textsc{igaz})$}
+    \lIf{$\mathrm{rang}(q)<\mathrm{rang}(q^{\text{best}})$}{$q^{\text{best}}\leftarrow q$}
+    \lIf{nincs ellenőrzés \textbf{és} $\mathrm{Shape}(q)$ \textbf{és} nem duplikátum}{\KwRet $(q,\textsc{igaz})$}
+    $\textit{visszajelzés}\leftarrow E$\;
+    \lIf{„nem igazolja” $\in E$}{$k'\leftarrow k'+2$ \tcp*[f]{szélesebb visszakeresés}}
+  }
+  \KwRet $(q^{\text{best}},\textsc{hamis})$\;
+}
+$(q,v)\leftarrow$ \Fill{$\kappa$}\;
+\If{$\neg v$ \textbf{és} $\mathcal{S}\neq\emptyset$}{
+  $(q',v')\leftarrow$ \Fill{$\textsc{Pop}(\mathcal{S})$}\;
+  \lIf{$v'$ \textbf{vagy} $q=\bot$ \textbf{vagy} ($\mathrm{Shape}(q')\wedge\neg\mathrm{Shape}(q)$)}{$(q,v)\leftarrow(q',v')$}
+}
+\If{$T=\textsf{mcq}$ \textbf{és} $\neg\mathrm{Shape}(q)$}{$q\leftarrow\textsc{Javít}(q)$ \tcp*{egy hívás: hiányzó disztraktorok}}
+\KwRet $(q,v)$\;
+\end{algorithm}
+
+\section{Munkamenet-hatókörű fogalomgráf}
+\label{sec:graf}
+
+Az \arm{E3} kar a tervezőt egy fogalomgráffal helyettesíti. A gráfépítés (\ref{alg:graph}.~algoritmus)
+a darabokat legfeljebb 3\,000 karakteres kötegekbe csoportosítja, és kötegenként egyetlen hívásban
+kinyeri a fogalmakat (definícióval, szülőfogalommal és darabazonosítókkal), az atomi tényeket és a
+tipizált relációkat (\emph{is\_a}, \emph{part\_of}, \emph{causes}, \emph{contrasts\_with},
+\emph{used\_for}, \emph{related\_to}). A csúcsokat normalizált név alapján, majd a névbeágyazások
+$0{,}92$-es koszinusz-küszöbe szerint egyesítjük, ami a magyar ragozott alakokat (pl.\ „T-sejt”, „T-sejtek”)
+összevonja. A szülőfogalmak is csúcsok lesznek \emph{is\_a} éllel, így a közös szülő alá tartozó
+fogalmak egy lépésben elérhetők egymásból.
+
+Egy $v$ fogalom \emph{centralitása} a fokszám, a darabszám és a tényszám súlyozott összege:
+\begin{equation}
+\mathrm{cent}(v)=\deg(v)+\tfrac12|D(v)|+\tfrac12|\mathrm{Facts}(v)|,
+\end{equation}
+amelyből a tervezési fontosság $\iota(v)=3$, ha $\mathrm{cent}(v)\ge4$; $\iota(v)=2$, ha
+$\mathrm{cent}(v)\ge2$; egyébként $1$. A gráf három helyen gazdagítja a csővezetéket: (i) a
+tervező bemenete a centralitás szerint rendezett fogalomlista; (ii) a disztraktor-ötletek a
+\emph{testvérfogalmak}, vagyis azok a $w$ csúcsok, amelyekre $\mathrm{parent}(w)=\mathrm{parent}(v)$
+vagy $N(w)\cap N(v)\ne\emptyset$, de $w\notin N(v)$ és $w$ nem $v$ szülője -- ezek ugyanabba a
+kategóriába tartoznak, ezért hihetők, de nem azonosak a kulccsal; (iii) a kontextus kiegészül a
+szomszédos fogalmak legtöbbször előforduló, saját darabhalmazon kívüli két darabjával (1-ugrásos
+szomszédság).
+
+\begin{algorithm}[htbp]
+\caption{Munkamenet-hatókörű fogalomgráf építése}
+\label{alg:graph}
+\KwIn{darabok $\Chunks$; kötegméret $B=3000$; hasonlósági küszöb $\eta=0{,}92$}
+\KwOut{gráf $\mathcal{G}=(V,E)$ fogalmakkal, tényekkel és darabhalmazokkal}
+$V\leftarrow\emptyset$; $E\leftarrow\emptyset$\;
+\ForEach{$\mathcal{I}\in\textsc{Kötegek}(\Chunks,B)$}{
+  $(\textit{Fog},\textit{Tény},\textit{Rel})\leftarrow\textsc{LLM}_{\text{gráf}}\bigl(\{[C_i]\,c_i: i\in\mathcal{I}\}\bigr)$ \tcp*{1 hívás}
+  \ForEach{$(\textit{név},\textit{def},\textit{szülő},D)\in\textit{Fog}$}{$\textsc{Hozzáad}(V,\textsc{Norm}(\textit{név}),\textit{def},\textit{szülő},D)$ \tcp*{egyesít, ha létezik}}
+  \ForEach{$(\textit{szöveg},\textit{fogalmak},i)\in\textit{Tény}$}{minden érintett fogalomhoz csatolja a tényt és az $i$ darabot}
+  \ForEach{$(u,\textit{típus},w)\in\textit{Rel}$}{$E\leftarrow E\cup\{\{u,w\}\}$}
+  \ForEach{$v\in V$ szülővel}{$E\leftarrow E\cup\{\{v,\mathrm{parent}(v)\}\}$ \tcp*{\emph{is\_a} él}}
+}
+\ForEach{$u,w\in V$, $u\prec w$}{
+  \lIf{$\cos(\phi(\nu_u),\phi(\nu_w))\ge\eta$}{$\textsc{Összevon}(u,w)$ \tcp*{$\nu_u$: $u$ neve; darabok, tények, élek uniója}}
+}
+\KwRet $\mathcal{G}$\;
+\end{algorithm}
+
+A gráf csak a vizsga élettartamáig létezik a memóriában, összhangban a zéró megőrzéssel. Költsége
+$\lceil|\Doc|/B\rceil$ nagyságrendű további hívás; egy 1\,700 karakteres dokumentumon ez egyetlen hívás
+volt, amely a pilot három futásában 14, 18 és 31 fogalmat, illetve 3, 9 és 19 relációt adott -- a
+szórás maga is jelzi, hogy a kis modell gráfkinyerése instabil.
+
+\section{Összeállítás és emberi felügyelet}
+
+Az elfogadott kérdéseket a Bloom-szint szerint rendezzük, és minden kérdéshez rögzítjük a hivatkozott
+darabokat, a kontextus darabjait, a tervezett fogalmat és az \emph{ellenőrzött} jelzőt. A vázlat egy
+szerkesztőbe kerül, ahol az oktató szerkesztheti, átrendezheti és törölheti a kérdéseket, módosíthatja
+a kulcsot, egyetlen kérdést újragenerálhat, és minden kérdés mellett megtekintheti a hivatkozott
+forrásrészletet. Jóváhagyás nélkül semmi sem exportálható, az exportált dokumentum pedig feltünteti,
+hogy a tartalom MI-rendszer közreműködésével készült, és melyik modellel (G5).

@@ -1,0 +1,255 @@
+% =====================================================================
+\chapter{A feladat formális modellje}
+\label{ch:formalizmus}
+% =====================================================================
+
+A vizsgagenerálás minőségéről csak akkor lehet szigorúan beszélni, ha a „jó vizsga” fogalmát mérhető
+predikátumokra bontjuk. Ebben a fejezetben bevezetjük a dokumentum, a darabolás, a vizsgaspecifikáció
+és a kérdés formális modelljét, definiáljuk a minőségi predikátumokat és az ezekből képzett mutatókat,
+majd a módszer két szerkezeti tulajdonságát bizonyítjuk. A definíciók egyúttal \az{\ref{ch:kiertekeles}}.~fejezet mutatóinak pontos specifikációi is: a kiértékelő keretrendszer
+(\code{tests/eval/mimir\_eval}) ezeket valósítja meg.
+
+\section{Dokumentum, mondatok és darabok}
+
+\begin{definicio}[Dokumentum és mondatfelbontás]
+A \emph{dokumentum} egy $\Doc\in\Sigma^{*}$ karaktersorozat. A mondatfelbontás a dokumentumot
+diszjunkt, egymást követő intervallumokra bontja: $S=(s_1,\dots,s_m)$, ahol minden $s_i$ egy
+$[a_i,b_i)$ karakterintervallumhoz tartozik és $b_i\le a_{i+1}$.
+\end{definicio}
+
+\begin{definicio}[Darabolás]
+A \emph{darabolás} a mondatsorozat egy összefüggő partíciója: $\Chunks=(c_1,\dots,c_K)$, ahol
+$c_k=(s_{j_{k-1}+1},\dots,s_{j_k})$ és $0=j_0<j_1<\dots<j_K=m$. A darabolást a vágási pontok
+$J=\{j_1,\dots,j_{K-1}\}$ halmaza egyértelműen meghatározza.
+\end{definicio}
+
+Legyen $\phi:\Sigma^{*}\to\mathbb{S}^{d-1}$ egységnyi normájú beágyazás, és jelölje
+$\langle\cdot,\cdot\rangle$ a skaláris szorzatot, így a koszinusz-hasonlóság egységvektorokra
+$\cos(u,v)=\langle u,v\rangle$. A szomszédos mondatok \emph{szemantikus távolsága}
+\begin{equation}
+\delta_i = 1-\cos\bigl(\phi(s_i),\phi(s_{i+1})\bigr),\qquad i=1,\dots,m-1.
+\label{eq:delta}
+\end{equation}
+A szemantikus darabolás alapgondolata, hogy a témaváltásoknál $\delta_i$ nagy. A pontos vágási
+szabályt (küszöb és méretfüggő érzékenység) \az{\ref{sec:darabolas}}.~szakaszban adjuk meg.
+
+\section{Vizsgaspecifikáció és kérdés}
+
+\begin{definicio}[Vizsgaspecifikáció]
+A \emph{vizsgaspecifikáció} egy $\sigma=(n,T,\lambda,\ell)$ négyes, ahol $n\in\mathbb{N}^{+}$ a
+kérdések száma, $T\subseteq\{\textsf{mcq},\textsf{tf},\textsf{open}\}$ a megengedett típusok
+sorozata, $\lambda$ a nehézség (könnyű, közepes vagy nehéz), $\ell$ pedig a nyelv.
+\end{definicio}
+
+\begin{definicio}[Kérdés]
+Egy \emph{kérdés} a $q=(\theta,t,O,R,b)$ ötös, ahol $\theta\in T$ a típus, $t$ a kérdés törzse,
+$O=(o_1,\dots,o_{|O|})$ a válaszlehetőségek sorozata, amelyek közül a $\kappa(o)\in\{0,1\}$ címke jelöli a
+helyeseket, $R\subseteq\{1,\dots,K\}$ a kérdés által hivatkozott darabok indexhalmaza, $b$ pedig a
+tervezett Bloom-szint. Egyetlen helyes lehetőség esetén ezt \emph{kulcsnak} nevezzük és $o^{\star}$-gal
+jelöljük; a többi lehetőség a \emph{disztraktorok} halmaza: $O^{-}=\{o\in O:\kappa(o)=0\}$.
+\end{definicio}
+
+A típusonként elvárt opciószámot $m_{\textsf{mcq}}=4$, $m_{\textsf{tf}}=2$, $m_{\textsf{open}}=1$ jelöli.
+
+\begin{definicio}[Formai helyesség]
+A $q$ kérdés \emph{formailag helyes}, ha
+\begin{equation}
+\mathrm{Shape}(q)=\1\Bigl[\,|O|=m_{\theta}\;\wedge\;\textstyle\sum_{o\in O}\kappa(o)=1\Bigr]
+\qquad(\theta\in\{\textsf{mcq},\textsf{tf}\}),
+\end{equation}
+nyitott kérdésnél pedig $\mathrm{Shape}(q)=\1[\,\exists o\in O:\kappa(o)=1 \wedge o\ne\varepsilon\,]$.
+Az $\Exam=(q_1,\dots,q_N)$ vizsga \emph{formai megfelelése}
+\begin{equation}
+F(\Exam)=\1\Bigl[\,N=n\;\wedge\;\forall i:\mathrm{Shape}(q_i)=1\;\wedge\;\forall i:\theta_i\in T\Bigr].
+\label{eq:format}
+\end{equation}
+\end{definicio}
+
+\section{Forrásalapú minőségi predikátumok}
+
+A kérdés tartalmi helyessége a forráshoz viszonyított fogalom. Jelölje $\mathrm{Src}(q)\subseteq\Doc$
+azt a szövegrészt, amelyből a kérdés készült (a hivatkozott vagy a kontextusként átadott darabok
+konkatenációja), és $\models$ a természetes nyelvi következményrelációt: $X\models y$, ha egy
+figyelmes olvasó $X$ alapján $y$-t igaznak fogadja el. A $\models$ reláció nem számítható ki pontosan;
+a kiértékelésben egy független bíró (\ref{sec:biro}.~szakasz) közelíti, az oktatói értékelés pedig ezt
+a közelítést validálja.
+
+\begin{definicio}[Alátámasztottság]
+A $q$ kérdés \emph{alátámasztott}, ha a forrás igazolja a kulcsot:
+$G(q)=\1\bigl[\mathrm{Src}(q)\models o^{\star}\text{ mint } t \text{ válasza}\bigr]$.
+\end{definicio}
+
+\begin{definicio}[Disztraktor-validitás]
+A $q$ kérdés disztraktor-validitása a forrás szerint hamis \emph{és} témába vágó disztraktorok aránya:
+\begin{equation}
+V(q)=\frac{1}{|O^{-}|}\sum_{o\in O^{-}}\1\bigl[\mathrm{Src}(q)\models\neg o\bigr]\cdot\1\bigl[\mathrm{onTopic}(o,t)\bigr].
+\end{equation}
+\end{definicio}
+
+\begin{definicio}[Vak megoldhatóság]
+Legyen $\pi$ az opciók egyenletes eloszlású véletlen permutációja, és $\mathcal{J}(t,\pi(O),\mathrm{Src})$
+egy megoldó választása, amely a kulcs ismerete nélkül, csak a forrás alapján dönt. A kérdés \emph{vakon
+megoldható}, ha $A(q)=\1\bigl[\mathcal{J}(t,\pi(O),\mathrm{Src}(q))=o^{\star}\bigr]$.
+\end{definicio}
+
+A vak megoldhatóság a kulcs helyességének és a kérdés egyértelműségének együttes, viselkedési mércéje:
+ha két opció is védhető, vagy a kulcs hibás, a megoldó várhatóan más opciót választ. A permutáció a
+bíró pozíciós torzítását~\cite{wang2024fair} semlegesíti. Ha a megoldó nem ad értelmezhető választ,
+a kérdést a vak megoldhatóság átlagából kihagyjuk (nem nullának számítjuk).
+
+\section{Vizsgaszintű mutatók}
+
+\begin{definicio}[Minőségi index]
+Egy vizsga \emph{minőségi indexe} a formai megfelelés és a három kérdésszintű ráta átlaga:
+\begin{equation}
+Q(\Exam)=\frac14\Bigl(F(\Exam)+\overline{G}(\Exam)+\overline{A}(\Exam)+\overline{V}(\Exam)\Bigr),
+\qquad \overline{X}(\Exam)=\frac{1}{|\Exam_X|}\sum_{q\in\Exam_X}X(q),
+\label{eq:qindex}
+\end{equation}
+ahol $\Exam_X\subseteq\Exam$ azon kérdések halmaza, amelyekre az $X$ predikátum értelmezett.
+\end{definicio}
+
+A $Q$ index szándékosan egyszerű, súlyozatlan átlag: minden komponense $[0,1]$-beli, a nagyobb érték
+jobb, és a formai megfelelés súlya egyenlő a tartalmi mutatókéval. Ennek következménye, hogy egyetlen
+hibás formájú kérdés egy tízkérdéses vizsgában a $Q$-t $0{,}25$-tel csökkenti -- a pilotban pontosan ez
+történt az ellenőrző karok egy-egy vizsgájában (\ref{sec:fallback}.~szakasz).
+
+\begin{definicio}[Lefedettség]
+Legyen $\nu(q)=\argmax_{k}\cos\bigl(\phi(t\oplus o^{\star}),\phi(c_k)\bigr)$ a kérdéshez (törzs és kulcs
+összefűzéséhez) legközelebbi darab. A vizsga \emph{lefedettsége}
+\begin{equation}
+\mathrm{Cov}(\Exam)=\frac{\bigl|\{\nu(q):q\in\Exam\}\bigr|}{K}.
+\label{eq:cov}
+\end{equation}
+\end{definicio}
+
+A lefedettség felső korlátja $\min(n,K)/K$; egy tízkérdéses vizsga egy négydarabos dokumentumon elvben
+teljes lefedettséget érhet el. A lefedettség nem minőségi, hanem \emph{szerkezeti} mutató: azt méri,
+mennyire oszlik el a vizsga a tananyagon, ezért a $Q$ indexbe nem számítjuk be, hanem mellette
+közöljük (a P2 probléma közvetlen mérőszáma).
+
+\begin{definicio}[Válaszszivárgás és nem-kérdés törzs]
+Jelölje $W(x)$ az $x$ szöveg szótokenjeinek halmazát. A kérdés \emph{szivárogtatja a kulcsot}, ha
+\begin{equation}
+L(q)=\1\Bigl[\,|W(o^{\star})|\ge 3\;\wedge\;\frac{|W(o^{\star})\cap W(t)|}{|W(o^{\star})|}\ge 0{,}8\Bigr],
+\label{eq:leak}
+\end{equation}
+és a törzs \emph{nem kérdés}, ha feleletválasztós kérdésnél sem kérdőjelre, sem kettőspontra nem végződik:
+$N(q)=\1[\,t \text{ utolsó írásjele}\notin\{\text{?},\,\text{:}\}\,]$ (a záró idézőjeleket figyelmen kívül hagyva).
+\end{definicio}
+
+A háromszavas alsó korlát a rövid, egyszavas kulcsok (pl.\ „Arabica”) téves pozitív jelzését zárja ki:
+egy tulajdonnév természetesen szerepelhet a törzsben. Az $L$ és $N$ predikátumokat a pilot során feltárt
+hibamód (\ref{sec:szivargas}.~szakasz) motiválta; azóta mind mutatóként, mind az ellenőrző lánc
+szabályaként használjuk őket.
+
+\begin{definicio}[Duplikátumráta]
+A vizsga duplikátumrátája azon kérdéspárok aránya, amelyek beágyazásainak koszinusz-hasonlósága
+meghaladja a $0{,}9$ küszöböt:
+\begin{equation*}
+\mathrm{Dup}(\Exam)=\binom{N}{2}^{-1}\sum_{i<j}\1\bigl[\cos(\phi(q_i),\phi(q_j))>0{,}9\bigr].
+\end{equation*}
+\end{definicio}
+
+\section{A tervezési probléma}
+
+A fenti fogalmakkal a vizsgagenerálás egy korlátos optimalizálási feladatként írható fel. Jelölje
+$\Pi$ a csővezetékek (módszerek) terét, $\Exam_\pi(\Doc,\sigma;\omega)$ a $\pi$ csővezeték által
+$\omega$ véletlenmaggal előállított vizsgát, $C(\pi)$ a modellhívások számát, $\tau(\pi)$ a futási időt,
+$M(\pi)$ pedig a csúcs GPU-memóriát. A cél
+\begin{equation}
+\max_{\pi\in\Pi}\;\E_{\Doc,\omega}\Bigl[Q\bigl(\Exam_\pi\bigr)\Bigr]
+\quad\text{f.h.}\quad
+\E\bigl[F(\Exam_\pi)\bigr]=1,\;\;
+M(\pi)\le M_{\max},\;\;
+\E\bigl[\tau(\pi)\bigr]\le\tau_{\max},
+\label{eq:objective}
+\end{equation}
+másodlagos célként pedig a lefedettség, $\E[\mathrm{Cov}(\Exam_\pi)]$ maximalizálása. A \Mimir{}
+esetében $M_{\max}=8$\,GB (egy fogyasztói kártya, amelyen az asztali környezet is fut), $\tau_{\max}$ pedig
+egy oktató számára elfogadható várakozási idő (néhány perc egy tízkérdéses vizsgára).
+
+A kísérleti karok (\ref{sec:karok}.~szakasz) a $\Pi$ tér egy-egy pontjai, amelyek egyszerre egy
+tényezőben különböznek. \Az{\eqref{eq:objective}} feladat \emph{nem} oldható meg analitikusan, mert $Q$
+csak mintavétellel becsülhető; a kiértékelési módszertan éppen ennek a becslésnek a torzítatlanságát és
+pontosságát biztosítja.
+
+\section{A vizsgaterv szerkezeti tulajdonságai}
+\label{sec:terv-tulajdonsagok}
+
+A tervezett csővezeték két fontos tulajdonsága már a konstrukcióból következik, mérés nélkül is.
+
+\begin{allitas}[Bloom-kvóta]\label{all:kvota}
+Legyen $p:\mathcal{L}\to[0,1]$ a nehézséghez rendelt Bloom-eloszlás ($\sum_b p_b=1$), és legyen $c_b$ a
+legnagyobb maradék módszerével kapott darabszám: $c_b=\lfloor np_b\rfloor+\1[b\in\mathcal{T}]$, ahol
+$\mathcal{T}$ a $\{np_b-\lfloor np_b\rfloor\}$ törtrészek szerint csökkenő sorrendben első
+$n-\sum_b\lfloor np_b\rfloor$ szint. Ekkor $\sum_b c_b=n$ és minden $b$-re $|c_b-np_b|<1$.
+\end{allitas}
+
+\begin{proof}
+A $\lfloor np_b\rfloor$ értékek összege $n-r$, ahol $r=\sum_b(np_b-\lfloor np_b\rfloor)$ egész, mert
+$\sum_b np_b=n$; továbbá $0\le r<|\mathcal{L}|$. Pontosan $r$ szint kap $+1$-et, így az összeg $n$.
+Ha $b\in\mathcal{T}$, akkor $c_b-np_b=1-(np_b-\lfloor np_b\rfloor)\in(0,1]$, és az egyenlőség csak
+egész $np_b$ esetén állna fenn, amikor a törtrész $0$ -- ilyen szint azonban csak akkor kerülhet
+$\mathcal{T}$-be, ha minden törtrész $0$, ekkor viszont $r=0$ és $\mathcal{T}=\emptyset$. Ha
+$b\notin\mathcal{T}$, akkor $c_b-np_b=-(np_b-\lfloor np_b\rfloor)\in(-1,0]$.
+\end{proof}
+
+Az állítás a választási matematikából ismert Hamilton-módszer kvótatulajdonsága~\cite{balinski2001fair}.
+Példaként közepes nehézségnél ($p=(0{,}4;\,0{,}4;\,0{,}2)$ a megértés, alkalmazás, elemzés szintekre) és
+$n=10$ esetén a kiosztás pontosan $(4,4,2)$; $n=7$ esetén $(2{,}8;\,2{,}8;\,1{,}4)\to(3,3,1)$. A
+nehézség így nem kérés, hanem \emph{garantált} szerkezeti tulajdonság.
+
+\begin{allitas}[Tervezett lefedettség]\label{all:lefed}
+Legyen $\mathcal{K}=\{\kappa_1,\dots,\kappa_P\}$ a tervező által javasolt fogalmak halmaza, $D(\kappa)\subseteq\{1,\dots,K\}$
+a fogalmat alátámasztó darabok halmaza és $U=\bigcup_{\kappa\in\mathcal{K}}D(\kappa)$. A mohó slotkiosztás
+(\ref{alg:blueprint}.~algoritmus), amely minden lépésben olyan fogalmat választ, amely legalább egy
+még le nem fedett darabot érint, ha van ilyen, $n\le P$ slot után legalább $\min(n,|U|)$ különböző darabot
+fed le.
+\end{allitas}
+
+\begin{proof}
+Jelölje $H_s$ az első $s$ kiválasztott fogalom által lefedett darabok halmazát. Az $(s+1)$-edik lépésben
+két eset lehetséges. Ha van olyan megmaradt $\kappa$, amelyre $D(\kappa)\setminus H_s\ne\emptyset$,
+akkor az algoritmus ilyet választ, így $|H_{s+1}|\ge|H_s|+1$. Ha nincs ilyen, akkor minden megmaradt fogalom
+darabjai már $H_s$-ben vannak, és a már kiválasztottaké definíció szerint is, így $H_s\supseteq U$, azaz
+$|H_s|=|U|$. Indukcióval $|H_n|\ge\min(n,|U|)$.
+\end{proof}
+
+Megjegyezzük, hogy a klasszikus maximális lefedési feladatra a határhaszon szerinti mohó algoritmus
+$(1-1/e)$-approximációt ad~\cite{nemhauser1978}. A \Mimir{} kiosztása ettől szándékosan eltér: a
+választás lexikografikus kulcsa (\emph{új darabot érint-e}, \emph{fontosság}), vagyis az újdonság csak
+bináris feltétel, és azon belül a tervező által becsült fontosság dönt. Ezzel az approximációs garanciát a
+tartalmi relevanciáért cseréljük, \az{\ref{all:lefed}}.~állítás alsó korlátja azonban megmarad. A tervezett
+lefedettség (a kontextusként felhasznált darabok halmaza) és \az{\eqref{eq:cov}} szerint mért lefedettség
+nem azonos: az utóbbi azt méri, miről szól ténylegesen a kész kérdés.
+
+\section{A modellhívások számának korlátai}
+\label{sec:hivasszam}
+
+A tervezett csővezeték költségét elsősorban a nyelvimodell-hívások száma határozza meg. Legyen $r$ a
+slotonkénti újrapróbálkozások maximális száma, és tegyük fel, hogy minden hívás legfeljebb egyszer
+ismétlődik értelmezhetetlen JSON miatt. Egy \emph{kísérlet} legfeljebb három sikeres hívásból áll
+(generálás, alátámasztottság-ellenőrzés, vak megoldás), egy slot legfeljebb $r+1$ kísérletből, sikertelenség
+esetén pedig egy tartalékfogalommal újabb legfeljebb $r+1$ kísérletből és egy javító hívásból. Így az
+ellenőrzött csővezeték hívásszámára
+\begin{equation}
+1+3n\;\le\;C_{\textsf{E2}}\;\le\;2+n\bigl(2\cdot 2\cdot 3\,(r+1)+2\bigr),
+\label{eq:callbounds}
+\end{equation}
+ahol a felső korlátban a tényezők rendre a tartalékfogalmat, a JSON-ismétlést és a kísérletenkénti
+három hívást, a $+2$ a javító hívást, a konstans $2$ pedig a (legfeljebb egyszer ismételt) tervezőhívást
+jelöli; az alsó korlát az az eset, amikor minden kérdés elsőre átmegy (egy tervezőhívás, majd
+slotonként három hívás). Ha egy kísérlet $p$ valószínűséggel megy át, függetlenül a többitől, akkor a
+slotonkénti kísérletek várható száma a csonkolt geometriai eloszlás várható értéke:
+\begin{equation}
+\E[a]=\sum_{j=0}^{r}(1-p)^{j}=\frac{1-(1-p)^{r+1}}{p}.
+\label{eq:expattempts}
+\end{equation}
+Az egyhívásos karok (\arm{E0}, \arm{E5a--c}, \arm{B-doc}) hívásszáma 1, az ellenőrzés
+nélküli \arm{E1} kar alsó korlátja $1+n$, az \arm{E2f} karé $1+2n$, a gráfalapú \arm{E3} karé pedig
+$G+3n$, ahol $G=\lceil|\Doc|/3000\rceil$ a gráfkötegek száma. A pilotban ($n=10$, $r=2$) az \arm{E2} kar átlagosan 75 hívást igényelt, ami slotonként 7,4 hívásnak
+felel meg -- ez messze az alsó korlát (3) felett van, és jelzi, hogy a kis modell ellenőrző lánca a
+kérdések jelentős részét elutasította (\ref{sec:koltseg}.~szakasz). A naiv alapvonal ezzel szemben
+$C_{\textsf{E0}}=1$ hívással dolgozik; a két módszer közötti költségkülönbség tehát két nagyságrend,
+amelyet a minőségi nyereségnek kell igazolnia.

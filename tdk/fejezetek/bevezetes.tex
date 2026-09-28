@@ -1,0 +1,135 @@
+% =====================================================================
+\chapter{Bevezetés}
+\label{ch:bevezetes}
+% =====================================================================
+
+\section{Motiváció}
+
+A felsőoktatásban és a középiskolában a feleletválasztós kérdés (\emph{multiple-choice question}, MCQ)
+a tudásmérés egyik legszélesebb körben használt eszköze: gépi úton javítható, nagy létszámú kurzusokon is
+skálázható, és jól illeszkedik a tanulásmenedzsment-rendszerek (pl.\ Moodle) kvízmoduljaihoz. Előállítása
+azonban drága. A pszichometriai szakirodalom szerint egy jó kérdés törzse önmagában is érthető és
+egyértelmű, pontosan egy válaszlehetősége helyes a tananyag szerint, a disztraktorok pedig azonos
+témájúak, formailag hasonlóak és egy felkészületlen hallgató számára hihetők, ám igazolhatóan
+hibásak~\cite{haladyna2002review,gierl2017distractors}. Egy tapasztalt oktató egy-egy ilyen kérdésen
+perceket, egy teljes vizsgán órákat dolgozik, és a disztraktorok megírása a munka legnehezebb része.
+
+A nagy nyelvi modellek (\emph{large language model}, LLM) megjelenése~\cite{brown2020gpt3} gyökeresen
+átalakította ezt a munkafolyamatot. Az oktatástechnológiai irodalom egyszerre hangsúlyozza a lehetőségeket
+és a kockázatokat~\cite{kasneci2023chatgpt}: a modellek képesek kérdéseket és disztraktorokat
+fogalmazni~\cite{kurdi2020systematic,alhazmi2024distractor}, ugyanakkor hajlamosak folyékony, de a forrás
+által nem alátámasztott állításokat generálni~\cite{ji2023hallucination}. A gyakorlatban a
+legelterjedtebb használati mód a legegyszerűbb: az oktató feltölti az előadásjegyzetét egy felhőben futó
+csevegő asszisztensbe, és „tíz feleletválasztós kérdést” kér. Ezt a munkafolyamatot a továbbiakban
+\emph{status quo}-nak vagy \emph{közvetlen megközelítésnek} nevezzük.
+
+\section{Problémafelvetés}
+
+A közvetlen megközelítés kényelmes, de az iskolai alkalmazás szempontjából négy, egymástól független
+gyengesége van. Ezek adják dolgozatunk kiindulópontját.
+
+\begin{description}[leftmargin=1.1cm,labelwidth=0.9cm,style=sameline,format=\normalfont\bfseries]
+\item[(P1)] \textbf{A helyesség nincs ellenőrizve.} Semmi sem garantálja, hogy a megjelölt kulcsot a
+dokumentum alátámasztja, és hogy a disztraktorok valóban hamisak. Az LLM-ek hihető, de alá nem támasztott
+állításokat állítanak elő~\cite{ji2023hallucination}; az önellenőrzés ezt csökkentheti, de nem
+szünteti meg~\cite{madaan2023selfrefine,dhuliawala2024cove,huang2024selfcorrect}.
+\item[(P2)] \textbf{A szerkezet és a lefedettség nincs kontrollálva.} A kért darabszám, típus és nehézség
+csak kérés a promptban. A hosszú bemenetet a modellek egyenetlenül használják: a kontextus elejére és
+végére jobban figyelnek, mint a közepére~\cite{liu2024lost}, a névleges kontextushossznál jóval rövidebb
+az a hossz, amelyen még megbízhatóan dolgoznak~\cite{hsieh2024ruler}. Ennek következménye, hogy a kérdések
+a dokumentum néhány szakaszára tömörülnek.
+\item[(P3)] \textbf{Adatvédelem.} A tananyag személyes adatot (pl.\ esettanulmányban szereplő neveket,
+hallgatói munkákat) is tartalmazhat; a felhőszolgáltatás az adatkezelés címzettjévé
+válik~\cite{gdpr2016}, az intézmény pedig elveszíti a kontrollt a tartalom sorsa felett.
+\item[(P4)] \textbf{Függés a nagy, távoli modellektől.} A teljes dokumentum egyetlen promptban hosszú
+kontextust és nagy modellt igényel. Az iskola által saját hardveren futtatható kis modellek (néhány
+milliárd paraméter, 8\,GB videomemória) kontextusa és memóriája korlátos.
+\end{description}
+
+Fontos látni, hogy a négy probléma nem oldható meg egyszerűen „jobb prompttal”. A P1 és a P2 a
+\emph{módszer} hiányából fakad: ha a vizsga szerkezete, a kérdések forrása és az ellenőrzés nem explicit
+lépések, akkor nem is mérhetők és nem is kényszeríthetők ki. A P3 és a P4 pedig egymást erősítik: a
+helyi futtatás megoldaná az adatvédelmi problémát, de a helyben futtatható kis modellek éppen a hosszú
+kontextusú, egylépéses feladatban a leggyengébbek. Kutatásunk alapgondolata ezért az, hogy a
+feladatot rövid, jól specifikált, egyenként ellenőrizhető lépésekre bontva egy kis, helyben futó modell
+is képes lehet megbízható vizsgát előállítani, és ez a felbontás egyben a P1 és P2 problémát is kezeli.
+
+\section{Kutatási kérdések és hipotézisek}
+
+A fenti problémák alapján három kutatási kérdést fogalmaztunk meg.
+
+\begin{description}[leftmargin=1.3cm,labelwidth=1.1cm,style=sameline,format=\normalfont\bfseries]
+\item[RQ1] A strukturált generálás -- tervezés, kérdésenkénti forráshoz kötés és ellenőrzés -- érvényesebb
+és jobban lefedő vizsgát eredményez-e, mint ha a modellnek a dokumentumot (vagy annak visszakeresett
+részleteit) egyetlen promptban adjuk át?
+\item[RQ2] Mennyivel járul hozzá a minőséghez az egyes komponens (tervező, ellenőrző, fogalomgráf,
+hibrid visszakeresés, darabolási stratégia), és mennyibe kerül futási időben, modellhívásban és
+tokenben?
+\item[RQ3] Mennyire közelíti meg egy 8\,GB-os fogyasztói GPU-n futó, 4 bitre kvantált 7B modell egy
+nagy, szerveren futó modell teljesítményét?
+\end{description}
+
+A kutatási kérdésekhez a következő, a fő vizsgálatban tesztelendő hipotéziseket rendeljük. A pilot
+vizsgálat (\ref{ch:eredmenyek}.~fejezet) mindegyikhez szolgáltat előzetes, leíró jellegű bizonyítékot,
+szignifikanciavizsgálatra azonban egyetlen dokumentum nem elegendő.
+
+\begin{hipotezis}[Tervezés]\label{h:terv}
+Azonos generátormodell mellett a vizsgaterv (\arm{E1}) a naiv RAG alapvonalhoz (\arm{E0}) képest
+növeli a kérdések alátámasztottságát és a vizsga darablefedettségét, a formai megfelelés romlása nélkül.
+\end{hipotezis}
+
+\begin{hipotezis}[Ellenőrzés]\label{h:verif}
+Az ellenőrző lánc (\arm{E2}) a tervezéshez (\arm{E1}) képest tovább növeli az alátámasztottságot és a
+vak megoldhatóságot; az ellenőrző ítélete pozitívan egyezik a független bíró ítéletével ($\kappa>0$).
+\end{hipotezis}
+
+\begin{hipotezis}[Lefedettség]\label{h:lefed}
+A teljes dokumentumot egyetlen promptban kapó alapvonal (\arm{B-doc}) lefedettsége -- modellmérettől
+függetlenül -- alacsonyabb, mint a tervezett változatoké.
+\end{hipotezis}
+
+\begin{hipotezis}[Helyi vs.\ szerver]\label{h:helyi}
+A helyi 7B modell a tervezett és ellenőrzött csővezetékben a szervermodell naiv változatának
+minőségi indexét megközelíti (különbség $<0{,}1$), miközben a GPU-memóriaigénye 8\,GB alatt marad.
+\end{hipotezis}
+
+\begin{hipotezis}[Mérés]\label{h:meres}
+A generátoroktól eltérő modellcsaládba tartozó LLM-bíró ítéletei az oktatói értékelésekkel legalább
+elfogadható megbízhatósággal egyeznek (Krippendorff-$\alpha\ge 0{,}667$).
+\end{hipotezis}
+
+\section{Hozzájárulások}
+
+Dolgozatunk négy, egymásra épülő hozzájárulást tartalmaz.
+
+\begin{enumerate}[label=(\arabic*)]
+\item \textbf{A \Mimir{} generálási módszer} (\ref{ch:modszer}.~fejezet): ablakozott mondatbeágyazáson
+alapuló szemantikus darabolás, lefedettségvezérelt vizsgaterv a legnagyobb maradék elvén kiosztott
+Bloom-szintekkel, slotonkénti sűrű vagy hibrid visszakeresés, forrásrészletekre hivatkozó egyenkénti
+kérdésgenerálás, legolcsóbbtól a legdrágábbig rendezett ellenőrző lánc visszacsatolással és
+tartalékfogalmakkal, valamint egy munkamenet-hatókörű fogalomgráf (GraphRAG-lite). A módszert formálisan
+is megfogalmazzuk (\ref{ch:formalizmus}.~fejezet), és algoritmikusan leírjuk.
+\item \textbf{Adatvédelmet biztosító helyi architektúra} (\ref{ch:architektura}.~fejezet): lazán
+csatolt mikroszolgáltatások, PostgreSQL-alapú zárolásmentes feladatsor, zéró adatmegőrzés és
+ujjlenyomat-alapú audit, valamint a GPU-memóriaigény analitikus modellje, amelyet mérésekkel
+validálunk.
+\item \textbf{Kiértékelési módszertan és nyílt keretrendszer} (\ref{ch:kiertekeles}.~fejezet): tizenöt
+egytényezős kísérleti kar, kétnyelvű adatkészlet referenciakérdésekkel, formálisan definiált mutatók,
+modellcsaládon kívüli LLM-bíró, oktatói értékelési protokoll és dokumentumszintű statisztika.
+\item \textbf{Empirikus eredmények} (\ref{ch:eredmenyek}.~fejezet): a pilot vizsgálat számszerű
+eredményei, köztük két korábbi méréseket érvénytelenítő mérési hiba feltárása, a válaszszivárgás mint új
+hibamód leírása és mérése, az önellenőrzés osztályozóként való validálása, valamint a futásról futásra
+jelentkező zaj becslése, amelyekből a fő vizsgálat terve közvetlenül következik.
+\end{enumerate}
+
+\section{A dolgozat felépítése}
+
+\Az{\ref{ch:szakirodalom}}.~fejezet áttekinti az automatikus kérdésgenerálás, a visszakereséssel
+kiegészített generálás, az ellenőrzés és a nyelvimodell-alapú kiértékelés szakirodalmát, és
+azonosítja a kutatási rést. \Az{\ref{ch:formalizmus}}.~fejezet a feladatot formálisan definiálja,
+bevezeti a minőségi predikátumokat és a célfüggvényt. \Az{\ref{ch:architektura}}.~fejezet a rendszer
+architektúráját, adatvédelmi mechanizmusait és erőforrás-modelljét mutatja be. \Az{\ref{ch:modszer}}.~fejezet a generálási módszer algoritmusait és azok költségelemzését tárgyalja.
+\Az{\ref{ch:kiertekeles}}.~fejezet a kiértékelési módszertant, \az{\ref{ch:eredmenyek}}.~fejezet a pilot
+eredményeit ismerteti. \Az{\ref{ch:diszkusszio}}.~fejezet az eredmények értelmezését és az érvényességet
+veszélyeztető tényezőket, \az{\ref{ch:osszefoglalas}}.~fejezet az összefoglalást és a további munkát
+tartalmazza. A függelék a promptokat, a konfigurációkat és a reprodukálás lépéseit közli.

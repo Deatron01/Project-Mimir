@@ -42,7 +42,28 @@ from .paper_tables import write_latex  # noqa: E402
 from .rubric import CRITERIA  # noqa: E402
 from .stats import bootstrap_ci, holm, paired_wilcoxon  # noqa: E402
 
-ARM_HU = {
+class _ArmNames(dict):
+    """Arm -> (short Hungarian name, description). Arms run with another local model via --model
+    (e.g. 'E2-gemma4-e4b') are named after their base arm: 'Tervezés + ellenőrzés (gemma4-e4b)'."""
+
+    def _derive(self, arm: str):
+        for base in sorted(self.keys(), key=len, reverse=True):
+            if arm.startswith(base + "-"):
+                tag = arm[len(base) + 1:]
+                name, desc = dict.__getitem__(self, base)
+                return f"{name} ({tag})", f"{desc}, {tag} modellel"
+        return None
+
+    def __missing__(self, arm: str):
+        return self._derive(arm) or (arm, "")
+
+    def get(self, arm, default=None):
+        if dict.__contains__(self, arm):
+            return dict.__getitem__(self, arm)
+        return self._derive(arm) or default
+
+
+ARM_HU = _ArmNames({
     "B-doc-L": ("Teljes dokumentum, helyi", "a teljes dokumentum egy promptban, helyi 7B modell"),
     "B-doc-S": ("Teljes dokumentum, szerver", "a teljes dokumentum egy promptban, szervermodell"),
     "E0": ("Alapmódszer", "naiv RAG: 3 részlet, egy hívásban 10 kérdés"),
@@ -57,7 +78,7 @@ ARM_HU = {
     "E5a": ("Régi darabolás", "E0 a javítás előtti RuneCarverrel"),
     "E5b": ("Szórás alapú darabolás", "E0, vágás a téma-váltás szórása alapján"),
     "E5c": ("Fix darabolás", "E0, 800 karakteres darabok"),
-}
+})
 METRICS_HU = [  # column, label; all "higher is better", 0..1
     ("format_compliant", "Formai megfelelés"),
     ("grounding_rate", "Forrással igazolt válasz"),

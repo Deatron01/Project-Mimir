@@ -1,0 +1,244 @@
+% =====================================================================
+%  Függelékek
+% =====================================================================
+
+\chapter{Promptok}
+\label{app-prompt}
+
+Ez a függelék a csővezetékek promptjait közli (rövidítve, a JSON-sémák elhagyásával ott, ahol a
+törzsszövegből egyértelműek). A belső lépések (tervező, gráf, ellenőrző) promptjai angol nyelvűek,
+mert a kis helyi modellek ezeket megbízhatóbban követik; a generátor promptja magyar, és megismétli az
+éles prompt szabályait, így az \arm{E0} és az \arm{E1+} karok szerkezetben, nem szabályokban
+különböznek.
+
+\section{A naiv alapvonal (\arm{E0}) és a teljes dokumentumos alapvonal promptja}
+\begin{lstlisting}
+Te egy kiemelkedő tudású oktatásmódszertani szakértő és professzionális vizsgakészítő vagy.
+
+KÖTELEZŐ SZABÁLYOK, AMIKET SZIGORÚAN BE KELL TARTANOD:
+1. ZÉRÓ HALLUCINÁCIÓ: KIZÁRÓLAG a megadott KONTEXTUS alapján dolgozz! Ha a kontextus nem
+   tartalmazza a választ, ne találj ki semmit!
+2. FELHASZNÁLÓI UTASÍTÁS KÖVETÉSE: ... Pontosan a kért mennyiséget és típust generáld le!
+3. DISZTRAKTOROK: Feleletválasztós (mcq) kérdés esetén 1 helyes és 3 hihető, de helytelen válasz.
+4. NO LATEX: Szigorúan TILOS LaTeX formázást vagy dollárjeleket ($) használni!
+5. META-REFERENCIA TILALOM: Szigorúan TILOS a dokumentum szerkezetére kérdezni.
+
+KONTEXTUS:
+{context_text}
+
+FELADAT (A felhasználó pontos kérése):
+"{query}"
+
+KIMENETI FORMÁTUM: kizárólag egy érvényes JSON objektum:
+{"title": "Mimir AI Vizsga", "format": "pdf", "questions": [
+  {"type": "mcq", "text": "...?", "answers": [{"text": "...", "is_correct": true}, ...]}]}
+\end{lstlisting}
+
+\section{A tervező promptja}
+\begin{lstlisting}
+[planner] You design exam blueprints. Reply with one valid JSON object only.
+
+Below is a document split into numbered chunks (C0, C1, ...). Some chunks are shortened.
+{overview}
+List the {n_concepts} most important, clearly distinct concepts, facts or ideas a student should
+be tested on. Cover the whole document: every major part should have at least one concept. Prefer
+central ideas over trivia. Write concept names and descriptions in {language}.
+JSON shape:
+{"concepts": [{"concept": "short name", "description": "one sentence: what exactly should be
+  tested", "chunk_ids": ["C0"], "importance": 3}]}
+importance: 3 = central, 2 = important, 1 = detail.
+\end{lstlisting}
+
+\section{A generátor promptja}
+\begin{lstlisting}
+[generator] Te egy kiemelkedő tudású oktatásmódszertani szakértő és professzionális vizsgakészítő
+vagy. Kizárólag érvényes JSON formátumban válaszolj, markdown formázás nélkül!
+
+Készíts PONTOSAN EGY vizsgakérdést az alábbi terv szerint.
+TERV:
+- Fogalom: {concept}
+- Mit kérdezzen: {description}
+- Kérdéstípus: feleletválasztós ("mcq"): pontosan 4 válasz, ebből pontosan 1 helyes és 3 hihető,
+  de a kontextus szerint egyértelműen helytelen disztraktor; a válaszok hossza és formája legyen
+  hasonló.
+- Bloom-szint: {pl. Megértés (magyarázat, összehasonlítás, saját szavakkal)}
+- Vizsga nehézsége: {difficulty}
+- Nyelv: a kérdést és a válaszokat {magyar} nyelven írd.
+KÖTELEZŐ SZABÁLYOK:
+1. ZÉRÓ HALLUCINÁCIÓ: KIZÁRÓLAG a KONTEXTUS alapján dolgozz. A helyes válasznak a kontextusból
+   igazolhatónak kell lennie.
+2. HIVATKOZÁS: a "citations" mezőbe írd azoknak a részleteknek az azonosítóját (pl. "C3"),
+   amelyek igazolják a helyes választ.
+3. NO LATEX.  4. META-REFERENCIA TILALOM.
+5. NE ISMÉTELD a már elkészült kérdéseket: {existing}
+[DISZTRAKTOR-ÖTLETEK (rokon fogalmak a dokumentumból) - csak E3]
+[AZ ELŐZŐ PRÓBÁLKOZÁS HIBÁS VOLT, JAVÍTSD: {feedback}]
+KONTEXTUS:
+[C3] ...
+[C1] ...
+KIMENETI FORMÁTUM (csak ez a JSON objektum):
+{"type": "mcq", "text": "A kérdés szövege?", "answers": [...], "citations": ["C0"],
+ "bloom": "understand", "explanation": "egy mondat: miért ez a helyes válasz"}
+\end{lstlisting}
+
+\section{Az ellenőrző promptjai}
+\begin{lstlisting}
+[verifier] You check exam questions against source text. Reply with one valid JSON object only.
+
+SOURCE: """{source}"""
+QUESTION (mcq): {text}
+A. ...   <-- marked correct
+B. ...
+Check strictly against the SOURCE only:
+1. key_supported: is the marked-correct answer clearly supported by the SOURCE?
+2. For every option NOT marked correct: is it clearly wrong according to the SOURCE?
+   (options_wrong, in order)
+3. ambiguous: could a careful reader argue that more than one option is correct?
+4. problems: one short sentence describing any problem ("" if none).
+JSON shape: {"key_supported": true, "options_wrong": [true, true, true], "ambiguous": false,
+             "problems": ""}
+
+--- vak megoldás ---
+SOURCE: """{source}"""
+Answer the question using only the SOURCE. Exactly one option is correct.
+{text}
+A. ...  B. ...  C. ...  D. ...        (véletlen permutáció)
+JSON shape: {"answer": "A"}
+\end{lstlisting}
+
+\section{A fogalomgráf promptja (\arm{E3})}
+\begin{lstlisting}
+[graph] You extract knowledge graphs from teaching material. Reply with one valid JSON object only.
+
+Extract the knowledge in these chunks as a small concept graph. Chunk ids are in brackets.
+{chunks_block}
+Rules:
+- concepts: the key terms, entities, processes or ideas (max 8 per chunk). "parent" is the broader
+  category the concept belongs to (e.g. "T-sejt" -> "limfocita"), or "" if none.
+- facts: short atomic statements from the text (max 6 per chunk), with the concepts they mention.
+- relations: typed links between concepts: is_a, part_of, causes, contrasts_with, used_for,
+  related_to.
+JSON shape: {"concepts": [...], "facts": [...], "relations": [...]}
+\end{lstlisting}
+
+\chapter{A bíró és az oktatók rubrikája}
+\label{app-rubrika}
+
+A rubrika szövege a bíró és az oktatói értékelőlap számára azonos (a bíró az angol, az oktatók a magyar
+változatot kapják).
+
+\begin{description}[style=nextline,leftmargin=0.6cm]
+\item[Helyesség] A megjelölt válasz a forrás szerint helyes, és más opció nem helyes.
+1 = hibás kulcs vagy két helyes opció; 3 = helyes, de pontatlan; 5 = teljesen helyes, egyértelmű.
+\item[Érthetőség] A kérdés önmagában érthető, nyelvtanilag helyes, egyértelmű, nem hivatkozik „a
+szövegre” vagy a dokumentum szerkezetére. 1 = zavaros; 3 = nehezen érthető; 5 = vizsgakész
+megfogalmazás.
+\item[Disztraktorok] A rossz válaszok a forrás szerint egyértelműen rosszak, de egy felkészületlen
+diák számára hihetők (azonos téma, hasonló hossz és forma). 1 = abszurd vagy szintén helyes;
+3 = részben hihető; 5 = mind hihető és rossz. Kifejtős kérdésnél üresen marad.
+\item[Szintillesztés] A kognitív szint megfelel a kért nehézségnek (könnyű: felidézés/megértés;
+közepes: alkalmazás/megértés; nehéz: elemzés/értékelés). 1 = egyértelműen rossz szint;
+3 = határeset; 5 = illik.
+\item[Felhasználnám] Beraknád ezt a kérdést egy valódi dolgozatba legfeljebb apró javítással?
+(igen/nem)
+\end{description}
+
+A bíró áttekintő hívása ezen felül kéri a kulcsot igazoló mondat szó szerinti idézését
+(\code{key\_evidence} mező), disztraktoronként a \code{is\_wrong} és \code{on\_topic} ítéletet, a kérdés
+Bloom-szintjét és egy egy-két mondatos indoklást kér.
+
+\chapter{Konfigurációk és reprodukálás}
+\label{app-reprodukcio}
+
+\section{Példakonfigurációk}
+
+Minden kísérleti kar egy YAML-fájl a \code{tests/eval/configs} könyvtárban. Az alábbi két
+konfiguráció az \arm{E2} és az \arm{E3} kart írja le; a két fájl egyetlen kulcsban (\code{graph})
+különbözik, ami az egytényezős tervet a konfiguráció szintjén is láthatóvá teszi.
+
+\begin{lstlisting}
+# E2 - E1 + verifier chain ("Thorough" mode): schema, meta-reference, citations, grounding +
+# distractor check, blind answer test; max 1 retry per slot with feedback, then 1 replacement.
+name: E2
+description: "Blueprint + verifier (max 1 retry, blind answer test on)"
+seeds: [1]
+exam: {n_questions: 10, types: [mcq]}
+pipeline: {kind: blueprint, retrieval: dense, retrieval_k: 3, verifier: true, blind_test: true,
+           max_retries: 1, graph: false}
+chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
+generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 8192}
+
+# E3 - E2 + concept graph
+name: E3
+pipeline: {kind: blueprint, retrieval: dense, retrieval_k: 3, verifier: true, blind_test: true,
+           max_retries: 1, graph: true}
+\end{lstlisting}
+
+\section{A reprodukálás lépései}
+
+\begin{lstlisting}
+# 1. Szolgáltatások és helyi modell
+ollama pull qwen2.5:7b
+docker-compose up -d --build
+
+# 2. Kiértékelő környezet
+cd tests/eval
+pip install -r requirements.txt
+python -m mimir_eval check configs/e0_naive_local.yaml      # adatkészlet és szolgáltatások
+
+# 3. Egy kar futtatása, pontozása és a jelentés
+python -m mimir_eval run   configs/e1_blueprint.yaml
+python -m mimir_eval score results/E1_<időbélyeg>
+python -m mimir_eval report --results results --name main
+
+# 4. A teljes mátrix (Windows PowerShell)
+./run_all.ps1
+\end{lstlisting}
+
+\section{A fő vizsgálat futtatási terve}
+\label{sec:futasterv}
+
+\begin{table}[H]
+\centering
+\caption{A fő vizsgálat futtatási terve.}
+\label{tab:futasterv}
+\small
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.2cm}l@{}}
+\toprule
+Lépés & Tartalom & Erőforrás & Becsült idő \\
+\midrule
+R0 & füstteszt minden karon 2 dokumentumon (egy hosszú) & helyi GPU + szerver & 2--3 óra \\
+R1 & helyi karok mind a 39 dokumentumon & helyi GPU & 2--3 nap \\
+R2 & szerverkarok mind a 39 dokumentumon & egyetemi szerver & kb.\ 1 nap \\
+R3 & pontozás a bíróval & egyetemi szerver & kb.\ 1 nap \\
+R4 & oktatói értékelés: 3 oktató $\times$ (60 + 10) kérdés & oktatók & 1--2 hét \\
+R5 & \code{report}: táblázatok, ábrák, tesztek & -- & 1--2 nap \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{A közölt számok forrásai}
+
+\begin{table}[H]
+\centering
+\caption{A dolgozat táblázatainak és ábráinak adatforrásai a tárolóban.}
+\label{tab:forrasok}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+Dolgozatbeli elem & Forrás \\
+\midrule
+\ref{tab:pilot-fo}.\ táblázat, \ref{fig:mutatok}.\ ábra & \code{results\_pilot/*/exam\_metrics.csv}, \code{questions.jsonl}; \code{report\_pilot/pilot} \\
+\ref{tab:verifier-biro}., \ref{tab:verifier-karok}.\ táblázat & \code{results\_pilot/\{E2,E2f,E2h,E3\}\_*/exams.jsonl} (\code{verified}) és \code{questions.jsonl} (\code{grounded}, \code{blind\_correct}, \code{judge\_would\_use}) \\
+\ref{tab:szivargas}.\ táblázat & \code{questions.jsonl}; \code{schema.key\_in\_stem}, \code{schema.stem\_is\_question} \\
+\ref{tab:rubrika-eredmeny}.\ táblázat & \code{questions.jsonl}, \code{judge\_*} mezők, 30 kérdés átlaga \\
+\ref{tab:hosszak}.\ táblázat & \code{questions.jsonl} (\code{text}, \code{options}), \code{exam\_metrics.csv} (\code{duplicate\_rate}, \code{gold\_max\_sim\_mean}) \\
+\ref{tab:koltseg}.\ táblázat & \code{exams.jsonl} (\code{llm.calls\_by\_stage}, \code{llm.tokens}), \code{exam\_metrics.csv} \\
+\ref{tab:vram-meres}.\ táblázat & \code{exams.jsonl} (\code{vram\_baseline\_mib}, \code{vram\_peak\_mib}), karonként az első vizsga \\
+\ref{tab:budget}.\ táblázat & publikált modellarchitektúrák és GGUF-fájlméretek; $M_0$ becslés \\
+\ref{tab:adatkeszlet}.\ táblázat & \code{tests/eval/dataset/manifest*.yaml} \\
+\ref{tab:peldak}.\ táblázat & \code{results\_pilot/\{E0,E1,E3,E4\}\_*/questions.jsonl}, 1.\ mag \\
+Futásról futásra zaj & \code{results\_pilot/\{E0,E5a\}\_*/exams.jsonl} (\code{retrieved}) \\
+\bottomrule
+\end{tabularx}
+\end{table}
