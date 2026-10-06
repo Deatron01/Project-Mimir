@@ -9,5 +9,10 @@ Szükséges csomagok: babel-hungarian, biblatex + biber, algorithm2e, pgfplots, 
 
 - `main.tex` – preambulum, címlap (a `\Kar`, `\SzerzoA`, `\Konzulens` stb. makrókat ki kell tölteni), jegyzékek
 - `fejezetek/` – fejezetek és függelékek
-- `figures/` – a `tests/eval/report_pilot/pilot` ábrái
-- Piros (`\tbd{}`) mezők: a 39 dokumentumos fő futás adataira várnak (7.12. szakasz, 7.10. táblázat)
+- `figures/` – `abra3_mutatok.pdf`: a `tests/eval/report_pilot/pilot` ábrája; `fo_*.pdf`: a fő vizsgálat
+  ábrái a `tests/eval/report_main/main` jelentésből
+- A fő vizsgálat (2026. szept. 27–28., 14 kar, 9 dokumentum, karonként 6) eredményei a 7.11. szakaszban, a
+  hipotézisek értékelése a 7.12. szakaszban; a számok forrása a `tests/eval/report_main/main` jelentés
+  (`eredmenyek.md`, `latex/`, `peldak.md`), a megfeleltetés a C. függelék táblázatában
+- Piros (`\tbd{}`) mezők: az oktatói értékelés (`rate-import` után) és a fő futás GPU-ja (`run.json`,
+  `hardware.gpus`)

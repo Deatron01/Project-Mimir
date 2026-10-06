@@ -3,12 +3,16 @@
 \label{ch:eredmenyek}
 % =====================================================================
 
-Ebben a fejezetben a pilot vizsgálat eredményeit közöljük. A pilot célja nem a hipotézisek
-eldöntése volt -- egyetlen dokumentumon ez \az{\ref{sec:statisztika}}.~szakasz szerint elvileg sem
-lehetséges --, hanem (i) a teljes mérési lánc validálása, (ii) a komponensek hatásának és költségének
-előzetes becslése, és (iii) a fő vizsgálat tervének megalapozása. Minden közölt szám a
-\code{tests/eval/results\_pilot} könyvtár nyers adataiból, a keretrendszer \code{report} lépésével
-készült; a táblázatok és a nyers adatok közötti megfeleltetést \az{\ref{app-reprodukcio}}.~függelék adja meg.
+Ebben a fejezetben két vizsgálat eredményeit közöljük. A fejezet első fele a \emph{pilot}
+vizsgálatot ismerteti, amely egyetlen dokumentumon futott. Célja nem a hipotézisek eldöntése volt --
+egyetlen dokumentumon ez \az{\ref{sec:statisztika}}.~szakasz szerint elvileg sem lehetséges --, hanem
+(i) a teljes mérési lánc validálása, (ii) a komponensek hatásának és költségének előzetes becslése, és
+(iii) a fő vizsgálat tervének megalapozása. \Az{\ref{sec:fo-vizsgalat}}.~szakasz a \emph{fő vizsgálatot}
+ismerteti, amely a pilot nyomán javított csővezetékkel, 14 karral és kilenc dokumentummal készült, a
+\ref{sec:hipotezis-ertekeles}.~szakasz pedig a két vizsgálat alapján értékeli a hipotéziseket. Minden
+közölt szám a nyers adatokból, a keretrendszer \code{report} lépésével készült (pilot:
+\code{tests/eval/report\_pilot}, fő vizsgálat: \code{tests/eval/report\_main}); a táblázatok és a nyers
+adatok közötti megfeleltetést \az{\ref{app-reprodukcio}}.~függelék adja meg.
 
 \section{A pilot beállításai}
 
@@ -26,7 +30,7 @@ szabályok nélkül futott: a tervezett karokban $r=2$ újrapróbálkozás volt 
 szabályok és javító hívás nélkül. A bíró a teljes dokumentumot látta (\code{judge-v1}), ami egy
 ilyen rövid szövegnél lényegében azonos a kérdés kontextusával.
 
-\section{Összesített eredmények}
+\section{A pilot összesített eredményei}
 
 \Az{\ref{tab:pilot-fo}}.~táblázat a karonkénti fő mutatókat a minőségi index szerint csoportosítva mutatja.
 \Az{\ref{fig:mutatok}}.~ábra ugyanezeket a mutatókat hőtérképként, a visszakeresési találati aránnyal
@@ -80,7 +84,7 @@ visszakeresési találati arány minden karon 100\,\% volt, ami egy négydarabos
 (a három visszakeresett darab a négyből szinte mindig tartalmazza a bizonyítékot); a visszakeresés
 mutatói csak a hosszú dokumentumokon lesznek informatívak.
 
-\section{A tervezés hatása (RQ1, RQ2)}
+\section{A tervezés hatása a pilotban (RQ1, RQ2)}
 
 A naiv alapvonal (\arm{E0}) és a tervezett, de nem ellenőrzött csővezeték (\arm{E1}) összevetése
 (\ref{tab:pilot-fo}. és \ref{tab:rubrika-eredmeny}.~táblázat) szerint a tervezés azonos modell és azonos formai megfelelés mellett javította az alátámasztottságot
@@ -138,7 +142,7 @@ utal, hogy a Bloom-szint mint szerkezeti garancia (\ref{all:kvota}.~állítás) 
 szintre vonatkozik; a megvalósult szint ellenőrzése egy további, eddig hiányzó ellenőrzési lépés
 lenne.
 
-\section{Az ellenőrzés hatása}
+\section{Az ellenőrzés hatása a pilotban}
 \label{sec:verifier-eredmeny}
 
 \subsection{A formai hiba és a tartalékkérdés}
@@ -260,7 +264,7 @@ jellegét. A fő vizsgálatra két következménye van: a szivárgást és a nem
 lánc szabályként elutasítja (\ref{tab:checks}.~táblázat), és mindkettő mutatóként is szerepel minden
 jelentésben.
 
-\section{Szervermodell és helyi modell (RQ3)}
+\section{Szervermodell és helyi modell a pilotban (RQ3)}
 
 A nagy szervermodell naiv RAG-gal (\arm{E4}) minden tartalmi mutatón a legjobb volt: alátámasztottság
 és vak megoldhatóság 100\,\%, disztraktor-validitás 97\,\%, a bíró minden kérdését felhasználná
@@ -301,7 +305,7 @@ asztali környezet mellett is fut. \Az{\ref{h:helyi}}.~hipotézis szerinti $<0{,
 nem támasztja alá (\arm{E4}: 0,99; a legjobb tervezett helyi kar, \arm{E1}: 0,88), a legjobb egyhívásos
 helyi karok (\arm{E5a}, \arm{E5b}: 0,90) azonban 0,09-re megközelítették.
 
-\section{Költség}
+\section{Költség a pilotban}
 \label{sec:koltseg}
 
 \Az{\ref{tab:koltseg}}.~táblázat a hívásszámot szakaszonként, a tokenfelhasználást és a futási időt mutatja.
@@ -367,7 +371,7 @@ növelte anélkül, hogy információt adott volna. A tervezés (\arm{E1}) ezzel
 minőségjavulást hozott; a pilot alapján a fő vizsgálatban a tervezés bizonyítása, az ellenőrzés
 pedig érdemének igazolása a feladat.
 
-\section{Darabolási stratégiák}
+\section{Darabolási stratégiák a pilotban}
 
 Az egyhívásos alapvonalat három darabolási változattal is összevetettük (\ref{tab:pilot-fo}. és \ref{tab:hosszak}.~táblázat). A
 rögzített, 800 karakteres ablakok (\arm{E5c}) adták a leggyengébb eredményt: a kérdéspárok 45\,\%-a
@@ -395,7 +399,7 @@ növelése egyetlen dokumentumon, hanem a dokumentumok számának növelése, me
 hipotézisei dokumentumok populációjára vonatkoznak. A fő vizsgálat ezért 39 dokumentumon,
 dokumentumszintű statisztikával fut.
 
-\section{Példák}
+\section{Példák a pilotból}
 
 \Az{\ref{tab:peldak}}.~táblázat négy pilotkérdést mutat eredeti, magyar nyelvükön, a bíró ítéletével. A
 példák a fenti eredmények tipikus eseteit illusztrálják: a naiv alapvonal téves kulcsát, a tervezett
@@ -431,57 +435,530 @@ közvetlenül kimondja; a többi arány hihető, de a szöveg cáfolja; helyess�
 \end{tabularx}
 \end{table}
 
-\section{A hipotézisek előzetes értékelése}
 
-\Az{\ref{tab:hipotezisek}}.~táblázat összefoglalja, hogy a pilot milyen irányú bizonyítékot szolgáltat az
-egyes hipotézisekhez. Hangsúlyozzuk, hogy ezek egyetlen dokumentumon, szignifikanciavizsgálat nélkül
-tett, leíró megfigyelések; a hipotézisek eldöntése a fő vizsgálat feladata.
+% =====================================================================
+\section{A fő vizsgálat eredményei}
+\label{sec:fo-vizsgalat}
+% =====================================================================
+
+\subsection{Beállítások}
+\label{sec:fo-beallitasok}
+
+A fő vizsgálat 2026. szeptember 27--28-án futott, a pilot nyomán javított csővezetékkel: a végső
+tartalékkérdés csak formailag helyes kérdés lehet, ennek hiányában egy javító hívás pótolja a hiányzó
+opciókat (\ref{sec:fallback}.~szakasz); a kulcsot tartalmazó és a nem kérdő törzset az ellenőrző lánc
+szabályként elutasítja (\ref{tab:checks}.~táblázat); slotonként $r=1$ újrapróbálkozás engedélyezett.
+A bíró a gpt-oss-120b, alacsony gondolkodási szinttel; a pilottól eltérően nem a teljes dokumentumot,
+hanem a kérdés saját forrásdarabjait látja, legfeljebb 24\,000 karakter terjedelemben
+(\ref{sec:biro}.~szakasz). \Az{\ref{tab:karok}}.~táblázat karjai közül az \arm{E0s} kivételével mind
+a 14 lefutott.
+
+\paragraph{Dokumentumok.} A futás nem a teljes, 39 dokumentumos adatkészleten, hanem karonként hat,
+összesen kilenc dokumentumon készült el (\ref{tab:fo-dokumentumok}.~táblázat). Tizenkét kar -- a helyi
+karok és a \arm{B-doc-S} -- az adatkészlet első hat dokumentumán futott: a három saját, rövid magyar
+szövegen és az OpenStax-gyűjtemény egy rövid, egy közepes és egy hosszú angol szövegén. A két szerveres
+RAG-kar (\arm{E4}, \arm{E4b}) a szerverkarok rögzített dokumentumlistájának első hat elemét kapta, ezek
+azonban mind angol szövegek, és közülük csak három közös a többi karéval. A MILQA-ból származó magyar
+Wikipédia-cikkek egyike sem került sorra. Ennek két következménye van: (i) az \arm{E4} és az \arm{E4b}
+átlaga a többi karéval nem közvetlenül, csak a közös dokumentumokon vethető össze; (ii) a „magyar”
+részhalmaz három rövid (1\,700--2\,300 karakteres) saját szöveg, így a nyelv hatása a forrás és a hossz
+hatásával keveredik.
 
 \begin{table}[htbp]
 \centering
-\caption{A hipotézisek és a pilot által szolgáltatott előzetes, leíró bizonyíték.}
-\label{tab:hipotezisek}
+\caption{A fő vizsgálatban kiértékelt dokumentumok. Ref.: referenciakérdések száma.}
+\label{tab:fo-dokumentumok}
 \small
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.6cm}@{}}
+\begin{tabular}{@{}llrrl@{}}
 \toprule
-Hipotézis & Pilot megfigyelés & Irány \\
+Dokumentum & Nyelv, forrás & Karakter & Ref. & Karok \\
 \midrule
-\ref{h:terv}.\ Tervezés & alátámasztottság $+6$, lefedettség $+8$ pp, forma változatlan; a különbség a zajsávon belül & támogató, nem döntő \\
-\ref{h:verif}.\ Ellenőrzés & alátámasztottság változatlan, vak megoldhatóság $-16$ pp; $\kappa\in[-0{,}14;0{,}07]$ & ellentmondó (önellenőrzésre) \\
-\ref{h:lefed}.\ Lefedettség & a szervermodell naiv RAG-gal 25\,\% lefedettséget ért el; a \arm{B-doc} kar még nem futott & támogató (közvetett) \\
-\ref{h:helyi}.\ Helyi vs.\ szerver & különbség 0,09--0,11; memória 5,4--5,9\,GiB & részben támogató \\
-\ref{h:meres}.\ Mérés & oktatói értékelés még nincs; a bíró a szivárgó kérdéseket nem büntette & nyitott; kockázat azonosítva \\
+\code{hu-coffee}                 & HU, saját    & 1\,696  & 4  & mind, kivéve \arm{E4}, \arm{E4b} \\
+\code{hu-immune}                 & HU, saját    & 1\,923  & 4  & mind, kivéve \arm{E4}, \arm{E4b} \\
+\code{hu-gametheory}             & HU, saját    & 2\,295  & 4  & mind, kivéve \arm{E4}, \arm{E4b} \\
+\code{en-economics-short-01}     & EN, OpenStax & 6\,000  & 6  & mind \\
+\code{en-humanities-medium-02}   & EN, OpenStax & 24\,937 & 6  & mind \\
+\code{en-law-long-03}            & EN, OpenStax & 68\,063 & 7  & mind \\
+\code{en-lifesciences-short-04}  & EN, OpenStax & 5\,843  & 4  & csak \arm{E4}, \arm{E4b} \\
+\code{en-economics-medium-05}    & EN, OpenStax & 16\,661 & 8  & csak \arm{E4}, \arm{E4b} \\
+\code{en-humanities-long-06}     & EN, OpenStax & 61\,045 & 10 & csak \arm{E4}, \arm{E4b} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Ismétlések és terjedelem.} Az egyhívásos karok dokumentumonként három maggal (18 vizsga,
+180 kérdés), a tervezett karok egy maggal (6 vizsga, 60 kérdés) futottak; az \arm{E5c} kar egy vizsgája
+sikertelen volt (17 vizsga). Összesen 1\,670 kérdés készült, mindegyiket a bíró értékelte. Az oktatói
+értékelés még nem érkezett be (\tbd{a \code{rate-import} után kitöltendő}), a futásidők pedig a futtató
+gépen (\tbd{GPU típusa a \code{run.json} alapján}) mért mediánok. Hat dokumentumnál a páros
+Wilcoxon-próba legkisebb elérhető $p$-értéke $0{,}031$ (\ref{sec:statisztika}.~szakasz), így egyetlen
+összevetés is csak akkor lehet szignifikáns, ha mind a hat dokumentumon azonos irányú a különbség.
+
+\subsection{Összesített eredmények}
+
+\Az{\ref{tab:fo-vizsgalat}}.~táblázat a karonkénti mutatókat, \az{\ref{fig:fo-rangsor}}.~ábra a
+minőségi indexet konfidenciaintervallummal, \az{\ref{fig:fo-mutatok}}.~ábra a mutatókat hőtérképként
+mutatja.
+
+\begin{table}[htbp]
+\centering
+\caption{A fő vizsgálat eredményei. $Q$: minőségi index (a dokumentumonkénti átlagok átlaga) 95\,\%-os
+bootstrap-CI-vel; a ráták \%-ban. Form.: formai megfelelés; Alát.: alátámasztottság; Vak: vak
+megoldhatóság; Diszt.: disztraktor-validitás; Lef.: lefedettség; Sziv.: kulcs a törzsben; Nell.: nem
+ellenőrzött kérdések száma vizsgánként; Hívás: átlagos modellhívás vizsgánként; Perc: medián futási idő
+vizsgánként. Az első tizenkét kar ugyanazon a hat dokumentumon futott; az \arm{E4} és az \arm{E4b} hat
+angol dokumentumon, amelyek közül három közös a többiekével.}
+\label{tab:fo-vizsgalat}
+\small
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{@{}lcccccccccrr@{}}
+\toprule
+Kar & $Q$ & 95\,\% CI & Form. & Alát. & Vak & Diszt. & Lef. & Sziv. & Nell. & Hívás & Perc \\
+\midrule
+\arm{B-doc-L} & 0,83 & 0,76--0,90 & 83  & 79 & 86  & 85 & 45 & 1 & --  & 1  & 0,4 \\
+\arm{B-doc-S} & 0,95 & 0,87--0,99 & 100 & 90 & 100 & 89 & 47 & 0 & --  & 1  & 4,0 \\
+\midrule
+\arm{E0}      & 0,64 & 0,46--0,81 & 100 & 43 & 62  & 52 & 25 & 0 & --  & 1  & 0,3 \\
+\midrule
+\arm{E1}      & 0,88 & 0,82--0,94 & 100 & 80 & 80  & 91 & 45 & 8 & 1,2 & 17 & 1,9 \\
+\arm{E2}      & \textbf{0,96} & 0,93--0,98 & 100 & 90 & 97 & 96 & 44 & 3 & 4,8 & 51 & 3,5 \\
+\arm{E2x}     & 0,89 & 0,83--0,95 & 100 & 78 & 83  & 95 & 42 & 2 & 2,5 & 19 & 7,6 \\
+\arm{E2f}     & 0,90 & 0,84--0,95 & 100 & 78 & 88  & 92 & 44 & 3 & 3,7 & 38 & 2,8 \\
+\arm{E2h}     & 0,92 & 0,90--0,94 & 100 & 82 & 92  & 94 & 42 & 2 & 5,2 & 53 & 3,7 \\
+\arm{E3}      & 0,88 & 0,79--0,95 & 100 & 83 & 87  & 83 & 40 & 0 & 4,8 & 56 & 5,5 \\
+\midrule
+\arm{E5a}     & 0,87 & 0,81--0,92 & 100 & 74 & 84  & 90 & 36 & 2 & --  & 1  & 0,3 \\
+\arm{E5b}     & 0,70 & 0,54--0,85 & 100 & 39 & 78  & 63 & 35 & 1 & --  & 1  & 0,3 \\
+\arm{E5c}     & 0,86 & 0,70--0,97 & 100 & 82 & 82  & 81 & 51 & 2 & --  & 1  & 0,3 \\
+\midrule
+\multicolumn{12}{@{}l}{\emph{Hat angol dokumentumon:}} \\
+\arm{E4}      & 0,91 & 0,80--0,98 & 100 & 77 & 98  & 87 & 9  & 0 & --  & 1  & 5,3 \\
+\arm{E4b}     & 0,99 & 0,97--1,00 & 100 & 98 & 100 & 98 & 28 & 0 & 0,0 & 37 & 47,7 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fo_abra2_rangsor.pdf}
+\caption[A karok rangsora a minőségi index szerint (fő vizsgálat)]{A karok rangsora a minőségi index
+szerint, 95\,\%-os bootstrap-konfidenciaintervallummal (fő vizsgálat). A jelentésgenerátor a legmagasabb indexű kart (\arm{E4b}) emeli ki; ez a kar azonban más
+dokumentumokon futott, mint a többi (\ref{sec:fo-beallitasok}.~szakasz), így a közvetlen rangsorolás csak
+az első tizenkét karra érvényes.}
+\label{fig:fo-rangsor}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fo_abra3_mutatok.pdf}
+\caption{Az egyes minőségi mutatók karonként (fő vizsgálat). A „szöveg szerint” oszlop a
+meta-hivatkozások aránya, a keresési találat@3 a referenciakérdések bizonyító mondatának visszakeresési
+aránya.}
+\label{fig:fo-mutatok}
+\end{figure}
+
+Négy megfigyelés emelhető ki. \emph{Először}, a közös hat dokumentumon a legjobb kar a helyi 7B
+modellel futó, tervezett és ellenőrzött csővezeték (\arm{E2}, $Q=0{,}96$), szűk
+konfidenciaintervallummal (0,93--0,98), vagyis a dokumentumok között keveset szóródik. \emph{Másodszor},
+a pilottal ellentétben a naiv alapvonal (\arm{E0}, 0,64) a leggyengébb kar; a különbség szinte teljes
+egészében az angol dokumentumokból ered (\ref{sec:fo-darabolas}.~szakasz). \emph{Harmadszor}, a pilotban
+megfigyelt formai hiba eltűnt: minden tervezett kar formai megfelelése 100\,\%, vagyis a javított
+tartalékkérdés és a javító hívás (\ref{sec:fallback}.~szakasz) működik. Formai hibát csak a teljes
+dokumentumos helyi alapvonal (\arm{B-doc-L}, 83\,\%) mutatott. \emph{Negyedszer}, a tervezett karok
+lefedettsége (40--45\,\%) a teljes dokumentumos alapvonalakéval (45--47\,\%) azonos szinten van, a naiv
+RAG-é viszont lényegesen alacsonyabb (\arm{E0}: 25\,\%, \arm{E4}: 9\,\%).
+
+\subsection{A tervezés és az ellenőrzés hatása (RQ1, RQ2)}
+\label{sec:fo-komponensek}
+
+\Az{\ref{fig:fo-komponensek}}.~ábra a minőségi index változását mutatja lépésenként, az alapvonaltól a
+fogalomgráfos változatig, \az{\ref{tab:fo-szignifikancia}}.~táblázat pedig a tervezett páros
+összehasonlításokat.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/fo_abra5_komponensek.pdf}
+\caption{Az egyes komponensek hozzájárulása a minőségi indexhez a fő vizsgálatban (ugyanazon a hat
+dokumentumon): tervezés $+0{,}24$, ellenőrzés $+0{,}08$, fogalomgráf $-0{,}07$.}
+\label{fig:fo-komponensek}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\caption{Páros Wilcoxon-próbák a dokumentumonkénti minőségi indexen (fő vizsgálat). $n$: a közös
+dokumentumok száma; $r_{rb}$: rangbiszeriális hatásméret ($r_{rb}>0$: az új kar jobb); $\tilde p$: a hat
+összevetésre Holm-korrigált $p$-érték.}
+\label{tab:fo-szignifikancia}
+\small
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+Összevetés & $n$ & Ref. $Q$ & Új $Q$ & $\Delta$ & $r_{rb}$ & $p$ & $\tilde p$ \\
+\midrule
+\arm{E1} -- \arm{B-doc-L} & 6 & 0,83 & 0,88 & $+0{,}04$ & $0{,}24$  & 0,688 & 0,875 \\
+\arm{E1} -- \arm{E0}      & 6 & 0,64 & 0,88 & $+0{,}24$ & $0{,}62$  & 0,219 & 0,875 \\
+\arm{E2} -- \arm{E1}      & 6 & 0,88 & 0,96 & $+0{,}08$ & $1{,}00$  & 0,031 & 0,188 \\
+\arm{E2x} -- \arm{E2}     & 6 & 0,96 & 0,89 & $-0{,}06$ & $-0{,}90$ & 0,062 & 0,312 \\
+\arm{E3} -- \arm{E2}      & 6 & 0,96 & 0,88 & $-0{,}07$ & $-0{,}62$ & 0,219 & 0,875 \\
+\arm{E4} -- \arm{E0}      & 3 & 0,40 & 0,93 & $+0{,}54$ & $1{,}00$  & 0,250 & 0,875 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Tervezés.} A vizsgaterv (\arm{E1}) a naiv alapvonalhoz képest $0{,}64$-ről $0{,}88$-ra emelte a
+minőségi indexet, az alátámasztottságot 43-ról 80\,\%-ra, a vak megoldhatóságot 62-ről 80\,\%-ra, a
+disztraktor-validitást 52-ről 91\,\%-ra, a lefedettséget 25-ről 45\,\%-ra, változatlan (100\,\%-os) formai
+megfelelés mellett. A hatás nagy ($r_{rb}=0{,}62$), de nem egyirányú: a három angol dokumentumon a
+javulás $0{,}40\to0{,}91$, a három rövid magyar szövegen viszont $0{,}88\to0{,}85$, azaz ott a tervezés nem
+javított. Ez összhangban van a pilottal, amely szerint egy négydarabos szövegen a naiv alapvonal a
+dokumentum nagy részét látja, így a tervezésnek kevés hozzáadnivalója marad. A különbség a Holm-korrekció
+után nem szignifikáns ($\tilde p=0{,}875$). A tervezés ára 17 hívás és 1,9 perc vizsgánként (a naiv
+alapvonalnál 1 hívás és 20 másodperc).
+
+\paragraph{Ellenőrzés.} A pilottal ellentétben az ellenőrző lánc a fő vizsgálatban javított: az \arm{E2}
+kar a tervezett \arm{E1}-hez képest $0{,}88$-ról $0{,}96$-ra emelte a minőségi indexet, az
+alátámasztottságot 80-ról 90\,\%-ra, a vak megoldhatóságot 80-ról 97\,\%-ra, a disztraktor-validitást
+91-ről 96\,\%-ra. A javulás mind a hat dokumentumon azonos irányú ($r_{rb}=1{,}00$), a korrigálatlan
+$p=0{,}031$ éppen a hat dokumentumnál elérhető minimum; a hat összevetésre vett Holm-korrekció után
+$\tilde p=0{,}188$, így a különbség formálisan nem szignifikáns, iránya azonban a vizsgált dokumentumokon
+egyértelmű. A javulás mindkét nyelven megjelent (magyar: $0{,}85\to0{,}96$, angol: $0{,}91\to0{,}95$).
+Az ellenőrzés ára a háromszoros hívásszám (17 helyett 51) és a 1,8-szoros futási idő (1,9 helyett
+3,5 perc). A pilothoz képest a fordulatot két változás magyarázza: a formai hiba megszűnt, és a
+szivárgási szabályok miatt az ellenőrző már nem a forrásmondat szó szerinti átvételét jutalmazza
+(\ref{sec:fo-szivargas}.~szakasz).
+
+\paragraph{Az ellenőrző lánc elemei.} A vak megoldási próba nélküli változat (\arm{E2f}) $0{,}90$-et ért el,
+alátámasztottsága (78\,\%) és vak megoldhatósága (88\,\%) is elmarad az \arm{E2}-étől: a vak próba tehát
+a lánc hasznos eleme, 38 helyett 51 hívásért. A hibrid visszakeresés (\arm{E2h}, $0{,}92$) nem javított a
+sűrű keresésen; a hat dokumentum közül csak egy hosszú, ahol a lexikális egyezés előnye megjelenhetne.
+
+\paragraph{Más modellcsaládba tartozó ellenőrző.} A Llama-3.1-8B ellenőrző (\arm{E2x}) a Qwen
+önellenőrzésénél \emph{rosszabb} vizsgát eredményezett ($0{,}96\to0{,}89$, $r_{rb}=-0{,}90$,
+$\tilde p=0{,}312$): az alátámasztottság 90-ről 78\,\%-ra, a vak megoldhatóság 97-ről 83\,\%-ra csökkent.
+Az \arm{E2x} ellenőrzője a kérdések 75\,\%-át átengedte (az \arm{E2}-é 52\,\%-át), ezért kevesebb hívásra
+(19) volt szükség, a modellcserék miatt mégis ez a leglassabb helyi kar (7,6 perc). A független ellenőrző
+tehát nem a szigorúsága, hanem az engedékenysége miatt különbözik: a vele mért egyezés a bíróval kissé
+magasabb ($\kappa=0{,}16$, \ref{sec:fo-verifier}.~szakasz), de kevesebb rossz kérdést szűr ki.
+
+\paragraph{Fogalomgráf.} A fogalomgráf (\arm{E3}) az \arm{E2}-höz képest rontott ($0{,}96\to0{,}88$,
+$r_{rb}=-0{,}62$), elsősorban a disztraktorokon (96 helyett 83\,\%), több hívásért (56) és hosszabb futási
+időért (5,5 perc). A pilotban az \arm{E3} kiugró alátámasztottságát a szivárgás okozta; a szivárgási
+szabályokkal ez az előny eltűnt (\ref{sec:fo-szivargas}.~szakasz).
+
+\subsection{Az ellenőrző mint osztályozó}
+\label{sec:fo-verifier}
+
+\Az{\ref{tab:fo-verifier-biro}}. és \az{\ref{tab:fo-verifier-karok}}.~táblázat a pilotbeli elemzést
+(\ref{tab:verifier-biro}. és \ref{tab:verifier-karok}.~táblázat) ismétli meg a fő vizsgálat adatain.
+
+\begin{table}[htbp]
+\centering
+\caption{Az ellenőrző ítélete és a bíró kimenetei (fő vizsgálat; az \arm{E2}, \arm{E2x}, \arm{E2f},
+\arm{E2h}, \arm{E3} és \arm{E4b} karok 360 kérdése, \%).}
+\label{tab:fo-verifier-biro}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Ellenőrző ítélete & $n$ & Alátámasztott & Vakon helyes & Felhasználnám \\
+\midrule
+Átengedett (ellenőrzött) & 234 & 89 & 93 & 85 \\
+Megjelölt (nem ellenőrzött) & 126 & 77 & 87 & 68 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Az ellenőrző pontossága, felidézése és Cohen-$\kappa$ együtthatója a bíró alátámasztottsági
+ítéletéhez képest, karonként (fő vizsgálat). Átengedett: az átengedett kérdések aránya (\%).}
+\label{tab:fo-verifier-karok}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Kar & $n$ & Átengedett & Pontosság & Felidézés & $\kappa$ \\
+\midrule
+\arm{E2}  & 60 & 52  & 0,94 & 0,54 & $0{,}08$ \\
+\arm{E2x} & 60 & 75  & 0,82 & 0,79 & $0{,}16$ \\
+\arm{E2f} & 60 & 63  & 0,79 & 0,64 & $0{,}02$ \\
+\arm{E2h} & 60 & 48  & 0,93 & 0,55 & $0{,}22$ \\
+\arm{E3}  & 60 & 52  & 0,87 & 0,54 & $0{,}08$ \\
+\arm{E4b} & 60 & 100 & 0,98 & 1,00 & $0{,}00$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A pilothoz képest az irány megfordult: az átengedett kérdéseket a bíró gyakrabban ítélte
+alátámasztottnak (89\,\%), mint a megjelölteket (77\,\%), és a „felhasználnám” arány is magasabb (85 vs.\
+68\,\%). Az \arm{E4b} kar 60, mind átengedett kérdése nélkül az átengedett helyi kérdések 86\,\%-a
+alátámasztott (174-ből 150), a különbség tehát nem a szervermodell kérdéseiből ered. A helyi ellenőrzők
+$\kappa$ együtthatója $0{,}02$ és $0{,}22$ közé esik (a pilotban $-0{,}14$ és $0{,}07$ közé), ami az irodalmi
+konvenció szerint legfeljebb gyenge egyezés. Az ellenőrző pontossága magas (0,79--0,94: amit átenged, az
+többnyire jó), a felidézése alacsony (0,54--0,79: a jó kérdések közel felét is megjelöli). Az oktató
+szemszögéből ez azt jelenti, hogy a megjelölt kérdések háromnegyede valójában rendben van; a jelzés
+\emph{figyelmeztetésként} hasznos, de nem szabad ítéletként bemutatni. Az \arm{E4b} kar szervermodellje
+minden kérdést átengedett, és a bíró ezek 98\,\%-át alátámasztottnak ítélte; mivel egyik ítéletben sincs
+szórás, a $\kappa$ itt nem informatív.
+
+\subsection{Válaszszivárgás és nem kérdő törzsek}
+\label{sec:fo-szivargas}
+
+\begin{table}[htbp]
+\centering
+\caption{Válaszszivárgás karonként (fő vizsgálat, \%). A definíciók \az{\ref{tab:szivargas}}.~táblázatéval
+azonosak; bírói helyesség: a szivárgó kérdések átlagos helyességi pontszáma (1--5).}
+\label{tab:fo-szivargas}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Kar & $n$ & Kulcs a törzsben & Nem kérdés & Bírói helyesség (szivárgó) \\
+\midrule
+\arm{B-doc-L} & 180 & 1 & \textbf{17} & 3,0 \\
+\arm{B-doc-S} & 180 & 0 & 1  & -- \\
+\arm{E0}      & 180 & 0 & 6  & -- \\
+\arm{E1}      & 60  & \textbf{8} & 12 & 3,6 \\
+\arm{E2}      & 60  & 3 & 8  & 3,0 \\
+\arm{E2x}     & 60  & 2 & 3  & 2,0 \\
+\arm{E2f}     & 60  & 3 & 5  & 3,0 \\
+\arm{E2h}     & 60  & 2 & 8  & 3,0 \\
+\arm{E3}      & 60  & 0 & 5  & -- \\
+\arm{E4}      & 180 & 0 & 0  & -- \\
+\arm{E4b}     & 60  & 0 & 0  & -- \\
+\arm{E5a}     & 180 & 2 & 6  & 5,0 \\
+\arm{E5b}     & 180 & 1 & 11 & 3,0 \\
+\arm{E5c}     & 170 & 2 & \textbf{41} & 2,3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A szivárgási szabályok hatása egyértelmű (\ref{tab:fo-szivargas}.~táblázat): az \arm{E3} kar
+szivárgása a pilotbeli 20\,\%-ról 0-ra, nem kérdő törzseinek aránya 47-ről 5\,\%-ra csökkent, és az
+ellenőrző karok szivárgása 0--3\,\%. A maradék szivárgó kérdések a végső tartalékok közül kerültek a
+vizsgába, megjelölve. A legtöbb szivárgás most az ellenőrzés nélküli \arm{E1} karban van (8\,\%), amelyben
+a szabályok nem futnak. A nem kérdő törzsek aránya a rögzített darabolásnál (\arm{E5c}, 41\,\%) és a
+teljes dokumentumos helyi alapvonalnál (\arm{B-doc-L}, 17\,\%) a legmagasabb. A bíró a szivárgó
+kérdéseknek most többnyire közepes helyességi pontot adott (2,0--3,6; csak az \arm{E5a} három szivárgó
+kérdése kapott 5-öt), szemben a pilot jellemző 5-öseivel; a szivárgó kérdések azonban kevesen vannak
+(karonként legfeljebb öt), így ebből nem vonható le általános következtetés.
+
+\paragraph{Egy új vakfolt: a forma szerint triviális kérdések.} A szervermodell naiv RAG-gal (\arm{E4})
+olyan kérdéseket is írt, amelyek nem a tananyagra, hanem a visszakeresett szövegdarab formájára
+kérdeznek rá („How many words are in Link to Learning?”, \ref{tab:fo-peldak}.~táblázat). Ezek a kérdések
+formailag hibátlanok, „alátámasztottak” és vakon megoldhatók, a bíró 5/5 helyességi pontot adott nekik --
+a szivárgáshoz hasonlóan felfelé torzítják a mutatókat. Az \arm{E4} kar 98\,\%-os vak megoldhatósága és
+0,91-es indexe mellett mért 9\,\%-os lefedettsége erre utal: a kérdések a dokumentum kis, tartalmilag
+szegény részéhez kötődnek.
+
+\subsection{Darabolás és a naiv RAG törékenysége}
+\label{sec:fo-darabolas}
+
+A darabolási karok eredménye (\ref{tab:fo-vizsgalat}.~táblázat) első ránézésre meglepő: a régi,
+512 tokenre csonkolt kódoló (\arm{E5a}, 0,87) és a rögzített, 800 karakteres darabolás (\arm{E5c}, 0,86) is
+jobb az alapértelmezett, ablakozott szemantikus darabolásnál (\arm{E0}, 0,64), a szórásalapú küszöb
+(\arm{E5b}, 0,70) pedig az alapvonal szintjén marad. A nyelvenkénti bontás (\ref{fig:fo-nyelvek}.~ábra)
+megmutatja, honnan ered a különbség: a három rövid magyar szövegen a három szemantikus változat közel
+azonos ($0{,}87$--$0{,}89$), a rögzített darabolás gyengébb ($0{,}77$); a három angol dokumentumon viszont a két szemantikus változat összeomlik (\arm{E0}:
+$0{,}40$, \arm{E5b}: $0{,}51$; alátámasztottság mindkettőnél 0\,\%), miközben az \arm{E5a} $0{,}87$-et, az
+\arm{E5c} $0{,}96$-ot ér el.
+
+A bíró ítéletei szerint a naiv karok az angol dokumentumokon gyakorlatilag tartalom nélküli kontextust
+kaptak: az \arm{E4} példáiban a forrás egy szakaszcím („Link to Learning”) vagy egy szót sem tartalmazó
+darab volt. Az OpenStax-szövegek rövid szerkezeti sorokat tartalmaznak („Link to Learning”, „Check Your
+Understanding”), amelyeket a szemantikus darabolás -- minimális darabméret nélkül -- önálló darabbá vág,
+és a naiv RAG általános lekérdezése („10 feleletválasztós kérdés \dots”) ezekhez a rövid darabokhoz áll a
+legközelebb. A rögzített darabolás ilyen darabot nem hoz létre, a régi kódoló pedig a dokumentum
+nagyobbik részén, az 512. token után méretalapúan vág (\ref{sec:csonkolt}.~szakasz). A visszakeresés maga nem hibás: a
+referenciakérdésekkel végzett próba találati aránya minden karon 89--95\,\% (\ref{fig:fo-mutatok}.~ábra).
+A hiba a naiv RAG \emph{lekérdezésében} van, amely nem tartalmi kérdés, hanem egy feladatleírás. A
+tervezett karok ettől nem szenvednek, mert slotonként a tervezett fogalommal keresnek (\arm{E1} az angol
+dokumentumokon: $0{,}91$). Ez a megfigyelés a tervezés mellett szóló új érv: a naiv RAG minősége a
+darabolás apró részleteitől függ, a tervezett csővezetéké nem. Gyakorlati következménye, hogy a
+szolgáltatás darabolójának minimális darabméretet kell kapnia; ennek hatását egy új futás mérheti.
+
+\subsection{A teljes dokumentumos alapvonal és a lefedettség}
+\label{sec:fo-bdoc}
+
+A status quót modellező alapvonalak két, egymástól eltérő képet adnak. A helyi 7B modell a teljes
+dokumentummal (\arm{B-doc-L}) $0{,}83$-at ért el: a vizsgák 17\,\%-a formailag hibás volt (nem tíz, vagy
+nem négyopciós kérdést tartalmazott), a törzsek 17\,\%-a nem kérdés, és a leghosszabb (68\,063 karakteres)
+dokumentumnak csak az első 30\,000 karakterét láthatta. A tervezett csővezeték ugyanazzal a modellel
+ennél jobb ($0{,}96$; az \arm{E1}--\arm{B-doc-L} különbség $+0{,}04$, $r_{rb}=0{,}24$). A szervermodell a
+teljes dokumentummal (\arm{B-doc-S}) viszont $0{,}95$-öt ért el, a helyi \arm{E2}-vel gyakorlatilag
+azonosat.
+
+A \ref{h:lefed}.~hipotézist a fő vizsgálat \emph{nem} támasztja alá: a teljes dokumentumos alapvonalak
+lefedettsége (45 és 47\,\%) nem alacsonyabb a tervezett karokénál (40--45\,\%). A kérdések egy szakaszra
+tömörülése, amelyet a pilot a szervermodellnél mutatott, a fő vizsgálatban a naiv RAG sajátjának
+bizonyult (\arm{E0}: 25\,\%, \arm{E4}: 9\,\%), nem a teljes dokumentumos promptolásé. Két megszorítással:
+a hat dokumentumból három rövid, négydarabos szöveg, amelyen tíz kérdés szükségképpen sok darabot fed le;
+és a lefedettség az embedding-térbeli legközelebbi darabra épül.
+
+\paragraph{A bíró kontextusablaka.} A teljes dokumentumos karoknál a bíró a dokumentum elejét látja,
+legfeljebb 24\,000 karaktert. A \code{en-law-long-03} dokumentumon a \arm{B-doc-S} egyik kérdését („What is
+the access economy?”) a bíró azért ítélte alá nem támasztottnak, mert a fogalom a dokumentum
+38\,603. karakterénél szerepel; a \arm{B-doc-L} „job sharing and flextime” kérdése (29\,030. karakter)
+ugyanígy járt. A teljes dokumentumos karok alátámasztottsága a hosszú dokumentumokon ezért alsó becslés;
+ez magyarázhatja a \arm{B-doc-S} magyar--angol különbségét is (0,99 vs.\ 0,90). A tervezett és a naiv
+karokat ez nem érinti, mert ott a bíró a kérdés saját forrásdarabjait látja.
+
+\subsection{Szervermodell és helyi modell (RQ3)}
+
+A szervermodell két változata más dokumentumokon futott, ezért azokat a közös három angol dokumentumon
+vetjük össze. Ezeken a helyi \arm{E2} $0{,}95$-öt, a szervermodell naiv RAG-gal (\arm{E4}) $0{,}93$-at ért el,
+vagyis a \ref{h:helyi}.~hipotézis szerinti $<0{,}1$ különbség teljesül: a helyi, tervezett és ellenőrzött
+csővezeték a szervermodell naiv változatát elérte. Ugyanezen a három dokumentumon a naiv alapvonal
+helyben $0{,}40$-et, a szerveren $0{,}93$-at adott ($+0{,}54$, $n=3$, szignifikanciára nem elegendő): a nagy
+modell a tartalom nélküli kontextusból is hibátlan formájú, bár részben triviális kérdést írt
+(\ref{sec:fo-szivargas}.~szakasz). A teljes dokumentumot kapó szervermodell (\arm{B-doc-S}) és a helyi
+\arm{E2} a közös hat dokumentumon $0{,}95$, illetve $0{,}96$ indexet ért el.
+
+A legmagasabb indexet a szervermodell a tervezett és ellenőrzött csővezetékben érte el (\arm{E4b}, $0{,}99$;
+alátámasztottság 98\,\%, vak megoldhatóság 100\,\%), hat angol dokumentumon. Ez a módszer
+modellfüggetlenségét mutatja: ugyanaz a csővezeték a nagyobb modellel közel hibátlan vizsgát ad. Az
+ára a megosztott egyetemi szerveren 47,7 perc vizsgánként (a helyi \arm{E2}-é 3,5 perc), és a tananyag
+elhagyja a gépet (P3). A lefedettsége (28\,\%) az \arm{E4}-énél (9\,\%) háromszor nagyobb ugyanazokon a
+dokumentumokon. A helyi modell GPU-memóriaigényét a fő vizsgálat jelentése nem közli; a pilotban mért
+5,4--5,9\,GiB (\ref{sec:vram}.~szakasz) azonos modellre és kontextusra vonatkozik.
+
+\subsection{Magyar és angol dokumentumok}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.72\textwidth]{figures/fo_abra7_nyelvek.pdf}
+\caption{Minőségi index nyelvenként (fő vizsgálat). A magyar részhalmaz három rövid saját szöveg, az angol
+három (az \arm{E4} és \arm{E4b} karnál hat) OpenStax-szöveg; a különbség ezért leíró, nem ok-okozati.}
+\label{fig:fo-nyelvek}
+\end{figure}
+
+\Az{\ref{fig:fo-nyelvek}}.~ábra szerint a tervezett karok az angol dokumentumokon kissé jobbak
+(0,91--0,95), mint a magyarokon (0,84--0,96), egyetlen kivétellel: az ellenőrzés (\arm{E2}) a magyar
+szövegeken emelte a legtöbbet ($0{,}85\to0{,}96$). A magyar szövegek rövidek (négy darab), így tíz eltérő,
+alátámasztott kérdés megírása rajtuk nehezebb, és a 7B modell magyar nyelvi hibái
+(\ref{tab:fo-peldak}.~táblázat) is itt jelentkeznek. Az egyhívásos karok nyelvi különbségei a darabolásból
+(\ref{sec:fo-darabolas}.~szakasz) és a bíró kontextusablakából (\ref{sec:fo-bdoc}.~szakasz) erednek.
+
+\subsection{Költség}
+
+\Az{\ref{fig:fo-minoseg-ido}}.~ábra a minőséget a futási idő függvényében mutatja. A helyi karok között
+két csoport különül el: az egyhívásos karok 20 másodperc körül, változó minőséggel ($0{,}64$--$0{,}87$), és
+a tervezett karok 1,9--7,6 perc alatt, egyenletesebben magas minőséggel ($0{,}88$--$0{,}96$). Az \arm{E2}
+3,5 perccel és 51 hívással a legjobb ár--érték arányú helyi kar. A pilotban ugyanez a kar 75 hívást és
+6,2 percet igényelt; a kevesebb hívásban az $r=1$ újrapróbálkozási korlát is szerepet játszik, a
+futásidők azonban eltérő dokumentumokon és esetleg eltérő hardveren készültek, így közvetlenül nem
+hasonlíthatók össze. A szerveren futó karok ideje a megosztott szerver terhelésétől függ, ezért csak
+tájékoztató jellegű.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.92\textwidth, height=7.5cm, xmode=log,
+  xmin=0.2, xmax=90, ymin=0.6, ymax=1.03,
+  xtick={0.25,0.5,1,2,4,8,16,32,64}, xticklabels={{0,25},{0,5},1,2,4,8,16,32,64},
+  yticklabel style={/pgf/number format/.cd, fixed, precision=2, use comma},
+  xlabel={Medián futási idő vizsgánként (perc, logaritmikus skála)}, ylabel={Minőségi index $Q$},
+  xlabel style={font=\small}, ylabel style={font=\small},
+  tick label style={font=\footnotesize}, grid=major, grid style={gray!20},
+  legend style={font=\footnotesize, at={(0.97,0.03)}, anchor=south east}]
+\addplot[only marks, mark=*, mark size=2.4pt, blue!70!black] coordinates {
+  (0.317,0.641) (0.321,0.702) (0.334,0.862) (0.344,0.869) (0.366,0.833)
+  (1.877,0.878) (3.460,0.956) (7.568,0.892) (2.847,0.896) (3.738,0.918) (5.519,0.883)};
+\addlegendentry{helyi 7B modell}
+\addplot[only marks, mark=square*, mark size=2.4pt, orange!85!black] coordinates {
+  (3.958,0.949) (5.270,0.906) (47.727,0.992)};
+\addlegendentry{szervermodell}
+\begin{scope}[font=\footnotesize, inner sep=1.5pt]
+\node[anchor=west]       at (axis cs:0.33,0.641) {E0};
+\node[anchor=west]       at (axis cs:0.33,0.702) {E5b};
+\node[anchor=north west] at (axis cs:0.37,0.833) {B-doc-L};
+\node[anchor=east]       at (axis cs:0.325,0.862) {E5c};
+\node[anchor=south west] at (axis cs:0.35,0.869) {E5a};
+\node[anchor=north]      at (axis cs:1.877,0.872) {E1};
+\node[anchor=south east] at (axis cs:2.80,0.899) {E2f};
+\node[anchor=south east] at (axis cs:3.40,0.958) {E2};
+\node[anchor=north]      at (axis cs:3.738,0.912) {E2h};
+\node[anchor=west]       at (axis cs:4.10,0.951) {B-doc-S};
+\node[anchor=south west] at (axis cs:5.35,0.908) {E4};
+\node[anchor=north west] at (axis cs:5.60,0.881) {E3};
+\node[anchor=west]       at (axis cs:7.90,0.892) {E2x};
+\node[anchor=east]       at (axis cs:45.0,0.992) {E4b};
+\end{scope}
+\end{axis}
+\end{tikzpicture}
+\caption{Minőség és futási idő a fő vizsgálatban. A tervezett helyi karok egy nagyságrenddel lassabbak az
+egyhívásos karoknál, de minőségük egyenletesebb; az \arm{E4} és az \arm{E4b} más dokumentumokon futott.}
+\label{fig:fo-minoseg-ido}
+\end{figure}
+
+\subsection{Példák}
+
+\Az{\ref{tab:fo-peldak}}.~táblázat négy kérdést mutat a fő vizsgálatból, eredeti nyelvükön, a bíró
+ítéletével. A teljes gyűjtemény (karonként egy jó és egy rossz kérdés) a fő vizsgálat jelentésének
+\code{peldak.md} fájljában található (\code{tests/eval/report\_main/main}).
+
+\begin{table}[htbp]
+\centering
+\caption{Kérdések a fő vizsgálatból eredeti nyelven (* = megjelölt kulcs), a bíró ítéletével.}
+\label{tab:fo-peldak}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{1.6cm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+\arm{E4b} & \emph{Which statement correctly compares how dsRNA, +ssRNA, and -ssRNA viral genomes produce
+translatable +ssRNA?} Kulcs: \emph{+ssRNA can be translated directly, -ssRNA is copied by viral RdRP into
++ssRNA, and dsRNA uses its negative strand as a template for RdRP to make +ssRNA.}*; a disztraktorok a
+három genomtípus szerepét keverik össze. \textbf{Bíró:} alátámasztott, vakon helyes, minden pontszám 5/5. \\
+\midrule
+\arm{E4} & \emph{How many words are in Link to Learning?} 3* / 2 / 4 / 5. \textbf{Bíró:} alátámasztott
+(bizonyíték: „Link to Learning”), vakon helyes, helyesség 5/5 -- noha a kérdés a visszakeresett szakaszcímre,
+nem a tananyagra kérdez. \\
+\midrule
+\arm{B-doc-S} & \emph{What is the access economy?} Kulcs: \emph{A resource circulation system in which
+consumers participate as both providers and obtainers of resources}*. \textbf{Bíró:} nem alátámasztott, „a
+forrás nem említi” -- a fogalom a dokumentum 38\,603. karakterénél áll, a bíró 24\,000 karakteres ablakán
+kívül. \\
+\midrule
+\arm{E2} & \emph{A Robusta kávé alacsonyabb területeken termelésének és koffeintartalma jellemzői.}
+Kulcs: \emph{A Robusta kávé alacsonyabb területeken termelésének és koffeintartalma 1.5-2 során
+fejlődik.}*; a disztraktorok csak a számokban térnek el. \textbf{Bíró:} nem alátámasztott (a forrás csak
+annyit mond, hogy a koffeintartalom az Arabicáénak majdnem kétszerese), helyesség 1/5. A nem kérdő
+törzs miatt az ellenőrző elutasította; végső tartalékként, megjelölve maradt a vizsgában. \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\section{A fő vizsgálat eredményei}
-\label{sec:fo-vizsgalat}
+% =====================================================================
+\section{A hipotézisek értékelése}
+\label{sec:hipotezis-ertekeles}
+% =====================================================================
 
-A fő vizsgálat (\code{eval-v1}, 39 dokumentum, \az{\ref{tab:karok}}.~táblázat összes kara, oktatói
-értékeléssel) futása e dolgozat lezárásakor folyamatban van. Eredményei a keretrendszer
-\code{report} lépésével, a pilottal azonos formában, automatikusan kerülnek \az{\ref{tab:fo-vizsgalat}}.~táblázatba és a hozzá tartozó szignifikanciatáblába. A táblázat szerkezetét
-itt rögzítjük; a piros mezők a fő futás adataira várnak.
+\Az{\ref{tab:hipotezisek}}.~táblázat hipotézisenként összeveti a pilot és a fő vizsgálat
+bizonyítékát. A fő vizsgálat karonként hat dokumentumon futott, így a Holm-korrekció után egyik
+összevetés sem szignifikáns; az értékelés a hatás irányára, nagyságára és konzisztenciájára épül, és
+megerősítő következtetéshez a teljes adatkészleten végzett futás szükséges.
 
 \begin{table}[htbp]
 \centering
-\caption{A fő vizsgálat eredményei (39 dokumentum; átlag és 95\,\%-os bootstrap-CI; páros
-Wilcoxon-próba Holm-korrekcióval a referenciakarhoz képest). \tbd{A fő futás után kitöltendő.}}
-\label{tab:fo-vizsgalat}
+\caption{A hipotézisek és a pilot, illetve a fő vizsgálat által szolgáltatott bizonyíték.}
+\label{tab:hipotezisek}
 \small
-\begin{tabular}{@{}llccccc@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.4cm}@{}}
 \toprule
-Kar & Ref. & $Q$ [95\,\% CI] & Alát. & Lef. & $\tilde p$ (Holm) & $r_{rb}$ \\
+Hipotézis & Pilot (1 dokumentum) & Fő vizsgálat (6 dokumentum) & Értékelés \\
 \midrule
-\arm{B-doc-L} & -- & \tbd{--} & \tbd{--} & \tbd{--} & -- & -- \\
-\arm{E0}  & -- & \tbd{--} & \tbd{--} & \tbd{--} & -- & -- \\
-\arm{E1}  & \arm{E0} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-\arm{E2}  & \arm{E1} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-\arm{E2x} & \arm{E2} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-\arm{E3}  & \arm{E2} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-\arm{E4}  & \arm{E0} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-\arm{E4b} & \arm{E2} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} & \tbd{--} \\
-\arm{B-doc-S} & -- & \tbd{--} & \tbd{--} & \tbd{--} & -- & -- \\
+\ref{h:terv}.\ Tervezés & alátámasztottság $+6$, lefedettség $+8$ pp; a zajsávon belül &
+$Q$: $0{,}64\to0{,}88$; alátámasztottság $43\to80$\,\%, lefedettség $25\to45$\,\%, forma 100\,\%;
+$r_{rb}=0{,}62$, $\tilde p=0{,}875$; a javulás az angol dokumentumokon jelentkezik &
+támogató, nem szignifikáns \\
+\ref{h:verif}.\ Ellenőrzés & alátámasztottság változatlan; $\kappa\in[-0{,}14;0{,}07]$ &
+$Q$: $0{,}88\to0{,}96$, mind a 6 dokumentumon ($p=0{,}031$, $\tilde p=0{,}188$); alátámasztottság
+$80\to90$\,\%, vak $80\to97$\,\%; $\kappa\in[0{,}02;0{,}22]$ & támogató; az egyezés csak gyenge \\
+\ref{h:lefed}.\ Lefedettség & közvetett: a szervermodell naiv RAG-gal 25\,\% &
+\arm{B-doc-L}: 45\,\%, \arm{B-doc-S}: 47\,\% vs.\ tervezett karok 40--45\,\%; naiv RAG: 9--25\,\% &
+nem támogatott (a teljes dokumentumra) \\
+\ref{h:helyi}.\ Helyi vs.\ szerver & különbség 0,09--0,11; memória 5,4--5,9\,GiB &
+közös dokumentumokon \arm{E2} 0,95 vs.\ \arm{E4} 0,93; \arm{E2} 0,96 vs.\ \arm{B-doc-S} 0,95 &
+támogató (leíró) \\
+\ref{h:meres}.\ Mérés & oktatói értékelés nincs; a szivárgást a bíró nem bünteti &
+oktatói értékelés még nincs (\tbd{kitöltendő}); két új bírói vakfolt: a 24\,000 karakteres ablak és a forma
+szerint triviális kérdések & nyitott \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
