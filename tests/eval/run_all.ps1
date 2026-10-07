@@ -6,7 +6,7 @@
 #   powershell -ExecutionPolicy Bypass -File run_all.ps1 -Model gemma4:e4b     # local arms with another model
 #
 # -Model runs the local arms with another Ollama model under new names (E2 -> E2-gemma4-e4b), so the
-# results sit next to the qwen2.5:7b ones and appear side by side in the report and the viewer.
+# results sit next to the hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M ones and appear side by side in the report and the viewer.
 # Server arms (E4, E4b, B-doc-S) are skipped with -Model because they do not use the local model.
 param(
     [string[]]$Arms = @("B-doc-L", "E0", "E1", "E2", "E2x", "E2f", "E2h", "E3", "B-doc-S", "E4", "E4b",

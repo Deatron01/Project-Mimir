@@ -54,12 +54,12 @@ Mielőtt elindítanád a rendszert, győződj meg róla, hogy az alábbiak telep
 ---
 
 ### 🧠 1. Lépés: A Lokális AI (Qwen) beüzemelése
-A Mimir jelenleg a hiper-optimalizált `qwen2.5:7b` modellt használja a vizsgakérdések generálására.
+A Mimir jelenleg a hiper-optimalizált `hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M` modellt használja a vizsgakérdések generálására.
 
 1. Nyiss egy terminált a gazdagépen (Windows/Mac/Linux).
 2. Futtasd le az alábbi parancsot a modell letöltéséhez és elindításához:
 ```bash
-ollama run qwen2.5:7b
+ollama run hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M
 ```
 3. Miután a modell betöltött (megjelenik a `>>>` prompt), kiléphetsz a terminálból. **A lényeg, hogy az Ollama a háttérben továbbra is fusson!** (A Docker konténerek a `host.docker.internal:11434` címen fognak kommunikálni vele).
 

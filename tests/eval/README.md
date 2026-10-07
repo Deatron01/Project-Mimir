@@ -22,7 +22,7 @@ pip install -r requirements.txt
 ```
 
 The Mimir services must be running (`docker-compose up -d` from the repo root), and Ollama must have
-the generator model pulled (`ollama pull qwen2.5:7b`; E2x also needs `ollama pull llama3.1:8b`). The
+the generator model pulled (`ollama pull hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M`; E2x also needs `ollama pull llama3.1:8b`). The
 judge, E4/E4b and B-doc-S use the university GenAI server; the key comes from `OE_GENAI_API_KEY` in the
 repo's `.env`.
 
@@ -30,7 +30,7 @@ Rebuild the changed services once (`docker-compose up -d --build runecarver bifr
 Service changes that the evaluation relies on:
 
 - Bifrost's prompt lives in `services/bifrost/prompts.py` (text unchanged); the local fallback model
-  is `OLLAMA_MODEL` (default `qwen2.5:7b`, as in the main README); the hard-coded error exam is now
+  is `OLLAMA_MODEL` (default `hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M`, as in the main README); the hard-coded error exam is now
   marked `metadata.is_fallback = true`.
 - RuneCarver accepts `method` / `threshold_val` (cut rule) and `encoder` (`window` = fixed long-text
   encoder, default; `legacy` = old 512-token behaviour, only for E5a). It uses float32 on CPU.
@@ -80,13 +80,13 @@ python -m mimir_eval analyze E0=results\E0_... E2=results\E2_... E4=results\E4_.
 
 | File | Arm | What changes |
 | --- | --- | --- |
-| `b_doc_local.yaml` | B-doc-L | Status quo: the whole document in one prompt (same prompt as E0), `qwen2.5:7b`, 16k context; documents over 30,000 characters are cut and the cut share is recorded |
+| `b_doc_local.yaml` | B-doc-L | Status quo: the whole document in one prompt (same prompt as E0), `hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M`, 16k context; documents over 30,000 characters are cut and the cut share is recorded |
 | `b_doc_server.yaml` | B-doc-S | The same on the GenAI server model (up to 80,000 characters) |
-| `e0_naive_local.yaml` | E0 | Reference: production retrieval + production prompt, `qwen2.5:7b` on Ollama |
+| `e0_naive_local.yaml` | E0 | Reference: production retrieval + production prompt, `hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M` on Ollama |
 | `e0s_naive_service.yaml` | E0s | Whole chain through Bifrost `/generate`; smoke test only (Bifrost picks the model) |
 | `e1_blueprint.yaml` | E1 | Planner + per-slot retrieval + one question per call, no verifier |
 | `e2_blueprint_verifier.yaml` | E2 | E1 + verifier chain with retries ("Thorough") |
-| `e2x_blueprint_other_verifier.yaml` | E2x | E2 with a verifier from another family (`llama3.1:8b` checks `qwen2.5:7b`) |
+| `e2x_blueprint_other_verifier.yaml` | E2x | E2 with a verifier from another family (`llama3.1:8b` checks `hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M`) |
 | `e2f_blueprint_fast.yaml` | E2f | E2 without the blind answer test ("Fast") |
 | `e2h_blueprint_hybrid.yaml` | E2h | E2 with hybrid BM25 + dense retrieval |
 | `e3_blueprint_graph.yaml` | E3 | E2 + concept graph |
@@ -240,5 +240,5 @@ mock LLM, so it needs neither Docker nor a GPU.
   topic changes. The default encoder now works in <= 512-token windows (identical results on short
   texts; tested in `tests_unit/test_runecarver_window.py`). E5a keeps the old encoder for the
   before/after comparison.
-- Bifrost's local fallback called `qwen2.5:14b` although the README targets `qwen2.5:7b` on 8 GB;
+- Bifrost's local fallback called `qwen2.5:14b` although the README targets `hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M` on 8 GB;
   it is now `OLLAMA_MODEL` (default 7b), in Bifrost and Heimdall.

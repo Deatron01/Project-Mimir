@@ -43,7 +43,7 @@ DEFAULTS: dict = {
     },
     "generator": {
         "provider": "ollama",     # ollama | genai | openai_compat | mock
-        "model": "qwen2.5:7b",
+        "model": "hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M",
         "temperature": 0.2,
         "num_ctx": 8192,          # every prompt fits; 16384 only made Ollama slower (AI-18)
         "timeout_s": 600,

@@ -4,9 +4,9 @@
 # 30,000 characters (~12k tokens of Hungarian at ~2.5 chars/token, leaving room for prompt and answer)
 # and the cut share is recorded, since this is exactly what a small local model cannot avoid.
 name: B-doc-L
-description: "Whole document in one prompt, qwen2.5:7b on Ollama (16k context)"
+description: "Whole document in one prompt, hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M on Ollama (16k context)"
 seeds: [1, 2, 3]
 exam: {n_questions: 10, types: [mcq]}
 pipeline: {kind: full_document, max_doc_chars: 30000}
 chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
-generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 16384}
+generator: {provider: ollama, model: "hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M", temperature: 0.2, num_ctx: 16384}

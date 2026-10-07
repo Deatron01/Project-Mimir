@@ -5,4 +5,4 @@ seeds: [1]
 exam: {n_questions: 10, types: [mcq]}
 pipeline: {kind: blueprint, retrieval: dense, retrieval_k: 3, verifier: true, blind_test: false, max_retries: 1, graph: false}
 chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
-generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 8192}
+generator: {provider: ollama, model: "hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M", temperature: 0.2, num_ctx: 8192}

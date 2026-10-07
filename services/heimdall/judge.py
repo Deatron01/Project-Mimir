@@ -79,14 +79,14 @@ class LLMJudge:
                         continue
 
         # 2. Fallback a lokális Ollama-ra (Javított URL formátummal)
-        print(f"⚠️ Heimdall: Külső API sikertelen. Próbálkozás lokális Ollama-val ({os.getenv('OLLAMA_MODEL', 'qwen2.5:7b')})...")
+        print(f"⚠️ Heimdall: Külső API sikertelen. Próbálkozás lokális Ollama-val ({os.getenv('OLLAMA_MODEL', 'hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M')})...")
         try:
             ollama_url = os.getenv("OLLAMA_URL", "http://host.docker.internal:11434/api/generate")
             async with httpx.AsyncClient() as client:
                 ollama_response = await client.post(
                     ollama_url,
                     json={
-                        "model": os.getenv("OLLAMA_MODEL", "qwen2.5:7b"),  # README: 7b fér el 8 GB VRAM-ban
+                        "model": os.getenv("OLLAMA_MODEL", "hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M"),  # README: 7b fér el 8 GB VRAM-ban
                         "prompt": prompt,
                         "stream": False,
                         "format": "json",

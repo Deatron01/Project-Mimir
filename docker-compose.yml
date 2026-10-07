@@ -140,7 +140,7 @@ services:
       - OE_GENAI_API_KEY=${OE_GENAI_API_KEY}
       - LOCAL_ONLY=${LOCAL_ONLY:-false}
       - JOB_TTL_SECONDS=${JOB_TTL_SECONDS:-3600}
-      - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen2.5:7b}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -162,7 +162,7 @@ services:
       - .env # IDE kerülnek az SMTP e-mail küldő és JWT authentikációs jelszavak!
     environment:
       - LOCAL_ONLY=${LOCAL_ONLY:-false}
-      - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen2.5:7b}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:

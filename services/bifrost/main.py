@@ -42,8 +42,8 @@ vector_store = RAGVectorStore(vector_size=768)
 LOCAL_ONLY = os.getenv("LOCAL_ONLY", "false").strip().lower() in ("1", "true", "yes")
 # A generált tesztek (feladateredmények) legfeljebb ennyi ideig maradnak a memóriában.
 JOB_TTL_SECONDS = int(os.getenv("JOB_TTL_SECONDS", "3600"))
-# Lokális Ollama modell és cím (README: qwen2.5:7b fér el 8 GB VRAM-ban; a 14b nem).
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:7b")
+# Lokális Ollama modell és cím (README: hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M fér el 8 GB VRAM-ban; a 14b nem).
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M")
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://host.docker.internal:11434/api/generate")
 
 GENAI_URL = "https://genai.uni-obuda.hu/api/chat/completions"

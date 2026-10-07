@@ -157,7 +157,7 @@ def test_hardware_record(monkeypatch):
 
     class Resp:
         def json(self):
-            return {"models": [{"name": "qwen2.5:7b", "size": 6 * 2**30, "size_vram": 3 * 2**30}]}
+            return {"models": [{"name": "hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M", "size": 6 * 2**30, "size_vram": 3 * 2**30}]}
 
     class Client:
         def __init__(self, **_): pass
@@ -169,4 +169,4 @@ def test_hardware_record(monkeypatch):
 
     monkeypatch.setattr(vram.httpx, "Client", Client)
     assert vram.ollama_residency("http://localhost:11434/v1") == [
-        {"model": "qwen2.5:7b", "size_mib": 6144, "vram_mib": 3072, "gpu_share": 0.5}]
+        {"model": "hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M", "size_mib": 6144, "vram_mib": 3072, "gpu_share": 0.5}]
