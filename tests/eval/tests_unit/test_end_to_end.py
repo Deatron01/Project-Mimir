@@ -159,6 +159,8 @@ def test_full_pipeline(workspace):
     assert {r["arm"] for r in data["summary"]} == {"A", "B"}
     assert all(r["n_docs"] == 3 and r["seeds"] == [1, 2] for r in data["summary"])
     assert set(data["perdoc"]["B"]) == {"hu-coffee", "hu-immune", "hu-gametheory"}
+    assert {"A", "B"} <= set(data["arms"]) and {"hu", "en", "family"} <= set(data["arms"]["A"])
+    assert "Melyik módszer" in page and "__DATA__" not in page
     q = data["runs"][0]["exams"][0]["questions"][0]
     assert {"dup_of", "is_question", "grounded", "options"} <= set(q)
 

@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mimir – kiértékelés</title>
+<style>
+:root{--bg:#f6f6f3;--panel:#fff;--ink:#151513;--ink2:#55544f;--ink3:#8a8983;--line:#e4e3dd;--grid:#eeede8;
+--accent:#2a78d6;--f-base:#8a8983;--f-pipeline:#2a78d6;--f-server:#eb6834;--f-chunk:#1baf7a;--f-other:#4a3aa7;
+--s1:#2a78d6;--s2:#eb6834;--pos:#2a78d6;--neg:#e34948;
+--good:#1f7a3a;--goodbg:#e6f4ea;--bad:#b3261e;--badbg:#fbe9e7;--warn:#8a5a00;--warnbg:#fdf3dc;--key:#e6f4ea;--hl:#eef4fc}
+@media (prefers-color-scheme:dark){:root{--bg:#141413;--panel:#1c1c1a;--ink:#f2f1ec;--ink2:#b8b6ad;--ink3:#86847c;--line:#33322e;--grid:#2a2926;
+--accent:#3987e5;--f-base:#86847c;--f-pipeline:#3987e5;--f-server:#d95926;--f-chunk:#199e70;--f-other:#9085e9;
+--s1:#3987e5;--s2:#d95926;--pos:#3987e5;--neg:#e66767;
+--good:#7fd29a;--goodbg:#1d3325;--bad:#f28b82;--badbg:#3a1f1d;--warn:#f0c46a;--warnbg:#3a3018;--key:#1d3325;--hl:#1e2733}}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;font:14.5px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);display:flex;flex-direction:column}
+a{color:var(--accent);text-decoration:none;cursor:pointer}a:hover{text-decoration:underline}
+code{font-size:12.5px;background:var(--grid);padding:1px 5px;border-radius:5px}
+.top{display:flex;align-items:center;gap:16px;padding:10px 22px;border-bottom:1px solid var(--line);background:var(--panel);flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;line-height:1.25}.brand b{font-size:16px}.brand span{font-size:12px;color:var(--ink3)}
+.tabs{display:flex;gap:2px;flex-wrap:wrap}.tabs button{border:0;background:none;color:var(--ink2);padding:7px 12px;border-radius:8px;cursor:pointer;font:inherit;font-size:14px}
+.tabs button:hover{background:var(--bg)}.tabs button.on{background:var(--hl);color:var(--ink);font-weight:600}
+.langsw{margin-left:auto}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;background:none;color:var(--ink2);padding:5px 11px;cursor:pointer;font:inherit;font-size:13px}.seg button.on{background:var(--accent);color:#fff}
+.view{flex:1;overflow:auto;min-height:0}.view[hidden]{display:none}
+.pad{padding:26px 28px 60px;max-width:1240px;margin:0 auto}
+h1{font-size:24px;line-height:1.25;margin:0 0 6px}h2{font-size:18px;margin:34px 0 4px}h3{font-size:15px;margin:18px 0 6px}
+.lead{color:var(--ink2);font-size:15px;max-width:860px;margin:0 0 18px}
+.note{color:var(--ink2);font-size:13px;margin:2px 0 12px;max-width:900px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.find{border-left:4px solid var(--accent)}.find ul{margin:6px 0 0;padding-left:20px}.find li{margin:5px 0}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:14px 0}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 13px}
+.tile .v{font-size:21px;font-weight:650;font-variant-numeric:tabular-nums;line-height:1.3}.tile .l{font-size:12.5px;color:var(--ink2)}
+.tile.warn{border-color:var(--warn)}.tile.bad{border-color:var(--bad)}
+.warns{list-style:none;padding:0;margin:0}.warns li{padding:9px 12px;border-radius:10px;background:var(--warnbg);margin:7px 0;font-size:13.5px}
+.warns li b{color:var(--warn)}
+details.box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:10px 0}
+details.box>summary{font-weight:600;color:var(--ink);font-size:14.5px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);align-items:center;margin:6px 0 10px}
+.sw{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.sq{display:inline-block;width:10px;height:10px;transform:rotate(45deg);margin-right:6px;vertical-align:0}
+/* ranking / steps / language rows */
+.rows{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 16px 12px}
+.r{display:grid;grid-template-columns:minmax(170px,300px) 1fr 150px;gap:12px;align-items:center;padding:5px 0;border-bottom:1px solid var(--grid)}
+.r:last-child{border-bottom:0}.r.click{cursor:pointer}.r.click:hover{background:var(--hl);border-radius:8px}
+.rl{font-size:13.5px;line-height:1.3;min-width:0}.rl b{margin-right:6px}.rl span{color:var(--ink2)}
+.rv{font-size:13.5px;font-variant-numeric:tabular-nums;text-align:right}.rv small{display:block;color:var(--ink3);font-size:11.5px}
+.trk{position:relative;height:22px}
+.trk .ax{position:absolute;top:0;bottom:0;width:1px;background:var(--grid)}
+.trk .base{position:absolute;top:-6px;bottom:-6px;width:0;border-left:1.5px dashed var(--ink3);opacity:.7}
+.trk .ci{position:absolute;top:9px;height:4px;border-radius:2px;opacity:.35}
+.trk .dot{position:absolute;top:4px;width:14px;height:14px;margin-left:-7px;border-radius:50%;border:2px solid var(--panel)}
+.trk .dia{position:absolute;top:5px;width:11px;height:11px;margin-left:-5.5px;transform:rotate(45deg);border:1.5px solid var(--panel)}
+.trk .link{position:absolute;top:10px;height:2px;background:var(--ink3);opacity:.5}
+.trk .zero{position:absolute;top:-4px;bottom:-4px;width:1.5px;background:var(--ink3)}
+.trk .bar{position:absolute;top:4px;height:14px;border-radius:4px}
+.axis{display:grid;grid-template-columns:minmax(170px,300px) 1fr 150px;gap:12px;font-size:11.5px;color:var(--ink3);padding:0 0 4px;border-bottom:1px solid var(--line);margin-bottom:2px}
+.axis .ticks{position:relative;height:16px}.axis .ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.axis .ticks span.first{transform:none}.axis .ticks span.last{transform:translateX(-100%)}
+.fam{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0}
+/* tables */
+.tw{overflow:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{font-weight:600;color:var(--ink2);background:var(--panel);position:sticky;top:0;z-index:1;font-size:12px}
+th.grp{text-align:center;border-bottom:1px solid var(--line);color:var(--ink);font-size:12px;background:var(--bg)}
+th.s{cursor:pointer}th.s:hover{color:var(--ink)}th.l,td.l{text-align:left}td.wrap{white-space:normal}
+tr:last-child td{border-bottom:0}tbody tr:hover td{background:var(--hl)}
+tr.sep td{background:var(--bg);font-weight:600;color:var(--ink2);text-align:left;font-size:12px}
+.hm td{text-align:center;min-width:56px}.hm td.l{text-align:left}.hm td.c{cursor:pointer}.hm td.c:hover{outline:2px solid var(--accent);outline-offset:-2px}
+.chip{font-size:11.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink2);white-space:nowrap;display:inline-block;vertical-align:1px}
+.ok{background:var(--goodbg);color:var(--good);border-color:transparent}.no{background:var(--badbg);color:var(--bad);border-color:transparent}
+.mid{background:var(--warnbg);color:var(--warn);border-color:transparent}
+.flagv{color:var(--bad);font-weight:600}.muted{color:var(--ink3)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+svg text{fill:var(--ink2);font-size:11px}svg .lab{fill:var(--ink);font-size:11.5px;font-weight:600}
+#tip{position:fixed;pointer-events:none;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:12.5px;
+box-shadow:0 6px 20px rgba(0,0,0,.16);max-width:380px;z-index:50;display:none;white-space:pre-line;line-height:1.45}
+select,input[type=search]{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+button.btn{padding:5px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer;font:inherit;font-size:13px}
+button.btn:hover{border-color:var(--accent)}
+dl.gl{display:grid;grid-template-columns:minmax(160px,230px) 1fr;gap:0;margin:0}
+dl.gl dt,dl.gl dd{padding:9px 10px;border-bottom:1px solid var(--grid);margin:0}dl.gl dt{font-weight:600}dl.gl dd{color:var(--ink2)}
+.verdict{font-size:15px;background:var(--hl);border-radius:12px;padding:12px 14px;margin:10px 0 14px}
+/* exams */
+.app{display:grid;grid-template-columns:310px 1fr;height:100%}
+aside{border-right:1px solid var(--line);background:var(--panel);overflow:auto;padding:14px}
+aside label{display:block;font-size:12px;color:var(--ink2);margin:12px 0 4px}aside select,aside input[type=search]{width:100%}
+.exmain{overflow:auto;padding:20px 28px}
+.exam{display:block;width:100%;text-align:left;padding:7px 9px;margin:3px 0;border:1px solid transparent;border-radius:8px;background:none;color:var(--ink);cursor:pointer;font:inherit;font-size:13px}
+.exam:hover{background:var(--bg)}.exam.on{border-color:var(--accent);background:var(--hl)}.exam small{color:var(--ink2);display:block}
+.head h2{margin:0 0 6px;font-size:18px}.stat{font-size:13px;color:var(--ink2)}
+.toggle{display:flex;gap:6px;align-items:center;font-size:13px;margin-top:12px}.toggle label{margin:0}
+.q{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.q.flag{border-left:4px solid var(--bad)}.qt{font-weight:600;margin:6px 0 8px}
+.q ol{margin:0 0 8px;padding-left:22px}.q li{padding:3px 6px;border-radius:6px;margin:2px 0}.q li.key{background:var(--key);font-weight:600}
+details{margin-top:8px}summary{cursor:pointer;color:var(--ink2);font-size:13px}
+.src{white-space:pre-wrap;font-size:13px;background:var(--bg);border-radius:8px;padding:10px;margin-top:6px;max-height:320px;overflow:auto}
+.why{font-size:13px;color:var(--ink2);margin-top:6px}.empty{color:var(--ink2);padding:40px 0}
+.ctx{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:13px;white-space:pre-wrap;background:var(--bg)}
+.ctx.tiny{border-color:var(--bad);background:var(--badbg)}
+.paper{background:#fff;color:#111;border:1px solid var(--line);border-radius:6px;max-width:820px;margin:0 auto;padding:42px 54px;
+font-family:Georgia,"Times New Roman",serif;font-size:15.5px;line-height:1.55;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.paper .pt{font-size:22px;font-weight:700;text-align:center;margin:0 0 4px}.paper .pm{text-align:center;color:#555;font-size:13px;margin-bottom:18px;font-family:system-ui,sans-serif}
+.paper .pn{display:flex;justify-content:space-between;gap:12px;border-top:1.5px solid #111;border-bottom:1px solid #999;padding:10px 0;margin-bottom:12px;font-size:14px;flex-wrap:wrap}
+.paper .pi{font-style:italic;margin:0 0 18px}
+.paper ol.pq{padding-left:26px;margin:0}.paper ol.pq>li{margin:0 0 20px;page-break-inside:avoid;break-inside:avoid}
+.paper .ps{font-weight:600;margin-bottom:6px}.paper .po{display:grid;gap:3px;padding-left:4px}
+.paper .opt{display:flex;gap:10px;align-items:baseline;padding:2px 6px;border-radius:4px}
+.paper .bub{display:inline-flex;width:22px;height:22px;border:1.3px solid #333;border-radius:50%;align-items:center;justify-content:center;font-size:12px;flex:none;font-family:system-ui,sans-serif}
+.paper .opt.right{background:#e3f3e7}.paper .opt.right .bub{background:#1f7a3a;border-color:#1f7a3a;color:#fff}
+.paper .lines{border-bottom:1px solid #999;height:26px;margin:4px 0}
+.paper .akey{margin-top:26px;border-top:1.5px solid #111;padding-top:10px;font-family:system-ui,sans-serif;font-size:13px}
+.paper .akey span{display:inline-block;margin:2px 14px 2px 0}
+.paper .pflag{font-family:system-ui,sans-serif;font-size:11px;color:#b3261e;margin-left:6px;font-weight:400}
+@media (max-width:900px){.grid2{grid-template-columns:1fr}.app{grid-template-columns:1fr;height:auto}aside{border-right:0;border-bottom:1px solid var(--line)}
+.paper{padding:24px 18px}.pad{padding:18px 16px 50px}.r,.axis{grid-template-columns:120px 1fr 92px;gap:8px}.rl span{display:none}.langsw{margin-left:0}}
+@media print{.top,aside,.noprint{display:none!important}body{display:block;background:#fff}.view{overflow:visible}.app{display:block;height:auto}
+.exmain{overflow:visible;padding:0}.paper{border:0;box-shadow:none;max-width:none;padding:0}.paper .pflag{display:none}}
+</style>
+</head>
+<body>
+<div class="top noprint">
+  <div class="brand"><b id="t-title"></b><span id="gen"></span></div>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="langsw seg" id="langsw"><button data-l="hu">Magyar</button><button data-l="en">English</button></div>
+</div>
+<section class="view" id="v-summary"><div class="pad" id="summary"></div></section>
+<section class="view" id="v-methods" hidden><div class="pad" id="methods"></div></section>
+<section class="view" id="v-documents" hidden><div class="pad" id="documents"></div></section>
+<section class="view" id="v-compare" hidden><div class="pad" id="compare"></div></section>
+<section class="view" id="v-exams" hidden>
+<div class="app">
+<aside>
+  <label for="run" id="t-run"></label><select id="run"></select>
+  <div class="stat" id="rundesc"></div>
+  <label for="find" id="t-find"></label><input id="find" type="search">
+  <div class="toggle"><input type="checkbox" id="problems"><label for="problems" id="t-problems"></label></div>
+  <label id="t-exams"></label><div id="exams"></div>
+</aside>
+<div class="exmain" id="main"></div>
+</div>
+</section>
+<div id="tip"></div>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+"use strict";
+const D = JSON.parse(document.getElementById('data').textContent);
+const RUNS = D.runs, SUM = D.summary, DOCS = D.docs, PERDOC = D.perdoc, ARMINFO = D.arms || {};
+const ARMS = SUM.map(r => r.arm);
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let lang = 'hu';
+try { const s = localStorage.getItem('mimir-viewer-lang'); if (s === 'en' || s === 'hu') lang = s; } catch (e) {}
+const L = (hu, en) => lang === 'hu' ? hu : en;
+const nf = (v, d = 2) => v == null || isNaN(v) ? '–' : (lang === 'hu' ? v.toFixed(d).replace('.', ',') : v.toFixed(d));
+const sg = (v, d = 2) => v == null ? '–' : (v >= 0 ? '+' : '−') + nf(Math.abs(v), d);
+const pc = v => v == null ? '–' : Math.round(v * 100) + '%';
+const pp = v => v == null ? '–' : (v >= 0 ? '+' : '−') + Math.abs(Math.round(v * 100)) + L(' %-pont', ' pp');
+const du = s => s == null ? '–' : s < 90 ? Math.round(s) + L(' mp', ' s') : nf(s / 60, 1) + L(' perc', ' min');
+const pv = p => p == null ? '–' : p < 0.001 ? '< 0' + (lang === 'hu' ? ',' : '.') + '001' : nf(p, 3);
+const LETTERS = 'ABCDEFGHIJ';
+const latestRun = arm => RUNS.find(r => r.arm === arm && r.latest);
+const sumOf = arm => SUM.find(r => r.arm === arm);
+const info = arm => ARMINFO[arm] || {family: 'other', en: arm, hu: arm, desc_en: '', desc_hu: ''};
+const aname = arm => L(info(arm).hu, info(arm).en);
+const adesc = arm => L(info(arm).desc_hu, info(arm).desc_en);
+const famColor = arm => `var(--f-${info(arm).family || 'other'})`;
+const FAMS = {base: ['Kiindulási módszerek', 'Baselines'], pipeline: ['Tervezés és ellenőrzés', 'Planning & verification'],
+              server: ['Egyetemi szervermodell', 'University server model'], chunk: ['Darabolási változatok', 'Chunking variants'], other: ['Egyéb', 'Other']};
+const famName = f => L(...(FAMS[f] || FAMS.other));
+function chip(label, state = '', tip = '') { return `<span class="chip ${state}"${tip ? ` data-tip="${esc(tip)}"` : ''}>${esc(label)}</span>`; }
+function yesno(v, yes, no) { return v == null ? '' : chip(v ? yes : no, v ? 'ok' : 'no'); }
+function tint(g) { g = Math.max(0, Math.min(1, g)); return `color-mix(in srgb, var(--accent) ${Math.round(g * 30)}%, var(--panel))`; }
+function shade(g) { g = Math.max(0, Math.min(1, g)); return `color-mix(in srgb, var(--accent) ${Math.round(4 + g * 46)}%, var(--panel))`; }
+const where = r => r.local ? chip(L('helyi', 'local'), '', L('A gépen futó modell (Ollama)', 'Model running on the local GPU (Ollama)')) : chip(L('szerver', 'server'), 'mid', L('Az egyetemi GenAI szerver modellje', "The university GenAI server's model"));
+const mean = v => v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+const JUDGE = (SUM.find(r => r.judge) || {}).judge || 'gpt-oss:120b';
+/* Hungarian definite article for a code or word: az E2, a B-doc-S; capitalised at sentence start */
+const art = (w, cap = false) => { if (lang !== 'hu') return ''; const a = /^[aeiouáéíóöőúüű15]/i.test(String(w)) ? 'az' : 'a'; return (cap ? a[0].toUpperCase() + a.slice(1) : a) + ' '; };
+const SUBJ = {humanities: ['bölcsészet', 'humanities'], economics: ['közgazdaságtan', 'economics'], law: ['jog', 'law'],
+              life_sciences: ['élettudományok', 'life sciences'], lifesciences: ['élettudományok', 'life sciences']};
+const DIFF = {easy: ['könnyű', 'easy'], medium: ['közepes', 'medium'], hard: ['nehéz', 'hard']};
+const subj = (s, lg = lang) => SUBJ[s] ? SUBJ[s][lg === 'hu' ? 0 : 1] : (s || '');
+const diff = (s, lg = lang) => DIFF[s] ? DIFF[s][lg === 'hu' ? 0 : 1] : (s || '');
+
+/* ---------------- metric definitions (one place for names, direction and meaning) ---------------- */
+const MET = {
+  qi: {hu: 'Minőségi index', en: 'Quality index', sh: ['Index', 'Index'], dir: 1, t: 'num',
+       d: ['A négy alapmutató (formai megfelelés, forrással igazolt, vakon megoldható, jó disztraktorok) átlaga, előbb dokumentumonként, aztán a dokumentumokra. Értéke 0 és 1 közötti.',
+           'Mean of the four core measures (format, grounded, blind-solvable, good distractors), first per document, then over documents. Ranges from 0 to 1.']},
+  format_compliant: {hu: 'Formai megfelelés', en: 'Format compliance', sh: ['Forma', 'Format'], dir: 1, t: 'pct', idx: 1,
+       d: ['A vizsgában annyi, jól formázott kérdés van, amennyit kértünk (10 kérdés, opciók, pontosan egy helyes válasz).', 'The exam has as many well-formed questions as requested (10 questions, options, exactly one correct answer).']},
+  grounding_rate: {hu: 'Forrással igazolt', en: 'Grounded', sh: ['Igazolt', 'Grounded'], dir: 1, t: 'pct', idx: 1,
+       d: ['A bíráló szerint a megjelölt helyes válasz tényleg következik a forrásszövegből.', 'The judge finds the keyed answer supported by the source text.']},
+  blind_answerability: {hu: 'Vakon megoldható', en: 'Blind-solvable', sh: ['Vak', 'Blind'], dir: 1, t: 'pct', idx: 1,
+       d: ['A bíráló a kulcs ismerete nélkül, csak a forrásból megoldja a kérdést, és ugyanazt a választ jelöli. Ha nem, a kérdés félreérthető vagy a kulcs rossz.', 'The judge answers from the source without seeing the key and picks the keyed option. If not, the question is ambiguous or the key is wrong.']},
+  distractor_validity: {hu: 'Jó disztraktorok', en: 'Good distractors', sh: ['Disztr.', 'Distr.'], dir: 1, t: 'pct', idx: 1,
+       d: ['A rossz válaszlehetőségek (disztraktorok) közül hány tényleg rossz a forrás szerint.', 'Share of the wrong options (distractors) that are really wrong according to the source.']},
+  dup_share: {hu: 'Ismétlődő kérdés', en: 'Repeated questions', sh: ['Ismétlés', 'Repeats'], dir: -1, t: 'pct', bad: .15,
+       d: ['Azon kérdések aránya, amelyek ugyanannak a vizsgának egy korábbi kérdését ismétlik (azonos vagy majdnem azonos szöveg). Nincs benne az indexben.', 'Share of questions that repeat an earlier question of the same exam (same or near-identical wording). Not part of the index.']},
+  nonq_share: {hu: 'Nem kérdés formájú', en: 'Not a question', sh: ['Nem kérdés', 'Not a Q'], dir: -1, t: 'pct', bad: .15,
+       d: ['Feleletválasztós kérdés, amely nem „?”-re vagy „:”-ra végződik (állítás, „Írja le…”). Nincs benne az indexben.', 'Multiple-choice stems that do not end in "?" or ":" (statements, "Describe…"). Not part of the index.']},
+  meta_reference_rate: {hu: '„A szöveg szerint”', en: '"According to the text"', sh: ['„Szöveg”', '"Text"'], dir: -1, t: 'pct', bad: .1,
+       d: ['A kérdés a szövegre vagy a dokumentumra hivatkozik, nem önállóan érthető.', 'The question refers to "the text" or the document instead of standing on its own.']},
+  coverage: {hu: 'Lefedettség', en: 'Coverage', sh: ['Lefed.', 'Coverage'], dir: 1, t: 'pct',
+       d: ['A dokumentum darabjainak aránya, amelyekről legalább egy kérdés szól: mennyire szórják szét a kérdések a témákat.', 'Share of document chunks that at least one question is about: how widely the questions spread over the topics.']},
+  'recall@3': {hu: 'Keresési találat (top 3)', en: 'Retrieval recall@3', sh: ['Keresés', 'Recall'], dir: 1, t: 'pct',
+       d: ['A kézzel írt referenciakérdésekhez tartozó szövegrészt a keresés az első 3 találat között adja-e vissza.', 'Whether retrieval returns the passage of the hand-written reference questions among the top 3 results.']},
+  judge_correctness: {hu: 'Helyesség (1–5)', en: 'Correctness (1–5)', sh: ['Helyes', 'Correct'], dir: 1, t: 'five',
+       d: ['A bíráló pontszáma: a kulcs helyes és egyértelmű, más opció nem helyes.', "The judge's score: the key is right and unambiguous, no other option is right."]},
+  judge_clarity: {hu: 'Érthetőség (1–5)', en: 'Clarity (1–5)', sh: ['Érthető', 'Clarity'], dir: 1, t: 'five',
+       d: ['A kérdés önmagában érthető, nyelvtanilag helyes, egyértelmű.', 'The question is understandable on its own, grammatical and unambiguous.']},
+  judge_distractor_quality: {hu: 'Disztraktorok (1–5)', en: 'Distractors (1–5)', sh: ['Disztr. 1–5', 'Distr. 1–5'], dir: 1, t: 'five',
+       d: ['A rossz válaszok rosszak, de egy felkészületlen diák számára hihetők.', 'Wrong options are wrong but plausible to an unprepared student.']},
+  judge_bloom_fit: {hu: 'Szintillesztés (1–5)', en: 'Level fit (1–5)', sh: ['Szint', 'Level'], dir: 1, t: 'five',
+       d: ['A kérdés gondolkodási szintje (Bloom) illik-e a kért nehézséghez.', 'The cognitive (Bloom) level fits the requested difficulty.']},
+  time_s: {hu: 'Idő / vizsga', en: 'Time per exam', sh: ['Idő', 'Time'], dir: -1, t: 'dur',
+       d: ['Egy 10 kérdéses vizsga elkészítésének medián ideje.', 'Median wall time to produce one 10-question exam.']},
+  calls: {hu: 'LLM-hívás / vizsga', en: 'LLM calls per exam', sh: ['Hívás', 'Calls'], dir: -1, t: 'int',
+       d: ['Hány nyelvimodell-hívás kell egy vizsgához (medián). A költséget és a futási időt jelzi.', 'How many language-model calls one exam needs (median); a proxy for cost and run time.']},
+};
+const mName = k => L(MET[k].hu, MET[k].en), mShort = k => L(...MET[k].sh), mDesc = k => L(...MET[k].d);
+function mval(k, v) {
+  const t = (MET[k] || {}).t;
+  return t === 'pct' ? pc(v) : t === 'five' ? nf(v, 1) : t === 'dur' ? du(v) : t === 'int' ? (v == null ? '–' : Math.round(v)) : nf(v);
+}
+function goodness(k, v) {
+  const m = MET[k]; if (!m || v == null) return null;
+  if (m.t === 'five') return (v - 1) / 4;
+  if (m.dir < 0 && m.t === 'pct') return 1 - Math.min(1, v / 0.5);
+  if (m.t === 'pct' || m.t === 'num') return v;
+  return null;
+}
+
+/* ---------------- tooltip ---------------- */
+const tip = $('#tip');
+document.addEventListener('mousemove', ev => {
+  const t = ev.target.closest && ev.target.closest('[data-tip]');
+  if (!t) { tip.style.display = 'none'; return; }
+  tip.textContent = t.getAttribute('data-tip'); tip.style.display = 'block';
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  tip.style.left = Math.max(4, Math.min(ev.clientX + 14, innerWidth - w - 8)) + 'px';
+  tip.style.top = (ev.clientY + 16 + h > innerHeight ? ev.clientY - h - 10 : ev.clientY + 16) + 'px';
+});
+
+/* ---------------- routing + chrome ---------------- */
+const TABS = [['summary', 'Összefoglaló', 'Summary'], ['methods', 'Módszerek és mutatók', 'Methods & metrics'],
+              ['documents', 'Dokumentumok', 'Documents'], ['compare', 'Két módszer összevetése', 'Compare two arms'],
+              ['exams', 'Vizsgalapok', 'Exam papers']];
+let tab = 'summary';
+function renderChrome() {
+  document.documentElement.lang = lang;
+  document.title = L('Mimir – kiértékelés', 'Mimir – evaluation');
+  $('#t-title').textContent = L('Mimir – kérdésgenerálás kiértékelése', 'Mimir – question generation evaluation');
+  $('#gen').textContent = L(`Készült: ${D.generated} · ${RUNS.length} futás`, `Generated ${D.generated} · ${RUNS.length} runs`);
+  $('#tabs').innerHTML = TABS.map(([k, hu, en]) => `<button data-t="${k}" class="${k === tab ? 'on' : ''}">${L(hu, en)}</button>`).join('');
+  document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => show(b.dataset.t));
+  document.querySelectorAll('#langsw button').forEach(b => { b.classList.toggle('on', b.dataset.l === lang); b.onclick = () => setLang(b.dataset.l); });
+  $('#t-run').textContent = L('Futás (módszer)', 'Run (arm)');
+  $('#t-find').textContent = L('Keresés a kérdésekben', 'Search questions');
+  $('#find').placeholder = L('szó a kérdésben vagy a válaszban', 'word in a question or answer');
+  $('#t-problems').textContent = L('Csak a hibás kérdések', 'Only problem questions');
+  $('#t-exams').innerHTML = L('Vizsgák <span class="muted">(← → léptet)</span>', 'Exams <span class="muted">(← → to step)</span>');
+}
+function setLang(l) {
+  lang = l; try { localStorage.setItem('mimir-viewer-lang', l); } catch (e) {}
+  renderChrome(); renderRuns(); show(tab, false);
+}
+function show(t, push = true) {
+  tab = t;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  TABS.forEach(([x]) => $('#v-' + x).hidden = x !== t);
+  ({summary: renderSummary, methods: renderMethods, documents: renderDocuments, compare: renderCompare,
+    exams: () => { renderExams(); renderMain(); }})[t]();
+  if (push) setHash();
+}
+function setHash() {
+  let h = tab;
+  if (tab === 'documents' && docSel) h += '/' + encodeURIComponent(docSel);
+  if (tab === 'compare') h += '/' + encodeURIComponent(cmpA) + '/' + encodeURIComponent(cmpB);
+  if (tab === 'exams' && run) h += '/' + encodeURIComponent(run.id) + (exam ? '/' + encodeURIComponent(exam.doc_id) + '/' + exam.seed : '');
+  history.replaceState(null, '', '#' + h);
+}
+function openExam(runId, doc, seed) {
+  run = RUNS.find(r => r.id === runId) || run;
+  exam = run ? (run.exams.find(e => (doc == null || e.doc_id === doc) && (seed == null || e.seed == seed)) || null) : null;
+  show('exams');
+}
+function bindLinks(root) {
+  root.querySelectorAll('[data-open]').forEach(a => a.onclick = ev => { ev.preventDefault(); openExam(a.dataset.open, null, null); });
+  root.querySelectorAll('[data-exam]').forEach(a => a.onclick = ev => { ev.preventDefault(); const [r, d, s] = a.dataset.exam.split('|'); openExam(r, d, s === '' ? null : +s); });
+  root.querySelectorAll('[data-go]').forEach(a => a.onclick = ev => { ev.preventDefault(); const [t, x, y] = a.dataset.go.split('|');
+    if (t === 'compare' && x) { cmpA = x; cmpB = y; } if (t === 'documents' && x) docSel = x; show(t); });
+}
+
+/* ---------------- shared statistics ---------------- */
+function docMetric(arm, doc, col) {
+  if (col === 'qi') return (PERDOC[arm] || {})[doc] ?? null;
+  const r = latestRun(arm); if (!r) return null;
+  const v = r.exams.filter(e => e.doc_id === doc && e.status !== 'error' && e.metrics)
+    .map(e => col === 'dup_share' ? e.n_dup / Math.max(1, e.questions.length) : col === 'nonq_share' ? e.n_nonq / Math.max(1, e.questions.length) : e.metrics[col])
+    .filter(x => x != null);
+  return v.length ? mean(v) : null;
+}
+function wilcoxon(diffs) {
+  const nz = diffs.filter(x => Math.abs(x) > 1e-12), n = nz.length;
+  if (!n) return {n: 0, p: 1, r: 0};
+  const abs = nz.map(Math.abs), idx = abs.map((_, i) => i).sort((a, b) => abs[a] - abs[b]), rank = new Array(n);
+  for (let i = 0; i < n;) { let j = i; while (j + 1 < n && Math.abs(abs[idx[j + 1]] - abs[idx[i]]) < 1e-12) j++; for (let k = i; k <= j; k++) rank[idx[k]] = (i + j) / 2 + 1; i = j + 1; }
+  const T = n * (n + 1) / 2, wp = nz.reduce((s, x, i) => s + (x > 0 ? rank[i] : 0), 0), obs = Math.min(wp, T - wp);
+  const r2 = rank.map(r => Math.round(r * 2)), tot = r2.reduce((a, b) => a + b, 0), dist = new Float64Array(tot + 1); dist[0] = 1;
+  for (const r of r2) for (let s = tot; s >= r; s--) dist[s] += dist[s - r];
+  let c = 0; for (let s = 0; s <= Math.round(obs * 2); s++) c += dist[s];
+  return {n, p: Math.min(1, 2 * c / 2 ** n), r: (2 * wp - T) / T};
+}
+function paired(a, b, col = 'qi') {
+  const docs = Object.keys(PERDOC[a] || {}).filter(d => (PERDOC[b] || {})[d] != null).sort();
+  const rows = docs.map(d => ({d, a: docMetric(a, d, col), b: docMetric(b, d, col)})).filter(x => x.a != null && x.b != null);
+  const diffs = rows.map(x => x.b - x.a);
+  return {rows, diffs, n: rows.length, ma: mean(rows.map(x => x.a)), mb: mean(rows.map(x => x.b)), md: mean(diffs),
+          up: diffs.filter(x => x > 1e-9).length, down: diffs.filter(x => x < -1e-9).length, w: wilcoxon(diffs)};
+}
+function langMean(arm, lg) {
+  const v = Object.entries(PERDOC[arm] || {}).filter(([d, x]) => x != null && (DOCS[d] || {}).language === lg).map(([, x]) => x);
+  return {v: mean(v), n: v.length};
+}
+function tinyPairs() {
+  const out = [];
+  RUNS.filter(r => r.latest).forEach(r => {
+    const seen = new Set();
+    r.exams.forEach(e => {
+      if (seen.has(e.doc_id) || !e.retrieved.length) return; seen.add(e.doc_id);
+      if (e.retrieved.slice(0, 3).every(c => c.len < 50)) out.push({arm: r.arm, doc: e.doc_id});
+    });
+  });
+  return out;
+}
+function mainDocSet() {
+  const sig = r => r.docs.join('|'), cnt = {};
+  SUM.forEach(r => cnt[sig(r)] = (cnt[sig(r)] || 0) + 1);
+  return Object.entries(cnt).sort((a, b) => b[1] - a[1])[0][0];
+}
+</script>
+<script>
+"use strict";
+/* ================= SUMMARY ================= */
+function caveats() {
+  const out = [];
+  if (!SUM.length) return out;
+  const main = mainDocSet(), odd = SUM.filter(r => r.docs.join('|') !== main), nMain = main.split('|').length;
+  if (odd.length) out.push(L(
+    `<b>Más dokumentumokon futott:</b> ${odd.map(r => esc(r.arm)).join(', ')}. A többi módszer ugyanazon a ${nMain} dokumentumon futott, ezek nem, ezért a rangsorbeli helyük nem összevethető. A <a data-go="compare">Két módszer összevetése</a> fül csak a közös dokumentumokat használja.`,
+    `<b>Different documents:</b> ${odd.map(r => esc(r.arm)).join(', ')} did not run on the same ${nMain} documents as the other arms, so their rank is not comparable. <a data-go="compare">Compare two arms</a> uses only common documents.`));
+  const maxS = Math.max(...SUM.map(r => r.seeds.length)), few = SUM.filter(r => r.seeds.length < maxS);
+  if (few.length) out.push(L(
+    `<b>Kevesebb ismétlés:</b> ${few.map(r => esc(r.arm)).join(', ')} dokumentumonként ${few[0].seeds.length} ismétléssel (seed) futott, a többi ${maxS}-mal; ezek átlaga zajosabb.`,
+    `<b>Fewer repeats:</b> ${few.map(r => esc(r.arm)).join(', ')} ran ${few[0].seeds.length} seed(s) per document, the others ${maxS}; their means are noisier.`));
+  const failed = SUM.filter(r => r.n_failed);
+  if (failed.length) out.push(L('<b>Sikertelen vizsgák</b> (kimaradtak a statisztikából): ', '<b>Failed exams</b> (left out of the statistics): ') + failed.map(r => latestRun(r.arm).exams.filter(e => e.status !== 'ok')
+    .map(e => `<a data-exam="${esc(r.run)}|${esc(e.doc_id)}|${e.seed}">${esc(r.arm)} · ${esc(e.doc_id)} · seed ${e.seed}</a> <span class="muted">(${esc((e.error || e.status || '').slice(0, 70))})</span>`).join(', ')).join('; '));
+  const nd = Math.max(...SUM.map(r => r.n_docs));
+  if (nd < 10) out.push(L(
+    `<b>Kevés dokumentum a szignifikanciához:</b> ${nd} dokumentumnál a legkisebb elérhető kétoldali Wilcoxon p-érték ${pv(2 / 2 ** nd)}; több összevetés korrekciója után semmi sem lehet p < 0,05. Legalább 10 dokumentum kell módszerenként.`,
+    `<b>Too few documents for significance:</b> with ${nd} documents the smallest possible two-sided Wilcoxon p is ${pv(2 / 2 ** nd)}; after correcting for several comparisons nothing can reach p < 0.05. Evaluate at least 10 documents per arm.`));
+  const dup = SUM.filter(r => r.dup_share > MET.dup_share.bad), nq = SUM.filter(r => r.nonq_share > MET.nonq_share.bad);
+  if (dup.length || nq.length) out.push(L('<b>Az index nem bünteti:</b> ', '<b>Not penalised by the index:</b> ')
+    + (dup.length ? L('sok ismétlődő kérdés – ', 'many repeated questions – ') + dup.map(r => `${esc(r.arm)} ${pc(r.dup_share)}`).join(', ') + '. ' : '')
+    + (nq.length ? L('sok nem kérdés formájú kérdés – ', 'many stems that are not questions – ') + nq.map(r => `${esc(r.arm)} ${pc(r.nonq_share)}`).join(', ') + '.' : ''));
+  const tiny = tinyPairs();
+  if (tiny.length) {
+    const arms = [...new Set(tiny.map(x => x.arm))];
+    out.push(L(
+      `<b>Darabolási hiba:</b> ${tiny.length} esetben a keresés csak 50 karakternél rövidebb darabokat adott vissza (pl. „Analysis:”), így a modellnek nem volt miből kérdezni. Érintett: ${arms.map(esc).join(', ')}. Lásd a <a data-go="documents">Dokumentumok</a> fület.`,
+      `<b>Chunking bug:</b> in ${tiny.length} cases retrieval returned only chunks under 50 characters (e.g. "Analysis:"), so the model had nothing to ask about. Affected: ${arms.map(esc).join(', ')}. See <a data-go="documents">Documents</a>.`));
+  }
+  return out;
+}
+function findings() {
+  const out = [], best = SUM[0], bl = SUM.find(r => r.local), e0 = sumOf('E0');
+  const main = mainDocSet(), oddBest = best.docs.join('|') !== main;
+  out.push(L(
+    `A legmagasabb minőségi indexet ${art(best.arm)}<b>${esc(best.arm)} – ${esc(aname(best.arm))}</b> érte el: <b>${nf(best.qi)}</b> (95% KI ${nf(best.ci_lo)}–${nf(best.ci_hi)})${oddBest ? ', de más dokumentumokon futott, ezért ez nem tiszta győzelem' : ''}.`,
+    `The highest quality index is <b>${esc(best.arm)} – ${esc(aname(best.arm))}</b>: <b>${nf(best.qi)}</b> (95% CI ${nf(best.ci_lo)}–${nf(best.ci_hi)})${oddBest ? ', but it ran on different documents, so this is not a clean win' : ''}.`));
+  if (bl && e0 && bl.arm !== 'E0') {
+    const p = paired('E0', bl.arm);
+    out.push(L(
+      `Csak helyi modellel ${art(bl.arm)}<b>${esc(bl.arm)} – ${esc(aname(bl.arm))}</b> a legjobb (${nf(bl.qi)}). Az alapmódszerhez (E0, ${nf(e0.qi)}) képest ${sg(p.md)} a ${p.n} közös dokumentumon: ${p.up} dokumentumon jobb, ${p.down} dokumentumon rosszabb. Ára: ${du(bl.time_s)} vizsgánként ${du(e0.time_s)} helyett.`,
+      `With a local model only, the best is <b>${esc(bl.arm)} – ${esc(aname(bl.arm))}</b> (${nf(bl.qi)}): ${sg(p.md)} over the baseline (E0, ${nf(e0.qi)}) on ${p.n} common documents, better on ${p.up}, worse on ${p.down}. It costs ${du(bl.time_s)} per exam instead of ${du(e0.time_s)}.`));
+  }
+  if (e0) {
+    const hu = langMean('E0', 'hu'), en = langMean('E0', 'en');
+    if (hu.n && en.n && hu.v - en.v > 0.2 && tinyPairs().some(x => x.arm === 'E0')) out.push(L(
+      `Az alapmódszer magyar dokumentumokon ${nf(hu.v)}, angolokon csak ${nf(en.v)}: az angol eredményt a darabolási hiba rontja le (apró darabok), nem maga a módszer. A javítás után az E0 és az erre épülő összevetések újrafuttatandók.`,
+      `The baseline scores ${nf(hu.v)} on Hungarian but only ${nf(en.v)} on English documents: the English result is dragged down by the chunking bug (tiny chunks), not by the method itself. After the fix, E0 and the comparisons built on it need a rerun.`));
+  }
+  const nd = Math.max(...SUM.map(r => r.n_docs));
+  if (nd < 10) out.push(L(
+    `A különbségek ${nd} dokumentumon statisztikailag még nem igazolhatók; az irányok (melyik módszer jobb) már láthatók, a bizonyításhoz több dokumentum kell.`,
+    `With ${nd} documents the differences cannot yet be shown to be statistically significant; the directions are visible, proving them needs more documents.`));
+  return out;
+}
+function rankingRows() {
+  const lo = Math.max(0, Math.floor(Math.min(...SUM.map(r => r.ci_lo ?? r.qi ?? 1)) * 10) / 10), X = v => (v - lo) / (1 - lo) * 100;
+  const e0 = sumOf('E0'), ticks = []; for (let v = lo; v <= 1.0001; v += 0.1) ticks.push(v);
+  const axis = `<div class="axis"><div>${L('Módszer', 'Arm')}</div><div class="ticks">${ticks.map(v => `<span style="left:${X(v)}%">${nf(v, 1)}</span>`).join('')}</div><div style="text-align:right">${L('Index · dok.', 'Index · docs')}</div></div>`;
+  const rows = SUM.map(r => {
+    const c = famColor(r.arm);
+    const t = `${r.arm} – ${aname(r.arm)}\n${adesc(r.arm)}\n\n${mName('qi')}: ${nf(r.qi)} (95% ${L('KI', 'CI')} ${nf(r.ci_lo)}–${nf(r.ci_hi)})\n${L('Dokumentum', 'Documents')}: ${r.n_docs} · ${L('vizsga', 'exams')}: ${r.n_exams} · seed: ${r.seeds.length}\n${L('Kattints a vizsgalapokhoz', 'Click to open the exams')}`;
+    return `<div class="r click" data-open="${esc(r.run)}" data-tip="${esc(t)}">
+      <div class="rl"><span class="fam" style="background:${c}"></span><b>${esc(r.arm)}</b><span>${esc(aname(r.arm))}</span></div>
+      <div class="trk">${ticks.map(v => `<span class="ax" style="left:${X(v)}%"></span>`).join('')}
+        ${e0 ? `<span class="base" style="left:${X(e0.qi)}%"></span>` : ''}
+        ${r.ci_lo != null ? `<span class="ci" style="left:${X(r.ci_lo)}%;width:${X(r.ci_hi) - X(r.ci_lo)}%;background:${c}"></span>` : ''}
+        <span class="dot" style="left:${X(r.qi)}%;background:${c}"></span></div>
+      <div class="rv"><b>${nf(r.qi)}</b> <span class="muted">· ${r.n_docs}</span>${r.local ? '' : `<small>${L('szervermodell', 'server model')}</small>`}</div></div>`;
+  }).join('');
+  const fams = [...new Set(SUM.map(r => info(r.arm).family))];
+  return `<div class="legend">${fams.map(f => `<span><span class="sw" style="background:var(--f-${f})"></span>${famName(f)}</span>`).join('')}
+      ${e0 ? `<span><span style="display:inline-block;width:0;height:12px;border-left:1.5px dashed var(--ink3);margin-right:6px;vertical-align:-2px"></span>${L('alapmódszer (E0)', 'baseline (E0)')}</span>` : ''}</div>
+    <div class="rows">${axis}${rows}</div>`;
+}
+const STEPS = [
+  ['E0', 'E1', 'Tervezés hozzáadása', 'Add planning'], ['E1', 'E2', 'Ellenőrzés hozzáadása', 'Add verification'],
+  ['E2', 'E3', 'Fogalomgráf hozzáadása', 'Add concept graph'], ['E2', 'E2h', 'Hibrid keresés', 'Hybrid search'],
+  ['E2', 'E2f', 'Vak teszt elhagyása', 'Drop the blind test'], ['E2', 'E2x', 'Más modellcsalád ellenőriz', 'Verifier from another family'],
+  ['E0', 'B-doc-L', 'Teljes dokumentum keresés helyett', 'Whole document instead of retrieval'],
+  ['E0', 'E5a', 'Régi darabolás', 'Old chunker'], ['E0', 'E5b', 'Szórás alapú darabolás', 'Std-based chunking'], ['E0', 'E5c', 'Fix darabolás', 'Fixed-size chunks'],
+  ['E0', 'E4', 'Nagyobb (szerver) modell', 'Larger (server) model'], ['E2', 'E4b', 'Nagyobb modell ellenőrzéssel', 'Larger model with verification'],
+];
+function stepsRows() {
+  const steps = STEPS.filter(s => PERDOC[s[0]] && PERDOC[s[1]]).map(s => ({a: s[0], b: s[1], name: L(s[2], s[3]), ...paired(s[0], s[1])}));
+  Object.keys(PERDOC).forEach(arm => { const i = info(arm); if (i.tag && PERDOC[i.base]) steps.push({a: i.base, b: arm, name: L('Másik modell: ', 'Other model: ') + i.tag, ...paired(i.base, arm)}); });
+  const ok = steps.filter(s => s.n);
+  if (!ok.length) return '';
+  const m = Math.max(0.1, ...ok.map(s => Math.abs(s.md))), X = v => 50 + v / m * 50;
+  const rows = ok.map(s => {
+    const col = s.md >= 0 ? 'var(--pos)' : 'var(--neg)', l = Math.min(X(0), X(s.md)), w = Math.abs(X(s.md) - X(0));
+    const t = `${s.name}: ${s.a} → ${s.b}\n${L('Közös dokumentum', 'Common documents')}: ${s.n}\n${L('Átlag', 'Mean')}: ${nf(s.ma)} → ${nf(s.mb)} (${sg(s.md)})\n${L('Jobb / rosszabb dokumentum', 'Better / worse documents')}: ${s.up} / ${s.down}\nWilcoxon p = ${pv(s.w.p)}\n${L('Kattints a részletes összevetéshez', 'Click for the detailed comparison')}`;
+    return `<div class="r click" data-go="compare|${esc(s.a)}|${esc(s.b)}" data-tip="${esc(t)}">
+      <div class="rl"><b>${esc(s.name)}</b><span class="muted">${esc(s.a)} → ${esc(s.b)}</span></div>
+      <div class="trk"><span class="zero" style="left:50%"></span><span class="bar" style="left:${l}%;width:${Math.max(w, 0.6)}%;background:${col}"></span></div>
+      <div class="rv"><b>${sg(s.md)}</b><small>${s.n} ${L('dok.', 'docs')} · ${s.up}↑ ${s.down}↓ · p ${pv(s.w.p)}</small></div></div>`;
+  }).join('');
+  return `<div class="rows"><div class="axis"><div>${L('Változtatás', 'Change')}</div><div class="ticks"><span class="first" style="left:0%">${sg(-m)}</span><span style="left:50%">0</span><span class="last" style="left:100%">${sg(m)}</span></div><div style="text-align:right">${L('Hatás az indexre', 'Effect on index')}</div></div>${rows}</div>`;
+}
+function langRows() {
+  const rows = SUM.map(r => ({arm: r.arm, hu: langMean(r.arm, 'hu'), en: langMean(r.arm, 'en')})).filter(x => x.hu.n || x.en.n);
+  if (!rows.some(x => x.hu.n) || !rows.some(x => x.en.n)) return `<p class="note">${L('Csak egy nyelvű dokumentumok vannak.', 'Only one language was evaluated.')}</p>`;
+  const vals = rows.flatMap(x => [x.hu.v, x.en.v]).filter(v => v != null), lo = Math.max(0, Math.floor(Math.min(...vals) * 10) / 10), X = v => (v - lo) / (1 - lo) * 100;
+  return `<div class="legend"><span><span class="sw" style="background:var(--s1)"></span>${L('magyar dokumentumok', 'Hungarian documents')}</span><span><span class="sq" style="background:var(--s2)"></span>${L('angol dokumentumok', 'English documents')}</span></div>
+    <div class="rows"><div class="axis"><div>${L('Módszer', 'Arm')}</div><div class="ticks"><span class="first" style="left:0%">${nf(lo, 1)}</span><span style="left:50%">${nf((lo + 1) / 2, 2)}</span><span class="last" style="left:100%">${nf(1, 1)}</span></div><div style="text-align:right">HU · EN</div></div>
+    ${rows.map(x => { const a = x.hu.v, b = x.en.v;
+      const t = `${x.arm} – ${aname(x.arm)}\n${L('Magyar', 'Hungarian')}: ${nf(a)} (${x.hu.n} ${L('dok.', 'docs')})\n${L('Angol', 'English')}: ${nf(b)} (${x.en.n} ${L('dok.', 'docs')})`;
+      return `<div class="r" data-tip="${esc(t)}"><div class="rl"><b>${esc(x.arm)}</b><span>${esc(aname(x.arm))}</span></div>
+      <div class="trk">${a != null && b != null ? `<span class="link" style="left:${Math.min(X(a), X(b))}%;width:${Math.abs(X(a) - X(b))}%"></span>` : ''}
+        ${a != null ? `<span class="dot" style="left:${X(a)}%;background:var(--s1)"></span>` : ''}${b != null ? `<span class="dia" style="left:${X(b)}%;background:var(--s2)"></span>` : ''}</div>
+      <div class="rv">${nf(a)} · ${nf(b)}</div></div>`; }).join('')}</div>`;
+}
+function scatter() {
+  const pts = SUM.filter(r => r.qi != null && r.time_s);
+  if (!pts.length) return '';
+  const W = 620, H = 330, Lm = 46, R = 16, T = 12, B = 40;
+  const tmin = Math.min(...pts.map(r => r.time_s / 60)), tmax = Math.max(...pts.map(r => r.time_s / 60));
+  const x0 = Math.log10(tmin / 1.5), x1 = Math.log10(tmax * 2.2);
+  const y0 = Math.max(0, Math.floor(Math.min(...pts.map(r => r.qi)) * 10) / 10 - 0.05), y1 = 1.0;
+  const X = t => Lm + (Math.log10(t) - x0) / (x1 - x0) * (W - Lm - R), Y = v => T + (y1 - v) / (y1 - y0) * (H - T - B);
+  let g = '';
+  [0.1, 0.3, 1, 3, 10, 30, 100, 300].filter(t => Math.log10(t) >= x0 && Math.log10(t) <= x1).forEach(t =>
+    g += `<line x1="${X(t)}" x2="${X(t)}" y1="${T}" y2="${H - B}" stroke="var(--grid)"/><text x="${X(t)}" y="${H - B + 15}" text-anchor="middle">${nf(t, t < 1 ? 1 : 0)}</text>`);
+  for (let v = Math.ceil(y0 * 10) / 10; v <= y1 + 1e-9; v += 0.1)
+    g += `<line x1="${Lm}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)"/><text x="${Lm - 6}" y="${Y(v) + 4}" text-anchor="end">${nf(v, 1)}</text>`;
+  g += `<text x="${(Lm + W - R) / 2}" y="${H - 6}" text-anchor="middle">${L('perc / vizsga (logaritmikus skála)', 'minutes per exam (log scale)')}</text>`;
+  g += `<text transform="translate(12 ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle">${L('minőségi index', 'quality index')}</text>`;
+  g += `<text x="${Lm + 6}" y="${T + 12}" style="font-weight:600">${L('↖ gyors és jó', '↖ fast and good')}</text>`;
+  const placed = [];
+  let dots = '', labs = '';
+  const order = [...pts].sort((a, b) => b.qi - a.qi);
+  order.forEach(r => {
+    const cx = X(r.time_s / 60), cy = Y(r.qi);
+    placed.push({x: cx - 6, y: cy - 6, w: 12, h: 12});
+    const t = `${r.arm} – ${aname(r.arm)}\n${mName('qi')}: ${nf(r.qi)}\n${mName('time_s')}: ${du(r.time_s)} · ${mName('calls')}: ${r.calls ?? '–'}`;
+    dots += `<g data-tip="${esc(t)}" style="cursor:pointer" data-open="${esc(r.run)}"><circle cx="${cx}" cy="${cy}" r="12" fill="transparent"/>
+      <circle cx="${cx}" cy="${cy}" r="6" fill="${famColor(r.arm)}" stroke="var(--panel)" stroke-width="2"/></g>`;
+  });
+  order.forEach(r => {
+    const cx = X(r.time_s / 60), cy = Y(r.qi), w = r.arm.length * 7 + 2;
+    for (const [dx, dy] of [[9, 0], [-9 - w, 0], [9, -12], [9, 12], [-9 - w, -12], [-9 - w, 12], [9, -24], [9, 24]]) {
+      const box = {x: cx + dx, y: cy + dy - 8, w, h: 12};
+      if (box.x < Lm || box.x + w > W) continue;
+      if (!placed.some(p => box.x < p.x + p.w && p.x < box.x + box.w && box.y < p.y + p.h && p.y < box.y + box.h)) {
+        placed.push(box); labs += `<text class="lab" x="${box.x}" y="${box.y + 10}">${esc(r.arm)}</text>`; break;
+      }
+    }
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${L('Minőség és idő', 'Quality vs time')}">${g}${dots}${labs}</svg>`;
+}
+const TCOLS = [
+  {g: ['Minőség (az index részei)', 'Quality (parts of the index)'], cols: ['format_compliant', 'grounding_rate', 'blind_answerability', 'distractor_validity']},
+  {g: ['Hibák (nincsenek az indexben)', 'Problems (not in the index)'], cols: ['dup_share', 'nonq_share', 'meta_reference_rate']},
+  {g: ['Bíráló (1–5)', 'Judge (1–5)'], cols: ['judge_correctness', 'judge_clarity', 'judge_distractor_quality']},
+  {g: ['Költség', 'Cost'], cols: ['time_s', 'calls']},
+];
+let sortK = 'qi', sortDir = -1;
+function fullTable() {
+  const rows = [...SUM].sort((a, b) => {
+    const va = a[sortK], vb = b[sortK];
+    if (typeof va === 'string') return sortDir * va.localeCompare(vb);
+    return sortDir * ((va ?? -1e9) - (vb ?? -1e9));
+  });
+  const th = k => `<th class="s" data-k="${k}" data-tip="${esc(mName(k) + '\n' + mDesc(k))}">${esc(mShort(k))}${sortK === k ? (sortDir < 0 ? ' ↓' : ' ↑') : ''}</th>`;
+  const rel = {};
+  ['qi', ...TCOLS.flatMap(g => g.cols)].forEach(k => { const v = SUM.map(r => r[k]).filter(x => x != null); rel[k] = [Math.min(...v), Math.max(...v)]; });
+  const td = (k, r) => { const v = r[k], [a, b] = rel[k], bad = MET[k].bad != null && v != null && v > MET[k].bad;
+    const g = v == null || b - a < 1e-9 ? null : (MET[k].dir < 0 ? (b - v) : (v - a)) / (b - a);
+    return `<td style="${g != null ? `background:${tint(g)}` : ''}" class="${bad ? 'flagv' : ''}" data-tip="${esc(`${r.arm} · ${mName(k)}: ${mval(k, v)}`)}">${mval(k, v)}</td>`; };
+  return `<div class="tw"><table><thead>
+    <tr><th class="grp" colspan="2"></th>${TCOLS.map(g => `<th class="grp" colspan="${g.cols.length}">${L(...g.g)}</th>`).join('')}<th class="grp"></th></tr>
+    <tr><th class="s l" data-k="arm">${L('Módszer', 'Arm')}${sortK === 'arm' ? (sortDir < 0 ? ' ↓' : ' ↑') : ''}</th>${th('qi')}
+      ${TCOLS.map(g => g.cols.map(th).join('')).join('')}<th data-tip="${esc(L('Dokumentumok · vizsgák · ismétlések (seed) száma', 'Documents · exams · seeds'))}">${L('Dok. · vizsga · seed', 'Docs · exams · seeds')}</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td class="l wrap" style="min-width:170px;max-width:230px"><span class="fam" style="background:${famColor(r.arm)}"></span><a data-open="${esc(r.run)}" data-tip="${esc(adesc(r.arm) + '\n' + r.generator)}"><b>${esc(r.arm)}</b></a> <span class="muted" style="font-size:12px">${esc(aname(r.arm))}</span></td>
+      ${td('qi', r)}${TCOLS.map(g => g.cols.map(k => td(k, r)).join('')).join('')}
+      <td>${r.n_docs} · ${r.n_exams}${r.n_failed ? ` <span class="flagv">(${r.n_failed}✗)</span>` : ''} · ${r.seeds.length}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function renderSummary() {
+  if (!SUM.length) { $('#summary').innerHTML = `<div class="empty">${L('Még nincs pontozott futás (előbb futtasd a <code>score</code> parancsot). A Vizsgalapok fül így is működik.', 'No scored runs yet (run <code>score</code> first). The Exam papers tab still works.')}</div>`; return; }
+  const exams = RUNS.filter(r => r.latest && r.scored).flatMap(r => r.exams);
+  const nq = exams.reduce((s, e) => s + e.questions.length, 0), docs = new Set(exams.map(e => e.doc_id)), fails = exams.filter(e => e.status !== 'ok').length;
+  const hu = [...docs].filter(d => (DOCS[d] || {}).language === 'hu').length, en = [...docs].filter(d => (DOCS[d] || {}).language === 'en').length;
+  const cv = caveats();
+  $('#summary').innerHTML = `
+    <h1>${L('Melyik módszer írja a legjobb vizsgakérdéseket?', 'Which method writes the best exam questions?')}</h1>
+    <p class="lead">${L(
+      `Minden módszer ugyanazokból a dokumentumokból írt 10 feleletválasztós kérdést, amelyeket egy független nyelvi modell (${esc(JUDGE)}) bírált el. A <b>minőségi index</b> 0 és 1 közötti szám: azt méri, hogy a kérdések jól formázottak, a forrás alapján helyesek, egyértelműek és jó rossz válaszokat kínálnak-e. A nagyobb a jobb.`,
+      `Every method wrote 10 multiple-choice questions from the same documents, judged by an independent language model (${esc(JUDGE)}). The <b>quality index</b> is a number from 0 to 1 measuring whether the questions are well-formed, correct according to the source, unambiguous and offer good wrong answers. Higher is better.`)}</p>
+    <div class="card find"><b>${L('Fő megállapítások', 'Key findings')}</b><ul>${findings().map(x => `<li>${x}</li>`).join('')}</ul></div>
+    <div class="tiles">
+      <div class="tile"><div class="v">${SUM.length}</div><div class="l">${L('összehasonlított módszer', 'arms compared')}</div></div>
+      <div class="tile"><div class="v">${docs.size}</div><div class="l">${L(`dokumentum (${hu} magyar, ${en} angol)`, `documents (${hu} Hungarian, ${en} English)`)}</div></div>
+      <div class="tile"><div class="v">${exams.length}</div><div class="l">${L('legenerált vizsga', 'exams generated')}</div></div>
+      <div class="tile"><div class="v">${nq.toLocaleString(lang === 'hu' ? 'hu-HU' : 'en-US')}</div><div class="l">${L('elbírált kérdés', 'questions judged')}</div></div>
+      <div class="tile ${fails ? 'bad' : ''}"><div class="v">${fails}</div><div class="l">${L('sikertelen vizsga', 'failed exams')}</div></div>
+    </div>
+    <h2>${L('Rangsor', 'Ranking')}</h2>
+    <p class="note">${L('A pont a minőségi index, a halvány vonal a 95%-os konfidenciaintervallum (a dokumentumokra vett bootstrap). Ha két módszer vonala átfed, a különbségük ezen a mintán nem biztos. Vidd az egeret egy sorra a részletekért, kattints a vizsgalapokhoz.', 'The dot is the quality index, the faint bar its 95% confidence interval (bootstrap over documents). When two bars overlap, the difference is not reliable on this sample. Hover a row for details, click it to open the exams.')}</p>
+    ${rankingRows()}
+    ${cv.length ? `<h2>${L('Mielőtt a számokat idéznéd', 'Before you quote the numbers')}</h2><ul class="warns">${cv.map(x => `<li>${x}</li>`).join('')}</ul>` : ''}
+    <h2>${L('Mit ad hozzá egy-egy lépés?', 'What does each step add?')}</h2>
+    <p class="note">${L('Egy módszert a rákövetkezővel vetünk össze, csak a mindkettő által feldolgozott dokumentumokon. Kék: javít, piros: ront. A „↑/↓” azt mutatja, hány dokumentumon lett jobb/rosszabb. Kattints egy sorra a részletekért.', 'Each change compared on the documents both arms processed. Blue improves, red makes it worse. "↑/↓" counts the documents that got better/worse. Click a row for the details.')}</p>
+    ${stepsRows()}
+    <div>
+      <div><h2>${L('Minőség és idő', 'Quality vs time')}</h2><p class="note">${L('Fent = jobb, balra = gyorsabb. A szín a módszercsaládot jelöli.', 'Up = better, left = faster. Colour shows the method family.')}</p><div class="card" style="max-width:900px">${scatter()}</div></div>
+      <div><h2>${L('Magyar és angol dokumentumok', 'Hungarian vs English documents')}</h2><p class="note">${L('Nagy távolság = a módszer az egyik nyelven sokkal gyengébb. A két nyelv dokumentumai különböznek (forrás, téma, hossz), ezért ez leíró adat.', 'A long gap means the method is much weaker in one language. The documents differ by source, topic and length, so this is descriptive.')}</p>${langRows()}</div>
+    </div>
+    <h2>${L('Részletes táblázat', 'Full table')}</h2>
+    <p class="note">${L('Minden mutató dokumentumonkénti átlagok átlaga. Oszloponként a legjobb érték a legsötétebb, a leggyengébb fehér (a „Hibák” oszlopokban is a kevesebb a jobb). Piros = a figyelmeztetési küszöb felett. Vidd az egeret a fejlécre a mutató magyarázatáért; kattints rá a rendezéshez.', 'Every measure is a mean of per-document means. In each column the best value is darkest and the weakest is white (in the "Problems" columns fewer is better). Red = above the warning threshold. Hover a header for its meaning, click it to sort.')}</p>
+    ${fullTable()}`;
+  document.querySelectorAll('#summary th.s').forEach(th => th.onclick = () => {
+    const k = th.dataset.k; if (sortK === k) sortDir = -sortDir; else { sortK = k; sortDir = k === 'arm' || (MET[k] || {}).dir < 0 ? 1 : -1; }
+    renderSummary();
+  });
+  bindLinks($('#summary'));
+}
+
+/* ================= METHODS ================= */
+function renderMethods() {
+  const arms = Object.keys(ARMINFO).sort((a, b) => (ARMS.indexOf(a) + 1 || 99) - (ARMS.indexOf(b) + 1 || 99));
+  const docs = [...new Set(RUNS.filter(r => r.latest).flatMap(r => r.exams.map(e => e.doc_id)))].sort();
+  const core = Object.keys(MET).filter(k => MET[k].idx);
+  $('#methods').innerHTML = `
+    <h1>${L('Módszerek és mutatók', 'Methods and metrics')}</h1>
+    <p class="lead">${L('Mit csinál az egyes módszer, mit mérnek a mutatók, és hogyan számoltuk a statisztikát.', 'What each arm does, what the metrics measure and how the statistics were computed.')}</p>
+    <h2>${L('A vizsgált módszerek', 'The arms')}</h2>
+    <div class="tw"><table><thead><tr><th class="l">${L('Kód', 'Code')}</th><th class="l">${L('Név', 'Name')}</th><th class="l">${L('Család', 'Family')}</th><th class="l">${L('Mit csinál', 'What it does')}</th><th class="l">${L('Generáló modell', 'Generator')}</th><th>${L('Dok.', 'Docs')}</th><th>Seed</th></tr></thead><tbody>
+    ${arms.map(a => { const s = sumOf(a), r = latestRun(a) || RUNS.find(x => x.arm === a) || {};
+      return `<tr><td class="l"><a data-open="${esc(r.id || '')}"><b>${esc(a)}</b></a></td><td class="l">${esc(aname(a))}</td>
+      <td class="l"><span class="fam" style="background:${famColor(a)}"></span>${famName(info(a).family)}</td><td class="l wrap" style="min-width:260px">${esc(adesc(a))}</td>
+      <td class="l">${esc(r.generator || '–')}</td><td>${s ? s.n_docs : '–'}</td><td>${s ? s.seeds.length : '–'}</td></tr>`; }).join('')}
+    </tbody></table></div>
+    <h2>${L('A mutatók jelentése', 'What the metrics mean')}</h2>
+    <p class="note">${L('A minőségi index a négy első mutató átlaga; a többi kiegészítő információ.', 'The quality index is the mean of the first four measures; the rest is supporting information.')}</p>
+    <div class="card"><dl class="gl">${['qi', ...core, ...Object.keys(MET).filter(k => k !== 'qi' && !MET[k].idx)].map(k => `<dt>${esc(mName(k))}${MET[k].idx ? ` ${chip(L('az index része', 'in the index'), 'ok')}` : ''}</dt>
+      <dd>${esc(mDesc(k))} <span class="muted">${MET[k].dir > 0 ? L('Nagyobb = jobb.', 'Higher is better.') : L('Kisebb = jobb.', 'Lower is better.')}</span></dd>`).join('')}</dl></div>
+    <h2>${L('Hogyan számoltunk', 'How the numbers are computed')}</h2>
+    <div class="card"><ul style="margin:0;padding-left:20px">
+      <li>${L(`Minden kérdést egy független, más modellcsaládba tartozó nyelvi modell (${esc(JUDGE)}) bírált el a forrásszöveg alapján.`, `Every question was judged by an independent language model from another family (${esc(JUDGE)}) against the source text.`)}</li>
+      <li>${L('Az értékeket előbb vizsgánként, aztán dokumentumonként (a seedek átlaga), végül a dokumentumok között átlagoltuk, így minden dokumentum egyforma súllyal számít.', 'Values are averaged per exam, then per document (mean over seeds), then over documents, so every document has the same weight.')}</li>
+      <li>${L('A 95%-os konfidenciaintervallum a dokumentumokra vett bootstrap (10 000 újramintavétel).', 'The 95% confidence interval is a bootstrap over documents (10,000 resamples).')}</li>
+      <li>${L('Két módszert párosított Wilcoxon-próbával vetünk össze a közös dokumentumokon. n dokumentumnál a legkisebb elérhető p = 2 / 2ⁿ, ezért kevés dokumentummal nem lehet szignifikáns eredmény.', 'Two arms are compared with a paired Wilcoxon test on their common documents. With n documents the smallest possible p is 2 / 2ⁿ, so few documents cannot give a significant result.')}</li>
+      <li>${L('Ismétlődő kérdés: a normalizált kérdésszöveg azonos egy korábbival, vagy legalább 85%-ban egyezik vele.', 'Repeated question: the normalised stem equals an earlier one or matches it at least 85%.')}</li>
+      <li>${L('Ugyanezek a számok szerepelnek a <code>report</code> paranccsal készült TDK-jelentésben is.', 'The same numbers appear in the TDK report built with <code>report</code>.')}</li>
+    </ul></div>
+    <h2>${L('Az értékelt dokumentumok', 'Evaluated documents')}</h2>
+    <div class="tw"><table><thead><tr><th class="l">${L('Dokumentum', 'Document')}</th><th class="l">${L('Nyelv', 'Language')}</th><th class="l">${L('Téma', 'Subject')}</th><th class="l">${L('Nehézség', 'Difficulty')}</th><th>${L('Karakter', 'Characters')}</th></tr></thead><tbody>
+    ${docs.map(d => { const i = DOCS[d] || {}; return `<tr><td class="l"><a data-go="documents|${esc(d)}">${esc(d)}</a></td><td class="l">${esc(i.language || '')}</td><td class="l">${esc(subj(i.subject))}</td><td class="l">${esc(diff(i.difficulty))}</td><td>${i.chars ? i.chars.toLocaleString(lang === 'hu' ? 'hu-HU' : 'en-US') : '–'}</td></tr>`; }).join('')}
+    </tbody></table></div>`;
+  bindLinks($('#methods'));
+}
+</script>
+<script>
+"use strict";
+/* ================= DOCUMENTS ================= */
+let docSel = null;
+function docList() {
+  const all = new Set();
+  Object.values(PERDOC).forEach(m => Object.keys(m).forEach(d => all.add(d)));
+  RUNS.filter(r => r.latest).forEach(r => r.exams.forEach(e => all.add(e.doc_id)));
+  return [...all].sort((a, b) => ((DOCS[b] || {}).language || '').localeCompare((DOCS[a] || {}).language || '') || a.localeCompare(b));
+}
+function renderDocuments() {
+  const docs = docList(), lo = 0.4;
+  const colMean = arm => mean(Object.values(PERDOC[arm] || {}).filter(x => x != null));
+  let lastLang = null;
+  const body = docs.map(d => {
+    const i = DOCS[d] || {}, sep = i.language !== lastLang ? `<tr class="sep"><td colspan="${ARMS.length + 2}">${i.language === 'hu' ? L('Magyar dokumentumok', 'Hungarian documents') : i.language === 'en' ? L('Angol dokumentumok', 'English documents') : esc(i.language || '?')}</td></tr>` : '';
+    lastLang = i.language;
+    return sep + `<tr><td class="l"><a data-doc="${esc(d)}">${d === docSel ? '<b>' + esc(d) + '</b>' : esc(d)}</a></td><td>${i.chars ? i.chars.toLocaleString(lang === 'hu' ? 'hu-HU' : 'en-US') : '–'}</td>
+      ${ARMS.map(a => { const v = (PERDOC[a] || {})[d]; if (v == null) return `<td class="muted" data-tip="${esc(L('Ez a módszer nem futott ezen a dokumentumon', 'This arm did not run on this document'))}">·</td>`;
+        return `<td class="c" style="background:${shade((v - lo) / (1 - lo))}" data-exam="${esc(latestRun(a).id)}|${esc(d)}|" data-tip="${esc(`${a} – ${aname(a)}\n${d}: ${nf(v)}\n${L('Kattints a vizsgához', 'Click to open the exam')}`)}">${nf(v)}</td>`; }).join('')}</tr>`;
+  }).join('');
+  $('#documents').innerHTML = `
+    <h1>${L('Dokumentumonkénti eredmények', 'Results per document')}</h1>
+    <p class="lead">${L('Minden cella egy módszer minőségi indexe egy dokumentumon (a seedek átlaga). Sötétebb = jobb. Így látszik, ha egy módszer csak bizonyos dokumentumokon gyenge. Kattints egy cellára a vizsgához, egy dokumentum nevére a darabolás részleteihez.', 'Each cell is one arm\'s quality index on one document (mean over seeds). Darker = better. This shows whether an arm is weak only on some documents. Click a cell for the exam, a document name for its chunking details.')}</p>
+    <div class="tw"><table class="hm"><thead><tr><th class="l">${L('Dokumentum', 'Document')}</th><th>${L('Karakter', 'Chars')}</th>${ARMS.map(a => `<th data-tip="${esc(a + ' – ' + aname(a))}"><span class="fam" style="background:${famColor(a)}"></span>${esc(a)}</th>`).join('')}</tr></thead><tbody>
+    ${body}
+    <tr class="sep"><td class="l">${L('Átlag', 'Mean')}</td><td></td>${ARMS.map(a => `<td style="text-align:center">${nf(colMean(a))}</td>`).join('')}</tr>
+    </tbody></table></div>
+    <div id="docdetail"></div>`;
+  document.querySelectorAll('#documents [data-doc]').forEach(a => a.onclick = ev => { ev.preventDefault(); docSel = a.dataset.doc; renderDocuments(); setHash(); $('#docdetail').scrollIntoView({behavior: 'smooth'}); });
+  bindLinks($('#documents'));
+  if (docSel) renderDocDetail(docSel);
+}
+function renderDocDetail(d) {
+  const i = DOCS[d] || {};
+  const rows = RUNS.filter(r => r.latest).map(r => ({r, e: r.exams.find(e => e.doc_id === d)})).filter(x => x.e);
+  $('#docdetail').innerHTML = `<h2>${esc(d)}</h2>
+    <div class="row" style="margin:4px 0 8px">${chip(i.language || '?')}${chip(subj(i.subject) || '?')}${chip(diff(i.difficulty) || '?')}${chip((i.chars || 0).toLocaleString(lang === 'hu' ? 'hu-HU' : 'en-US') + L(' karakter', ' characters'))}</div>
+    <p class="note">${L('Hogyan darabolta fel a dokumentumot az egyes módszer, és mit adott a keresés a kérdésíró modellnek (első seed). A piros darab 50 karakternél rövidebb: abból nem lehet értelmes kérdést írni. Vidd az egeret egy darabra a szövegéért.', 'How each arm cut the document and what retrieval gave the question writer (first seed). Red chunks are under 50 characters: no sensible question can come from them. Hover a chunk for its text.')}</p>
+    <div class="tw"><table><thead><tr><th class="l">${L('Módszer', 'Arm')}</th><th>${L('Darab', 'Chunks')}</th><th>${L('Medián hossz', 'Median length')}</th><th>&lt; 50 ${L('kar.', 'chars')}</th><th>&lt; 200 ${L('kar.', 'chars')}</th><th>Index</th><th class="l">${L('A keresés első 3 találata', 'Top 3 retrieved chunks')}</th></tr></thead><tbody>
+    ${rows.map(({r, e}) => { const c = e.chunks || {}, v = (PERDOC[r.arm] || {})[d];
+      return `<tr><td class="l"><a data-exam="${esc(r.id)}|${esc(d)}|${e.seed}">${esc(r.arm)}</a> <span class="muted">${esc(aname(r.arm))}</span></td><td>${c.n ?? '–'}</td><td>${c.median != null ? Math.round(c.median) : '–'}</td>
+      <td class="${c.tiny ? 'flagv' : ''}">${c.tiny ?? '–'}</td><td>${c.small ?? '–'}</td><td>${nf(v)}</td>
+      <td class="l wrap" style="min-width:320px">${e.retrieved.slice(0, 3).map(x => `<span class="chip ${x.len < 50 ? 'no' : ''}" data-tip="${esc(x.text)}">${esc(x.text.slice(0, 30))}${x.text.length > 30 ? '…' : ''} <span class="muted">(${x.len})</span></span>`).join(' ') || `<span class="muted">${L('– (teljes dokumentum)', '– (whole document)')}</span>`}</td></tr>`; }).join('')}
+    </tbody></table></div>
+    ${i.text ? `<details class="box"><summary>${L('A dokumentum szövege', 'Document text')}${i.truncated ? L(' (első ', ' (first ') + i.text.length.toLocaleString() + L(' karakter)', ' characters)') : ''}</summary><div class="src" style="max-height:480px">${esc(i.text)}</div></details>` : ''}`;
+  bindLinks($('#docdetail'));
+}
+
+/* ================= COMPARE ================= */
+let cmpA = ARMS.includes('E0') ? 'E0' : ARMS[ARMS.length - 1];
+let cmpB = (SUM.find(r => r.local && r.arm !== cmpA) || SUM[0] || {}).arm;
+function renderCompare() {
+  if (ARMS.length < 2) { $('#compare').innerHTML = `<div class="empty">${L('Legalább két pontozott módszer kell.', 'Need at least two scored arms.')}</div>`; return; }
+  if (!ARMS.includes(cmpA)) cmpA = ARMS[0]; if (!ARMS.includes(cmpB)) cmpB = ARMS[1];
+  const opts = sel => ARMS.map(a => `<option value="${esc(a)}" ${a === sel ? 'selected' : ''}>${esc(a)} – ${esc(aname(a))}</option>`).join('');
+  const P = paired(cmpA, cmpB), dA = Object.keys(PERDOC[cmpA] || {}), dB = Object.keys(PERDOC[cmpB] || {});
+  const onlyA = dA.filter(d => !dB.includes(d)), onlyB = dB.filter(d => !dA.includes(d));
+  const better = P.md > 0.005, worse = P.md < -0.005, sig = P.w.p < 0.05;
+  const verdict = !P.n ? L('Nincs közös dokumentum.', 'No common documents.') : L(
+    `${art(cmpB, true)}<b>${esc(cmpB)}</b> ${better ? 'jobb' : worse ? 'rosszabb' : 'nagyjából ugyanolyan'}, mint ${art(cmpA)}<b>${esc(cmpA)}</b>: átlagosan ${sg(P.md)} a minőségi indexben; a ${P.n} közös dokumentumból ${P.up} dokumentumon jobb, ${P.down} dokumentumon rosszabb. ${sig ? `A különbség p = ${pv(P.w.p)} mellett szignifikáns (korrekció nélkül).` : `A különbség nem szignifikáns (p = ${pv(P.w.p)})${P.n < 10 ? `; ${P.n} dokumentummal a legkisebb elérhető p is ${pv(2 / 2 ** P.n)}` : ''}.`}`,
+    `<b>${esc(cmpB)}</b> is ${better ? 'better than' : worse ? 'worse than' : 'about the same as'} <b>${esc(cmpA)}</b>: ${sg(P.md)} in quality index on average, better on ${P.up} and worse on ${P.down} of ${P.n} common documents. ${sig ? `The difference is significant at p = ${pv(P.w.p)} (uncorrected).` : `The difference is not significant (p = ${pv(P.w.p)})${P.n < 10 ? `; with ${P.n} documents even the smallest possible p is ${pv(2 / 2 ** P.n)}` : ''}.`}`);
+  const idA = latestRun(cmpA).id, idB = latestRun(cmpB).id;
+  const MK = ['qi', 'format_compliant', 'grounding_rate', 'blind_answerability', 'distractor_validity', 'dup_share', 'nonq_share', 'meta_reference_rate', 'coverage', 'judge_correctness', 'judge_clarity', 'judge_distractor_quality', 'judge_bloom_fit'];
+  const m = Math.max(0.1, ...P.diffs.map(Math.abs));
+  $('#compare').innerHTML = `
+    <h1>${L('Két módszer összevetése', 'Compare two arms')}</h1>
+    <p class="lead">${L('Válassz egy referencia- és egy új módszert. Az összevetés csak azokat a dokumentumokat használja, amelyeken mindkettő futott, így a különbség nem a dokumentumok eltéréséből adódik.', 'Pick a reference and a new arm. Only documents both arms ran are used, so the difference does not come from different documents.')}</p>
+    <div class="row" style="margin-bottom:6px"><b>${L('Referencia', 'Reference')}</b> <select id="ca">${opts(cmpA)}</select> <b>${L('új', 'new')}</b> <select id="cb">${opts(cmpB)}</select>
+      <button class="btn" id="swap">⇄ ${L('csere', 'swap')}</button></div>
+    <div class="verdict">${verdict}</div>
+    ${onlyA.length || onlyB.length ? `<ul class="warns"><li>${L('<b>Nem ugyanazok a dokumentumok.</b> Csak ', '<b>Not the same documents.</b> Only ')}${esc(cmpA)}: ${esc(onlyA.join(', ') || '–')}. ${L('Csak ', 'Only ')}${esc(cmpB)}: ${esc(onlyB.join(', ') || '–')}. ${L('Ezek kimaradnak.', 'These are ignored.')}</li></ul>` : ''}
+    <div>
+      <div><h2 style="margin-top:8px">${L('Dokumentumonként', 'Per document')}</h2>
+      <div class="rows"><div class="axis"><div>${L('Dokumentum', 'Document')}</div><div class="ticks"><span class="first" style="left:0%">${sg(-m)}</span><span style="left:50%">0</span><span class="last" style="left:100%">${sg(m)}</span></div><div style="text-align:right">${esc(cmpA)} → ${esc(cmpB)}</div></div>
+      ${P.rows.map(x => { const d = x.b - x.a, X = v => 50 + v / m * 50, l = Math.min(X(0), X(d)), w = Math.abs(X(d) - X(0));
+        return `<div class="r"><div class="rl"><b style="font-weight:500">${esc(x.d)}</b><span class="muted">${esc((DOCS[x.d] || {}).language || '')}</span></div>
+        <div class="trk"><span class="zero" style="left:50%"></span><span class="bar" style="left:${l}%;width:${Math.max(w, 0.6)}%;background:${d >= 0 ? 'var(--pos)' : 'var(--neg)'}"></span></div>
+        <div class="rv"><a data-exam="${esc(idA)}|${esc(x.d)}|">${nf(x.a)}</a> → <a data-exam="${esc(idB)}|${esc(x.d)}|">${nf(x.b)}</a><small>${sg(d)}</small></div></div>`; }).join('')}</div></div>
+      <div><h2>${L('Mutatónként', 'Per metric')}</h2><div class="tw" style="max-width:900px"><table><thead><tr><th class="l">${L('Mutató', 'Metric')}</th><th>${esc(cmpA)}</th><th>${esc(cmpB)}</th><th>${L('Különbség', 'Difference')}</th><th>p</th></tr></thead><tbody>
+      ${MK.map(k => { const Q = paired(cmpA, cmpB, k); if (!Q.n) return '';
+        const t = MET[k].t, dd = Q.md, ds = t === 'pct' ? pp(dd) : sg(dd, t === 'five' ? 2 : 2), worseM = MET[k].dir < 0 ? dd > 0.005 : dd < -0.005;
+        return `<tr><td class="l" data-tip="${esc(mDesc(k))}">${esc(mName(k))}</td><td>${mval(k, Q.ma)}</td><td>${mval(k, Q.mb)}</td><td class="${worseM ? 'flagv' : ''}">${ds}</td><td>${Q.w.n ? pv(Q.w.p) : '–'}</td></tr>`; }).join('')}
+      </tbody></table></div><p class="note">${L('Piros = az új módszer ezen a mutatón rosszabb.', 'Red = the new arm is worse on this measure.')}</p></div>
+    </div>`;
+  $('#ca').onchange = () => { cmpA = $('#ca').value; renderCompare(); setHash(); };
+  $('#cb').onchange = () => { cmpB = $('#cb').value; renderCompare(); setHash(); };
+  $('#swap').onclick = () => { [cmpA, cmpB] = [cmpB, cmpA]; renderCompare(); setHash(); };
+  bindLinks($('#compare'));
+}
+</script>
+<script>
+"use strict";
+/* ================= EXAMS ================= */
+let run = null, exam = null, mode = 'paper', answers = false;
+const PAPER = {
+  hu: {exam: 'Feladatlap', name: 'Név', date: 'Dátum', score: 'Pontszám', inst: 'Minden kérdésnél egy helyes választ jelöljön meg.', key: 'Megoldókulcs', doc: 'Forrás', q: 'kérdés'},
+  en: {exam: 'Exam', name: 'Name', date: 'Date', score: 'Score', inst: 'Choose the one correct answer for each question.', key: 'Answer key', doc: 'Source', q: 'questions'},
+};
+function isProblem(q) {
+  return q.grounded === false || q.blind_correct === false || q.verified === false || q.meta_reference || q.key_in_stem ||
+         q.dup_of != null || q.is_question === false || (q.judge_correctness != null && q.judge_correctness <= 2) || q.judge_error;
+}
+function examSummary(e) {
+  const qs = e.questions, n = qs.length, g = qs.filter(q => q.grounded != null);
+  return {n, grounded: g.length ? g.filter(q => q.grounded).length / g.length : null, problems: qs.filter(isProblem).length};
+}
+function renderRuns() {
+  const opt = r => `<option value="${RUNS.indexOf(r)}">${esc(r.arm)} – ${esc(aname(r.arm))}${r.latest ? '' : ' · ' + esc(r.id)}${r.scored ? '' : L(' (nincs pontozva)', ' (not scored)')}</option>`;
+  const old = RUNS.filter(r => !r.latest);
+  const lat = RUNS.filter(r => r.latest).sort((a, b) => (ARMS.indexOf(a.arm) + 1 || 99) - (ARMS.indexOf(b.arm) + 1 || 99));
+  $('#run').innerHTML = `<optgroup label="${L('Legutóbbi futás módszerenként', 'Latest run per arm')}">${lat.map(opt).join('')}</optgroup>${old.length ? `<optgroup label="${L('Korábbi futások', 'Older runs')}">${old.map(opt).join('')}</optgroup>` : ''}`;
+  $('#run').onchange = () => { run = RUNS[+$('#run').value]; exam = run.exams[0] || null; renderExams(); renderMain(); setHash(); };
+  if (!run && RUNS.length) run = SUM.length ? latestRun(SUM[0].arm) : RUNS[RUNS.length - 1];
+  if (run) $('#run').value = RUNS.indexOf(run);
+}
+function renderExams() {
+  if (!run) { $('#exams').innerHTML = `<div class="stat">${L('Nincs futás.', 'No runs found.')}</div>`; return; }
+  $('#run').value = RUNS.indexOf(run);
+  $('#rundesc').textContent = `${adesc(run.arm)} · ${run.generator}`;
+  $('#exams').innerHTML = run.exams.map((e, i) => {
+    const s = examSummary(e), st = e.status !== 'ok' ? ` · <b style="color:var(--bad)">${esc(e.status)}</b>` : '';
+    return `<button class="exam ${exam === e ? 'on' : ''}" data-i="${i}">${esc(e.doc_id)} · seed ${e.seed}${st}
+      <small>index ${nf(e.qi)} · ${L('igazolt', 'grounded')} ${pc(s.grounded)} · ${s.problems} ${L('hibás', 'flagged')}${e.n_dup ? ` · ${e.n_dup} ${L('ismétlés', 'repeated')}` : ''}</small></button>`;
+  }).join('');
+  document.querySelectorAll('#exams .exam').forEach(b => b.onclick = () => { exam = run.exams[+b.dataset.i]; renderExams(); renderMain(); setHash(); });
+}
+function tiles(e) {
+  const m = e.metrics || {}, c = e.chunks || {}, n = e.questions.length;
+  const t = (v, l, cls = '', tipx = '') => `<div class="tile ${cls}"${tipx ? ` data-tip="${esc(tipx)}"` : ''}><div class="v">${v}</div><div class="l">${l}</div></div>`;
+  const stages = e.calls_by_stage ? Object.entries(e.calls_by_stage).map(([k, v]) => `${k}: ${v}`).join('\n') : '';
+  return `<div class="tiles">${[
+    t(nf(e.qi), mName('qi'), '', mDesc('qi')), t(pc(m.grounding_rate), mName('grounding_rate'), '', mDesc('grounding_rate')),
+    t(pc(m.blind_answerability), mName('blind_answerability'), '', mDesc('blind_answerability')),
+    t(pc(m.distractor_validity), mName('distractor_validity'), '', mDesc('distractor_validity')),
+    t(`${e.n_dup}/${n}`, mName('dup_share'), e.n_dup ? 'bad' : '', mDesc('dup_share')), t(`${e.n_nonq}/${n}`, mName('nonq_share'), e.n_nonq ? 'warn' : '', mDesc('nonq_share')),
+    t(pc(m.coverage), mName('coverage'), '', mDesc('coverage')), t(pc(m['recall@3']), mName('recall@3'), '', mDesc('recall@3')),
+    t(du(e.total_s), L('idő', 'time')), t(e.calls ?? '–', mName('calls'), '', stages),
+    t(e.vram != null ? nf(e.vram / 1024, 1) + ' GB' : '–', L('VRAM-csúcs', 'VRAM peak')),
+    t(c.n != null ? `${c.n} · ${Math.round(c.median)}` : '–', L('darab · medián hossz', 'chunks · median length'), c.tiny ? 'bad' : '', c.n != null ? L(`${c.tiny} darab 50 karakter alatt, ${c.small} 200 alatt, a leghosszabb ${c.max}`, `${c.tiny} chunks under 50 characters, ${c.small} under 200, longest ${c.max}`) : ''),
+  ].join('')}</div>`;
+}
+function renderPaper(e, qs) {
+  const P = PAPER[e.language] || PAPER.en, keys = [];
+  const body = qs.map(([q, n]) => {
+    const opts = q.options || [], k = opts.findIndex(o => o.correct);
+    keys.push(`${n}. ${k >= 0 ? LETTERS[k] : esc(q.key || '–')}`);
+    const flags = [q.dup_of != null ? L(`ismétli a ${q.dup_of + 1}. kérdést`, `repeats Q${q.dup_of + 1}`) : '', q.is_question === false ? L('nem kérdés formájú', 'not a question') : ''].filter(Boolean).join(' · ');
+    return `<li value="${n}"><div class="ps">${esc(q.text)}${flags ? `<span class="pflag">${esc(flags)}</span>` : ''}</div>
+      ${opts.length ? `<div class="po">${opts.map((o, i) => `<div class="opt ${answers && o.correct ? 'right' : ''}"><span class="bub">${LETTERS[i]}</span><span>${esc(o.text)}</span></div>`).join('')}</div>`
+        : `<div class="lines"></div><div class="lines"></div>${answers && q.key ? `<div class="opt right">${esc(q.key)}</div>` : ''}`}</li>`;
+  }).join('');
+  return `<article class="paper">
+    <div class="pt">${esc(P.exam)}${e.subject ? ' – ' + esc(subj(e.subject, e.language === 'hu' ? 'hu' : 'en')) : ''}</div>
+    <div class="pm">${esc(P.doc)}: ${esc(e.doc_id)} · ${esc(run.arm)}, seed ${e.seed} · ${qs.length} ${P.q}</div>
+    <div class="pn"><span>${P.name}: ______________________________</span><span>${P.date}: ______________</span><span>${P.score}: ____ / ${qs.length}</span></div>
+    <p class="pi">${P.inst}</p>
+    <ol class="pq">${body}</ol>
+    ${answers ? `<div class="akey"><b>${P.key}:</b> ${keys.map(k => `<span>${k}</span>`).join('')}</div>` : ''}
+  </article>`;
+}
+function renderQuestion(q, n) {
+  const opts = (q.options || []).map(o => `<li class="${o.correct ? 'key' : ''}">${esc(o.text)}${o.correct ? ' ✓' : ''}</li>`).join('');
+  const J = [['correctness', 'judge_correctness'], ['clarity', 'judge_clarity'], ['distractor_quality', 'judge_distractor_quality'], ['bloom_fit', 'judge_bloom_fit']];
+  const scores = J.map(([k, mk]) => { const v = q['judge_' + k]; return v == null ? '' : chip(`${mShort(mk)} ${v}/5`, v >= 4 ? 'ok' : v <= 2 ? 'no' : 'mid', mDesc(mk)); }).join('');
+  return `<div class="q ${isProblem(q) ? 'flag' : ''}">
+    <div class="row"><b>${n}.</b>${chip(q.type)}${q.bloom ? chip(q.bloom) : ''}
+      ${yesno(q.grounded, L('forrással igazolt', 'grounded'), L('nincs igazolva', 'not grounded'))}${yesno(q.blind_correct, L('vakon ✓', 'blind ✓'), L('vakon ✗', 'blind ✗'))}
+      ${q.verified == null ? '' : yesno(q.verified, L('ellenőrzött', 'verified'), L('nem ellenőrzött', 'unverified'))}
+      ${q.dup_of != null ? chip(L(`ismétli a ${q.dup_of + 1}. kérdést`, `repeats Q${q.dup_of + 1}`), 'no') : ''}${q.is_question === false ? chip(L('nem kérdés formájú', 'not a question'), 'mid') : ''}
+      ${q.key_in_stem ? chip(L('a válasz benne van a kérdésben', 'answer in the stem'), 'no') : ''}${q.meta_reference ? chip(L('„a szöveg szerint”', '"the text says"'), 'no') : ''}
+      ${q.judge_would_use == null ? '' : yesno(q.judge_would_use, L('használható', 'would use'), L('nem használható', 'would not use'))}</div>
+    <div class="qt">${esc(q.text)}</div>
+    <ol type="A">${opts}</ol>
+    <div class="row">${scores}</div>
+    ${q.judge_rationale ? `<div class="why"><b>${L('A bíráló indoklása', 'Judge')}:</b> ${esc(q.judge_rationale)}</div>` : ''}
+    ${q.key_evidence ? `<div class="why"><b>${L('A bíráló által idézett bizonyíték', 'Evidence quoted by the judge')}:</b> „${esc(q.key_evidence)}”</div>` : ''}
+    ${q.judge_error ? `<div class="why" style="color:var(--bad)">${L('Bírálói hiba', 'Judge error')}: ${esc(q.judge_error)}</div>` : ''}
+    <details><summary>${L('Forrásszöveg', 'Source text')}${q.citations && q.citations.length ? ' (' + esc(q.citations.join(', ')) + ')' : ''}${q.concept ? ' · ' + L('tervezett fogalom', 'planned concept') + ': ' + esc(q.concept) : ''}</summary>
+      <div class="src">${esc(q.source) || '–'}</div></details>
+  </div>`;
+}
+function renderMain() {
+  if (!exam) { $('#main').innerHTML = `<div class="empty">${L('Válassz egy vizsgát a bal oldalon.', 'Pick an exam on the left.')}</div>`; return; }
+  const s = examSummary(exam), term = $('#find').value.trim().toLowerCase(), only = $('#problems').checked;
+  let qs = exam.questions.map((q, i) => [q, i + 1]);
+  if (only) qs = qs.filter(([q]) => isProblem(q));
+  if (term) qs = qs.filter(([q]) => (q.text + ' ' + (q.options || []).map(o => o.text).join(' ')).toLowerCase().includes(term));
+  const tinyCtx = exam.retrieved.slice(0, 3).some(c => c.len < 50);
+  const head = `<div class="card head noprint"><h2>${esc(run.arm)} – ${esc(aname(run.arm))} · ${esc(exam.doc_id)} · seed ${exam.seed}</h2>
+    <div class="row">${chip(exam.status, exam.status === 'ok' ? 'ok' : 'no')}${chip(exam.language || '')}${chip(diff(exam.difficulty))}
+      ${chip(`${s.n}/${exam.n_requested ?? '?'} ${L('kérdés', 'questions')}`, s.n === exam.n_requested ? 'ok' : 'no')}${chip(s.problems + ' ' + L('hibás', 'flagged'), s.problems ? 'mid' : 'ok')}
+      <span style="flex:1"></span>
+      <span class="seg"><button data-m="paper" class="${mode === 'paper' ? 'on' : ''}">${L('Feladatlap', 'Test paper')}</button><button data-m="review" class="${mode === 'review' ? 'on' : ''}">${L('Bírálat', 'Review')}</button></span>
+      ${mode === 'paper' ? `<label class="row" style="gap:5px;font-size:13px"><input type="checkbox" id="ans" ${answers ? 'checked' : ''}>${L('Megoldások mutatása', 'Show answers')}</label><button class="btn" id="print">${L('Nyomtatás', 'Print')}</button>` : ''}</div>
+    <div class="stat" style="margin-top:6px">${L('modell', 'model')} ${esc(exam.model || '–')}${exam.unverified != null ? ' · ' + L(`${exam.unverified} nem ellenőrzött, ${exam.replacements ?? 0} cserélve az ellenőrző által`, `${exam.unverified} unverified, ${exam.replacements ?? 0} replaced by the verifier`) : ''}</div>
+    ${exam.error ? `<div class="why" style="color:var(--bad)">${esc(exam.error)}</div>` : ''}
+    <div style="margin-top:12px">${tiles(exam)}</div>
+    ${exam.retrieved.length ? `<details ${tinyCtx && mode === 'review' ? 'open' : ''}><summary>${L(`Amit a keresés a modellnek adott (${exam.retrieved.length} darab)`, `What retrieval gave the model (${exam.retrieved.length} chunks)`)}${tinyCtx ? ` – <b style="color:var(--bad)">${L('apró darabok!', 'tiny chunks!')}</b>` : ''}</summary>
+      ${exam.retrieved.map(c => `<div class="ctx ${c.len < 50 ? 'tiny' : ''}"><span class="muted">#${c.rank ?? '?'} · ${L('darab', 'chunk')} ${c.chunk ?? '?'} · ${c.len} ${L('karakter', 'chars')}</span>\n${esc(c.text)}</div>`).join('')}</details>` : ''}
+  </div>`;
+  const body = !qs.length ? `<div class="empty">${L('Nincs a szűrésnek megfelelő kérdés.', 'No questions match.')}</div>` : mode === 'paper' ? renderPaper(exam, qs) : qs.map(([q, n]) => renderQuestion(q, n)).join('');
+  $('#main').innerHTML = head + body;
+  $('#main').querySelectorAll('.seg button').forEach(b => b.onclick = () => { mode = b.dataset.m; renderMain(); });
+  if ($('#ans')) $('#ans').onchange = () => { answers = $('#ans').checked; renderMain(); };
+  if ($('#print')) $('#print').onclick = () => window.print();
+}
+$('#find').oninput = renderMain; $('#problems').onchange = renderMain;
+document.addEventListener('keydown', ev => {
+  if (tab !== 'exams' || !run || ev.target.matches('input,select,textarea')) return;
+  if (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') return;
+  const i = run.exams.indexOf(exam), j = Math.max(0, Math.min(run.exams.length - 1, i + (ev.key === 'ArrowRight' ? 1 : -1)));
+  if (j !== i) { exam = run.exams[j]; renderExams(); renderMain(); setHash(); ev.preventDefault(); }
+});
+
+/* ---------------- start ---------------- */
+function route() {
+  const [t, ...rest] = location.hash.slice(1).split('/').map(decodeURIComponent);
+  const alias = {overview: 'summary'}, tt = alias[t] || t;
+  if (tt === 'documents' && rest[0]) docSel = rest[0];
+  if (tt === 'compare' && rest.length === 2 && ARMS.includes(rest[0]) && ARMS.includes(rest[1])) [cmpA, cmpB] = rest;
+  if (tt === 'exams' && rest[0]) {
+    run = RUNS.find(r => r.id === rest[0]) || run;
+    exam = run && rest[1] ? run.exams.find(e => e.doc_id === rest[1] && String(e.seed) === rest[2]) || null : null;
+  }
+  if (run && !exam) exam = run.exams[0] || null;
+  show(TABS.some(x => x[0] === tt) ? tt : (SUM.length ? 'summary' : 'exams'), false);
+}
+renderChrome();
+renderRuns();
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>

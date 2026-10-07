@@ -147,12 +147,15 @@ python -m mimir_eval report --name pilot        # latest run of every arm -> rep
 python -m mimir_eval view                        # results\viewer.html: read the generated exams
 ```
 
-`results\viewer.html` is one offline page with four tabs: **Overview** (ranking with 95% CIs, duplicate and
-non-question rates, quality vs time, metric heatmap, automatic warnings about uneven document sets, seeds,
-failed exams and tiny retrieved chunks), **Documents** (document x arm matrix; per document the chunking and
-the retrieved chunks), **Compare arms** (paired per-document differences with an exact Wilcoxon test) and
-**Exams** (each exam as a printable test paper with a hidden answer key, or in review mode with the judge's
-verdicts). Re-run `view` after every `score`.
+`results\viewer.html` is one offline page with a Hungarian / English switch (top right) and five tabs:
+**Summary** (key findings in plain language, ranking with 95% CIs coloured by method family, what each
+pipeline step adds, quality vs time, Hungarian vs English, the full table and automatic caveats about uneven
+document sets, seeds, failed exams, duplicates and tiny retrieved chunks), **Methods & metrics** (what every
+arm does and what every measure means), **Documents** (document x arm matrix; per document the chunking and
+the retrieved chunks), **Compare two arms** (paired per-document differences with an exact Wilcoxon test and
+a one-sentence verdict) and **Exam papers** (each exam as a printable test paper with a hidden answer key, or
+in review mode with the judge's verdicts). The layout is `mimir_eval\viewer_template.html`. Re-run `view`
+after every `score`.
 
 `report\<name>\` gets (PNG 300 dpi + PDF, and the text in `eredmenyek.md`):
 
