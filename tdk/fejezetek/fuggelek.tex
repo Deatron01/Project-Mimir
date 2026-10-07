@@ -217,6 +217,10 @@ R5 & \code{report}: táblázatok, ábrák, tesztek & -- & 1--2 nap \\
 \end{tabularx}
 \end{table}
 
+A terv végrehajtásának állapota a dolgozat lezárásakor: az R1 és R2 lépés a 2026. szeptember 27--28-i
+futásban karonként hat dokumentumon készült el (\ref{sec:fo-beallitasok}.~szakasz), az R3 pontozás és az
+R5 jelentés megtörtént (\code{tests/eval/report\_main/main}), az R4 oktatói értékelés folyamatban van.
+
 \section{A közölt számok forrásai}
 
 \begin{table}[H]
@@ -239,6 +243,13 @@ Dolgozatbeli elem & Forrás \\
 \ref{tab:adatkeszlet}.\ táblázat & \code{tests/eval/dataset/manifest*.yaml} \\
 \ref{tab:peldak}.\ táblázat & \code{results\_pilot/\{E0,E1,E3,E4\}\_*/questions.jsonl}, 1.\ mag \\
 Futásról futásra zaj & \code{results\_pilot/\{E0,E5a\}\_*/exams.jsonl} (\code{retrieved}) \\
+\ref{tab:fo-vizsgalat}.\ táblázat, \ref{fig:fo-minoseg-ido}.\ ábra & \code{report\_main/main/latex/tab\_main.tex}, \code{fig\_quality\_time.dat}, \code{paper\_numbers.json} \\
+\ref{tab:fo-dokumentumok}.\ táblázat & \code{report\_main/main/adatkeszlet.csv} (\code{kiertekelve}); \code{configs/e4*\_server\_*.yaml} (\code{documents}) \\
+\ref{tab:fo-szignifikancia}.\ táblázat & \code{report\_main/main/szignifikancia.csv}, \code{latex/tab\_significance.tex} \\
+\ref{tab:fo-verifier-biro}., \ref{tab:fo-verifier-karok}.\ táblázat & \code{report\_main/main/latex/tab\_verifier.tex}, \code{tab\_verifier\_arms.tex}; az \arm{E4b} nélküli 150/174: karonként pontosság $\times$ átengedett kérdések száma \\
+\ref{tab:fo-szivargas}.\ táblázat & \code{report\_main/main/latex/tab\_leakage.tex} \\
+\ref{fig:fo-rangsor}--\ref{fig:fo-nyelvek}.\ ábra, nyelvenkénti értékek & \code{report\_main/main/abra*.pdf}, \code{eredmenyek.md} (5.~táblázat) \\
+\ref{tab:fo-peldak}.\ táblázat & \code{report\_main/main/peldak.md}; karakterpozíciók: \code{dataset/docs/eduqg/en-law-long-03.txt} \\
 \bottomrule
 \end{tabularx}
 \end{table}

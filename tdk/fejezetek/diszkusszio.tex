@@ -6,24 +6,32 @@
 \section{Miért módszer, és nem prompt?}
 
 A dolgozat központi állítása, hogy a vizsgagenerálás megbízhatóságát nem egy jobb prompt, hanem a
-feladat explicit, ellenőrizhető lépésekre bontása biztosítja. A pilot három ponton támasztja alá ezt
-az érvelést. \emph{Először}, ugyanaz a 7B modell pusztán a tervezés hatására alátámasztottabb,
-vakon jobban megoldható, jobb disztraktorú és jobban lefedő vizsgát írt; a különbség nem a modell
-tudásából, hanem a feladat szerkezetéből ered. \emph{Másodszor}, egy lényegesen nagyobb modell,
-amely a dokumentumot (visszakeresett formában) egyben kapta meg, szintén a dokumentum egyetlen
-részére koncentrált -- a lefedettség tehát nem a modell méretével, hanem a feladat megfogalmazásával
-kontrollálható. \emph{Harmadszor}, a kérdésenkénti forráshivatkozás lehetővé tette, hogy egy olvasó --
-a kiértékelésben a bíró, a gyakorlatban az oktató -- minden kulcsot a saját forrásával szemben
-ellenőrizzen; éppen ez tárta fel a naiv alapvonal hibás kulcsait és az ellenőrző karok szivárgó
-kérdéseit.
+feladat explicit, ellenőrizhető lépésekre bontása biztosítja. A két vizsgálat együtt négy ponton
+támasztja alá ezt az érvelést. \emph{Először}, ugyanaz a 7B modell a tervezés és az ellenőrzés hatására
+a fő vizsgálat hat dokumentumán a naiv RAG $0{,}64$-es és a teljes dokumentumos prompt $0{,}83$-as
+indexéről $0{,}96$-ra javult, és elérte a teljes dokumentumot kapó szervermodellt ($0{,}95$); a különbség
+nem a modell tudásából, hanem a feladat szerkezetéből ered. \emph{Másodszor}, a naiv RAG minősége a
+darabolás apró részleteitől függött (az angol dokumentumokon $0{,}40$-re esett), a tervezett csővezetéké
+nem: a fogalmanként végzett keresés robusztusabb, mint egy feladatleírással végzett keresés.
+\emph{Harmadszor}, a kérdésenkénti forráshivatkozás lehetővé tette, hogy egy olvasó -- a kiértékelésben a
+bíró, a gyakorlatban az oktató -- minden kulcsot a saját forrásával szemben ellenőrizzen; éppen ez tárta
+fel a naiv alapvonal hibás kulcsait, az ellenőrző karok szivárgó kérdéseit és a szervermodell forma
+szerint triviális kérdéseit. \emph{Negyedszer}, ugyanaz a csővezeték a nagy szervermodellel $0{,}99$-et ért
+el: a módszer nem a kis modell mankója, hanem modelltől független keret.
 
-A pilot a módszer határait is megmutatta. Az ellenőrzés a hívásszámot 60--100-szorosára növelte, és
-ha az ellenőrző ugyanaz a 7B modell, mint a generátor, ez a többletköltség nem jár többletinformációval.
-A fő vizsgálatban ezért nem a tervezés, hanem az ellenőrzés az a komponens, amelynek bizonyítania kell a
-helyét. Ha az \arm{E2x} kar (eltérő modellcsaládba tartozó ellenőrző) sem mutat pozitív egyezést a
-bíróval, akkor a helyi telepítés helyes konfigurációja a tervezett, ellenőrzés nélküli csővezeték
-(\arm{E1}), a forráshivatkozás megjelenítésével és az oktatói ellenőrzéssel mint egyetlen
-ellenőrzési réteggel.
+A vizsgálatok a módszer határait is megmutatták. Az ellenőrzés a pilotban rontott, a fő vizsgálatban mind
+a hat dokumentumon javított; a fordulatot a tartalékkérdés javítása és a szivárgási szabályok hozták, vagyis
+az ellenőrzés haszna az implementáció részletein múlik. Az ellenőrző ítélete a bíróéval továbbra is csak
+gyengén egyezik ($\kappa\le0{,}22$): a lánc a vizsga egészét javítja, de az egyes kérdésekre adott jelzése
+nem megbízható. A pilot után megfogalmazott alternatíva -- ha a más modellcsaládba tartozó ellenőrző sem
+független a generátortól, a helyi telepítés helyes konfigurációja az ellenőrzés nélküli \arm{E1} -- a fő
+vizsgálat alapján módosul: a javasolt helyi konfiguráció az önellenőrző \arm{E2}, a megjelölést pedig
+figyelmeztetésként, nem ítéletként kell az oktatónak megmutatni. A Llama-ellenőrző (\arm{E2x}) engedékenyebb
+és lassabb, a fogalomgráf (\arm{E3}) és a hibrid keresés (\arm{E2h}) nem javított, így a jelen adatokon
+egyik sem éri meg a többletköltségét. Végül a teljes dokumentumot kapó szervermodell a vizsgált,
+többnyire rövid dokumentumokon sem minőségben, sem lefedettségben nem maradt el: a módszer előnye vele
+szemben nem a rövid dokumentumokon mért minőség, hanem az ellenőrizhetőség, az adatvédelem és a helyi
+futtathatóság (P1, P3, P4), a lefedettségi előny (P2) pedig a naiv RAG-gal szemben mutatható ki.
 
 \section{A mérés mint kutatási eredmény}
 
@@ -40,6 +48,15 @@ egy hibamód okozta.
 A futásról futásra jelentkező zaj ($\approx0{,}07$) becslése hasonló tanulság: a kevés dokumentumon,
 kevés ismétléssel mért különbségek jelentős része zaj lehet.
 
+A fő vizsgálat a bíróval kapcsolatban két újabb vakfoltot tárt fel. A teljes dokumentumos karoknál a bíró
+24\,000 karakteres ablaka a hosszú dokumentumok végéről írt helyes kérdéseket „alá nem támasztottnak”
+minősíti, ami ezeket a karokat lefelé torzítja; a szervermodell visszakeresett szakaszcímre vonatkozó,
+tartalmilag üres kérdéseit („hány szóból áll a cím?”) pedig a bíró hibátlannak ítélte, ami felfelé torzít.
+Egy harmadik tanulság a jelentés automatizmusára vonatkozik: a jelentésgenerátor a legmagasabb indexű
+kart (\arm{E4b}) „győztesnek” jelölte, holott az más dokumentumokon futott, mint a többi kar. A futásonként
+eltérő dokumentumhalmazt a nézőfelület figyelmeztetésként jelzi, a rangsor azonban csak azonos
+dokumentumokon futott karok között értelmes.
+
 \section{Az érvényességet veszélyeztető tényezők}
 \label{sec:validitas}
 
@@ -52,7 +69,10 @@ formáját is megváltoztatja, ami közvetve hat a bíró érthetőségi ítéle
 nemdeterminisztikussága miatt azonos konfiguráció mellett is eltérő kimenetek születnek; ezt a
 dokumentumszintű aggregálás és a dokumentumok számának növelése kezeli. A pilot és a fő vizsgálat
 között a csővezeték változott (szivárgási szabályok, javító hívás, $r=1$), így a két vizsgálat
-eredményei nem közvetlenül összevethetők; a pilot eredményei az akkori implementációra vonatkoznak.
+eredményei nem közvetlenül összevethetők; a pilot eredményei az akkori implementációra vonatkoznak. A
+fő vizsgálatban az \arm{E4} és az \arm{E4b} kar más dokumentumokon futott, mint a többi, ezért ezeket csak a
+közös három dokumentumon vetjük össze; a tervezett karok egyetlen maggal futottak, így a dokumentumonkénti
+értékükben a futásról futásra jelentkező zaj is benne van.
 
 \paragraph{Konstrukciós érvényesség.} A minőségi index négy egyenlő súlyú komponense közül a formai
 megfelelés vizsgaszintű bináris változó, a másik három kérdésszintű ráta; ezért egyetlen formai hiba
@@ -61,19 +81,28 @@ használhatatlanná teszi a vizsgát), de minden komponenst külön is közlünk
 embedding-térbeli legközelebbi darabra épül, ami csak közelítése annak, hogy a kérdés „miről szól”.
 Az alátámasztottság és a vak megoldhatóság a bíró ítéletén alapul; a bíró a kérdés kontextusát látja,
 így a dokumentum más részeiben lévő ellentmondást nem veheti észre, és -- amint a szivárgás
-megmutatta -- a formailag hibás, de „igaz” kérdéseket nem bünteti. A bíró validálása az oktatói
-értékeléssel ezért a fő vizsgálat elengedhetetlen része.
+megmutatta -- a formailag hibás, de „igaz” kérdéseket nem bünteti; a fő vizsgálat szerint a forma
+szerint triviális kérdéseket sem, a teljes dokumentumos karoknál pedig legfeljebb a dokumentum első
+24\,000 karakterét látja. A bíró validálása az oktatói értékeléssel ezért elengedhetetlen; a fő vizsgálat
+lezárásakor az oktatói értékelés még nem érkezett be (\tbd{kitöltendő}), így a tartalmi mutatók egyelőre
+egyetlen, nem validált bíróra épülnek.
 
 \paragraph{Külső érvényesség.} A pilot egyetlen rövid, könnyű magyar szövegen futott, amelyen a naiv
-alapvonal a négy darabból hármat lát -- ez a tervezés számára a legkedvezőtlenebb helyzet, hosszabb
-dokumentumokon nagyobb különbség várható. A fő adatkészlet magyar és angol részhalmaza eltérő
-forrásból származik (Wikipédia és tankönyv), így a nyelv hatása a forrás hatásával keveredik. Csak
+alapvonal a négy darabból hármat lát -- ez a tervezés számára a legkedvezőtlenebb helyzet. A fő vizsgálat
+a 39 dokumentumból kilencen futott (karonként hat); magyar részhalmaza három rövid saját szöveg, a
+Wikipédia-cikkek egyike sem szerepelt benne, így a nyelv hatása a forrás és a hossz hatásával keveredik, és
+az eredmények a teljes adatkészleten módosulhatnak. A vizsgált dokumentumok többsége rövid, ezért a
+hosszú dokumentumokra jellemző jelenségek (a kontextus közepének gyengébb kihasználása, a csonkolás)
+csak egy-két dokumentumon jelenhettek meg. Csak
 feleletválasztós kérdéseket értékelünk; az igaz--hamis és a kifejtős kérdések minősége külön vizsgálatot
 igényel. Az eredmények a vizsgált modellekre (Qwen2.5-7B, Llama-3.1-8B, a szervermodell) vonatkoznak;
 egy másik modellcsalád eltérően viselkedhet.
 
-\paragraph{Következtetési érvényesség.} A dokumentumszintű nemparaméteres tesztek konzervatívak;
-a 39 dokumentum közepes hatásméretek kimutatására elegendő, kis hatások kimutatására nem. A több
+\paragraph{Következtetési érvényesség.} A dokumentumszintű nemparaméteres tesztek konzervatívak.
+A fő vizsgálat karonként hat dokumentuma éppen az a legkisebb szám, amelyen $p<0{,}05$ egyáltalán
+elérhető; a hat összevetés közül egy (\arm{E2}--\arm{E1}) érte el, a Holm-korrekció után egyik sem. A
+fő vizsgálat következtetései ezért leíró jellegűek; a 39 dokumentum közepes hatásméretek kimutatására
+elegendő lenne, kis hatások kimutatására nem. A több
 összehasonlítást Holm-korrekcióval kezeljük. A bootstrap-intervallumok kis mintán alulfedhetnek, ezért a
 pontbecslések mellett mindig a dokumentumszintű eloszlást is közöljük.
 

@@ -31,31 +31,51 @@ analitikus modelljét mérésekkel validáltuk: a 7B generátor és futtatókör
 \item \textbf{Kiértékelési módszertan.} Tizenöt egytényezős kísérleti kart, 39 dokumentumos kétnyelvű
 adatkészletet 326 referenciakérdéssel, modellcsaládon kívüli bírót, közös bíró--oktató rubrikát és
 dokumentumszintű statisztikát tartalmazó, nyílt és reprodukálható keretrendszert hoztunk létre.
-\item \textbf{Pilot eredmények.} A tervezés a helyi modell alátámasztottságát 67-ről 73\,\%-ra, vak
-megoldhatóságát 85-ről 93\,\%-ra, disztraktor-validitását 80-ról 87\,\%-ra és lefedettségét 50-ről
-58\,\%-ra javította; a nagy szervermodell a legmagasabb minőséget (0,99), de a legalacsonyabb
-lefedettséget (25\,\%) érte el; az azonos modellel végzett önellenőrzés a bíróval csak véletlenszintű
-egyezést mutatott; a visszacsatolási hurok a kulcs kérdésbe szivárgását idézte elő, amely az automatikus
-mutatókat és a bírót egyaránt félrevezette; a futásról futásra jelentkező zaj ($\approx0{,}07$) pedig
-megmutatta, hogy egyetlen dokumentumon a legtöbb különbség nem értelmezhető.
+\item \textbf{Pilot eredmények.} Egyetlen dokumentumon a tervezés javította a helyi modell
+alátámasztottságát, vak megoldhatóságát, disztraktorait és lefedettségét; az azonos modellel végzett
+önellenőrzés a bíróval csak véletlenszintű egyezést mutatott; a visszacsatolási hurok a kulcs kérdésbe
+szivárgását idézte elő, amely az automatikus mutatókat és a bírót egyaránt félrevezette; a futásról
+futásra jelentkező zaj ($\approx0{,}07$) pedig megmutatta, hogy egyetlen dokumentumon a legtöbb különbség
+nem értelmezhető. Ezekből a megfigyelésekből közvetlenül következtek a fő vizsgálat javításai.
+\item \textbf{A fő vizsgálat eredményei.} Tizennégy karral, kilenc magyar és angol dokumentumon
+(karonként hat), 1\,670 kérdésen: a helyi 7B modellel futó tervezett és ellenőrzött csővezeték érte el a
+legmagasabb minőségi indexet a közös dokumentumokon ($0{,}96$), szemben a naiv RAG $0{,}64$-es, a helyi teljes
+dokumentumos prompt $0{,}83$-as és a teljes dokumentumot kapó szervermodell $0{,}95$-ös értékével; a tervezés
+$+0{,}24$-dal, az ellenőrzés -- a pilottal ellentétben -- mind a hat dokumentumon, $+0{,}08$-dal javított; a
+más modellcsaládba tartozó ellenőrző és a fogalomgráf rontott; a szivárgási szabályok a szivárgást
+0--3\,\%-ra szorították le; a naiv RAG az angol dokumentumokon a rövid szerkezeti darabok miatt összeomlott;
+ugyanaz a csővezeték a szervermodellel $0{,}99$-et ért el. A Holm-korrekció után egyik összevetés sem
+szignifikáns.
 \end{enumerate}
 
-A kutatási kérdésekre a pilot alapján a következő előzetes válaszokat adhatjuk. \textbf{RQ1:} a
-tervezés érvényesebb és jobban lefedő vizsgát eredményezett; a hatás iránya a várt, nagysága azonban
-egyetlen dokumentumon a zajsávon belül van. \textbf{RQ2:} a tervezés 23 hívásért mérhető javulást hozott;
-az önellenőrzés 60--100 hívásért nem hozott, a fogalomgráf pedig csak a szivárgás torzításával együtt
-javított; a rögzített darabolás a duplikátumokat megháromszorozta. \textbf{RQ3:} a helyi 7B modell a
-szervermodell minőségi indexét 0,09--0,11-re közelítette meg, 8\,GB alatti memóriaigénnyel.
+A kutatási kérdésekre a két vizsgálat alapján a következő válaszokat adhatjuk. \textbf{RQ1:} a strukturált
+generálás a vizsgált dokumentumokon érvényesebb vizsgát adott, mint ha ugyanannak a modellnek a dokumentumot
+vagy annak visszakeresett részleteit egyetlen promptban adjuk át ($0{,}96$ vs.\ $0{,}83$ és $0{,}64$), és a
+lefedettsége jobb volt a naiv RAG-énál; a teljes dokumentumos promptnál azonban nem volt jobb a lefedettsége
+(\ref{h:lefed}.~hipotézis nem teljesült). \textbf{RQ2:} a tervezés 17 hívásért, az ellenőrzés további
+34 hívásért javított, a vak megoldási próba a lánc hasznos eleme; a más modellcsaládba tartozó ellenőrző,
+a fogalomgráf és a hibrid keresés a többletköltségéért nem javított; a naiv RAG-ot a darabolás apró
+részletei is jelentősen befolyásolták. \textbf{RQ3:} a helyi 7B modell a tervezett és ellenőrzött
+csővezetékben a közös dokumentumokon elérte a szervermodell naiv RAG-os ($0{,}95$ vs.\ $0{,}93$) és teljes
+dokumentumos ($0{,}96$ vs.\ $0{,}95$) változatát, a pilotban mért 5,4--5,9\,GiB GPU-memóriával; ugyanazzal a
+csővezetékkel a szervermodell $0{,}99$-et ért el, vizsgánként 47,7 perc alatt.
 
 \section{További munka}
 
-A közvetlen folytatás a fő vizsgálat lefuttatása \az{\ref{ch:kiertekeles}}.~fejezetben rögzített
-protokoll szerint: mind a 15 kar a 39 dokumentumon, a bíró validálása három oktató vak értékelésével, és \az{\ref{tab:fo-vizsgalat}}.~táblázat kitöltése. Ezen túl a következő irányokat tartjuk ígéretesnek.
+A közvetlen folytatás a fő vizsgálat kiterjesztése \az{\ref{ch:kiertekeles}}.~fejezetben rögzített
+protokoll szerint: a fő karok (\arm{B-doc-L}, \arm{B-doc-S}, \arm{E0}, \arm{E1}, \arm{E2}, \arm{E4},
+\arm{E4b}) futtatása mind a 39 dokumentumon, köztük a 24 magyar Wikipédia-cikken, azonos dokumentumokon
+a helyi és a szerverkarokkal; a bíró validálása három oktató vak értékelésével; és a bíró kontextusablakának
+bővítése a teljes dokumentumos karokra. Ezen túl a következő irányokat tartjuk ígéretesnek.
 
 \begin{itemize}
-\item \textbf{Független ellenőrző.} Ha az eltérő modellcsaládba tartozó ellenőrző (\arm{E2x}) sem
-független a generátortól, természetes nyelvi következtetésre (NLI) tanított kisebb osztályozó vagy a
-FActScore-hoz hasonló atomi tényellenőrzés~\cite{min2023factscore} lehet a következő lépés.
+\item \textbf{Minimális darabméret.} A naiv RAG angol dokumentumokon mért összeomlását a szerkezeti
+sorokból képzett, tartalom nélküli darabok okozták; a darabolóba illesztett minimális darabméret (a rövid
+darab összevonása a szomszédjával) egyszerű javítás, amelynek hatása egy újabb \arm{E0}-futással mérhető.
+\item \textbf{Megbízhatóbb ellenőrző.} Az ellenőrzés javítja a vizsgát, de a kérdésenkénti jelzése a bíróval
+csak gyengén egyezik, és a más modellcsaládba tartozó ellenőrző (\arm{E2x}) sem jobb. Természetes nyelvi
+következtetésre (NLI) tanított kisebb osztályozó vagy a FActScore-hoz hasonló atomi
+tényellenőrzés~\cite{min2023factscore} lehet a következő lépés.
 \item \textbf{A megvalósult Bloom-szint ellenőrzése.} A pilot szerint a kis modell a kért kognitív
 szintet nem valósítja meg megbízhatóan; egy szintosztályozó ellenőrzés az ellenőrző láncba illeszthető.
 \item \textbf{Adaptív ellenőrzés.} Az ellenőrzés költségét csökkentené, ha csak a bizonytalan
@@ -67,5 +87,5 @@ kiértékelése, valamint a generált vizsgák pszichometriai elemzése (nehézs
 nem funkcionáló disztraktorok) valós hallgatói válaszokon.
 \end{itemize}
 
-A \Mimir{} nyílt forráskódú: a kód, a konfigurációk, az adatkészlet-manifesztek és a pilot nyers
-kimenetei a reprodukáláshoz rendelkezésre állnak.
+A \Mimir{} nyílt forráskódú: a kód, a konfigurációk, az adatkészlet-manifesztek, a pilot nyers
+kimenetei és a fő vizsgálat jelentése a reprodukáláshoz rendelkezésre állnak.

@@ -1,7 +1,11 @@
 # Experiment plan: from the pilot to the main study
 
 Status: **approved; code changes I1–I7 implemented and tested** (24 Sep 2026), decisions D1–D5 taken
-with their defaults. Next: the runs R0–R5.
+with their defaults. **Main run done on 27–28 Sep 2026** with six documents per arm (14 arms, nine
+documents: the twelve local arms and B-doc-S on the first six manifest documents, E4/E4b on the first six of
+the server subset, all English); scored and reported (`tests/eval/report_main/main`), written into the
+paper and the TDK. Open: R4 (teacher ratings) and the full 39-document run of the core arms on identical
+document sets.
 
 The paper (`main.tex`, "MIMIR: Verifiable, Privacy-Preserving Exam Generation with Local Language
 Models") reports the pilot (`tests/eval/results_pilot`, `tests/eval/report_pilot`: one Hungarian

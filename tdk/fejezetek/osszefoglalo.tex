@@ -34,17 +34,20 @@ adatkészlet; a generátoroktól eltérő modellcsaládba tartozó LLM-bíró; f
 valamint dokumentumszintű statisztika (bootstrap konfidenciaintervallum, páros Wilcoxon-próba
 Holm-korrekcióval, rangbiszeriális hatásméret, Krippendorff-$\alpha$).
 
-Egy magyar nyelvű dokumentumon, tíz karral és három ismétléssel végzett pilot vizsgálat (300 kérdés)
-szerint a tervezés a helyi 7B modell alátámasztottságát 67-ről 73\,\%-ra, vak megoldhatóságát 85-ről
-93\,\%-ra, disztraktor-validitását 80-ról 87\,\%-ra, lefedettségét 50-ről 58\,\%-ra javította; egy nagy
-szervermodell ugyan a legmagasabb minőségi indexet (0,99) érte el, de kérdéseit a dokumentum darabjainak
-mindössze negyedéből merítette; a helyi modell a GPU-memóriából 5,4--5,9\,GB-ot foglalt, tehát 8\,GB-os
-kártyán is fut. A pilot két, korábbi méréseket érvénytelenítő mérési hibát és egy új hibamódot is feltárt:
-az azonos 7B modellel végzett önellenőrzés a bíró ítéletével csak véletlenszintű egyezést mutat
-(Cohen-$\kappa \in [-0{,}14;\,0{,}07]$), a visszacsatolási hurok pedig a modellt a forrásmondat szó szerinti
-átvételére, azaz a helyes válasz kérdésszövegbe szivárogtatására ösztönzi, amit a bíró sem büntet.
-Az egyetlen dokumentumon mért futásról futásra jelentkező zaj ($\approx$0,07) indokolja a 39 dokumentumos,
-dokumentumszintű statisztikára épülő fő vizsgálatot, amelynek protokollját részletesen rögzítjük.
+Egy magyar dokumentumon végzett pilot (tíz kar, három ismétlés, 300 kérdés) szerint a helyi modell a
+GPU-memóriából 5,4--5,9\,GB-ot foglal, tehát 8\,GB-os kártyán is fut. A pilot két, korábbi méréseket
+érvénytelenítő mérési hibát és egy új hibamódot is feltárt: az ellenőrző visszacsatolási hurka a helyes
+választ a kérdés szövegébe szivárogtatta, amit a bíró sem büntetett. A javított csővezetékkel végzett fő
+vizsgálat (14 kar, kilenc magyar és angol dokumentum, karonként hat, 1\,670 kérdés) szerint a helyi 7B
+modellel futó, tervezett és ellenőrzött csővezeték érte el a legmagasabb minőségi indexet (0,96; 95\,\%-os
+CI: 0,93--0,98), szemben a naiv RAG (0,64), a teljes dokumentumot egy promptban kapó helyi modell (0,83) és
+a teljes dokumentumot kapó nagy szervermodell (0,95) értékével. A tervezés 0,24-dal, az ellenőrzés -- a
+pilottal ellentétben -- mind a hat dokumentumon 0,08-dal javított; a más modellcsaládba tartozó ellenőrző és
+a fogalomgráf nem javított; a szivárgási szabályok a szivárgást 0--3\,\%-ra csökkentették; ugyanaz a
+csővezeték a szervermodellel 0,99-et ért el. Az ellenőrző ítélete a bíróéval csak gyengén egyezik
+(Cohen-$\kappa\le0{,}22$), a naiv RAG minőségét pedig a darabolás apró részletei is meghatározták. Hat
+dokumentumon a különbségek a Holm-korrekció után nem szignifikánsak; a teljes, 39 dokumentumos futás és a
+bíró oktatói validálása a következő lépés.
 
 \medskip
 \noindent\textbf{Kulcsszavak:} automatikus kérdésgenerálás, visszakereséssel kiegészített generálás (RAG),
@@ -71,14 +74,17 @@ microservice architecture retains no uploaded content beyond the lifetime of a j
 We also contribute an evaluation methodology and open harness: fifteen single-factor experiment arms, a
 39-document Hungarian--English dataset with 326 reference questions, a cross-family LLM judge, formally
 defined measures and document-level statistics. A pilot on one Hungarian document (ten arms, three seeds,
-300 questions) shows that planning raised the local model's grounding from 67\,\% to 73\,\%, blind
-answerability from 85\,\% to 93\,\%, distractor validity from 80\,\% to 87\,\% and section coverage from
-50\,\% to 58\,\%; that a large server model scored highest (0.99) but drew its questions from a quarter of
-the document; and that the local model occupies 5.4--5.9\,GB of GPU memory. The pilot also exposed two
-measurement defects, a same-model verifier at chance-level agreement with the judge
-(Cohen's $\kappa$ from $-0.14$ to $0.07$) and an answer-leakage failure mode that inflates both automatic
-and LLM-judge scores. Run-to-run noise of about 0.07 on a single document motivates the 39-document main
-study, whose protocol we specify in full.
+300 questions) showed that the local model occupies 5.4--5.9\,GB of GPU memory, exposed two measurement
+defects, and revealed an answer-leakage failure mode that inflates both automatic and LLM-judge scores. In
+the main study with the corrected pipeline (14 arms, nine Hungarian and English documents, six per arm,
+1,670 questions), the planned and verified pipeline on the local 7B model reached the highest quality index
+(0.96, 95\,\% CI 0.93--0.98), against 0.64 for naive RAG, 0.83 for the whole document in one prompt to the
+same model and 0.95 for the whole document to a large server model. Planning added 0.24; verification,
+unlike in the pilot, added 0.08 on all six documents; a verifier from another model family and the concept
+graph did not help; leakage rules cut leakage to 0--3\,\%; and the same pipeline on the server model reached
+0.99. The verifier agrees only weakly with the judge (Cohen's $\kappa\le0.22$), and naive RAG proved fragile
+to chunking details. With six documents no difference survives Holm correction; the full 39-document run and
+the teachers' validation of the judge are the next step.
 
 \medskip
 \noindent\textbf{Keywords:} automatic question generation, retrieval-augmented generation, small language

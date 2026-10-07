@@ -254,8 +254,10 @@ véletlenül permutált opciókkal.
 A bíró forrásként alapértelmezésben a kérdéshez tartozó darabokat kapja, nem a teljes dokumentumot. Ezt
 a fő vizsgálat futási idejének csökkentése indokolja (a bíró egy hívása a megosztott szerveren kb.\
 14 másodperc, és ez a mérés szűk keresztmetszete); a választás korlátja, hogy a bíró a dokumentum más
-részeiben lévő ellentmondást nem láthatja (\ref{sec:validitas}.~szakasz). A \code{context: document}
-beállítás a teljes dokumentumot adja át, a pilot így futott.
+részeiben lévő ellentmondást nem láthatja (\ref{sec:validitas}.~szakasz). A teljes dokumentumos
+karoknál, ahol a kérdésekhez nem tartozik forrásdarab, a bíró a (csonkolt) dokumentum elejét kapja,
+legfeljebb 24\,000 karaktert; ennek következményét \az{\ref{sec:fo-bdoc}}.~szakasz tárgyalja. A
+\code{context: document} beállítás a teljes dokumentumot adja át, a pilot így futott.
 
 \section{Oktatói értékelés}
 

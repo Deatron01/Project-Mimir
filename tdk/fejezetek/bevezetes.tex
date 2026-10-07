@@ -69,9 +69,8 @@ tokenben?
 nagy, szerveren futó modell teljesítményét?
 \end{description}
 
-A kutatási kérdésekhez a következő, a fő vizsgálatban tesztelendő hipotéziseket rendeljük. A pilot
-vizsgálat (\ref{ch:eredmenyek}.~fejezet) mindegyikhez szolgáltat előzetes, leíró jellegű bizonyítékot,
-szignifikanciavizsgálatra azonban egyetlen dokumentum nem elegendő.
+A kutatási kérdésekhez a következő hipotéziseket rendeljük. Értékelésüket a pilot és a fő vizsgálat
+alapján \az{\ref{sec:hipotezis-ertekeles}}.~szakasz adja.
 
 \begin{hipotezis}[Tervezés]\label{h:terv}
 Azonos generátormodell mellett a vizsgaterv (\arm{E1}) a naiv RAG alapvonalhoz (\arm{E0}) képest
@@ -116,10 +115,12 @@ validálunk.
 \item \textbf{Kiértékelési módszertan és nyílt keretrendszer} (\ref{ch:kiertekeles}.~fejezet): tizenöt
 egytényezős kísérleti kar, kétnyelvű adatkészlet referenciakérdésekkel, formálisan definiált mutatók,
 modellcsaládon kívüli LLM-bíró, oktatói értékelési protokoll és dokumentumszintű statisztika.
-\item \textbf{Empirikus eredmények} (\ref{ch:eredmenyek}.~fejezet): a pilot vizsgálat számszerű
-eredményei, köztük két korábbi méréseket érvénytelenítő mérési hiba feltárása, a válaszszivárgás mint új
-hibamód leírása és mérése, az önellenőrzés osztályozóként való validálása, valamint a futásról futásra
-jelentkező zaj becslése, amelyekből a fő vizsgálat terve közvetlenül következik.
+\item \textbf{Empirikus eredmények} (\ref{ch:eredmenyek}.~fejezet): egy pilot vizsgálat, amely két
+korábbi méréseket érvénytelenítő mérési hibát, a válaszszivárgást mint új hibamódot és a futásról futásra
+jelentkező zajt tárta fel, valamint egy 14 karos, kilenc dokumentumos fő vizsgálat, amely szerint a helyi
+7B modellel futó tervezett és ellenőrzött csővezeték a közös dokumentumokon a naiv RAG-ot ($0{,}64$) és a
+teljes dokumentumos promptot ($0{,}83$) is felülmúlta ($0{,}96$), és elérte a teljes dokumentumot kapó
+szervermodellt ($0{,}95$).
 \end{enumerate}
 
 \section{A dolgozat felépítése}
@@ -129,7 +130,7 @@ kiegészített generálás, az ellenőrzés és a nyelvimodell-alapú kiértéke
 azonosítja a kutatási rést. \Az{\ref{ch:formalizmus}}.~fejezet a feladatot formálisan definiálja,
 bevezeti a minőségi predikátumokat és a célfüggvényt. \Az{\ref{ch:architektura}}.~fejezet a rendszer
 architektúráját, adatvédelmi mechanizmusait és erőforrás-modelljét mutatja be. \Az{\ref{ch:modszer}}.~fejezet a generálási módszer algoritmusait és azok költségelemzését tárgyalja.
-\Az{\ref{ch:kiertekeles}}.~fejezet a kiértékelési módszertant, \az{\ref{ch:eredmenyek}}.~fejezet a pilot
-eredményeit ismerteti. \Az{\ref{ch:diszkusszio}}.~fejezet az eredmények értelmezését és az érvényességet
+\Az{\ref{ch:kiertekeles}}.~fejezet a kiértékelési módszertant, \az{\ref{ch:eredmenyek}}.~fejezet a pilot és a fő
+vizsgálat eredményeit ismerteti. \Az{\ref{ch:diszkusszio}}.~fejezet az eredmények értelmezését és az érvényességet
 veszélyeztető tényezőket, \az{\ref{ch:osszefoglalas}}.~fejezet az összefoglalást és a további munkát
 tartalmazza. A függelék a promptokat, a konfigurációkat és a reprodukálás lépéseit közli.

@@ -1,0 +1,40 @@
+﻿id,forras,nyelv,hossz,tema,karakter,arany_kerdes,licenc,kiertekelve
+hu-coffee,saját,hu,short,humanities,1696,4,own,True
+hu-immune,saját,hu,short,life_sciences,1923,4,own,True
+hu-gametheory,saját,hu,short,economics,2295,4,own,True
+en-economics-short-01,OpenStax via EduQG,en,short,economics,6000,6,CC-BY-4.0,True
+en-humanities-medium-02,OpenStax via EduQG,en,medium,humanities,24937,6,CC-BY-4.0,True
+en-law-long-03,OpenStax via EduQG,en,long,law,68063,7,CC-BY-4.0,True
+en-lifesciences-short-04,OpenStax via EduQG,en,short,life_sciences,5843,4,CC-BY-4.0,True
+en-economics-medium-05,OpenStax via EduQG,en,medium,economics,16661,8,CC-BY-4.0,True
+en-humanities-long-06,OpenStax via EduQG,en,long,humanities,61045,10,CC-BY-4.0,True
+en-law-short-07,OpenStax via EduQG,en,short,law,5972,4,CC-BY-4.0,False
+en-lifesciences-medium-08,OpenStax via EduQG,en,medium,life_sciences,16844,5,CC-BY-4.0,False
+en-economics-long-09,OpenStax via EduQG,en,long,economics,64623,10,CC-BY-4.0,False
+en-humanities-short-10,OpenStax via EduQG,en,short,humanities,5963,4,CC-BY-4.0,False
+en-law-medium-11,OpenStax via EduQG,en,medium,law,6558,5,CC-BY-4.0,False
+en-lifesciences-long-12,OpenStax via EduQG,en,long,life_sciences,65246,5,CC-BY-4.0,False
+hu-wiki-short-01-nurnbergi-per,Wikipedia via MILQA,hu,short,wikipedia,4404,10,CC-BY-SA-4.0,False
+hu-wiki-medium-02-vaskapu-szoros,Wikipedia via MILQA,hu,medium,wikipedia,7919,10,CC-BY-SA-4.0,False
+hu-wiki-long-03-sclerosis-multiplex,Wikipedia via MILQA,hu,long,wikipedia,40112,10,CC-BY-SA-4.0,False
+hu-wiki-short-04-liszt-ferenc,Wikipedia via MILQA,hu,short,wikipedia,3808,10,CC-BY-SA-4.0,False
+hu-wiki-medium-05-lady-gaga,Wikipedia via MILQA,hu,medium,wikipedia,6945,10,CC-BY-SA-4.0,False
+hu-wiki-long-06-kek-balna,Wikipedia via MILQA,hu,long,wikipedia,29046,10,CC-BY-SA-4.0,False
+hu-wiki-short-07-isztambul,Wikipedia via MILQA,hu,short,wikipedia,3785,10,CC-BY-SA-4.0,False
+hu-wiki-medium-08-berlini-fal,Wikipedia via MILQA,hu,medium,wikipedia,7834,10,CC-BY-SA-4.0,False
+hu-wiki-long-09-hamburg,Wikipedia via MILQA,hu,long,wikipedia,52013,10,CC-BY-SA-4.0,False
+hu-wiki-short-10-torokorszag,Wikipedia via MILQA,hu,short,wikipedia,2394,10,CC-BY-SA-4.0,False
+hu-wiki-medium-11-seuso-kincs,Wikipedia via MILQA,hu,medium,wikipedia,9543,10,CC-BY-SA-4.0,False
+hu-wiki-long-12-matyas-templom,Wikipedia via MILQA,hu,long,wikipedia,25228,10,CC-BY-SA-4.0,False
+hu-wiki-short-13-johann-sebastian-bach,Wikipedia via MILQA,hu,short,wikipedia,5801,10,CC-BY-SA-4.0,False
+hu-wiki-medium-14-joseph-haydn,Wikipedia via MILQA,hu,medium,wikipedia,13511,10,CC-BY-SA-4.0,False
+hu-wiki-long-15-arany-janos-kolto,Wikipedia via MILQA,hu,long,wikipedia,55924,10,CC-BY-SA-4.0,False
+hu-wiki-short-16-feher-capa,Wikipedia via MILQA,hu,short,wikipedia,5728,10,CC-BY-SA-4.0,False
+hu-wiki-medium-17-gizai-nagy-piramis,Wikipedia via MILQA,hu,medium,wikipedia,8225,10,CC-BY-SA-4.0,False
+hu-wiki-long-18-pompeii,Wikipedia via MILQA,hu,long,wikipedia,65288,10,CC-BY-SA-4.0,False
+hu-wiki-short-19-asperger-szindroma,Wikipedia via MILQA,hu,short,wikipedia,5226,10,CC-BY-SA-4.0,False
+hu-wiki-medium-20-szent-gyorgyi-albert,Wikipedia via MILQA,hu,medium,wikipedia,6455,10,CC-BY-SA-4.0,False
+hu-wiki-long-21-csontvary-kosztka-tivada,Wikipedia via MILQA,hu,long,wikipedia,28749,10,CC-BY-SA-4.0,False
+hu-wiki-short-22-gardonyi-geza,Wikipedia via MILQA,hu,short,wikipedia,4294,10,CC-BY-SA-4.0,False
+hu-wiki-medium-23-wolfgang-amadeus-mozart,Wikipedia via MILQA,hu,medium,wikipedia,13677,10,CC-BY-SA-4.0,False
+hu-wiki-long-24-feher-golya,Wikipedia via MILQA,hu,long,wikipedia,47992,10,CC-BY-SA-4.0,False
