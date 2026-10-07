@@ -45,14 +45,17 @@ services:
     restart: unless-stopped
 
   minio:
-    # A minio/minio kép 2026 szeptemberében eltűnt a Docker Hubról; a Quay.io tükör még elérhető.
-    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    image: alpine:latest
     container_name: mimir-minio
     logging: *default-logging
     environment:
       MINIO_ROOT_USER: minio_admin
       MINIO_ROOT_PASSWORD: minio_password123
-    command: server /data --console-address ":9001"
+    command: >
+      sh -c "apk add --no-cache curl && 
+      curl -O https://dl.min.io/server/minio/release/linux-amd64/minio && 
+      chmod +x minio && 
+      ./minio server /data --console-address ':9001'"
     ports:
       - "9000:9000"
       - "9001:9001"
