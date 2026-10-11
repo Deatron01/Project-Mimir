@@ -1,8 +1,7 @@
-<p align="center">
-  <img src="./.github/assets/banner.svg" alt="Project Mimir — Documents in, exam questions out." width="100%" />
-</p>
+<h1 align="center">Project Mimir</h1>
 
 <p align="center">
+  Documents in, exam questions out.<br />
   <samp>FASTAPI · NODE · REACT · POSTGRESQL · REDIS · MINIO · OLLAMA · DOCKER</samp><br />
   <samp><a href="https://mimir-ai.hu/">MIMIR-AI.HU ↗</a></samp>
 </p>
@@ -119,5 +118,7 @@ The script pushes a complex document through the whole system and writes a
 <br />
 
 <p align="center">
+  <a href="https://github.com/Deatron01"><img src="https://raw.githubusercontent.com/Deatron01/Deatron01/main/assets/icon.png" width="56" alt="Dea" /></a><br />
+  <sub><i>Little chaos in a quiet mind.</i></sub><br />
   <sub><samp>MORE WORK AT <a href="https://github.com/Deatron01">GITHUB.COM/DEATRON01</a></samp></sub>
 </p>
