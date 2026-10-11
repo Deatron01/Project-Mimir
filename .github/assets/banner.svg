@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 300" width="1280" height="300" role="img" aria-label="Project Mimir — Documents in, exam questions out.">
+  <title>Project Mimir — Documents in, exam questions out.</title>
+  <defs>
+    <radialGradient id="glow" cx="86%" cy="50%" r="55%">
+      <stop offset="0" stop-color="#7d3de8" stop-opacity=".28"/>
+      <stop offset=".55" stop-color="#7d3de8" stop-opacity=".06"/>
+      <stop offset="1" stop-color="#7d3de8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <style>
+    .title { font: italic 700 98px Georgia, 'Times New Roman', 'Noto Serif', serif; fill: #f3ede2; }
+    .tagline { font: 400 21px 'Courier New', Courier, 'Liberation Mono', monospace; fill: #f3ede2; opacity: .82; letter-spacing: 1px; }
+    .tag { font: 400 17px 'Courier New', Courier, 'Liberation Mono', monospace; fill: #9a6ae8; letter-spacing: 4px; }
+    .swash { fill: none; stroke: #7d3de8; stroke-width: 6; stroke-linecap: round;
+             stroke-dasharray: 624; stroke-dashoffset: 624;
+             animation: draw 2.2s cubic-bezier(.6,0,.2,1) .3s forwards; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    @media (prefers-reduced-motion: reduce) { .swash { animation: none; stroke-dashoffset: 0; } }
+  </style>
+  <rect width="1280" height="300" rx="18" fill="#0f0d14"/>
+  <rect width="1280" height="300" rx="18" fill="url(#glow)"/>
+  <text x="84" y="157" class="title">Project Mimir</text>
+  <path class="swash" d="M88 187 C 259 185, 446 179, 668 175"/>
+  <text x="86" y="235" class="tagline">Documents in, exam questions out.</text>
+  <text x="1136" y="104" class="tag" text-anchor="middle">RAG</text>
+  <text x="1136" y="156" class="tag" text-anchor="middle">FASTAPI</text>
+  <text x="1136" y="208" class="tag" text-anchor="middle">POSTGRES</text>
+</svg>

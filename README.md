@@ -1,95 +1,123 @@
-# 🌳 Projekt Mimir
-**Intelligens Dokumentum-alapú Tesztgenerátor (IDTG)**
+<p align="center">
+  <img src="./.github/assets/banner.svg" alt="Project Mimir — Documents in, exam questions out." width="100%" />
+</p>
 
-> *"Mímir kútjából fakad a tudás és a megértés. Aki iszik belőle, meglátja a rendet a káoszban."*
+<p align="center">
+  <samp>FASTAPI · NODE · REACT · POSTGRESQL · REDIS · MINIO · OLLAMA · DOCKER</samp><br />
+  <samp><a href="https://mimir-ai.hu/">MIMIR-AI.HU ↗</a></samp>
+</p>
 
-A **Projekt Mimir** egy mesterséges intelligencia által vezérelt, mikroszolgáltatás-alapú rendszer, amely képes nyers dokumentumokból automatikusan strukturált, oktatási célú teszteket és vizsgakérdéseket generálni. A projekt különlegessége, hogy a dokumentum-feldolgozástól kezdve az AI-vezérlésen át a PDF/XML exportálásig mindent saját, "kézzel írt", mélyreható algoritmusok hajtanak végre, mellőzve a túlzottan absztrakt külső keretrendszereket.
+### <samp>01 — WHAT IT IS</samp>
 
----
+> *"From Mímir's well springs knowledge and understanding. Whoever drinks from it sees the order in the chaos."*
 
-## ✨ Főbb funkciók
+Project Mimir is an AI-driven, microservice-based system that turns raw documents into
+structured tests and exam questions. Upload a PDF or a DOCX; get back multiple-choice,
+true/false and essay questions you can edit and export.
 
-* **Dokumentum-feldolgozás:** PDF, DOCX és TXT formátumok támogatása egészen 20MB-os fájlméretig.
-* **Intelligens Tesztgenerálás:** Feleletválasztós (MCQ), igaz-hamis és kifejtős (esszé) kérdések automatikus létrehozása.
-* **Dinamikus nehézség:** A generált kérdések szintje paraméterezhető (Kezdő, Közép, Haladó).
-* **RAG-alapú pontosság:** Beépített Retrieval-Augmented Generation logika a hallucinációk minimalizálása érdekében.
-* **Interaktív Szerkesztő:** A generált tesztek valós idejű módosítása, törlése és kiegészítése a véglegesítés előtt.
-* **Multi-formátumú Export:** A kész tesztek letöltése JSON (adatcsere), Moodle XML (LMS integráció) és nyomtatható PDF formátumban.
+What sets it apart is how much of it is written by hand. Document parsing, chunking, the
+RAG pipeline, the worker pool and the PDF / XML export are all its own code rather than a
+stack of high-level frameworks, and the language model runs locally so documents never
+leave the machine.
 
----
+### <samp>02 — FEATURES</samp>
 
-## 🏛️ Architektúra és Modulok
+- **Document processing.** PDF, DOCX and TXT, up to 20 MB per file.
+- **Question generation.** Multiple-choice, true/false and essay questions.
+- **Adjustable difficulty.** Beginner, intermediate or advanced.
+- **RAG-grounded answers.** Retrieval-augmented generation keeps questions tied to the
+  source text and hallucinations down.
+- **Interactive editor.** Change, delete and add questions before you finalise a test.
+- **Export.** JSON for data exchange, Moodle XML for LMS import, and a printable PDF.
 
-A rendszer lazán csatolt, skálázható mikroszolgáltatásokból áll. A modulok az északi mitológia tudással és teremtéssel kapcsolatos elemeiről kapták a nevüket:
+### <samp>03 — ARCHITECTURE</samp>
 
-1. **🌊 Wellspring (Az Archivista):** Bináris szintű fájlfeldolgozó, amely saját logikával nyeri ki a tiszta szöveget és táblázatokat a PDF/DOCX fájlokból.
-2. **ᛋ RuneCarver (A Szobrász):** Szemantikai daraboló modul, amely mondatokra bontja a szöveget, és koszinusz-hasonlóság alapján, a témaváltásoknál hoz létre vágási pontokat.
-3. **🌈 Bifrost (A Navigátor):** A RAG-karmester. Közvetlenül kommunikál a vektoradatbázissal és az LLM API-val, összeállítva a tökéletes kontextus-promptot.
-4. **👁️ Heimdall (A Cenzor):** Szigorú JSON-sémák és megbízhatósági logikák alapján szűri az AI válaszait, megakadályozva a hallucinációkat és a prompt injection támadásokat.
-5. **⚒️ The Forge (A Gépterem):** A PostgreSQL adatbázisra és `FOR UPDATE SKIP LOCKED` logikára épülő saját worker-pool, amely optimálisan elosztja a CPU és GPU igényes feladatokat.
-6. **📜 Skald (Az Írnok):** Az exportáló motor, amely manuálisan fűzi össze a Moodle XML-t (CDATA és MathJax támogatással), és saját rajzoló logikával készíti a PDF-eket.
+Loosely coupled services, named after the parts of Norse myth that deal with knowledge and
+making things.
 
----
+| Service | Role |
+|---|---|
+| **Wellspring** (the archivist) | Parses files at the binary level and extracts clean text and tables from PDF / DOCX with its own logic |
+| **RuneCarver** (the sculptor) | Semantic chunking: splits text into sentences and cuts where cosine similarity says the topic changes |
+| **Bifrost** (the navigator) | The RAG conductor. Talks to the vector store and the LLM and assembles the context prompt |
+| **Heimdall** (the censor) | Filters model output through strict JSON schemas and confidence rules, guarding against hallucination and prompt injection |
+| **The Forge** (the engine room) | A worker pool on PostgreSQL and `FOR UPDATE SKIP LOCKED` that schedules CPU- and GPU-heavy jobs |
+| **Skald** (the scribe) | The export engine. Assembles Moodle XML by hand (CDATA and MathJax included) and draws PDFs with its own layout code |
 
-## 🛠️ Technológiai Stack
+In front of them sit an nginx API gateway and a React + TypeScript frontend.
 
-* **Háttérrendszer:** Python (FastAPI) és Node.js a szolgáltatásokhoz.
-* **Adatbázisok:** PostgreSQL a strukturált metaadatokhoz, MinIO (S3 kompatibilis) a bináris fájlokhoz.
-* **Gyorsítótár:** Redis a gyakori lekérdezések és session-ök tárolására, optimalizálva a költségeket.
-* **Biztonság:** JWT (JSON Web Token) alapú autentikáció és TLS titkosítás.
-* **Infrastruktúra:** Docker konténerizáció és Kubernetes (HPA) a felhős skálázhatóságért.
+### <samp>04 — STACK</samp>
 
+- **Backend:** Python (FastAPI) and Node.js services
+- **Data:** PostgreSQL for structured metadata, MinIO (S3-compatible) for binary files
+- **Cache:** Redis for frequent queries and sessions
+- **Security:** JWT authentication and TLS
+- **Frontend:** React, TypeScript, Vite, Tailwind, TanStack Query, i18next; tested with Vitest, Playwright and Storybook
+- **Infrastructure:** Docker Compose locally, Kubernetes (HPA) for scaling in the cloud
 
-## 🚀 Telepítés és Indítás (Getting Started)
+### <samp>05 — GETTING STARTED</samp>
 
-A Projekt Mimir mikroszolgáltatás-architektúrára épül, amelynek gerincét Docker konténerek adják, a "valódi intelligenciát" pedig egy lokálisan futtatott Nagy Nyelvi Modell (LLM) biztosítja a maximális adatvédelem érdekében.
+The services run in Docker containers. The model runs locally through Ollama.
 
-### 📋 Előfeltételek
-Mielőtt elindítanád a rendszert, győződj meg róla, hogy az alábbiak telepítve vannak a gépeden:
-* **Docker Desktop** (a mikroszolgáltatások futtatásához)
-* **Python 3.10+** (a teszt-keretrendszerhez)
-* **Ollama** (a lokális LLM futtatásához - [ollama.com](https://ollama.com/))
-* *Hardverigény:* Legalább 8GB VRAM-mal rendelkező dedikált videókártya (pl. RTX 3070 Ti) az AI gördülékeny futtatásához.
+##### Prerequisites
 
----
+- **Docker Desktop**
+- **Python 3.10+** for the test harness
+- **[Ollama](https://ollama.com/)** for the local LLM
+- A dedicated GPU with at least 8 GB of VRAM (an RTX 3070 Ti, for example)
 
-### 🧠 1. Lépés: A Lokális AI (Qwen) beüzemelése
-A Mimir jelenleg a hiper-optimalizált `hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M` modellt használja a vizsgakérdések generálására.
+##### 1. Start the local model
 
-1. Nyiss egy terminált a gazdagépen (Windows/Mac/Linux).
-2. Futtasd le az alábbi parancsot a modell letöltéséhez és elindításához:
+Mimir currently generates questions with `hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M`.
+
 ```bash
 ollama run hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M
 ```
-3. Miután a modell betöltött (megjelenik a `>>>` prompt), kiléphetsz a terminálból. **A lényeg, hogy az Ollama a háttérben továbbra is fusson!** (A Docker konténerek a `host.docker.internal:11434` címen fognak kommunikálni vele).
 
----
+Once the `>>>` prompt appears you can leave the session, but **Ollama has to keep running
+in the background**. The containers reach it at `host.docker.internal:11434`.
 
-### 🐳 2. Lépés: A Mikroszolgáltatások indítása (Docker)
-Miután az "agy" (Ollama) készen áll, elindíthatjuk a Mimir testét alkotó mikroszolgáltatásokat.
+##### 2. Start the services
 
-1. Lépj be a projekt gyökérmappájába a terminálban.
-2. Építsd fel és indítsd el a konténereket a háttérben:
+From the repository root:
+
 ```bash
 docker-compose up -d --build
 ```
-3. *Várakozás:* Az első építés eltarthat néhány percig, amíg a Docker letölti a Python image-eket, a FastAPI függőségeket, és a Bifrost vektorizáló (RAG) modelljét. 
 
----
+The first build takes a few minutes while Docker pulls the Python images, the FastAPI
+dependencies and Bifrost's embedding model.
 
-### 🧪 3. Lépés: A Rendszer tesztelése (E2E Test)
-Ha minden konténer fut (ezt a Docker Desktopban vagy a `docker ps` paranccsal ellenőrizheted), jöhet a rendszer integrációs tesztje!
+##### 3. Run the end-to-end test
 
-1. Hozz létre egy virtuális környezetet (opcionális, de ajánlott), és telepítsd a tesztelő függőségeit:
+With every container up (`docker ps`):
+
 ```bash
 pip install requests pandas matplotlib tabulate
-```
-2. Futtasd le az átfogó végpontok-közötti (End-to-End) tesztelőt:
-```bash
 python tests/tester.py
 ```
-3. **Eredmények:** A szkript automatikusan végigfuttat egy komplex szöveget a rendszeren. A teszt végén a `tests/Test_Result_[időbélyeg]/` mappában találsz egy:
-   * 📊 Színkódolt teljesítmény (Latency) grafikont.
-   * 📝 Részletes Markdown jelentést (Audit Log).
-   * 🤖 A Qwen által generált nyers JSON fájlt.
-   * 📜 A nyomtatásra kész, végleges PDF vizsgalapot.
+
+The script pushes a complex document through the whole system and writes a
+`tests/Test_Result_[timestamp]/` folder containing:
+
+- a colour-coded latency chart,
+- a detailed Markdown audit log,
+- the raw JSON the model generated,
+- the final, print-ready PDF exam sheet.
+
+### <samp>06 — ALSO IN THIS REPOSITORY</samp>
+
+| Path | What it is |
+|---|---|
+| `frontend/` | The web app, with its own [`README`](./frontend/README.md) |
+| `services/` | One folder per service listed above |
+| `api-gateway/` | nginx configuration |
+| `docs/` | Roadmap, architecture decision records, GDPR documentation (EN / HU), usability test plan |
+| `tests/` | The end-to-end tester, evaluation sets and saved test results |
+| `tdk/`, `paper/` | The research write-up and its figures and tables |
+
+<br />
+
+<p align="center">
+  <sub><samp>MORE WORK AT <a href="https://github.com/Deatron01">GITHUB.COM/DEATRON01</a></samp></sub>
+</p>
