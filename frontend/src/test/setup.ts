@@ -26,6 +26,20 @@ if (hasDom && !window.matchMedia) {
     dispatchEvent: () => false,
   })) as unknown as typeof window.matchMedia;
 }
+// framer-motion's whileInView needs IntersectionObserver; report nothing as visible.
+if (hasDom && typeof window.IntersectionObserver === 'undefined') {
+  window.IntersectionObserver = class {
+    readonly root = null;
+    readonly rootMargin = '';
+    readonly thresholds = [];
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+    takeRecords() {
+      return [];
+    }
+  } as unknown as typeof IntersectionObserver;
+}
 if (hasDom) {
   window.scrollTo = (() => undefined) as typeof window.scrollTo;
   Element.prototype.scrollTo = function scrollTo() {} as typeof Element.prototype.scrollTo;

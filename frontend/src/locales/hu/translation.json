@@ -17,7 +17,6 @@
   "meta": {
     "home": "Mimir AI – Okos vizsgagenerátor",
     "about": "Rólunk – Mimir AI",
-    "pricing": "Árazás – Mimir AI",
     "contact": "Kapcsolat – Mimir AI",
     "login": "Bejelentkezés – Mimir AI",
     "register": "Regisztráció – Mimir AI",
@@ -27,7 +26,7 @@
     "terms": "Felhasználási feltételek – Mimir AI",
     "notFound": "Az oldal nem található – Mimir AI",
     "data": "Adataim – Mimir AI",
-    "topics": "Témák – Mimir AI",
+    "topics": "Tantárgyaim – Mimir AI",
     "verify": "E-mail megerősítése – Mimir AI",
     "forgot": "Elfelejtett jelszó – Mimir AI",
     "reset": "Új jelszó – Mimir AI"
@@ -36,16 +35,15 @@
     "skipToContent": "Ugrás a tartalomra",
     "home": "Főoldal",
     "about": "Rólunk",
-    "pricing": "Árazás",
     "tests": "Tesztjeim",
     "login": "Bejelentkezés",
     "register": "Regisztráció",
     "logout": "Kijelentkezés",
-    "openApp": "Vizsgagenerátor",
+    "openApp": "Tantárgyaim megnyitása",
     "openMenu": "Menü megnyitása",
     "closeMenu": "Menü bezárása",
     "main": "Fő navigáció",
-    "topics": "Témák"
+    "topics": "Tantárgyaim"
   },
   "settings": {
     "open": "Megjelenési beállítások",
@@ -75,42 +73,49 @@
     "terms": "Felhasználási feltételek",
     "contact": "Kapcsolat",
     "rights": "© {{year}} Mimir Project. Minden jog fenntartva.",
-    "yourData": "Adataim"
+    "yourData": "Adataim",
+    "links": "Jogi információk és kapcsolat"
   },
   "home": {
-    "badge": "Az okos vizsgagenerátor új generációja",
-    "title": "Mímir kútjából fakad a <1>tudás</1>",
-    "subtitle": "Töltsd fel saját oktatási anyagaidat, és a Mimir AI másodpercek alatt professzionális vizsgakérdéseket generál belőlük egy modern, interaktív chat felületen.",
-    "ctaTry": "Próbáld ki ingyen",
-    "ctaApp": "Irány a generátor",
+    "badge": "Tanulótársad minden tantárgyhoz",
+    "title": "Jegyzetekből <1>gyakorló tesztek</1>",
+    "subtitle": "Hozz létre egy tantárgyat minden tárgyhoz, töltsd fel a PDF-jeidet és jegyzeteidet, és Mimir másodpercek alatt teszteket készít belőlük – minden kérdés a saját dokumentumaidon alapul.",
+    "ctaTry": "Kezdjük – ingyenes",
+    "ctaApp": "Tantárgyaim megnyitása",
     "howItWorks": "Hogyan működik?",
-    "mock": {
-      "title": "Mimir AI Chat",
-      "fileName": "biologia_tetelek.pdf",
-      "userMessage": "Kérlek készíts egy 10 kérdéses feleletválasztós (MCQ) vizsgát a csatolt anyagból, kifejezetten a sejtosztódás témakörére fókuszálva!",
-      "aiMessage": "Elkészült a vizsgaanyag! A feltöltött dokumentumból kinyertem a sejtosztódással kapcsolatos legfontosabb fogalmakat (mitózis, meiózis), és legeneráltam a 10 szakmailag lektorált kérdést.",
-      "check": "Hallucináció-szűrés sikeres",
-      "download": "Letöltés (PDF)"
-    },
-    "featuresTitle": "A <1>Mimir</1> architektúra előnyei",
+    "featuresTitle": "Miért <1>Mimir</1>?",
     "features": {
       "rag": {
-        "title": "RAG alapú pontosság",
-        "desc": "A rendszer szemantikus darabolást (RuneCarver) használ. Csak a feltöltött dokumentumod tényeire támaszkodik, minimalizálva az AI hallucinációt."
+        "title": "Csak a te anyagod",
+        "desc": "A kérdések a feltöltött dokumentumaidból készülnek, és mindegyik megmutatja, hol a válasz – nincsenek kitalált tények."
       },
       "secure": {
-        "title": "Zéró megőrzés",
-        "desc": "A feltöltött dokumentumokat csak a teszt elkészítéséig tároljuk, utána automatikusan töröljük, és soha nem használjuk modellek tanítására. Helyi módban a szöveg a saját szervered sem hagyja el."
+        "title": "Alapból privát",
+        "desc": "Minden tantárgy saját kulccsal titkosított, és sosem tanítunk vele MI-modelleket. Ha törlöd, végleg eltűnik."
       },
       "export": {
-        "title": "Szupergyors PDF export",
-        "desc": "A Skald engine tipográfiailag helyes, letisztult PDF fájlokat generál, amelyek azonnal nyomtathatók és felhasználhatók vizsgáztatásra."
+        "title": "Nyomtatásra kész",
+        "desc": "Tölts le tiszta PDF-et megoldókulccsal vagy anélkül, vagy exportáld Moodle-be egy kattintással."
       }
     },
-    "ctaTitle": "Készen állsz az első vizsgád legenerálására?",
-    "ctaSubtitle": "Csatlakozz a platformhoz, és spórolj órákat a vizsgaírásra szánt időből a Mimir AI segítségével.",
-    "ctaStart": "Kezdjük el!",
-    "ctaRegister": "Fiók létrehozása"
+    "ctaTitle": "Készen állsz okosabban tanulni?",
+    "ctaSubtitle": "Hozd létre az első tantárgyad egy perc alatt.",
+    "ctaStart": "Irány a tantárgyaim",
+    "ctaRegister": "Ingyenes fiók létrehozása",
+    "stepsTitle": "Három lépés, semmi bonyodalom",
+    "preview": {
+      "label": "Példa tantárgyak",
+      "classes": [
+        "Matematika",
+        "Földrajz",
+        "Biológia"
+      ],
+      "docs_one": "{{count}} dokumentum",
+      "docs_other": "{{count}} dokumentum",
+      "tests_one": "{{count}} teszt",
+      "tests_other": "{{count}} teszt",
+      "bubble": "Kérsz 10 kérdést a 3. fejezetből?"
+    }
   },
   "about": {
     "title": "A <1>Mimir</1> története",
@@ -129,40 +134,6 @@
         "desc": "Azért hoztuk létre, hogy a tanárok és oktatók órákat spóroljanak a vizsgaírással."
       }
     }
-  },
-  "pricing": {
-    "title": "Egyszerű, átlátható árazás",
-    "subtitle": "Mivel a Mimir a te saját hardvereden (lokálisan) fut, nincsenek rejtett felhőköltségek vagy API-díjak. Válassz az igényeidhez illő támogatási csomagok közül.",
-    "free": {
-      "name": "Nyílt forráskód",
-      "price": "0 Ft",
-      "period": "/ örökké",
-      "desc": "Tökéletes diákoknak és hobbistáknak, akik maguk üzemeltetik a rendszert.",
-      "features": [
-        "Teljes lokális hozzáférés",
-        "Korlátlan vizsgagenerálás",
-        "Skald PDF engine"
-      ],
-      "cta": "Letöltés GitHubról",
-      "notIncluded": [
-        "Közösségi Discord-támogatás"
-      ]
-    },
-    "pro": {
-      "badge": "Ajánlott",
-      "name": "Pro támogatás",
-      "price": "15 000 Ft",
-      "period": "/ hó",
-      "desc": "Intézményeknek és tanároknak, akik garantált működést és frissítéseket igényelnek.",
-      "features": [
-        "Minden a nyílt csomagból",
-        "Dedikált technikai beüzemelés",
-        "Prioritásos hibajavítás",
-        "Korai hozzáférés új funkciókhoz"
-      ],
-      "cta": "Előfizetés"
-    },
-    "notIncludedLabel": "nem része a csomagnak"
   },
   "contact": {
     "title": "Lépj velünk kapcsolatba",
@@ -277,7 +248,7 @@
       "renameLabel": "A beszélgetés címe",
       "deleteSession": "Beszélgetés törlése: {{title}}",
       "deleteSessionTitle": "Törlöd ezt a beszélgetést?",
-      "deleteSessionBody": "Az üzenetei és a nem mentett tesztjei törlődnek. A mentett tesztek a témában maradnak.",
+      "deleteSessionBody": "Az üzenetei és a nem mentett tesztjei törlődnek. A mentett tesztek a tantárgyban maradnak.",
       "sessionDeleted": "A beszélgetés törölve.",
       "loadOlder": "Korábbi üzenetek betöltése",
       "intent": "Mit szeretnél?",
@@ -286,16 +257,17 @@
         "ask": "Kérdés feltevése"
       },
       "placeholderGenerate": "Írd le a tesztet (nem kötelező), pl. „a fényszakaszra koncentrálj”…",
-      "placeholderAsk": "Kérdezz valamit a téma dokumentumairól…",
+      "placeholderAsk": "Kérdezz valamit a tantárgy dokumentumairól…",
       "sendGenerate": "Teszt generálása",
       "sendAsk": "Kérdés elküldése",
       "optionsSummary": "{{count}} kérdés · {{difficulty}} · {{lang}}",
-      "noFiles": "Generálás előtt tölts fel dokumentumot ebbe a témába.",
+      "noFiles": "Generálás előtt tölts fel dokumentumot ebbe a tantárgyba.",
       "filesProcessing": "A dokumentumaid feldolgozása még tart – ez körülbelül egy perc.",
-      "goToFiles": "Ugrás a fájlokhoz",
+      "goToFiles": "Ugrás a dokumentumokhoz",
       "reviewTest": "Teszt átnézése és szerkesztése",
-      "welcomeTitle": "Kezdjünk a(z) „{{name}}” témán",
-      "welcomeBody": "Kérj tesztet, és lent állítsd be a kérdések számát, típusát és nehézségét – vagy kérdezz a dokumentumokról. Minden ebben a témában marad."
+      "welcomeTitle": "Tanuljunk: „{{name}}”!",
+      "welcomeBody": "Válaszd a „Teszt készítése” lehetőséget, hogy új kérdéseket kapj a dokumentumaidból, vagy a „Kérdés feltevése” lehetőséget, hogy forrásokkal alátámasztott választ kapj. Minden ebben a tantárgyban marad.",
+      "optionsButton": "Teszt beállításai"
     }
   },
   "editor": {
@@ -359,7 +331,7 @@
     }
   },
   "tests": {
-    "title": "Generált vizsgaanyagok",
+    "title": "Tesztjeim",
     "subtitle": "Itt találod az összes korábban elkészített tesztedet, amelyeket bármikor újra letölthetsz.",
     "loadError": "Nem sikerült betölteni a tesztek előzményeit.",
     "downloadError": "A letöltés sikertelen.",
@@ -380,10 +352,10 @@
     "deleteTitle": "Törlöd ezt a tesztet?",
     "deleteBody": "A(z) „{{title}}” véglegesen törlődik.",
     "v1": {
-      "subtitle": "A megtartott tesztjeid témák szerint csoportosítva.",
-      "retention": "A mentett tesztek addig maradnak meg, amíg nem törlöd őket vagy a témájukat. A témák 90 nap aktivitás nélkül törlődnek.",
-      "emptyDesc": "Nyiss meg egy témát, generálj tesztet, és jelöld be a „Mentés a Tesztjeim közé” lehetőséget.",
-      "goToTopics": "Ugrás a témákhoz"
+      "subtitle": "A megtartott tesztjeid tantárgyak szerint csoportosítva.",
+      "retention": "A mentett tesztek addig maradnak meg, amíg nem törlöd őket vagy a tantárgyukat. A tantárgyak 90 nap aktivitás nélkül törlődnek.",
+      "emptyDesc": "Nyiss meg egy tantárgyat, generálj tesztet, és jelöld be a „Mentés a Tesztjeim közé” lehetőséget.",
+      "goToTopics": "Ugrás a tantárgyaimhoz"
     }
   },
   "notFound": {
@@ -656,18 +628,18 @@
     "INVALID_CREDENTIALS": "Hibás e-mail-cím vagy jelszó.",
     "EMAIL_NOT_VERIFIED": "Előbb erősítsd meg az e-mail-címed – regisztrációkor küldtünk egy linket.",
     "FORBIDDEN": "Ehhez nincs hozzáférésed.",
-    "TOPIC_NOT_FOUND": "Ez a téma nem létezik, vagy törölték.",
+    "TOPIC_NOT_FOUND": "Ez a tantárgy nem létezik, vagy törölték.",
     "FILE_NOT_FOUND": "Ez a fájl már nem létezik.",
     "SESSION_NOT_FOUND": "Ez a beszélgetés már nem létezik.",
     "TEST_NOT_FOUND": "Ez a teszt már nem létezik.",
     "JOB_NOT_FOUND": "Ez a feladat már nem létezik.",
-    "TOPIC_DELETING": "Ez a téma éppen törlődik.",
-    "FILE_NOT_READY": "A téma egyik dokumentumának feldolgozása sem fejeződött még be. Várj egy kicsit, vagy tölts fel egyet.",
+    "TOPIC_DELETING": "Ez a tantárgy éppen törlődik.",
+    "FILE_NOT_READY": "A tantárgy egyik dokumentumának feldolgozása sem fejeződött még be. Várj egy kicsit, vagy tölts fel egyet.",
     "EMAIL_TAKEN": "Ez az e-mail-cím már regisztrálva van.",
     "JOB_IN_PROGRESS": "Ez már folyamatban van.",
     "FILE_TOO_LARGE": "A fájl túl nagy (korlát: {{limitMb}} MB).",
     "TOPIC_QUOTA_EXCEEDED": "Elérted ennek a korlátját.",
-    "TOPIC_STORAGE_EXCEEDED": "A témában nincs több tárhely (korlát: {{limitMb}} MB). Előbb törölj egy fájlt.",
+    "TOPIC_STORAGE_EXCEEDED": "A tantárgyban nincs több tárhely (korlát: {{limitMb}} MB). Előbb törölj egy fájlt.",
     "NO_TEXT_EXTRACTED": "Ebből a dokumentumból nem sikerült szöveget kinyerni. Szkennelt kép? Próbálj szöveges PDF-et.",
     "GENERATION_INVALID": "Az AI érvénytelen tesztet adott vissza. Kérjük, próbáld újra.",
     "RATE_LIMITED": "Túl sok kérés. Várj egy percet, és próbáld újra.",
@@ -678,16 +650,16 @@
     "MODEL_UNAVAILABLE": "A választott modell nem érhető el. Válassz másikat, vagy hagyd automatikuson."
   },
   "topics": {
-    "title": "Témák",
-    "subtitle": "Minden téma külön őrzi a saját dokumentumait, beszélgetéseit és tesztjeit – a témák között semmi nem keveredik.",
-    "search": "Keresés a témák között",
-    "noMatch": "Nincs a(z) „{{q}}” keresésnek megfelelő téma.",
-    "resultCount_one": "{{count}} téma",
-    "resultCount_other": "{{count}} téma",
-    "quota": "{{count}} / {{max}} téma",
-    "quotaReached": "Elérted a {{max}} témás korlátot. Új téma létrehozásához törölj egyet.",
-    "emptyTitle": "Hozd létre az első témád",
-    "emptyDesc": "A téma egy tantárgy vagy tanegység munkaterülete: egyszer töltsd fel a dokumentumait, utána annyi tesztet készíthetsz, amennyi kell.",
+    "title": "Tantárgyaim",
+    "subtitle": "Minden tantárgy külön őrzi a saját dokumentumait, beszélgetéseit és tesztjeit – a tantárgyak között semmi nem keveredik.",
+    "search": "Keresés a tantárgyak között",
+    "noMatch": "Nincs a(z) „{{q}}” keresésnek megfelelő tantárgy.",
+    "resultCount_one": "{{count}} tantárgy",
+    "resultCount_other": "{{count}} tantárgy",
+    "quota": "{{count}} / {{max}} tantárgy",
+    "quotaReached": "Elérted a {{max}} tantárgyas korlátot. Új tantárgy létrehozásához törölj egyet.",
+    "emptyTitle": "Hozd létre az első tantárgyad",
+    "emptyDesc": "A tantárgy egy mappa egyetlen tárgyhoz, például matekhoz vagy földrajzhoz. Egyszer töltsd fel a dokumentumait, utána annyi tesztet készíthetsz, amennyi kell.",
     "noDescription": "Nincs leírás",
     "deleting": "Törlés…",
     "expiresSoon_one": "Aktivitás nélkül {{count}} nap múlva törlődik",
@@ -711,21 +683,43 @@
     },
     "fields": {
       "name": "Név",
-      "namePlaceholder": "pl. Biológia 9. – Fotoszintézis",
+      "namePlaceholder": "pl. Matematika, Földrajz, Biológia 9",
       "description": "Leírás",
-      "descriptionPlaceholder": "Miről szól ez a téma? Kinek készül?"
+      "descriptionPlaceholder": "Miről szól ez a tantárgy? pl. „3. fejezet: törtek”"
     },
     "new": {
-      "button": "Új téma",
-      "title": "Új téma",
-      "subtitle": "Adj nevet a témának; dokumentumokat most vagy később is feltölthetsz.",
+      "button": "Új tantárgy",
+      "title": "Új tantárgy",
+      "subtitle": "Adj nevet a tantárgynak; dokumentumokat most vagy később is feltölthetsz.",
       "documents": "Dokumentumok",
-      "create": "Téma létrehozása",
+      "create": "Tantárgy létrehozása",
       "createAndUpload": "Létrehozás és feltöltés",
-      "nameRequired": "Adj nevet a témának.",
-      "created": "A(z) „{{name}}” téma elkészült.",
-      "uploadFailed": "A téma elkészült, de a feltöltés nem sikerült: {{reason}}"
-    }
+      "nameRequired": "Adj nevet a tantárgynak.",
+      "created": "A(z) „{{name}}” tantárgy elkészült.",
+      "uploadFailed": "A tantárgy elkészült, de a feltöltés nem sikerült: {{reason}}"
+    },
+    "greeting": "Melyik tantárggyal foglalkozunk ma?",
+    "mascotHello": "Válassz egy tantárgyat a folytatáshoz, vagy készíts újat egy másik tárgyhoz.",
+    "mascotEmpty": "Hozzuk létre az első tantárgyad – csak egy perc!",
+    "steps": {
+      "title": "Így működik",
+      "create": {
+        "title": "Hozz létre egy tantárgyat",
+        "desc": "Tárgyanként egyet: matek, földrajz, történelem…"
+      },
+      "upload": {
+        "title": "Tölts fel dokumentumokat",
+        "desc": "Jegyzetek, diák vagy tankönyvfejezetek (PDF, Word, szöveg)."
+      },
+      "generate": {
+        "title": "Készíts teszteket",
+        "desc": "Kérj tesztet Mimirtől – a kérdések csak a dokumentumaidból készülnek."
+      }
+    },
+    "card": {
+      "addDocs": "A kezdéshez tölts fel dokumentumot"
+    },
+    "quotaLabel": "Tantárgykorlát"
   },
   "upload": {
     "drop": "Húzd ide a fájlokat, vagy",
@@ -733,31 +727,31 @@
     "selected": "Kiválasztott fájlok",
     "remove": "{{name}} eltávolítása",
     "progress": "Feltöltés… {{pct}}%",
-    "limits": "{{types}} · fájlonként max. {{fileMb}} MB · egyszerre {{perUpload}} fájl · témánként {{perTopic}} fájl / {{topicMb}} MB",
+    "limits": "{{types}} · fájlonként max. {{fileMb}} MB · egyszerre {{perUpload}} fájl · tantárgyanként {{perTopic}} fájl / {{topicMb}} MB",
     "rejected": {
       "type": "{{name}}: nem támogatott fájltípus.",
       "size": "{{name}}: a fájl túl nagy.",
       "count": "{{name}}: túl sok fájl.",
-      "storage": "{{name}}: nincs elég hely ebben a témában.",
+      "storage": "{{name}}: nincs elég hely ebben a tantárgyban.",
       "duplicate": "{{name}} már ki van választva."
     },
     "consent": {
       "label": "Megerősítem, hogy jogosult vagyok ezeket a dokumentumokat felhasználni, és nem tartalmaznak különleges adatot (pl. egészségügyi adatot) vagy diákokra vonatkozó személyes adatot.",
-      "details": "A dokumentumokat a téma saját kulcsával titkosítva tároljuk, és csak a tesztjeid elkészítéséhez használjuk. A téma törlésekor a kulcsot megsemmisítjük, így minden másolat azonnal olvashatatlanná válik.",
+      "details": "A dokumentumokat a tantárgy saját kulcsával titkosítva tároljuk, és csak a tesztjeid elkészítéséhez használjuk. A tantárgy törlésekor a kulcsot megsemmisítjük, így minden másolat azonnal olvashatatlanná válik.",
       "more": "Adatkezelési tájékoztató",
       "required": "A feltöltéshez jelöld be a négyzetet."
     }
   },
   "workspace": {
     "breadcrumb": "Navigációs útvonal",
-    "sections": "A téma részei",
-    "backToTopics": "Vissza a témákhoz",
-    "deletedElsewhere": "Ezt a témát törölték.",
-    "notFoundTitle": "A téma nem található",
+    "sections": "A tantárgy részei",
+    "backToTopics": "Vissza a tantárgyaimhoz",
+    "deletedElsewhere": "Ezt a tantárgyat törölték.",
+    "notFoundTitle": "A tantárgy nem található",
     "notFoundDesc": "Lehet, hogy törölték, vagy hibás a link.",
     "tabs": {
       "chat": "Beszélgetés",
-      "files": "Fájlok",
+      "files": "Dokumentumok",
       "tests": "Tesztek"
     },
     "stream": {
@@ -767,22 +761,24 @@
       "closed": "Offline – időnként frissül"
     },
     "header": {
-      "editLabel": "Téma szerkesztése",
-      "saved": "A téma frissült.",
+      "editLabel": "Tantárgy szerkesztése",
+      "saved": "A tantárgy frissült.",
       "storage": "Tárhely",
       "expires": "Automatikus törlés",
-      "expiryHelp": "A témák 90 nap aktivitás nélkül automatikusan törlődnek. Bármilyen aktivitás kitolja a dátumot.",
+      "expiryHelp": "A tantárgyak 90 nap aktivitás nélkül automatikusan törlődnek. Bármilyen aktivitás kitolja a dátumot.",
       "live": "Élő frissítés",
-      "delete": "Téma törlése",
-      "deleteTitle": "Törlöd ezt a témát?",
+      "delete": "Tantárgy törlése",
+      "deleteTitle": "Törlöd ezt a tantárgyat?",
       "deleteConfirm": "Végleges törlés",
-      "deleteBody": "A téma törlődik a(z) {{files}} fájljával, minden beszélgetésével és tesztjével együtt, beleértve {{saved}} mentett tesztet is. Ez nem vonható vissza.",
-      "deleteCrypto": "Először a téma titkosítási kulcsát semmisítjük meg, így minden megmaradt másolat (a biztonsági mentéseket is beleértve) azonnal olvashatatlanná válik.",
-      "deleteStarted": "„{{name}}” törlése folyamatban…"
+      "deleteBody": "A tantárgy törlődik a(z) {{files}} fájljával, minden beszélgetésével és tesztjével együtt, beleértve {{saved}} mentett tesztet is. Ez nem vonható vissza.",
+      "deleteCrypto": "Először a tantárgy titkosítási kulcsát semmisítjük meg, így minden megmaradt másolat (a biztonsági mentéseket is beleértve) azonnal olvashatatlanná válik.",
+      "deleteStarted": "„{{name}}” törlése folyamatban…",
+      "more": "További műveletek",
+      "stats": "A tantárgy adatai"
     },
     "tests": {
-      "title": "A téma tesztjei",
-      "retention": "A nem mentett tesztek ideiglenesek: a beszélgetésükkel vagy a témával együtt törlődnek. Mentsd el, amelyiket meg akarod tartani.",
+      "title": "A tantárgy tesztjei",
+      "retention": "A nem mentett tesztek ideiglenesek: a beszélgetésükkel vagy a tantárggyal együtt törlődnek. Mentsd el, amelyiket meg akarod tartani.",
       "filter": "Megjelenítés",
       "all": "Összes",
       "saved": "Mentett",
@@ -807,6 +803,17 @@
       "leaveTitle": "Kilépsz mentés nélkül?",
       "leaveBody": "A teszt módosításait nem mentetted, és elvesznek.",
       "leaveConfirm": "Kilépés"
+    },
+    "switcher": {
+      "title": "Tantárgyaim",
+      "label": "Tantárgy váltása",
+      "current": "Aktuális tantárgy: {{name}}",
+      "search": "Tantárgy keresése",
+      "noMatch": "Nincs ilyen tantárgy",
+      "new": "Új tantárgy",
+      "all": "Összes tantárgy",
+      "counts": "{{files}} dok. · {{saved}} mentett",
+      "close": "Tantárgylista bezárása"
     }
   },
   "generate": {
@@ -895,7 +902,7 @@
     "indicator_one": "{{count}} feladat fut",
     "indicator_other": "{{count}} feladat fut",
     "panelTitle": "Futó feladatok",
-    "openTopic": "Téma megnyitása",
+    "openTopic": "Tantárgy megnyitása",
     "queued": "Sorban – {{position}}. hely",
     "status": {
       "queued": "Indulásra vár",
@@ -920,7 +927,7 @@
       "generate_test": "Teszt generálása",
       "answer_question": "Válasz egy kérdésre",
       "regenerate_question": "Kérdés újragenerálása",
-      "delete_topic": "Téma törlése",
+      "delete_topic": "Tantárgy törlése",
       "export_account": "Adatexport előkészítése",
       "delete_account": "Fiók törlése"
     }
@@ -982,5 +989,40 @@
     "leavesMachine": "Az adat elhagyja ezt a szervert",
     "staysLocal": "Az adat ezen a szerveren marad",
     "madeWith": "Készítette: {{model}}"
+  },
+  "help": {
+    "label": "Súgó: {{topic}}",
+    "class": "A tantárgy egy mappa egyetlen tárgyhoz, például matekhoz vagy földrajzhoz. A dokumentumai, beszélgetései és tesztjei együtt maradnak, és nem keverednek más tantárgyakkal.",
+    "quota": "Ennyi tantárgyad lehet egyszerre. Új tantárgyhoz törölj egy régit.",
+    "sort": "A tantárgyak sorrendje: legutóbb használt, ábécé szerinti vagy a legújabb elöl.",
+    "switcher": "Ugrás egy másik tantárgyra. Ugyanazon a fülön maradsz (Chat, Dokumentumok vagy Tesztek).",
+    "tabs": "Chat: kérdezz vagy kérj tesztet. Dokumentumok: a fájlok, amelyekből a tantárgy tanul. Tesztek: minden, amit itt generáltál.",
+    "storage": "Ennyi helyet foglalnak a tantárgy dokumentumai.",
+    "live": "Ha itt „Élő” látszik, az oldal magától frissül, amikor egy dokumentum feldolgozása vagy egy teszt elkészül.",
+    "upload": "Tölts fel jegyzeteket, diákat vagy tankönyvfejezeteket. Mimir elolvassa és rövid szakaszokra bontja őket, így minden kérdés visszavezethető a forrására.",
+    "consent": "Meg kell erősítened, hogy jogosult vagy a dokumentumok használatára, és nincs bennük érzékeny személyes adat.",
+    "usage": "Minden tantárgyban korlátozott, hány dokumentum fér el, és mennyi helyet foglalhatnak.",
+    "fileStatus": "Feltöltés után minden dokumentum ezeken megy át: Sorban áll → Szöveg kinyerése → Darabolás → Indexelés → Kész. Tesztet akkor készíthetsz, ha legalább egy dokumentum Kész.",
+    "sessions": "Minden beszélgetés külön őrzi az előzményeit. Kezdj újat, ha tiszta lappal indulnál ugyanabban a tantárgyban.",
+    "intent": "A „Teszt készítése” új kérdéseket készít a dokumentumaidból. A „Kérdés feltevése” forrásokkal alátámasztott választ ad, tesztkészítés nélkül.",
+    "options": "Állítsd be, hány és milyen típusú kérdést kérsz, milyen nehézséggel és milyen nyelven.",
+    "count": "Hány kérdésből álljon a teszt (1–50).",
+    "types": "Feleletválasztós: válaszd ki a jó választ. Igaz/hamis: döntsd el, igaz-e az állítás. Kifejtős: válaszolj a saját szavaiddal.",
+    "difficulty": "A könnyű kérdések tényeket kérdeznek, a nehezek összefüggések felismerését és alkalmazását kívánják.",
+    "examLanguage": "A kérdések nyelve – eltérhet a dokumentumaid nyelvétől.",
+    "mode": "A Gyors gyakorláshoz jó. Az Alapos minden kérdést ellenőriz a dokumentumaid alapján, ezért kicsit tovább tart.",
+    "model": "A kérdéseket író MI. Az „Automatikus” a legjobb elérhetőt választja.",
+    "sources": "Vedd ki a pipát azokból a dokumentumokból, amelyekből nem kérsz kérdést.",
+    "tests": "A nem mentett tesztek ideiglenesek. Nyisd meg a tesztet, és jelöld be a „Mentés a Tesztjeim közé” lehetőséget, hogy megmaradjon.",
+    "myTests": "Csak az elmentett tesztjeid jelennek meg itt. Bármikor újra letöltheted őket.",
+    "export": "Töltsd le a tesztet nyomtatható PDF-ként, vagy Moodle-be és más oktatási rendszerekbe importálható fájlként.",
+    "aiReview": "Az MI tévedhet. Olvasd át a kérdéseket, és javíts ki mindent, ami hibás, mielőtt használod a tesztet.",
+    "palette": "Válaszd ki a kedvenc színeidet. Minden színtémának saját kabalája van!",
+    "mode2": "Világos, sötét, vagy kövesse az eszközöd beállítását.",
+    "description": "Nem kötelező megjegyzés, hogy emlékezz, mit tartalmaz a tantárgy."
+  },
+  "mascot": {
+    "alt": "A(z) {{palette}} téma kabalája",
+    "preview": "A kabalád"
   }
 }

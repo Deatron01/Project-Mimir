@@ -34,8 +34,9 @@ export default function DevMailbox() {
     window.location.assign('/');
   };
 
+  // Sits above the phone tab bar of the class workspace.
   return (
-    <div className="fixed bottom-4 left-4 z-[70] text-xs">
+    <div className="fixed bottom-24 left-4 z-[70] text-xs md:bottom-4">
       {open ? (
         <div className="w-80 rounded-2xl border border-warning/60 bg-background/95 p-4 shadow-2xl backdrop-blur-xl">
           <div className="mb-2 flex items-center justify-between">

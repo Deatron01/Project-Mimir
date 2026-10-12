@@ -9,8 +9,8 @@ describe('TopicExplorer', () => {
     await loginDemo();
     renderRoutes([{ path: '/topics', element: <TopicExplorer /> }], { initialPath: '/topics' });
     expect(await screen.findByRole('link', { name: /Fotoszintézis \(demo\)/ })).toBeInTheDocument();
-    expect(screen.getByText('1 of 50 topics')).toBeInTheDocument();
-    await userEvent.type(screen.getByRole('searchbox', { name: 'Search topics' }), 'zzz');
-    expect(await screen.findByText('No topic matches “zzz”.')).toBeInTheDocument();
+    expect(screen.getByText('1 of 50 classes')).toBeInTheDocument();
+    await userEvent.type(screen.getByRole('searchbox', { name: 'Search classes' }), 'zzz');
+    expect(await screen.findByText('No class matches “zzz”.')).toBeInTheDocument();
   });
 });

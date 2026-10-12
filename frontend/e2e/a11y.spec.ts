@@ -35,9 +35,10 @@ for (const palette of palettes.palettes.map((p) => p.id)) {
 test('dialog traps focus and closes on Escape', async ({ page }) => {
   await prepare(page);
   await login(page);
-  const opener = page.getByRole('button', { name: 'New topic' });
+  // The header button (the dashed "New class" card further down opens the same dialog).
+  const opener = page.getByRole('button', { name: 'New class' }).first();
   await opener.click();
-  const dialog = page.getByRole('dialog', { name: 'New topic' });
+  const dialog = page.getByRole('dialog', { name: 'New class' });
   await expect(dialog.getByLabel(/^Name/)).toBeFocused();
   for (let i = 0; i < 12; i += 1) await page.keyboard.press('Tab');
   expect(await dialog.evaluate((d) => d.contains(document.activeElement))).toBe(true);

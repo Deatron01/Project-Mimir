@@ -24,7 +24,7 @@ describe('NewTopicModal', () => {
   it('is an accessible modal that focuses the name field', async () => {
     await loginDemo();
     setup();
-    const dialog = await screen.findByRole('dialog', { name: 'New topic' });
+    const dialog = await screen.findByRole('dialog', { name: 'New class' });
     expect(dialog).toHaveAttribute('aria-modal', 'true');
     await waitFor(() => expect(screen.getByLabelText(/^Name/)).toHaveFocus());
   });
@@ -32,8 +32,8 @@ describe('NewTopicModal', () => {
   it('requires a name', async () => {
     await loginDemo();
     setup();
-    await userEvent.click(await screen.findByRole('button', { name: 'Create topic' }));
-    expect(await screen.findByText('Give the topic a name.')).toBeInTheDocument();
+    await userEvent.click(await screen.findByRole('button', { name: 'Create class' }));
+    expect(await screen.findByText('Give the class a name.')).toBeInTheDocument();
     expect(screen.getByLabelText(/^Name/)).toHaveAttribute('aria-invalid', 'true');
   });
 

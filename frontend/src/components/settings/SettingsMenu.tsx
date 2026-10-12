@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import { LANGUAGES } from '../../i18n';
 import SegmentedControl from '../ui/SegmentedControl';
+import HelpTip from '../ui/HelpTip';
+import Mascot from '../mascot/Mascot';
 import { cn } from '../../utils/cn';
 
 /** Appearance panel: language, light/dark/system mode and colour palette. */
@@ -25,7 +27,12 @@ export function SettingsPanelContent() {
       </section>
 
       <section>
-        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-muted">{t('settings.mode')}</h3>
+        <div className="mb-2 flex items-center gap-0.5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-muted">{t('settings.mode')}</h3>
+          <HelpTip label={t('settings.mode')} size={13}>
+            {t('help.mode2')}
+          </HelpTip>
+        </div>
         <SegmentedControl
           label={t('settings.mode')}
           value={mode}
@@ -39,7 +46,12 @@ export function SettingsPanelContent() {
       </section>
 
       <section>
-        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-muted">{t('settings.palette')}</h3>
+        <div className="mb-2 flex items-center gap-0.5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-muted">{t('settings.palette')}</h3>
+          <HelpTip label={t('settings.palette')} size={13}>
+            {t('help.palette')}
+          </HelpTip>
+        </div>
         <div role="radiogroup" aria-label={t('settings.palette')} className="grid grid-cols-2 gap-2">
           {palettes.map((p) => {
             const active = p.id === paletteId;
@@ -66,7 +78,10 @@ export function SettingsPanelContent() {
                     </span>
                   ))}
                 </span>
-                <span className="text-xs font-medium leading-tight text-textMain">{name}</span>
+                <span className="flex items-center gap-1.5">
+                  <Mascot paletteId={p.id} size={26} float={false} />
+                  <span className="text-xs font-medium leading-tight text-textMain">{name}</span>
+                </span>
                 {active && (
                   <span className="absolute right-1.5 top-1.5 rounded-full bg-primary p-0.5 text-onPrimary">
                     <Check size={10} strokeWidth={3} aria-hidden="true" />

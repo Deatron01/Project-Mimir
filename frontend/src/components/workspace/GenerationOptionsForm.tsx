@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import SegmentedControl from '../ui/SegmentedControl';
+import HelpTip from '../ui/HelpTip';
 import ModelSelect, { AUTO_MODEL, validModel } from '../generation/ModelSelect';
 import { useModels } from '../../api/hooks/models';
 import type { GenerationOptions, QuestionType, TopicFile } from '../../api/types';
@@ -58,9 +59,14 @@ export default function GenerationOptionsForm({
     <fieldset disabled={disabled} className="grid gap-4 rounded-2xl border border-border/40 bg-surface/30 p-4 text-sm sm:grid-cols-2">
       <legend className="sr-only">{t('generate.legend')}</legend>
       <div>
-        <label htmlFor="gen-count" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted">
-          {t('generate.count')}
-        </label>
+        <div className="mb-1 flex items-center gap-0.5">
+          <label htmlFor="gen-count" className="text-xs font-semibold uppercase tracking-wider text-muted">
+            {t('generate.count')}
+          </label>
+          <HelpTip label={t('generate.count')} size={13}>
+            {t('help.count')}
+          </HelpTip>
+        </div>
         <input
           id="gen-count"
           type="number"
@@ -73,12 +79,17 @@ export default function GenerationOptionsForm({
       </div>
 
       <div>
-        <span id="gen-types" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted">
-          {t('generate.types')}
-        </span>
+        <div className="mb-1 flex items-center gap-0.5">
+          <span id="gen-types" className="text-xs font-semibold uppercase tracking-wider text-muted">
+            {t('generate.types')}
+          </span>
+          <HelpTip label={t('generate.types')} size={13}>
+            {t('help.types')}
+          </HelpTip>
+        </div>
         <div role="group" aria-labelledby="gen-types" className="flex flex-wrap gap-3">
           {TYPES.map((type) => (
-            <label key={type} className="flex items-center gap-1.5">
+            <label key={type} className="flex min-h-[2.25rem] cursor-pointer items-center gap-1.5">
               <input
                 type="checkbox"
                 checked={value.types.includes(type)}
@@ -92,9 +103,14 @@ export default function GenerationOptionsForm({
       </div>
 
       <div>
-        <label htmlFor="gen-difficulty" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted">
-          {t('generate.difficulty')}
-        </label>
+        <div className="mb-1 flex items-center gap-0.5">
+          <label htmlFor="gen-difficulty" className="text-xs font-semibold uppercase tracking-wider text-muted">
+            {t('generate.difficulty')}
+          </label>
+          <HelpTip label={t('generate.difficulty')} size={13}>
+            {t('help.difficulty')}
+          </HelpTip>
+        </div>
         <select
           id="gen-difficulty"
           value={value.difficulty}
@@ -110,7 +126,12 @@ export default function GenerationOptionsForm({
       </div>
 
       <div>
-        <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted">{t('generate.examLanguage')}</span>
+        <div className="mb-1 flex items-center gap-0.5">
+          <span className="text-xs font-semibold uppercase tracking-wider text-muted">{t('generate.examLanguage')}</span>
+          <HelpTip label={t('generate.examLanguage')} size={13}>
+            {t('help.examLanguage')}
+          </HelpTip>
+        </div>
         <SegmentedControl
           label={t('generate.examLanguage')}
           value={value.exam_language}
@@ -124,7 +145,12 @@ export default function GenerationOptionsForm({
       </div>
 
       <div className="sm:col-span-2">
-        <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted">{t('generate.mode')}</span>
+        <div className="mb-1 flex items-center gap-0.5">
+          <span className="text-xs font-semibold uppercase tracking-wider text-muted">{t('generate.mode')}</span>
+          <HelpTip label={t('generate.mode')} size={13}>
+            {t('help.mode')}
+          </HelpTip>
+        </div>
         <SegmentedControl
           label={t('generate.mode')}
           value={value.mode}
@@ -151,12 +177,17 @@ export default function GenerationOptionsForm({
 
       {readyFiles.length > 1 && (
         <div className="sm:col-span-2">
-          <span id="gen-files" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted">
-            {t('generate.sources')} {allFiles && <span className="font-normal normal-case">({t('generate.allFiles')})</span>}
-          </span>
+          <div className="mb-1 flex items-center gap-0.5">
+            <span id="gen-files" className="text-xs font-semibold uppercase tracking-wider text-muted">
+              {t('generate.sources')} {allFiles && <span className="font-normal normal-case">({t('generate.allFiles')})</span>}
+            </span>
+            <HelpTip label={t('generate.sources')} size={13}>
+              {t('help.sources')}
+            </HelpTip>
+          </div>
           <div role="group" aria-labelledby="gen-files" className="flex flex-col gap-1.5">
             {readyFiles.map((f) => (
-              <label key={f.id} className="flex items-center gap-2">
+              <label key={f.id} className="flex min-h-[2.25rem] cursor-pointer items-center gap-2">
                 <input
                   type="checkbox"
                   checked={allFiles || value.file_ids!.includes(f.id)}

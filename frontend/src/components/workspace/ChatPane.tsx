@@ -1,9 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { AlertTriangle, BookOpen, Bot, Check, FileWarning, MessageSquarePlus, Pencil, RotateCcw, Send, Settings2, Trash2, User, X } from 'lucide-react';
+import { AlertTriangle, BookOpen, Check, ChevronDown, FileWarning, MessageSquarePlus, MessagesSquare, Pencil, RotateCcw, Send, Settings2, Sparkles, Trash2, User, X } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
 import SegmentedControl from '../ui/SegmentedControl';
+import HelpTip from '../ui/HelpTip';
+import Mascot from '../mascot/Mascot';
+import type { MascotMood } from '../../theme/mascots';
 import ConfirmDialog from '../common/ConfirmDialog';
 import ErrorNotice, { useErrorText } from '../common/ErrorNotice';
 import Spinner from '../common/Spinner';
@@ -33,9 +37,9 @@ export default function ChatPane({ topic }: { topic: Topic }) {
   }, [sessionId, sessions.data, navigate, topic.id]);
 
   return (
-    <div className="grid gap-4 lg:h-[min(80vh,54rem)] lg:grid-cols-[16rem_minmax(0,1fr)]">
+    <div className="grid gap-4 xl:h-[min(80vh,54rem)] xl:grid-cols-[15rem_minmax(0,1fr)]">
       <SessionList topicId={topic.id} sessions={sessions.data ?? []} loading={sessions.isPending} activeId={sessionId} />
-      <section aria-label={t('chat.v1.conversation')} className="card flex h-[80vh] min-h-[28rem] flex-col overflow-hidden lg:h-auto">
+      <section aria-label={t('chat.v1.conversation')} className="card flex h-[calc(100dvh-13rem)] min-h-[28rem] flex-col overflow-hidden md:h-[75vh] xl:h-auto">
         {sessions.isError ? (
           <ErrorNotice className="m-4" error={sessions.error} onRetry={() => void sessions.refetch()} />
         ) : (
@@ -57,6 +61,8 @@ function SessionList({ topicId, sessions, loading, activeId }: { topicId: string
   const [editing, setEditing] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [toDelete, setToDelete] = useState<ChatSession | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const active = sessions.find((s) => s.id === activeId);
 
   const newChat = async () => {
     try {
@@ -89,86 +95,114 @@ function SessionList({ topicId, sessions, loading, activeId }: { topicId: string
   };
 
   return (
-    <aside aria-label={t('chat.v1.sessions')} className="card flex max-h-64 flex-col p-3 lg:max-h-none">
-      <Button size="sm" variant="outline" className="mb-3 w-full" onClick={() => void newChat()} isLoading={create.isPending}>
-        <MessageSquarePlus size={16} aria-hidden="true" /> {t('chat.v1.newChat')}
-      </Button>
-      {loading ? (
-        <Spinner className="py-6" />
-      ) : sessions.length === 0 ? (
-        <p className="px-2 py-4 text-center text-xs text-muted">{t('chat.v1.noSessions')}</p>
-      ) : (
-        <ul className="-mx-1 flex flex-col gap-1 overflow-y-auto px-1">
-          {sessions.map((s) => (
-            <li key={s.id}>
-              {editing === s.id ? (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    void saveTitle(s.id);
-                  }}
-                  className="flex items-center gap-1"
-                >
-                  <label htmlFor={`rename-${s.id}`} className="sr-only">
-                    {t('chat.v1.renameLabel')}
-                  </label>
-                  <input
-                    id={`rename-${s.id}`}
-                    value={title}
-                    maxLength={120}
-                    onChange={(e) => setTitle(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Escape' && setEditing(null)}
-                    className="field min-w-0 flex-1 px-3 py-1.5 text-sm"
-                    // eslint-disable-next-line jsx-a11y/no-autofocus -- opened by the rename button
-                    autoFocus
-                  />
-                  <button type="submit" aria-label={t('common.save')} className="rounded-full p-1.5 text-success hover:bg-success/10">
-                    <Check size={14} aria-hidden="true" />
-                  </button>
-                  <button type="button" onClick={() => setEditing(null)} aria-label={t('common.cancel')} className="rounded-full p-1.5 text-muted hover:bg-surface">
-                    <X size={14} aria-hidden="true" />
-                  </button>
-                </form>
-              ) : (
-                <div
-                  className={cn(
-                    'group flex items-center gap-1 rounded-xl pr-1 transition-colors',
-                    s.id === activeId ? 'bg-primary/15 text-textMain' : 'text-muted hover:bg-surface/60 hover:text-textMain',
-                  )}
-                >
-                  <Link
-                    to={`/topics/${topicId}/chat/${s.id}`}
-                    aria-current={s.id === activeId ? 'page' : undefined}
-                    className="min-w-0 flex-1 px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                  >
-                    <span className="block truncate text-sm font-medium">{s.title}</span>
-                    <span className="block text-[11px] opacity-80">{formatDate(s.updated_at, i18n.resolvedLanguage)}</span>
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setTitle(s.title);
-                      setEditing(s.id);
+    <aside aria-label={t('chat.v1.sessions')} className="card flex max-h-72 flex-col p-3 xl:max-h-none">
+      {/* Below xl the list folds away behind a "Conversations ▾" toggle so the chat keeps its space. */}
+      <div className="flex items-center gap-2 xl:hidden">
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          aria-controls="session-list"
+          className="flex min-h-[2.75rem] min-w-0 flex-1 items-center gap-2 rounded-xl px-2 text-left hover:bg-surface/50"
+        >
+          <MessagesSquare size={16} className="shrink-0 text-accent" aria-hidden="true" />
+          <span className="min-w-0 flex-1">
+            <span className="block text-xs font-bold uppercase tracking-wider text-muted">
+              {t('chat.v1.sessions')} ({sessions.length})
+            </span>
+            {active && <span className="block truncate text-sm font-medium text-textMain">{active.title}</span>}
+          </span>
+          <ChevronDown size={18} className={cn('shrink-0 text-muted transition-transform', expanded && 'rotate-180')} aria-hidden="true" />
+        </button>
+        <Button size="icon" variant="outline" className="h-11 w-11" onClick={() => void newChat()} isLoading={create.isPending} aria-label={t('chat.v1.newChat')}>
+          {!create.isPending && <MessageSquarePlus size={16} aria-hidden="true" />}
+        </Button>
+      </div>
+      <div id="session-list" className={cn('min-h-0 flex-col', expanded ? 'mt-2 flex' : 'hidden', 'xl:mt-0 xl:flex')}>
+        <div className="mb-3 hidden items-center gap-1 xl:flex">
+          <Button size="sm" variant="outline" className="flex-1" onClick={() => void newChat()} isLoading={create.isPending}>
+            <MessageSquarePlus size={16} aria-hidden="true" /> {t('chat.v1.newChat')}
+          </Button>
+          <HelpTip label={t('chat.v1.sessions')}>{t('help.sessions')}</HelpTip>
+        </div>
+        {loading ? (
+          <Spinner className="py-6" />
+        ) : sessions.length === 0 ? (
+          <p className="px-2 py-4 text-center text-xs text-muted">{t('chat.v1.noSessions')}</p>
+        ) : (
+          <ul className="-mx-1 flex flex-col gap-1 overflow-y-auto px-1">
+            {sessions.map((s) => (
+              <li key={s.id}>
+                {editing === s.id ? (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      void saveTitle(s.id);
                     }}
-                    aria-label={t('chat.v1.rename', { title: s.title })}
-                    className="rounded-full p-1.5 opacity-60 hover:bg-surface hover:opacity-100 focus-visible:opacity-100"
+                    className="flex items-center gap-1"
                   >
-                    <Pencil size={13} aria-hidden="true" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setToDelete(s)}
-                    aria-label={t('chat.v1.deleteSession', { title: s.title })}
-                    className="rounded-full p-1.5 opacity-60 hover:bg-danger/10 hover:text-danger hover:opacity-100 focus-visible:opacity-100"
+                    <label htmlFor={`rename-${s.id}`} className="sr-only">
+                      {t('chat.v1.renameLabel')}
+                    </label>
+                    <input
+                      id={`rename-${s.id}`}
+                      value={title}
+                      maxLength={120}
+                      onChange={(e) => setTitle(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Escape' && setEditing(null)}
+                      className="field min-w-0 flex-1 px-3 py-1.5 text-sm"
+                      // eslint-disable-next-line jsx-a11y/no-autofocus -- opened by the rename button
+                      autoFocus
+                    />
+                    <button type="submit" aria-label={t('common.save')} className="rounded-full p-1.5 text-success hover:bg-success/10">
+                      <Check size={14} aria-hidden="true" />
+                    </button>
+                    <button type="button" onClick={() => setEditing(null)} aria-label={t('common.cancel')} className="rounded-full p-1.5 text-muted hover:bg-surface">
+                      <X size={14} aria-hidden="true" />
+                    </button>
+                  </form>
+                ) : (
+                  <div
+                    className={cn(
+                      'group flex items-center gap-1 rounded-xl pr-1 transition-colors',
+                      s.id === activeId ? 'bg-surface text-textMain ring-1 ring-accent/50' : 'text-muted hover:bg-surface/60 hover:text-textMain',
+                    )}
                   >
-                    <Trash2 size={13} aria-hidden="true" />
-                  </button>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
+                    <Link
+                      to={`/topics/${topicId}/chat/${s.id}`}
+                      onClick={() => setExpanded(false)}
+                      aria-current={s.id === activeId ? 'page' : undefined}
+                      className="min-w-0 flex-1 px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    >
+                      <span className="block truncate text-sm font-medium">{s.title}</span>
+                      <span className="block text-[11px] text-muted">{formatDate(s.updated_at, i18n.resolvedLanguage)}</span>
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTitle(s.title);
+                        setEditing(s.id);
+                      }}
+                      aria-label={t('chat.v1.rename', { title: s.title })}
+                      className="rounded-full p-2 opacity-70 hover:bg-surface hover:opacity-100 focus-visible:opacity-100"
+                    >
+                      <Pencil size={13} aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setToDelete(s)}
+                      aria-label={t('chat.v1.deleteSession', { title: s.title })}
+                      className="rounded-full p-2 opacity-70 hover:bg-danger/10 hover:text-danger hover:opacity-100 focus-visible:opacity-100"
+                    >
+                      <Trash2 size={13} aria-hidden="true" />
+                    </button>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
       <ConfirmDialog
         open={Boolean(toDelete)}
         onClose={() => setToDelete(null)}
@@ -270,7 +304,7 @@ function Conversation({ topic, sessionId }: { topic: Topic; sessionId?: string }
         )}
         {pending.map((m) => (
           <div key={`job-${m.id}`} className="flex gap-3">
-            <Avatar who="assistant" />
+            <Avatar who="assistant" mood="thinking" />
             <div className="w-full max-w-lg rounded-2xl rounded-tl-none border border-border/50 bg-surface/50 p-4">
               <JobProgress jobId={m.job_id!} />
             </div>
@@ -294,38 +328,48 @@ function Conversation({ topic, sessionId }: { topic: Topic; sessionId?: string }
 
         <form onSubmit={onSubmit} className="flex flex-col gap-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <SegmentedControl
-              label={t('chat.v1.intent')}
-              value={intent}
-              onChange={setIntent}
-              options={[
-                { value: 'generate', label: t('chat.v1.intents.generate') },
-                { value: 'ask', label: t('chat.v1.intents.ask') },
-              ]}
-              className="w-full max-w-xs"
-            />
+            <div className="flex w-full items-center gap-1 sm:w-auto">
+              <SegmentedControl
+                label={t('chat.v1.intent')}
+                value={intent}
+                onChange={setIntent}
+                options={[
+                  { value: 'generate', label: t('chat.v1.intents.generate'), icon: Sparkles },
+                  { value: 'ask', label: t('chat.v1.intents.ask'), icon: MessagesSquare },
+                ]}
+                className="w-full sm:w-80"
+              />
+              <HelpTip label={t('chat.v1.intent')}>{t('help.intent')}</HelpTip>
+            </div>
             {intent === 'generate' && (
-              <button
-                type="button"
-                onClick={() => setShowOptions((v) => !v)}
-                aria-expanded={showOptions}
-                aria-controls="gen-options"
-                className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-muted hover:bg-surface/60 hover:text-textMain"
-              >
-                <Settings2 size={14} aria-hidden="true" />
-                {t('chat.v1.optionsSummary', {
-                  count: options.count,
-                  difficulty: t(`editor.difficulty.${options.difficulty}`).toLowerCase(),
-                  lang: options.exam_language.toUpperCase(),
-                })}
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setShowOptions((v) => !v)}
+                  aria-expanded={showOptions}
+                  aria-controls="gen-options"
+                  className={cn(
+                    'flex min-h-[2.5rem] items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors',
+                    showOptions ? 'border-accent/60 bg-surface/60 text-textMain' : 'border-border/50 text-muted hover:bg-surface/60 hover:text-textMain',
+                  )}
+                >
+                  <Settings2 size={14} aria-hidden="true" />
+                  {t('chat.v1.optionsSummary', {
+                    count: options.count,
+                    difficulty: t(`editor.difficulty.${options.difficulty}`).toLowerCase(),
+                    lang: options.exam_language.toUpperCase(),
+                  })}
+                  <ChevronDown size={14} className={cn('transition-transform', showOptions && 'rotate-180')} aria-hidden="true" />
+                </button>
+                <HelpTip label={t('chat.v1.optionsButton')}>{t('help.options')}</HelpTip>
+              </div>
             )}
           </div>
 
           {intent === 'generate' && showOptions && (
-            <div id="gen-options">
+            <motion.div id="gen-options" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.18 }} className="max-h-[45vh] overflow-y-auto">
               <GenerationOptionsForm value={options} onChange={setOptions} readyFiles={readyFiles} disabled={post.isPending} />
-            </div>
+            </motion.div>
           )}
 
           <div className="flex items-end gap-2 rounded-3xl border border-border/80 bg-background/60 p-1.5 pl-4 focus-within:border-accent/60">
@@ -351,7 +395,7 @@ function Conversation({ topic, sessionId }: { topic: Topic; sessionId?: string }
               type="submit"
               disabled={!canSend}
               aria-label={intent === 'generate' ? t('chat.v1.sendGenerate') : t('chat.v1.sendAsk')}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary transition-colors hover:bg-primary/85 disabled:opacity-40"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary transition-all hover:scale-105 hover:bg-primary/85 active:scale-95 disabled:scale-100 disabled:opacity-40"
             >
               <Send size={18} aria-hidden="true" />
             </button>
@@ -366,25 +410,25 @@ function Conversation({ topic, sessionId }: { topic: Topic; sessionId?: string }
 function Welcome({ topic }: { topic: Topic }) {
   const { t } = useTranslation();
   return (
-    <div className="mx-auto max-w-md py-10 text-center">
-      <Bot size={40} className="mx-auto mb-3 text-accent" aria-hidden="true" />
-      <h2 className="mb-1 text-lg font-semibold">{t('chat.v1.welcomeTitle', { name: topic.name })}</h2>
+    <div className="mx-auto flex max-w-md flex-col items-center py-8 text-center">
+      <Mascot mood="wave" size={104} className="mb-3" />
+      <h2 className="mb-1 text-lg font-bold">{t('chat.v1.welcomeTitle', { name: topic.name })}</h2>
       <p className="text-sm text-muted">{t('chat.v1.welcomeBody')}</p>
     </div>
   );
 }
 
-function Avatar({ who }: { who: Message['role'] }) {
+function Avatar({ who, mood = 'idle' }: { who: Message['role']; mood?: MascotMood }) {
   const { t } = useTranslation();
   const user = who === 'user';
   return (
     <div
       className={cn(
-        'flex h-9 w-9 shrink-0 items-center justify-center rounded-full',
-        user ? 'border border-border bg-surface text-textMain' : 'border border-primary/30 bg-primary/20 text-accent',
+        'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
+        user ? 'border border-border bg-surface text-textMain' : 'border border-primary/30 bg-primary/15',
       )}
     >
-      {user ? <User size={18} aria-hidden="true" /> : <Bot size={18} aria-hidden="true" />}
+      {user ? <User size={18} aria-hidden="true" /> : <Mascot mood={mood} size={34} float={mood === 'thinking'} />}
       <span className="sr-only">{user ? t('chat.you') : t('chat.assistant')}</span>
     </div>
   );
@@ -395,8 +439,14 @@ function MessageBubble({ message: m, topicId, fileNames, onRetry }: { message: M
   const user = m.role === 'user';
   const failed = Boolean(m.error_code);
   return (
-    <article className={cn('flex gap-3', user && 'flex-row-reverse')} aria-label={user ? t('chat.you') : t('chat.assistant')}>
-      <Avatar who={m.role} />
+    <motion.article
+      initial={{ opacity: 0, y: 8, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+      className={cn('flex gap-3', user && 'flex-row-reverse')}
+      aria-label={user ? t('chat.you') : t('chat.assistant')}
+    >
+      <Avatar who={m.role} mood={m.test_id ? 'happy' : failed ? 'thinking' : 'idle'} />
       <div
         className={cn(
           'max-w-[85%] rounded-2xl p-4 text-sm leading-relaxed shadow-sm md:text-[15px]',
@@ -430,12 +480,14 @@ function MessageBubble({ message: m, topicId, fileNames, onRetry }: { message: M
           </p>
         )}
         {m.test_id && (
-          <Link
-            to={`/topics/${topicId}/tests/${m.test_id}`}
-            className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-onPrimary hover:bg-primary/85"
-          >
-            {t('chat.v1.reviewTest')}
-          </Link>
+          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 380, damping: 18, delay: 0.1 }}>
+            <Link
+              to={`/topics/${topicId}/tests/${m.test_id}`}
+              className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-onPrimary shadow-md transition-transform hover:scale-[1.03] hover:bg-primary/85"
+            >
+              <Sparkles size={15} aria-hidden="true" /> {t('chat.v1.reviewTest')}
+            </Link>
+          </motion.div>
         )}
         {m.citations && m.citations.length > 0 && (
           <details className="mt-3 text-xs text-muted">
@@ -456,6 +508,6 @@ function MessageBubble({ message: m, topicId, fileNames, onRetry }: { message: M
           {formatDate(m.created_at, i18n.resolvedLanguage, new Date(m.created_at).toDateString() === new Date().toDateString() ? { timeStyle: 'short' } : { dateStyle: 'medium', timeStyle: 'short' })}
         </time>
       </div>
-    </article>
+    </motion.article>
   );
 }
