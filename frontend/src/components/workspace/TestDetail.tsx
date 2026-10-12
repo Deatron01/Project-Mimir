@@ -4,6 +4,7 @@ import { ArrowLeft, Bot, Download, ShieldAlert, Star } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
+import HelpTip from '../ui/HelpTip';
 import ConfirmDialog from '../common/ConfirmDialog';
 import ErrorNotice, { useErrorText } from '../common/ErrorNotice';
 import { PageLoader } from '../common/Spinner';
@@ -105,10 +106,13 @@ export default function TestDetail({ topic }: { topic: Topic }) {
         </div>
       </div>
 
-      <p className="flex items-start gap-2 rounded-2xl border border-border/40 bg-surface/30 p-3 text-xs text-muted">
+      <div className="flex items-start gap-2 rounded-2xl border border-border/40 bg-surface/30 p-3 text-xs text-muted">
         <ShieldAlert size={16} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
-        {t('workspace.test.aiActNotice')}
-      </p>
+        <p className="flex-1">{t('workspace.test.aiActNotice')}</p>
+        <HelpTip label={t('editor.title')} size={14}>
+          {t('help.aiReview')}
+        </HelpTip>
+      </div>
 
       {Object.entries(regenerating).map(([qid, jobId]) => (
         <RegenWatcher key={jobId} jobId={jobId} onDone={(job) => void onRegenDone(qid, job)} />
@@ -127,9 +131,12 @@ export default function TestDetail({ topic }: { topic: Topic }) {
         fileNames={fileNames}
         onDirtyChange={setDirty}
         actions={
-          <Button size="sm" variant="outline" onClick={() => setExportOpen(true)} disabled={dirty} title={dirty ? t('workspace.test.saveBeforeExport') : undefined}>
-            <Download size={14} aria-hidden="true" /> {t('export.button')}
-          </Button>
+          <span className="inline-flex items-center gap-0.5">
+            <Button size="sm" variant="outline" onClick={() => setExportOpen(true)} disabled={dirty} title={dirty ? t('workspace.test.saveBeforeExport') : undefined}>
+              <Download size={14} aria-hidden="true" /> {t('export.button')}
+            </Button>
+            <HelpTip label={t('export.button')}>{t('help.export')}</HelpTip>
+          </span>
         }
       />
       {dirty && <p className="text-right text-xs text-muted">{t('workspace.test.saveBeforeExport')}</p>}

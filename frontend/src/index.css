@@ -12,6 +12,16 @@
       color 400ms ease-in-out;
   }
 
+  /* Phones: keep focused / scrolled-to elements clear of the fixed navbar and the class tab bar. */
+  html {
+    scroll-padding-top: 5rem;
+  }
+  @media (max-width: 767px) {
+    html {
+      scroll-padding-bottom: 8.5rem;
+    }
+  }
+
   /* Visible keyboard focus everywhere, in every palette. */
   :focus-visible {
     outline: 2px solid rgb(var(--c-accent));

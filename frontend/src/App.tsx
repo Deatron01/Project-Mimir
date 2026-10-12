@@ -4,7 +4,6 @@ import { MotionConfig } from 'framer-motion';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import About from './pages/About';
-import Pricing from './pages/Pricing';
 import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
@@ -45,7 +44,8 @@ export function buildRoutes(mode = getConfig().apiMode): RouteObject[] {
       children: [
         { path: '/', element: <Home /> },
         { path: '/about', element: <About /> },
-        { path: '/pricing', element: <Pricing /> },
+        // The pricing page was removed; keep old links working.
+        { path: '/pricing', element: <Navigate to="/" replace /> },
         { path: '/contact', element: <Contact /> },
         { path: '/privacy', element: <Privacy /> },
         { path: '/terms', element: <Terms /> },

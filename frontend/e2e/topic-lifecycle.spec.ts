@@ -21,11 +21,11 @@ test('topic lifecycle', async ({ page, isMobile }) => {
   await expect(page.getByText('Your e-mail address is confirmed')).toBeVisible();
 
   await login(page, email, password);
-  await expect(page.getByRole('heading', { name: 'Create your first topic' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Create your first class' })).toBeVisible();
 
   // Create a topic with one document (consent required).
-  await page.getByRole('button', { name: 'New topic' }).first().click();
-  const dialog = page.getByRole('dialog', { name: 'New topic' });
+  await page.getByRole('button', { name: 'New class' }).first().click();
+  const dialog = page.getByRole('dialog', { name: 'New class' });
   await dialog.getByLabel(/^Name/).fill('Cell biology');
   await dialog.locator('input[type=file]').setInputFiles({
     name: 'cells.txt',
@@ -48,7 +48,7 @@ test('topic lifecycle', async ({ page, isMobile }) => {
   // Generate a test from the chat.
   await page.getByRole('link', { name: 'Chat' }).click();
   await page.getByRole('button', { name: /questions ·/ }).click();
-  await page.getByLabel('Number of questions').fill('3');
+  await page.getByLabel('Number of questions', { exact: true }).fill('3');
   await page.getByLabel('Describe the test (optional), e.g. “focus on the light reactions”…').fill('Focus on organelles');
   await page.getByRole('button', { name: 'Generate test' }).click();
   await page.getByRole('link', { name: 'Review and edit the test' }).click({ timeout: 30_000 });
@@ -63,7 +63,7 @@ test('topic lifecycle', async ({ page, isMobile }) => {
   await expect(page.getByText('Saved to “My tests”.').first()).toBeVisible();
 
   // Export as JSON.
-  await page.getByRole('button', { name: 'Export' }).click();
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
   await page.getByLabel('JSON').check();
   const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Download' }).click()]);
   expect(download.suggestedFilename()).toMatch(/\.json$/);
@@ -75,13 +75,13 @@ test('topic lifecycle', async ({ page, isMobile }) => {
 
   // Delete the topic (type the name to confirm); everything goes with it.
   await page.getByRole('link', { name: 'Cell biology', exact: true }).click();
-  await page.getByRole('button', { name: 'Delete topic' }).click();
-  const confirm = page.getByRole('alertdialog', { name: 'Delete this topic?' });
+  await page.getByRole('button', { name: 'Delete class' }).click();
+  const confirm = page.getByRole('alertdialog', { name: 'Delete this class?' });
   await expect(confirm.getByRole('button', { name: 'Delete permanently' })).toBeDisabled();
   await confirm.getByLabel(/Type "Cell biology" to confirm/).fill('Cell biology');
   await confirm.getByRole('button', { name: 'Delete permanently' }).click();
   await expect(page).toHaveURL(/\/topics$/);
-  await expect(page.getByRole('heading', { name: 'Create your first topic' })).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByRole('heading', { name: 'Create your first class' })).toBeVisible({ timeout: 20_000 });
 });
 
 test('topics are private to their owner', async ({ page, isMobile }) => {
@@ -106,5 +106,5 @@ test('topics are private to their owner', async ({ page, isMobile }) => {
   await expect(page.getByText('Your e-mail address is confirmed')).toBeVisible();
   await login(page, email, 'another long password');
   await page.goto('/topics/top_demo/chat');
-  await expect(page.getByRole('heading', { name: 'Topic not found' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Class not found' })).toBeVisible();
 });

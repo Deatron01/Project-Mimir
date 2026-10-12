@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ListChecks, Star, Trash2 } from 'lucide-react';
+import { ArrowRight, Star, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import SegmentedControl from '../ui/SegmentedControl';
+import HelpTip from '../ui/HelpTip';
+import { motion } from 'framer-motion';
 import ConfirmDialog from '../common/ConfirmDialog';
 import EmptyState from '../common/EmptyState';
 import ErrorNotice, { useErrorText } from '../common/ErrorNotice';
@@ -36,11 +38,14 @@ export default function TestsPane({ topic }: { topic: Topic }) {
   return (
     <section aria-labelledby="tests-title">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 id="tests-title" className="text-lg font-bold">
-            {t('workspace.tests.title')}
-          </h2>
-          <p className="text-xs text-muted">{t('workspace.tests.retention')}</p>
+        <div className="min-w-0">
+          <div className="flex items-center gap-1">
+            <h2 id="tests-title" className="text-lg font-bold">
+              {t('workspace.tests.title')}
+            </h2>
+            <HelpTip label={t('workspace.tests.title')}>{t('help.tests')}</HelpTip>
+          </div>
+          <p className="max-w-2xl text-xs text-muted">{t('workspace.tests.retention')}</p>
         </div>
         <SegmentedControl
           label={t('workspace.tests.filter')}
@@ -50,7 +55,7 @@ export default function TestsPane({ topic }: { topic: Topic }) {
             { value: 'all', label: t('workspace.tests.all') },
             { value: 'saved', label: t('workspace.tests.saved') },
           ]}
-          className="w-56"
+          className="w-full sm:w-56"
         />
       </div>
       {tests.isPending ? (
@@ -59,19 +64,29 @@ export default function TestsPane({ topic }: { topic: Topic }) {
         <ErrorNotice error={tests.error} onRetry={() => void tests.refetch()} />
       ) : !tests.data.length ? (
         <EmptyState
-          icon={ListChecks}
+          mascot="thinking"
           title={filter === 'saved' ? t('workspace.tests.emptySaved') : t('workspace.tests.empty')}
           description={t('workspace.tests.emptyDesc')}
           action={
-            <Link to={`/topics/${topic.id}/chat`} className="text-sm font-semibold text-accent hover:underline">
-              {t('workspace.tests.goToChat')}
+            <Link
+              to={`/topics/${topic.id}/chat`}
+              className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-onPrimary transition-transform hover:scale-[1.03]"
+            >
+              {t('workspace.tests.goToChat')} <ArrowRight size={16} aria-hidden="true" />
             </Link>
           }
         />
       ) : (
         <ul className="grid gap-3 md:grid-cols-2">
-          {tests.data.map((x) => (
-            <li key={x.id} className="card flex items-start gap-3 p-4">
+          {tests.data.map((x, i) => (
+            <motion.li
+              key={x.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: Math.min(i, 10) * 0.03 }}
+              whileHover={{ y: -2 }}
+              className="card flex items-start gap-3 p-4 transition-colors hover:border-accent/50"
+            >
               <div className="min-w-0 flex-1">
                 <Link to={`/topics/${topic.id}/tests/${x.id}`} className="block truncate font-semibold text-textMain hover:text-accent">
                   {x.title}
@@ -91,11 +106,11 @@ export default function TestsPane({ topic }: { topic: Topic }) {
                 type="button"
                 onClick={() => setToDelete(x)}
                 aria-label={t('workspace.tests.deleteLabel', { title: x.title })}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted hover:bg-danger/10 hover:text-danger"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted hover:bg-danger/10 hover:text-danger"
               >
                 <Trash2 size={16} aria-hidden="true" />
               </button>
-            </li>
+            </motion.li>
           ))}
         </ul>
       )}

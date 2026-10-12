@@ -1,14 +1,23 @@
-import { Outlet, ScrollRestoration } from 'react-router-dom';
+import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import DevMailbox from './DevMailbox';
 import { getConfig } from '../../config/runtime';
 
+/** Key for the page-enter animation: the class id inside a workspace, so tab switches don't replay it. */
+const sectionKey = (path: string) => {
+  const [, first = '', second = ''] = path.split('/');
+  return first === 'topics' && second ? `topics/${second}` : first;
+};
+
 /** App shell. Renders route children through <Outlet /> (or explicit children in tests/stories). */
 export default function Layout({ children }: { children?: React.ReactNode }) {
   const { t } = useTranslation();
   const { useMocks, apiMode } = getConfig();
+  const { pathname } = useLocation();
+  const inApp = /^\/(topics|tests|chat)(\/|$)/.test(pathname);
   return (
     <div className="relative flex min-h-screen flex-col selection:bg-accent/30 selection:text-textMain">
       <a
@@ -27,12 +36,20 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
 
       <Navbar />
 
-      <main id="main" tabIndex={-1} className="relative z-10 flex-grow pt-20 focus:outline-none">
-        {children ?? <Outlet />}
+      <main id="main" tabIndex={-1} className="relative z-10 flex-grow pt-16 focus:outline-none">
+        <motion.div
+          key={sectionKey(pathname)}
+          // Opacity only: a transform here would break `position: fixed` descendants (the phone tab bar).
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.22, ease: 'easeOut' }}
+        >
+          {children ?? <Outlet />}
+        </motion.div>
       </main>
 
       <div className="relative z-10">
-        <Footer />
+        <Footer compact={inApp} />
       </div>
       {useMocks && apiMode === 'v1' && <DevMailbox />}
       {!children && <ScrollRestoration />}

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { FileText, RotateCcw, Trash2, UploadCloud } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
+import HelpTip from '../ui/HelpTip';
+import { AnimatePresence, motion } from 'framer-motion';
 import ConfirmDialog from '../common/ConfirmDialog';
 import EmptyState from '../common/EmptyState';
 import ErrorNotice, { useErrorText } from '../common/ErrorNotice';
@@ -70,9 +72,12 @@ export default function FilesPane({ topic }: { topic: Topic }) {
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
       <section aria-labelledby="upload-title" className="card h-max p-5">
-        <h2 id="upload-title" className="mb-3 flex items-center gap-2 text-lg font-bold">
-          <UploadCloud size={18} className="text-accent" aria-hidden="true" /> {t('files.uploadTitle')}
-        </h2>
+        <div className="mb-3 flex items-center gap-1">
+          <h2 id="upload-title" className="flex items-center gap-2 text-lg font-bold">
+            <UploadCloud size={18} className="text-accent" aria-hidden="true" /> {t('files.uploadTitle')}
+          </h2>
+          <HelpTip label={t('files.uploadTitle')}>{t('help.upload')}</HelpTip>
+        </div>
         <Dropzone
           files={selected}
           onFilesChange={(f) => {
@@ -99,8 +104,13 @@ export default function FilesPane({ topic }: { topic: Topic }) {
           </Button>
         )}
         <div className="mt-5 space-y-2 text-xs text-muted">
-          <div className="flex justify-between">
-            <span>{t('files.usage.files')}</span>
+          <div className="flex items-center justify-between">
+            <span className="flex items-center gap-0.5">
+              {t('files.usage.files')}
+              <HelpTip label={t('files.usage.files')} size={13}>
+                {t('help.usage')}
+              </HelpTip>
+            </span>
             <span>
               {list.length} / {limits.max_files_per_topic}
             </span>
@@ -117,56 +127,71 @@ export default function FilesPane({ topic }: { topic: Topic }) {
       </section>
 
       <section aria-labelledby="files-title">
-        <h2 id="files-title" className="mb-3 text-lg font-bold">
-          {t('files.listTitle')}
-        </h2>
+        <div className="mb-3 flex items-center gap-1">
+          <h2 id="files-title" className="text-lg font-bold">
+            {t('files.listTitle')}
+          </h2>
+          {list.length > 0 && <span className="rounded-full bg-surface px-2 py-0.5 text-xs font-semibold text-textMain">{list.length}</span>}
+          <HelpTip label={t('files.listTitle')}>{t('help.fileStatus')}</HelpTip>
+        </div>
         {files.isPending ? (
           <Spinner className="py-16" />
         ) : files.isError ? (
           <ErrorNotice error={files.error} onRetry={() => void files.refetch()} />
         ) : list.length === 0 ? (
-          <EmptyState icon={FileText} title={t('files.emptyTitle')} description={t('files.emptyDesc')} />
+          <EmptyState mascot="thinking" title={t('files.emptyTitle')} description={t('files.emptyDesc')} />
         ) : (
           <ul className="flex flex-col gap-2" aria-live="polite" aria-relevant="text">
-            {list.map((f) => (
-              <li key={f.id} className="card flex flex-col gap-2 p-4 sm:flex-row sm:items-center">
-                <div className="flex min-w-0 flex-1 items-start gap-3">
-                  <FileText size={20} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-textMain" title={f.filename}>
-                      {f.filename}
-                    </p>
-                    <p className="text-xs text-muted">
-                      {formatBytes(f.size_bytes, lang)} · {formatDate(f.created_at, lang)}
-                      {f.status === 'ready' && ` · ${t('files.chunks', { count: f.chunk_count })}`}
-                    </p>
-                    {f.status === 'failed' && f.error_code && <p className="mt-1 text-xs text-danger">{t(`errors.${f.error_code}`, { defaultValue: t('errors.UNKNOWN') })}</p>}
+            <AnimatePresence initial={false}>
+              {list.map((f) => (
+                <motion.li
+                  key={f.id}
+                  layout
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, x: -20, transition: { duration: 0.15 } }}
+                  className="card flex flex-col gap-2 p-4 sm:flex-row sm:items-center"
+                >
+                  <div className="flex min-w-0 flex-1 items-start gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-accent">
+                      <FileText size={18} aria-hidden="true" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-textMain" title={f.filename}>
+                        {f.filename}
+                      </p>
+                      <p className="text-xs text-muted">
+                        {formatBytes(f.size_bytes, lang)} · {formatDate(f.created_at, lang)}
+                        {f.status === 'ready' && ` · ${t('files.chunks', { count: f.chunk_count })}`}
+                      </p>
+                      {f.status === 'failed' && f.error_code && <p className="mt-1 text-xs text-danger">{t(`errors.${f.error_code}`, { defaultValue: t('errors.UNKNOWN') })}</p>}
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-2 sm:justify-end">
-                  <FileStatusBadge status={f.status} />
-                  {f.status === 'failed' && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => retry.mutate(f.id, { onError: (e) => toast(errorText(e), 'error') })}
-                      disabled={retry.isPending && retry.variables === f.id}
-                      aria-label={t('files.retryLabel', { name: f.filename })}
+                  <div className="flex items-center gap-2 sm:justify-end">
+                    <FileStatusBadge status={f.status} />
+                    {f.status === 'failed' && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => retry.mutate(f.id, { onError: (e) => toast(errorText(e), 'error') })}
+                        disabled={retry.isPending && retry.variables === f.id}
+                        aria-label={t('files.retryLabel', { name: f.filename })}
+                      >
+                        <RotateCcw size={14} aria-hidden="true" /> {t('common.retry')}
+                      </Button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setToDelete(f)}
+                      aria-label={t('files.deleteLabel', { name: f.filename })}
+                      className="flex h-10 w-10 items-center justify-center rounded-full text-muted hover:bg-danger/10 hover:text-danger"
                     >
-                      <RotateCcw size={14} aria-hidden="true" /> {t('common.retry')}
-                    </Button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => setToDelete(f)}
-                    aria-label={t('files.deleteLabel', { name: f.filename })}
-                    className="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-danger/10 hover:text-danger"
-                  >
-                    <Trash2 size={16} aria-hidden="true" />
-                  </button>
-                </div>
-              </li>
-            ))}
+                      <Trash2 size={16} aria-hidden="true" />
+                    </button>
+                  </div>
+                </motion.li>
+              ))}
+            </AnimatePresence>
           </ul>
         )}
       </section>

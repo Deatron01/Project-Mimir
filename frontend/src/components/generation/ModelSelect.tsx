@@ -1,5 +1,6 @@
 import { Cloud, HardDrive } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import HelpTip from '../ui/HelpTip';
 
 export interface ModelOption {
   id: string;
@@ -66,9 +67,14 @@ export default function ModelSelect({
   const where = locationOf(list, value);
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <label htmlFor={id} className="text-xs font-semibold uppercase tracking-wider text-muted">
-        {t('models.label')}
-      </label>
+      <span className="flex items-center gap-0.5">
+        <label htmlFor={id} className="text-xs font-semibold uppercase tracking-wider text-muted">
+          {t('models.label')}
+        </label>
+        <HelpTip label={t('models.label')} size={13}>
+          {t('help.model')}
+        </HelpTip>
+      </span>
       <select
         id={id}
         value={value}

@@ -1,4 +1,5 @@
 import { AlertCircle, CheckCircle2, Clock, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import type { FileStatus } from '../../api/types';
 import { cn } from '../../utils/cn';
@@ -8,7 +9,11 @@ export default function FileStatusBadge({ status }: { status: FileStatus }) {
   const busy = status === 'extracting' || status === 'chunking' || status === 'indexing';
   const Icon = status === 'ready' ? CheckCircle2 : status === 'failed' ? AlertCircle : busy ? Loader2 : Clock;
   return (
-    <span
+    <motion.span
+      key={status}
+      initial={{ scale: 0.85, opacity: 0.4 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 500, damping: 20 }}
       className={cn(
         'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold',
         status === 'ready' && 'border-success/50 bg-success/10 text-success',
@@ -18,6 +23,6 @@ export default function FileStatusBadge({ status }: { status: FileStatus }) {
     >
       <Icon size={12} className={cn(busy && 'animate-spin')} aria-hidden="true" />
       {t(`files.status.${status}`)}
-    </span>
+    </motion.span>
   );
 }

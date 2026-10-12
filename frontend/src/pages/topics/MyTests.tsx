@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Download, FolderOpen, Inbox, Trash2 } from 'lucide-react';
+import { Download, Trash2 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import ButtonLink from '../../components/ui/ButtonLink';
+import HelpTip from '../../components/ui/HelpTip';
+import ClassAvatar from '../../components/topics/ClassAvatar';
 import Button from '../../components/ui/Button';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import EmptyState from '../../components/common/EmptyState';
@@ -49,9 +51,14 @@ export default function MyTests() {
   if (groups.isPending) return <PageLoader />;
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-12">
+    <div className="mx-auto max-w-6xl px-4 py-8 md:px-6 md:py-12">
       <div className="mb-10">
-        <h1 className="mb-2 text-3xl font-extrabold tracking-tight">{t('tests.title')}</h1>
+        <div className="mb-2 flex items-center gap-2">
+          <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">{t('tests.title')}</h1>
+          <HelpTip label={t('tests.title')} size={18}>
+            {t('help.myTests')}
+          </HelpTip>
+        </div>
         <p className="text-sm text-muted">{t('tests.v1.subtitle')}</p>
         <p className="mt-1 text-xs text-muted">{t('tests.v1.retention')}</p>
       </div>
@@ -60,7 +67,7 @@ export default function MyTests() {
         <ErrorNotice error={groups.error} onRetry={() => void groups.refetch()} />
       ) : !groups.data.length ? (
         <EmptyState
-          icon={Inbox}
+          mascot="wave"
           title={t('tests.emptyTitle')}
           description={t('tests.v1.emptyDesc')}
           action={
@@ -71,8 +78,8 @@ export default function MyTests() {
         <div className="space-y-8">
           {groups.data.map((g) => (
             <section key={g.topic.id} aria-labelledby={`grp-${g.topic.id}`}>
-              <h2 id={`grp-${g.topic.id}`} className="mb-3 flex items-center gap-2 text-lg font-bold">
-                <FolderOpen size={18} className="text-accent" aria-hidden="true" />
+              <h2 id={`grp-${g.topic.id}`} className="mb-3 flex items-center gap-3 text-lg font-bold">
+                <ClassAvatar name={g.topic.name} size="sm" />
                 <Link to={`/topics/${g.topic.id}`} className="hover:text-accent">
                   {g.topic.name}
                 </Link>

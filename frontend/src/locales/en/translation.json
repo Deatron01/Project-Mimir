@@ -17,7 +17,6 @@
   "meta": {
     "home": "Mimir AI – Smart exam generator",
     "about": "About – Mimir AI",
-    "pricing": "Pricing – Mimir AI",
     "contact": "Contact – Mimir AI",
     "login": "Sign in – Mimir AI",
     "register": "Sign up – Mimir AI",
@@ -27,7 +26,7 @@
     "terms": "Terms of use – Mimir AI",
     "notFound": "Page not found – Mimir AI",
     "data": "Your data – Mimir AI",
-    "topics": "Topics – Mimir AI",
+    "topics": "My classes – Mimir AI",
     "verify": "Confirm e-mail – Mimir AI",
     "forgot": "Forgotten password – Mimir AI",
     "reset": "New password – Mimir AI"
@@ -36,16 +35,15 @@
     "skipToContent": "Skip to content",
     "home": "Home",
     "about": "About",
-    "pricing": "Pricing",
     "tests": "My tests",
     "login": "Sign in",
     "register": "Sign up",
     "logout": "Sign out",
-    "openApp": "Exam generator",
+    "openApp": "Open my classes",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "main": "Main navigation",
-    "topics": "Topics"
+    "topics": "My classes"
   },
   "settings": {
     "open": "Appearance settings",
@@ -75,42 +73,49 @@
     "terms": "Terms of use",
     "contact": "Contact",
     "rights": "© {{year}} Mimir Project. All rights reserved.",
-    "yourData": "Your data"
+    "yourData": "Your data",
+    "links": "Legal and contact"
   },
   "home": {
-    "badge": "The next generation of smart exam generation",
-    "title": "Knowledge flows from <1>Mímir's well</1>",
-    "subtitle": "Upload your own teaching materials and Mimir AI turns them into professional exam questions in seconds, through a modern, interactive chat interface.",
-    "ctaTry": "Try it for free",
-    "ctaApp": "Open the generator",
+    "badge": "Your study buddy for every subject",
+    "title": "Turn your notes into <1>practice tests</1>",
+    "subtitle": "Make a class for each subject, upload your PDFs and notes, and Mimir creates tests from them in seconds – every question backed by your own documents.",
+    "ctaTry": "Get started – it’s free",
+    "ctaApp": "Open my classes",
     "howItWorks": "How does it work?",
-    "mock": {
-      "title": "Mimir AI Chat",
-      "fileName": "biology_notes.pdf",
-      "userMessage": "Please create a 10-question multiple-choice (MCQ) exam from the attached material, focusing on cell division.",
-      "aiMessage": "Your exam is ready! I extracted the key concepts of cell division (mitosis, meiosis) from the uploaded document and generated 10 professionally reviewed questions.",
-      "check": "Hallucination check passed",
-      "download": "Download (PDF)"
-    },
-    "featuresTitle": "Why the <1>Mimir</1> architecture",
+    "featuresTitle": "Why <1>Mimir</1>?",
     "features": {
       "rag": {
-        "title": "RAG-based accuracy",
-        "desc": "The system uses semantic chunking (RuneCarver). It relies only on the facts in your uploaded document, keeping AI hallucination to a minimum."
+        "title": "Only your material",
+        "desc": "Questions come from the documents you upload, and each one shows where its answer is – no made-up facts."
       },
       "secure": {
-        "title": "Zero retention",
-        "desc": "Uploaded documents are kept only until your test is ready, then deleted automatically, and never used to train models. In local mode the text never leaves your own server."
+        "title": "Private by design",
+        "desc": "Each class is encrypted with its own key and never used to train AI models. Delete a class and it is gone for good."
       },
       "export": {
-        "title": "Lightning-fast PDF export",
-        "desc": "The Skald engine produces clean, typographically correct PDF files that are ready to print and use in exams straight away."
+        "title": "Ready to print",
+        "desc": "Download clean PDFs with or without the answer key, or export to Moodle in one click."
       }
     },
-    "ctaTitle": "Ready to generate your first exam?",
-    "ctaSubtitle": "Join the platform and save hours of exam writing with Mimir AI.",
-    "ctaStart": "Let's start!",
-    "ctaRegister": "Create an account"
+    "ctaTitle": "Ready to study smarter?",
+    "ctaSubtitle": "Create your first class in under a minute.",
+    "ctaStart": "Go to my classes",
+    "ctaRegister": "Create a free account",
+    "stepsTitle": "Three steps, zero hassle",
+    "preview": {
+      "label": "Example classes",
+      "classes": [
+        "Math",
+        "Geography",
+        "Biology"
+      ],
+      "docs_one": "{{count}} document",
+      "docs_other": "{{count}} documents",
+      "tests_one": "{{count}} test",
+      "tests_other": "{{count}} tests",
+      "bubble": "Want 10 questions on chapter 3?"
+    }
   },
   "about": {
     "title": "The story of <1>Mimir</1>",
@@ -129,40 +134,6 @@
         "desc": "We built it so teachers and instructors can save hours of exam writing."
       }
     }
-  },
-  "pricing": {
-    "title": "Simple, transparent pricing",
-    "subtitle": "Because Mimir runs on your own hardware (locally), there are no hidden cloud costs or API fees. Choose the support plan that fits your needs.",
-    "free": {
-      "name": "Open source",
-      "price": "HUF 0",
-      "period": "/ forever",
-      "desc": "Perfect for students and hobbyists who run the system themselves.",
-      "features": [
-        "Full local access",
-        "Unlimited exam generation",
-        "Skald PDF engine"
-      ],
-      "cta": "Download from GitHub",
-      "notIncluded": [
-        "Community Discord support"
-      ]
-    },
-    "pro": {
-      "badge": "Recommended",
-      "name": "Pro support",
-      "price": "HUF 15,000",
-      "period": "/ month",
-      "desc": "For institutions and teachers who need guaranteed operation and updates.",
-      "features": [
-        "Everything in Open source",
-        "Dedicated technical onboarding",
-        "Priority bug fixes",
-        "Early access to new features"
-      ],
-      "cta": "Subscribe"
-    },
-    "notIncludedLabel": "not included"
   },
   "contact": {
     "title": "Get in touch",
@@ -277,7 +248,7 @@
       "renameLabel": "Conversation title",
       "deleteSession": "Delete conversation: {{title}}",
       "deleteSessionTitle": "Delete this conversation?",
-      "deleteSessionBody": "Its messages and unsaved tests are deleted. Saved tests stay in the topic.",
+      "deleteSessionBody": "Its messages and unsaved tests are deleted. Saved tests stay in the class.",
       "sessionDeleted": "Conversation deleted.",
       "loadOlder": "Load earlier messages",
       "intent": "What would you like to do?",
@@ -286,16 +257,17 @@
         "ask": "Ask a question"
       },
       "placeholderGenerate": "Describe the test (optional), e.g. “focus on the light reactions”…",
-      "placeholderAsk": "Ask something about this topic's documents…",
+      "placeholderAsk": "Ask something about this class's documents…",
       "sendGenerate": "Generate test",
       "sendAsk": "Send question",
       "optionsSummary": "{{count}} questions · {{difficulty}} · {{lang}}",
-      "noFiles": "Upload a document to this topic before generating.",
+      "noFiles": "Upload a document to this class before generating.",
       "filesProcessing": "Your documents are still being processed – this takes a minute.",
-      "goToFiles": "Go to files",
+      "goToFiles": "Go to documents",
       "reviewTest": "Review and edit the test",
-      "welcomeTitle": "Start working on “{{name}}”",
-      "welcomeBody": "Ask for a test and set the number of questions, types and difficulty below – or ask a question about the documents. Everything stays in this topic."
+      "welcomeTitle": "Let’s study “{{name}}”!",
+      "welcomeBody": "Pick “Create a test” to get new questions from your documents, or “Ask a question” to get an answer with sources. Everything stays in this class.",
+      "optionsButton": "Test settings"
     }
   },
   "editor": {
@@ -359,7 +331,7 @@
     }
   },
   "tests": {
-    "title": "Generated exams",
+    "title": "My tests",
     "subtitle": "All the tests you've created so far. You can download them again at any time.",
     "loadError": "Could not load your test history.",
     "downloadError": "Download failed.",
@@ -380,10 +352,10 @@
     "deleteTitle": "Delete this test?",
     "deleteBody": "“{{title}}” will be deleted permanently.",
     "v1": {
-      "subtitle": "Tests you chose to keep, grouped by topic.",
-      "retention": "Saved tests stay until you delete them or their topic. Topics are deleted after 90 days without activity.",
-      "emptyDesc": "Open a topic, generate a test and tick “Save to My tests”.",
-      "goToTopics": "Go to topics"
+      "subtitle": "Tests you chose to keep, grouped by class.",
+      "retention": "Saved tests stay until you delete them or their class. Classes are deleted after 90 days without activity.",
+      "emptyDesc": "Open a class, generate a test and tick “Save to My tests”.",
+      "goToTopics": "Go to my classes"
     }
   },
   "notFound": {
@@ -656,18 +628,18 @@
     "INVALID_CREDENTIALS": "Incorrect e-mail address or password.",
     "EMAIL_NOT_VERIFIED": "Confirm your e-mail address first – we sent you a link when you registered.",
     "FORBIDDEN": "You do not have access to this.",
-    "TOPIC_NOT_FOUND": "This topic does not exist or has been deleted.",
+    "TOPIC_NOT_FOUND": "This class does not exist or has been deleted.",
     "FILE_NOT_FOUND": "This file no longer exists.",
     "SESSION_NOT_FOUND": "This conversation no longer exists.",
     "TEST_NOT_FOUND": "This test no longer exists.",
     "JOB_NOT_FOUND": "This task no longer exists.",
-    "TOPIC_DELETING": "This topic is being deleted.",
-    "FILE_NOT_READY": "No document in this topic has finished processing yet. Wait for it or upload one.",
+    "TOPIC_DELETING": "This class is being deleted.",
+    "FILE_NOT_READY": "No document in this class has finished processing yet. Wait for it or upload one.",
     "EMAIL_TAKEN": "This e-mail address is already registered.",
     "JOB_IN_PROGRESS": "This is already in progress.",
     "FILE_TOO_LARGE": "The file is too large (limit: {{limitMb}} MB).",
     "TOPIC_QUOTA_EXCEEDED": "You have reached the limit for this.",
-    "TOPIC_STORAGE_EXCEEDED": "This topic has no more storage space (limit: {{limitMb}} MB). Delete a file first.",
+    "TOPIC_STORAGE_EXCEEDED": "This class has no more storage space (limit: {{limitMb}} MB). Delete a file first.",
     "NO_TEXT_EXTRACTED": "No text could be read from this document. Is it a scanned image? Try a text-based PDF.",
     "GENERATION_INVALID": "The AI returned an invalid test. Please try again.",
     "RATE_LIMITED": "Too many requests. Wait a minute and try again.",
@@ -678,16 +650,16 @@
     "MODEL_UNAVAILABLE": "The chosen model is not available. Pick another one or leave it on automatic."
   },
   "topics": {
-    "title": "Topics",
-    "subtitle": "Each topic keeps its own documents, conversations and tests – nothing leaks between topics.",
-    "search": "Search topics",
-    "noMatch": "No topic matches “{{q}}”.",
-    "resultCount_one": "{{count}} topic",
-    "resultCount_other": "{{count}} topics",
-    "quota": "{{count}} of {{max}} topics",
-    "quotaReached": "You have reached the limit of {{max}} topics. Delete one to create a new one.",
-    "emptyTitle": "Create your first topic",
-    "emptyDesc": "A topic is a workspace for one subject or unit: upload its documents once, then generate as many tests as you need.",
+    "title": "My classes",
+    "subtitle": "Each class keeps its own documents, chats and tests – nothing mixes between classes.",
+    "search": "Search classes",
+    "noMatch": "No class matches “{{q}}”.",
+    "resultCount_one": "{{count}} class",
+    "resultCount_other": "{{count}} classes",
+    "quota": "{{count}} of {{max}} classes",
+    "quotaReached": "You have reached the limit of {{max}} classes. Delete one to create a new one.",
+    "emptyTitle": "Create your first class",
+    "emptyDesc": "A class is a folder for one subject, like Math or Geography. Upload its documents once, then create as many tests as you need.",
     "noDescription": "No description",
     "deleting": "Deleting…",
     "expiresSoon_one": "Deleted in {{count}} day without activity",
@@ -711,21 +683,43 @@
     },
     "fields": {
       "name": "Name",
-      "namePlaceholder": "e.g. Biology 9 – Photosynthesis",
+      "namePlaceholder": "e.g. Math, Geography, Biology 9",
       "description": "Description",
-      "descriptionPlaceholder": "What is this topic about? Who is it for?"
+      "descriptionPlaceholder": "What is this class about? e.g. “Chapter 3: fractions”"
     },
     "new": {
-      "button": "New topic",
-      "title": "New topic",
-      "subtitle": "Give the topic a name; you can add documents now or later.",
+      "button": "New class",
+      "title": "New class",
+      "subtitle": "Give the class a name; you can add documents now or later.",
       "documents": "Documents",
-      "create": "Create topic",
+      "create": "Create class",
       "createAndUpload": "Create and upload",
-      "nameRequired": "Give the topic a name.",
-      "created": "Topic “{{name}}” created.",
-      "uploadFailed": "The topic was created but the upload failed: {{reason}}"
-    }
+      "nameRequired": "Give the class a name.",
+      "created": "Class “{{name}}” created.",
+      "uploadFailed": "The class was created but the upload failed: {{reason}}"
+    },
+    "greeting": "Which class are we studying today?",
+    "mascotHello": "Pick a class to continue, or make a new one for another subject.",
+    "mascotEmpty": "Let’s set up your first class – it only takes a minute!",
+    "steps": {
+      "title": "How it works",
+      "create": {
+        "title": "Make a class",
+        "desc": "One per subject: Math, Geography, History…"
+      },
+      "upload": {
+        "title": "Add documents",
+        "desc": "Upload notes, slides or textbook chapters (PDF, Word, text)."
+      },
+      "generate": {
+        "title": "Create tests",
+        "desc": "Ask Mimir for a test – questions come only from your documents."
+      }
+    },
+    "card": {
+      "addDocs": "Add documents to start"
+    },
+    "quotaLabel": "Class limit"
   },
   "upload": {
     "drop": "Drag files here or",
@@ -733,31 +727,31 @@
     "selected": "Selected files",
     "remove": "Remove {{name}}",
     "progress": "Uploading… {{pct}}%",
-    "limits": "{{types}} · max {{fileMb}} MB per file · {{perUpload}} files at a time · {{perTopic}} files / {{topicMb}} MB per topic",
+    "limits": "{{types}} · max {{fileMb}} MB per file · {{perUpload}} files at a time · {{perTopic}} files / {{topicMb}} MB per class",
     "rejected": {
       "type": "{{name}}: unsupported file type.",
       "size": "{{name}}: the file is too large.",
       "count": "{{name}}: too many files.",
-      "storage": "{{name}}: not enough space left in this topic.",
+      "storage": "{{name}}: not enough space left in this class.",
       "duplicate": "{{name}} is already selected."
     },
     "consent": {
       "label": "I confirm that I may use these documents and that they contain no special category data (e.g. health data) or personal data about students.",
-      "details": "The documents are stored encrypted with this topic's own key and used only to create your tests. Deleting the topic destroys the key, so every copy becomes unreadable at once.",
+      "details": "The documents are stored encrypted with this class's own key and used only to create your tests. Deleting the class destroys the key, so every copy becomes unreadable at once.",
       "more": "Privacy notice",
       "required": "Please tick the box to upload."
     }
   },
   "workspace": {
     "breadcrumb": "Breadcrumb",
-    "sections": "Topic sections",
-    "backToTopics": "Back to topics",
-    "deletedElsewhere": "This topic was deleted.",
-    "notFoundTitle": "Topic not found",
+    "sections": "Class sections",
+    "backToTopics": "Back to my classes",
+    "deletedElsewhere": "This class was deleted.",
+    "notFoundTitle": "Class not found",
     "notFoundDesc": "It may have been deleted, or the link is wrong.",
     "tabs": {
       "chat": "Chat",
-      "files": "Files",
+      "files": "Documents",
       "tests": "Tests"
     },
     "stream": {
@@ -767,22 +761,24 @@
       "closed": "Offline – refreshing periodically"
     },
     "header": {
-      "editLabel": "Edit topic",
-      "saved": "Topic updated.",
+      "editLabel": "Edit class",
+      "saved": "Class updated.",
       "storage": "Storage",
       "expires": "Automatic deletion",
-      "expiryHelp": "Topics are deleted automatically after 90 days without activity. Any activity moves the date forward.",
+      "expiryHelp": "Classes are deleted automatically after 90 days without activity. Any activity moves the date forward.",
       "live": "Live updates",
-      "delete": "Delete topic",
-      "deleteTitle": "Delete this topic?",
+      "delete": "Delete class",
+      "deleteTitle": "Delete this class?",
       "deleteConfirm": "Delete permanently",
-      "deleteBody": "This deletes the topic with its {{files}} file(s), every conversation and every test, including {{saved}} saved test(s). This cannot be undone.",
-      "deleteCrypto": "We destroy the topic's encryption key first, so every remaining copy (including backups) becomes unreadable immediately.",
-      "deleteStarted": "Deleting “{{name}}”…"
+      "deleteBody": "This deletes the class with its {{files}} file(s), every conversation and every test, including {{saved}} saved test(s). This cannot be undone.",
+      "deleteCrypto": "We destroy the class's encryption key first, so every remaining copy (including backups) becomes unreadable immediately.",
+      "deleteStarted": "Deleting “{{name}}”…",
+      "more": "More actions",
+      "stats": "Class details"
     },
     "tests": {
-      "title": "Tests in this topic",
-      "retention": "Unsaved tests are temporary: they are deleted with their conversation or topic. Save the ones you want to keep.",
+      "title": "Tests in this class",
+      "retention": "Unsaved tests are temporary: they are deleted with their conversation or class. Save the ones you want to keep.",
       "filter": "Show",
       "all": "All",
       "saved": "Saved",
@@ -807,6 +803,17 @@
       "leaveTitle": "Leave without saving?",
       "leaveBody": "Your edits to this test have not been saved and will be lost.",
       "leaveConfirm": "Leave"
+    },
+    "switcher": {
+      "title": "My classes",
+      "label": "Switch class",
+      "current": "Current class: {{name}}",
+      "search": "Find a class",
+      "noMatch": "No class found",
+      "new": "New class",
+      "all": "All classes",
+      "counts": "{{files}} docs · {{saved}} saved",
+      "close": "Close class list"
     }
   },
   "generate": {
@@ -895,7 +902,7 @@
     "indicator_one": "{{count}} task running",
     "indicator_other": "{{count}} tasks running",
     "panelTitle": "Running tasks",
-    "openTopic": "Open topic",
+    "openTopic": "Open class",
     "queued": "In queue – position {{position}}",
     "status": {
       "queued": "Waiting to start",
@@ -920,7 +927,7 @@
       "generate_test": "Generating a test",
       "answer_question": "Answering a question",
       "regenerate_question": "Regenerating a question",
-      "delete_topic": "Deleting a topic",
+      "delete_topic": "Deleting a class",
       "export_account": "Preparing your data export",
       "delete_account": "Deleting your account"
     }
@@ -982,5 +989,40 @@
     "leavesMachine": "Data leaves this server",
     "staysLocal": "Data stays on this server",
     "madeWith": "Made with: {{model}}"
+  },
+  "help": {
+    "label": "Help: {{topic}}",
+    "class": "A class is a folder for one subject, like Math or Geography. Its documents, chats and tests stay together and never mix with other classes.",
+    "quota": "How many classes you can have at once. Delete an old class to make room for a new one.",
+    "sort": "Change the order of your classes: the ones you used last, alphabetical, or newest first.",
+    "switcher": "Jump to another class. You stay on the same tab (Chat, Documents or Tests).",
+    "tabs": "Chat: ask questions or request a test. Documents: the files this class learns from. Tests: everything you generated here.",
+    "storage": "How much space this class’s documents use.",
+    "live": "When this says “Live”, the page updates by itself as documents finish processing or tests become ready.",
+    "upload": "Add notes, slides or textbook chapters. Mimir reads them and splits them into short passages, so every question can point back to its source.",
+    "consent": "We need your confirmation that you are allowed to use these documents and that they contain no sensitive personal data.",
+    "usage": "Each class has a limit on how many documents it can hold and how much space they take.",
+    "fileStatus": "After upload each document goes Queued → Reading text → Splitting → Indexing → Ready. You can create tests once at least one document is Ready.",
+    "sessions": "Each conversation keeps its own history. Start a new one when you want a fresh start inside the same class.",
+    "intent": "“Create a test” makes new questions from your documents. “Ask a question” gives you an answer with sources, without making a test.",
+    "options": "Set how many questions you want, which kinds, how hard, and in which language.",
+    "count": "How many questions the test will have (1–50).",
+    "types": "Multiple choice: pick the right answer. True/false: decide if a statement is correct. Open: write the answer in your own words.",
+    "difficulty": "Easy questions check facts, hard ones need you to connect and apply ideas.",
+    "examLanguage": "The language the questions are written in – it can differ from the language of your documents.",
+    "mode": "Fast is good for practice. Thorough double-checks every question against your documents, so it takes a bit longer.",
+    "model": "The AI that writes the questions. “Automatic” picks the best one available.",
+    "sources": "Untick documents you don’t want questions from.",
+    "tests": "Unsaved tests are temporary. Open a test and tick “Save to My tests” to keep it.",
+    "myTests": "Only the tests you saved show up here. You can download them again anytime.",
+    "export": "Download the test as a PDF to print, or as a file you can import into Moodle and other learning platforms.",
+    "aiReview": "AI can make mistakes. Read each question and fix anything that is wrong before you use the test.",
+    "palette": "Pick the colours you like best. Each colour theme comes with its own mascot!",
+    "mode2": "Light, dark, or follow your device’s setting.",
+    "description": "An optional note so you remember what this class covers."
+  },
+  "mascot": {
+    "alt": "Mascot of the {{palette}} theme",
+    "preview": "Your mascot"
   }
 }

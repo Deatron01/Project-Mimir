@@ -1,8 +1,10 @@
 import { useRef, useState } from 'react';
-import { Check, Hourglass, Pencil, Radio, Trash2, X } from 'lucide-react';
+import { Check, FileText, HardDrive, Hourglass, Pencil, Star, Trash2, X, type LucideIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
+import HelpTip from '../ui/HelpTip';
+import ClassAvatar from '../topics/ClassAvatar';
 import ConfirmDialog from '../common/ConfirmDialog';
 import { useErrorText } from '../common/ErrorNotice';
 import { useToast } from '../common/Toaster';
@@ -61,7 +63,7 @@ export default function TopicHeader({ topic }: { topic: Topic }) {
   };
 
   return (
-    <header className="card p-5 md:p-6">
+    <header className="card p-4 sm:p-5 md:p-6">
       {editing ? (
         <form onSubmit={save} className="flex flex-col gap-3" aria-label={t('workspace.header.editLabel')}>
           <label htmlFor="edit-topic-name" className="sr-only">
@@ -101,46 +103,53 @@ export default function TopicHeader({ topic }: { topic: Topic }) {
           </div>
         </form>
       ) : (
-        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-          <div className="min-w-0">
-            <h1 className="break-words text-2xl font-extrabold tracking-tight md:text-3xl">{topic.name}</h1>
-            {topic.description && <p className="mt-1 max-w-3xl text-sm text-muted">{topic.description}</p>}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-start gap-4">
+            <ClassAvatar name={topic.name} size="lg" className="hidden sm:flex" />
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <h1 className="min-w-0 break-words text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">{topic.name}</h1>
+                <HelpTip label={topic.name} size={16}>
+                  {t('help.class')}
+                </HelpTip>
+              </div>
+              {topic.description && <p className="mt-1 line-clamp-2 max-w-3xl text-sm text-muted sm:line-clamp-none">{topic.description}</p>}
+            </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <Button ref={editBtn} size="sm" variant="outline" onClick={startEdit}>
-              <Pencil size={14} aria-hidden="true" /> {t('common.edit')}
+            {/* Icon-only on phones; the accessible name stays the full label. */}
+            <Button ref={editBtn} size="sm" variant="outline" onClick={startEdit} aria-label={t('common.edit')} className="w-10 px-0 sm:w-auto sm:px-4">
+              <Pencil size={14} aria-hidden="true" /> <span className="hidden sm:inline">{t('common.edit')}</span>
             </Button>
-            <Button size="sm" variant="danger" onClick={() => setConfirm(true)}>
-              <Trash2 size={14} aria-hidden="true" /> {t('workspace.header.delete')}
+            <Button size="sm" variant="danger" onClick={() => setConfirm(true)} aria-label={t('workspace.header.delete')} className="w-10 px-0 sm:w-auto sm:px-4">
+              <Trash2 size={14} aria-hidden="true" /> <span className="hidden sm:inline">{t('workspace.header.delete')}</span>
             </Button>
           </div>
         </div>
       )}
 
-      <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-muted">
-        <div className="flex gap-1">
-          <dt>{t('topics.stats.files')}:</dt>
-          <dd className="font-medium text-textMain">{topic.file_count}</dd>
-        </div>
-        <div className="flex gap-1">
-          <dt>{t('workspace.header.storage')}:</dt>
-          <dd className="font-medium text-textMain">{formatBytes(topic.total_bytes, lang)}</dd>
-        </div>
-        <div className="flex gap-1">
-          <dt>{t('topics.stats.saved')}:</dt>
-          <dd className="font-medium text-textMain">{topic.saved_test_count}</dd>
-        </div>
-        <div className="flex items-center gap-1" title={t('workspace.header.expiryHelp')}>
-          <Hourglass size={12} aria-hidden="true" />
-          <dt>{t('workspace.header.expires')}:</dt>
-          <dd className="font-medium text-textMain">{formatDate(topic.expires_at, lang, { dateStyle: 'medium' })}</dd>
-        </div>
-        <div className="flex items-center gap-1">
-          <Radio size={12} aria-hidden="true" className={cn(stream === 'open' ? 'text-success' : 'text-warning')} />
-          <dt className="sr-only">{t('workspace.header.live')}</dt>
-          <dd>{t(`workspace.stream.${stream}`)}</dd>
-        </div>
-      </dl>
+      <ul aria-label={t('workspace.header.stats')} className="relative -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 text-xs text-muted sm:mx-0 sm:mt-4 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
+        <Stat icon={FileText} label={t('topics.stats.files')} value={topic.file_count} />
+        <Stat icon={HardDrive} label={t('workspace.header.storage')} value={formatBytes(topic.total_bytes, lang)} help={t('help.storage')} />
+        <Stat icon={Star} label={t('topics.stats.saved')} value={topic.saved_test_count} />
+        <Stat
+          icon={Hourglass}
+          label={t('workspace.header.expires')}
+          value={formatDate(topic.expires_at, lang, { dateStyle: 'medium' })}
+          help={t('workspace.header.expiryHelp')}
+        />
+        <li className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-border/40 bg-background/40 py-1 pl-3 pr-1">
+          <span className={cn('relative flex h-2 w-2', stream === 'open' ? 'text-success' : 'text-warning')} aria-hidden="true">
+            {stream === 'open' && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-60" />}
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-current" />
+          </span>
+          <span className="sr-only">{t('workspace.header.live')}:</span>
+          <span className="font-medium text-textMain">{t(`workspace.stream.${stream}`)}</span>
+          <HelpTip label={t('workspace.header.live')} size={13}>
+            {t('help.live')}
+          </HelpTip>
+        </li>
+      </ul>
 
       <ConfirmDialog
         open={confirm}
@@ -159,5 +168,20 @@ export default function TopicHeader({ topic }: { topic: Topic }) {
         }
       />
     </header>
+  );
+}
+
+function Stat({ icon: Icon, label, value, help }: { icon: LucideIcon; label: string; value: React.ReactNode; help?: string }) {
+  return (
+    <li className={cn('flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-border/40 bg-background/40 py-1 pl-3', help ? 'pr-1' : 'pr-3')}>
+      <Icon size={13} aria-hidden="true" />
+      <span>{label}:</span>
+      <span className="font-semibold text-textMain">{value}</span>
+      {help && (
+        <HelpTip label={label} size={13}>
+          {help}
+        </HelpTip>
+      )}
+    </li>
   );
 }
