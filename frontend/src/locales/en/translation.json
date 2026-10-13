@@ -58,12 +58,12 @@
     "toggleMode": "Switch to {{mode}} mode",
     "palette": "Colour palette",
     "palettes": {
-      "original": "Mimir Original",
-      "midnight": "Midnight Blossom",
-      "ocean": "Deep Ocean",
-      "sunset": "Sunset Glow",
-      "lavender": "Lavender Dream",
-      "forest": "Forest Whisper"
+      "original": "Stargazer Silver",
+      "midnight": "Midnight Lab",
+      "library": "Old Library",
+      "sunset": "Evening Lecture",
+      "lavender": "Varsity Lavender",
+      "forest": "Atelier Green"
     },
     "selectPalette": "Select the {{name}} palette"
   },

@@ -58,12 +58,12 @@
     "toggleMode": "Váltás {{mode}} módra",
     "palette": "Színpaletta",
     "palettes": {
-      "original": "Mimir Eredeti",
-      "midnight": "Midnight Blossom",
-      "ocean": "Deep Ocean",
-      "sunset": "Sunset Glow",
-      "lavender": "Lavender Dream",
-      "forest": "Forest Whisper"
+      "original": "Stargazer Silver",
+      "midnight": "Midnight Lab",
+      "library": "Old Library",
+      "sunset": "Evening Lecture",
+      "lavender": "Varsity Lavender",
+      "forest": "Atelier Green"
     },
     "selectPalette": "{{name}} paletta kiválasztása"
   },

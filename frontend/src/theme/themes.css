@@ -85,35 +85,35 @@
   --c-warning: 161 98 7;
 }
 
-:root[data-palette='ocean'][data-mode='dark'] {
+:root[data-palette='library'][data-mode='dark'] {
   color-scheme: dark;
-  --c-bg: 3 23 22;
-  --c-surface: 3 47 48;
-  --c-border: 39 77 96;
-  --c-text: 107 163 190;
-  --c-muted: 101 155 180;
-  --c-primary: 12 150 156;
-  --c-on-primary: 0 17 18;
-  --c-accent: 72 157 162;
-  --c-brand-primary: 12 150 156;
-  --c-brand-accent: 10 112 117;
+  --c-bg: 47 28 24;
+  --c-surface: 62 37 34;
+  --c-border: 140 110 99;
+  --c-text: 255 242 223;
+  --c-muted: 205 185 166;
+  --c-primary: 211 163 118;
+  --c-on-primary: 30 16 11;
+  --c-accent: 255 224 178;
+  --c-brand-primary: 211 163 118;
+  --c-brand-accent: 255 224 178;
   --c-danger: 254 202 202;
   --c-success: 134 239 172;
   --c-warning: 252 211 77;
 }
 
-:root[data-palette='ocean'][data-mode='light'] {
+:root[data-palette='library'][data-mode='light'] {
   color-scheme: light;
-  --c-bg: 238 250 249;
-  --c-surface: 211 240 240;
-  --c-border: 159 189 205;
-  --c-text: 2 43 59;
-  --c-muted: 73 105 116;
-  --c-primary: 43 156 162;
-  --c-on-primary: 2 43 59;
-  --c-accent: 10 112 117;
-  --c-brand-primary: 12 150 156;
-  --c-brand-accent: 10 112 117;
+  --c-bg: 255 249 240;
+  --c-surface: 255 235 208;
+  --c-border: 201 174 152;
+  --c-text: 62 37 34;
+  --c-muted: 111 87 77;
+  --c-primary: 140 110 99;
+  --c-on-primary: 255 255 255;
+  --c-accent: 138 90 44;
+  --c-brand-primary: 211 163 118;
+  --c-brand-accent: 255 224 178;
   --c-danger: 185 28 28;
   --c-success: 22 101 52;
   --c-warning: 161 98 7;

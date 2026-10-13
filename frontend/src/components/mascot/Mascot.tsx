@@ -25,7 +25,7 @@ export default function Mascot({ mood = 'idle', size = 96, say, bubbleSide = 'ri
   const theme = useTheme();
   const id = paletteId ?? theme.paletteId;
   const info = getMascot(id);
-  const src = mascotArt(info, mood);
+  const src = mascotArt(info, mood, size);
 
   const figure = (
     <div className="relative shrink-0" style={{ width: size, height: size, ...(paletteId ? paletteVars(paletteId) : undefined) }} aria-hidden="true">
@@ -116,13 +116,6 @@ function PlaceholderMascot({ mood, accessory }: { mood: MascotMood; accessory: M
           <circle cx="22" cy="18" r="1.8" />
           <circle cx="12" cy="34" r="1.2" />
           <circle cx="108" cy="50" r="1.4" />
-        </g>
-      )}
-      {accessory === 'bubbles' && (
-        <g fill="none" stroke={C.accent} strokeWidth="2" opacity="0.9">
-          <circle cx="98" cy="22" r="6" />
-          <circle cx="108" cy="38" r="3.5" />
-          <circle cx="16" cy="30" r="4" />
         </g>
       )}
 

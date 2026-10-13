@@ -57,7 +57,7 @@ src/pages/legacy/           Old chat + test list, used only when apiMode = legac
 - Colours are semantic tokens (`background`, `surface`, `border`, `textMain`, `muted`, `primary`, `onPrimary`, `accent`, `danger`, `success`, `warning`, plus `brandPrimary` / `brandAccent` for the background glow).
 - Tokens are CSS variables with RGB channels, so Tailwind opacity modifiers (`bg-primary/20`) work.
 - Source of truth: `src/theme/palettes.json`. Dark values keep the original palette colours (only `accent` was lightened where it failed contrast as text); light values are derived from the same hues.
-- `<html data-palette="ocean" data-mode="light">` selects the theme. An inline script in `index.html` applies the saved choice before first paint.
+- `<html data-palette="library" data-mode="light">` selects the theme. An inline script in `index.html` applies the saved choice before first paint.
 - Never use raw hex or `text-white` / `bg-white` in components; use a token.
 
 ## Translations

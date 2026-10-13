@@ -105,7 +105,7 @@ export default function Home() {
       {/* Bottom CTA */}
       <section className="relative mx-auto max-w-4xl px-4 py-16 md:px-6">
         <div className="flex flex-col items-center gap-6 rounded-[2rem] border border-border/40 bg-surface/30 px-6 py-12 text-center md:flex-row md:text-left">
-          <Mascot mood="happy" size={120} />
+          <Mascot mood="happy" size={150} />
           <div className="flex-1">
             <h2 className="mb-2 text-2xl font-bold md:text-3xl">{t('home.ctaTitle')}</h2>
             <p className="mb-6 text-muted">{t('home.ctaSubtitle')}</p>
@@ -166,7 +166,7 @@ function ClassPreview() {
         ))}
       </ul>
       <div className="mt-6 flex justify-center lg:justify-end">
-        <Mascot mood="wave" size={110} say={t('home.preview.bubble')} />
+        <Mascot mood="wave" size={150} say={t('home.preview.bubble')} />
       </div>
     </motion.div>
   );

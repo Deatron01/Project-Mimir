@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getMascot, indexArt, mascotArt, mascots } from './mascots';
+import { MASCOT_FACE_BELOW, getMascot, indexArt, mascotArt, mascots } from './mascots';
 import paletteData from './palettes.json';
 import { initials } from '../components/topics/ClassAvatar';
 
@@ -8,17 +8,33 @@ describe('mascots', () => {
     for (const p of paletteData.palettes) expect(mascots[p.id]?.paletteId).toBe(p.id);
   });
 
-  it('indexes artwork by palette and mood from the file name', () => {
+  it('indexes artwork by palette and pose from the file name', () => {
     const art = indexArt({
-      '../assets/mascots/ocean.png': '/a/ocean.png',
-      '../assets/mascots/ocean-happy.webp': '/a/ocean-happy.webp',
-      '../assets/mascots/Forest-Wave.SVG': '/a/forest-wave.svg',
+      '../assets/mascots/forest.png': '/a/forest.png',
+      '../assets/mascots/forest-happy.webp': '/a/forest-happy.webp',
+      '../assets/mascots/forest-face.webp': '/a/forest-face.webp',
+      '../assets/mascots/Sunset-Wave.SVG': '/a/sunset-wave.svg',
       '../assets/mascots/sunset-glow.png': '/a/sunset-glow.png',
     });
-    expect(art.ocean).toEqual({ idle: '/a/ocean.png', happy: '/a/ocean-happy.webp' });
-    expect(art.forest).toEqual({ wave: '/a/forest-wave.svg' });
-    // An unknown suffix is part of the palette id, not a mood.
+    expect(art.forest).toEqual({ idle: '/a/forest.png', happy: '/a/forest-happy.webp', face: '/a/forest-face.webp' });
+    expect(art.sunset).toEqual({ wave: '/a/sunset-wave.svg' });
+    // An unknown suffix is part of the palette id, not a pose.
     expect(art['sunset-glow']).toEqual({ idle: '/a/sunset-glow.png' });
+  });
+
+  it('uses the head crop at avatar sizes only', () => {
+    const info = { paletteId: 'x', accessory: 'cap' as const, art: { idle: '/idle.png', wave: '/wave.png', face: '/face.png' } };
+    expect(mascotArt(info, 'wave', MASCOT_FACE_BELOW - 1)).toBe('/face.png');
+    expect(mascotArt(info, 'wave', MASCOT_FACE_BELOW)).toBe('/wave.png');
+    expect(mascotArt(info, 'wave')).toBe('/wave.png');
+    expect(mascotArt({ ...info, art: { idle: '/idle.png' } }, 'wave', 20)).toBe('/idle.png');
+  });
+
+  it('ships a figure and a head crop for every palette', () => {
+    for (const p of paletteData.palettes) {
+      expect(mascots[p.id].art.idle, p.id).toBeTruthy();
+      expect(mascots[p.id].art.face, p.id).toBeTruthy();
+    }
   });
 
   it('falls back to the default pose, then to the placeholder', () => {
