@@ -3,21 +3,19 @@
 \label{ch:bevezetes}
 % =====================================================================
 
+Ez a fejezet a problémát, a \Mimir{} jelenlegi állapotát, a kutatási kérdéseket, a hipotéziseket és a
+hozzájárulásokat mutatja be.
+
 \section{Motiváció}
 
-A feleletválasztós kérdés (\emph{multiple-choice question}, MCQ) a tudásmérés egyik legszélesebb körben
-használt eszköze: gépi úton javítható, nagy létszámú kurzusokon is skálázható, és jól illeszkedik a
-tanulásmenedzsment-rendszerek (például a Moodle) kvízmoduljaihoz. Előállítása azonban drága. Egy jó
-kérdés törzse önmagában is érthető és egyértelmű, pontosan egy válaszlehetősége helyes a tananyag szerint, a
-helytelen válaszok (\emph{disztraktorok}) pedig hihetők, de igazolhatóan hibásak~\cite{haladyna2002review,gierl2017distractors}.
-Egy tapasztalt oktató egy-egy ilyen kérdésen perceket, egy teljes vizsgán órákat dolgozik.
-
-A nagy nyelvi modellek (\emph{large language model}, LLM) megjelenése óta a legelterjedtebb megoldás a
-legegyszerűbb: az oktató feltölti a jegyzetét egy felhőben futó csevegő asszisztensbe, és „tíz
-feleletválasztós kérdést” kér. A modellek képesek kérdéseket és disztraktorokat fogalmazni~\cite{kurdi2020systematic},
-ugyanakkor hajlamosak folyékony, de a forrás által nem alátámasztott állításokat
-generálni~\cite{ji2023hallucination}. Ezt a munkafolyamatot a továbbiakban \emph{közvetlen
-megközelítésnek} nevezzük.
+A feleletválasztós kérdés (\emph{multiple-choice question}, MCQ) gépi úton javítható és nagy létszámú
+kurzusokon is skálázható, előállítása azonban drága: egy jó kérdés törzse önmagában is érthető, pontosan egy
+válaszlehetősége helyes a tananyag szerint, a helytelen válaszok (\emph{disztraktorok}) pedig hihetők, de
+igazolhatóan hibásak~\cite{haladyna2002review,gierl2017distractors}. A nagy nyelvi modellek (\emph{large language
+model}, LLM) óta a legelterjedtebb megoldás, hogy az oktató egy felhőben futó csevegő asszisztenstől kér
+kérdéseket a jegyzetéből. A modellek képesek kérdéseket és disztraktorokat fogalmazni~\cite{kurdi2020systematic},
+de hajlamosak a forrás által nem alátámasztott állításokra~\cite{ji2023hallucination}. Ezt a munkafolyamatot a
+továbbiakban \emph{közvetlen megközelítésnek} nevezzük.
 
 \section{Problémafelvetés}
 
@@ -37,13 +35,27 @@ kontextust és nagy modellt igényel, a saját, fogyasztói hardveren futtathat�
 memóriája viszont korlátos.
 \end{description}
 
-A négy probléma nem oldható meg egyszerűen „jobb prompttal”. A P1 és a P2 a \emph{módszer} hiányából fakad:
-ha a vizsga szerkezete, a kérdések forrása és az ellenőrzés nem önálló lépések, akkor sem mérni, sem
-kikényszeríteni nem lehet őket. A P3 és a P4 pedig egymást erősítik: a helyi futtatás megoldaná az
-adatvédelmi problémát, de a helyben futtatható kis modellek éppen a hosszú, egylépéses feladatban a
-leggyengébbek. Kutatásunk alapgondolata ezért az, hogy ha a feladatot rövid, egyenként ellenőrizhető
-lépésekre bontjuk, egy fogyasztói grafikus kártyán (GPU) futó kis modell is képes lehet megbízható vizsgát
-előállítani, és ez a felbontás egyben a P1 és a P2 problémát is kezeli.
+A P1 és a P2 a \emph{módszer} hiányából fakad: ha a vizsga szerkezete, a kérdések forrása és az ellenőrzés nem
+önálló lépések, sem mérni, sem kikényszeríteni nem lehet őket. A P3 és a P4 egymást erősíti: a helyi futtatás
+megoldaná az adatvédelmi problémát, de a kis modellek éppen a hosszú, egylépéses feladatban a leggyengébbek.
+Kiinduló gondolatunk ezért az, hogy rövid, egyenként ellenőrizhető lépésekre bontva egy fogyasztói grafikus
+kártyán (GPU) futó kis modell is megbízható vizsgát állíthat elő.
+
+\section{A rendszer állapota és a dolgozat célja}
+
+A \Mimir{} fejlesztési fázisban lévő rendszer. Éles szolgáltatásai ma a naiv visszakereséses megoldást
+(\emph{naiv RAG}, \arm{E0}) futtatják: a modell a feladatleírással visszakeresett három dokumentumrészletet
+(darabot) kapja egy promptban. A lépésekre bontott tervezett folyamat a saját kiértékelő keretrendszerünkben
+készült el, ahol minden lépése külön mérhető. A dolgozat célja \emph{mérésen alapuló döntés} arról, melyik
+megoldás kerüljön a rendszerbe -- a legjobb, a leggyorsabb és a legrobusztusabb, külön a 8 és a 12\,GB-os
+GPU-szinten. A mérések a kiinduló gondolatot pontosították; a dolgozat fő állítása:
+
+\begin{quote}
+\itshape Fogyasztói GPU-n futó kis modellekkel a vizsgakérdések minőségét elsősorban a választott modell és a
+visszakeresés lekérdezése határozza meg; a feladat lépésekre bontása gyenge modellnél nélkülözhetetlen, erős
+modellnél pedig az ellenőrizhetőséget adja. Ezt egy saját, nyílt kiértékelő keretrendszerrel, 30 dokumentumon
+és három modellen mértük, és ebből döntöttük el, mi kerül a rendszerbe.
+\end{quote}
 
 \section{Kutatási kérdések és hipotézisek}
 
@@ -57,13 +69,13 @@ hibrid keresés, darabolás), és mennyibe kerülnek futási időben és modellh
 szerveren futó modell teljesítményét, és hogyan függ az eredmény a választott helyi modelltől?
 \end{description}
 
-A kutatási kérdésekhez a következő hipotéziseket rendeljük; értékelésüket
-\az{\ref{sec:hipotezis-ertekeles}}.~szakasz adja. A hipotézisekben szereplő konfigurációk (\arm{E0}, \arm{E1},
+A hipotéziseket \az{\ref{sec:hipotezis-ertekeles}}.~szakasz értékeli; a konfigurációk (\arm{E0}, \arm{E1},
 \dots) a kísérlet egy-egy beállítását jelölik (\ref{sec:karok}.~szakasz).
 
 \begin{hipotezis}[Tervezés]\label{h:terv}
-Azonos generátormodell mellett a vizsgaterv (\arm{E1}) a naiv visszakereséses alapvonalhoz (\arm{E0})
-képest növeli a kérdések alátámasztottságát és a vizsga lefedettségét, a formai megfelelés romlása nélkül.
+Azonos generátormodell mellett a vizsgaterv (\arm{E1}) a naiv visszakereséses alapvonalhoz (\arm{E0}:
+szemantikus darabolás, a teljes vizsgához három visszakeresett darab) képest növeli a kérdések
+alátámasztottságát és a vizsga lefedettségét, a formai megfelelés romlása nélkül.
 \end{hipotezis}
 
 \begin{hipotezis}[Ellenőrzés]\label{h:verif}
@@ -88,30 +100,30 @@ legalább elfogadható megbízhatósággal egyeznek (Krippendorff-$\alpha\ge0{,}
 
 \section{Hozzájárulások}
 
-\begin{enumerate}[label=(\arabic*)]
-\item \textbf{A \Mimir{} generálási módszere} (\ref{ch:modszer}.~fejezet): szemantikus darabolás;
-lefedettségvezérelt vizsgaterv a Bloom-szintek arányos kiosztásával; kérdésenkénti, fogalomalapú keresés;
-forrásrészletekre hivatkozó, egyenkénti kérdésgenerálás; a legolcsóbbtól a legdrágábbig rendezett ellenőrző
-lánc visszacsatolással.
-\item \textbf{Adatvédelmet biztosító helyi architektúra} (\ref{ch:modszer}.~fejezet): lazán csatolt
-mikroszolgáltatások, zéró adatmegőrzés, ujjlenyomat-alapú audit, saját export (JSON, Moodle XML, PDF) és a
-GPU-memóriaigény mérésekkel ellenőrzött becslése.
-\item \textbf{Nyílt kiértékelési keretrendszer} (\ref{ch:kiertekeles}.~fejezet): 14 egytényezős kísérleti
-konfiguráció, kétnyelvű adatkészlet, forrásalapú mutatók, független bíró, oktatói értékelési protokoll és
-dokumentumszintű statisztika.
-\item \textbf{Empirikus eredmények} (\ref{ch:eredmenyek}. és \ref{ch:diszkusszio}.~fejezet): három vizsgálat,
-köztük egy 30 dokumentumos fő vizsgálat két helyi modellel. Ezek szerint a vizsgaterv minden vizsgált modellnél
-szignifikánsan javít a naiv visszakereséshez képest; a módszer haszna annál nagyobb, minél gyengébb a modell;
-a magyarra továbbtanított modell a formátumkövetésben bukik el; és a mérés több ponton (válaszszivárgás,
-csendes tartalékágak) a valósnál jobb eredményt mutatott volna, ha nem ellenőrizzük.
+\begin{enumerate}[label=(\arabic*),itemsep=0pt]
+\item \textbf{Generálási módszer:} vizsgaterv, kérdéshelyenkénti keresés, forráshivatkozás, ellenőrző lánc
+(\ref{ch:modszer}.~fejezet).
+\item \textbf{Helyi architektúra és megfelelés:} helyi modell, törlődő vektortár, GDPR és MI-rendelet
+(\ref{ch:modszer}.~fejezet).
+\item \textbf{Saját, nyílt kiértékelő keretrendszer:} 14 egytényezős konfiguráció, független bíró, statisztika
+(\ref{ch:kiertekeles}.~fejezet).
+\item \textbf{A módszerek kiértékelése:} a naiv RAG törékenységének oka és a komponensek hatása
+(\ref{ch:eredmenyek}.~fejezet).
+\item \textbf{A modellek kiértékelése:} három helyi modell azonos dokumentumokon, két GPU-szint
+(\ref{ch:modellek}.~fejezet).
+\item \textbf{Mérési tanulságok:} szivárgás, csendes tartalékágak, $\kappa\approx0$, hiányzó bírói ítéletek
+(\ref{ch:eredmenyek}.~fejezet).
+\item \textbf{Gyakorlati eredmény:} a döntés arról, mi kerül a rendszerbe, GPU-szintenként
+(\ref{ch:diszkusszio}.~fejezet).
 \end{enumerate}
 
 \section{A dolgozat felépítése}
 
-\Az{\ref{ch:szakirodalom}}.~fejezet áttekinti a feleletválasztós kérdés követelményeit, a kérdésgenerálás
-fejlődését, a visszakereséssel kiegészített generálást, az ellenőrzést, a kis modellek helyi futtatását és a
-nyelvi modellel végzett kiértékelést, és megfogalmazza a kutatási rést. \Az{\ref{ch:modszer}}.~fejezet a
-rendszert és a generálási módszert, \az{\ref{ch:kiertekeles}}.~fejezet a kiértékelési módszertant mutatja be.
-\Az{\ref{ch:eredmenyek}}.~fejezet a három vizsgálat eredményeit közli, \az{\ref{ch:diszkusszio}}.~fejezet ezeket
-a hipotézisek szempontjából értékeli, \az{\ref{ch:osszefoglalas}}.~fejezet pedig összefoglal, és kijelöli a
-további munkát. A függelék a promptokat, a rubrikát és a reprodukálás lépéseit tartalmazza.
+\Az{\ref{ch:szakirodalom}}.~fejezet a hazai és nemzetközi irodalmat és a jogi keretet tekinti át, és
+megfogalmazza a kutatási rést. \Az{\ref{ch:modszer}}.~fejezet a rendszert, a tervezett módszert és a megfelelés
+helyzetét, \az{\ref{ch:kiertekeles}}.~fejezet a kiértékelési módszertant mutatja be. \Az{\ref{ch:eredmenyek}}.~fejezet
+a módszer lépéseinek hatását, \az{\ref{ch:modellek}}.~fejezet a modelleket értékeli;
+\az{\ref{ch:diszkusszio}}.~fejezet az eredményeket az irodalommal összeveti, és meghozza a döntést,
+\az{\ref{ch:osszefoglalas}}.~fejezet pedig összefoglal. A függelék a módszer és az eredmények részleteit
+(\ref{app-modszer}. és \ref{app-eredmeny-reszletek}.~függelék), a promptokat, a rubrikát, a reprodukálás
+lépéseit és az OTDK kötelező elemeit tartalmazza.

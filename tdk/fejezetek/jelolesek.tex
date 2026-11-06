@@ -9,11 +9,17 @@
 \small
 \begin{longtable}{@{}p{3.2cm}p{11.6cm}@{}}
 BM25 & szógyakoriságon alapuló lexikális rangsoroló függvény\\
-GGUF, Q4\_K\_M & a \texttt{llama.cpp} kvantált modellformátuma, illetve annak kb.\ 4,5 bit/súly változata\\
+DPIA & \emph{Data Protection Impact Assessment}, adatvédelmi hatásvizsgálat (GDPR 35.~cikk)\\
+GDPR & \emph{General Data Protection Regulation}, általános adatvédelmi rendelet, (EU) 2016/679\\
+GGUF, Q4\_K\_M & a \texttt{llama.cpp} kvantált modellformátuma, illetve annak kb.\ 4,8 bit/súly változata\\
 GPU, VRAM & grafikus feldolgozóegység, illetve annak dedikált memóriája\\
+Infotv. & az információs önrendelkezési jogról és az információszabadságról szóló 2011.~évi CXII.\ törvény\\
 KV-gyorsítótár & a szövegelőállítás közben tárolt kulcs- és értékvektorok\\
 LLM & \emph{Large Language Model}, nagy nyelvi modell\\
 MCQ & \emph{Multiple-Choice Question}, feleletválasztós kérdés\\
+MI & mesterséges intelligencia\\
+MI-rendelet & \emph{AI Act}, a mesterséges intelligenciáról szóló (EU) 2024/1689 rendelet\\
+NAIH & Nemzeti Adatvédelmi és Információszabadság Hatóság\\
 RAG & \emph{Retrieval-Augmented Generation}, visszakereséssel kiegészített generálás\\
 RRF & \emph{Reciprocal Rank Fusion}, reciprok rangfúzió\\[3pt]
 bíró & a kérdéseket pontozó, a generátoroktól független nyelvi modell (gpt-oss-120b)\\
@@ -23,7 +29,9 @@ ellenőrző & a \Mimir{} saját ellenőrző lépése, amely a generált kérdés
 kérdéshely & a vizsgaterv egy pontja (fogalom, típus, Bloom-szint), amelyből egy kérdés készül\\
 konfiguráció & a kísérlet egy beállítása (\arm{E0}, \arm{E1}, \dots), amely a referenciájától egy tényezőben tér el\\
 kulcs & a feleletválasztós kérdés megjelölt helyes válasza\\
+naiv RAG & az éles rendszer jelenlegi generálási módja (\arm{E0}): a feladatleírással visszakeresett három darab és a kérés egy promptban\\
 szivárgás & a kulcs szinte szó szerint szerepel a kérdés törzsében\\
+teljes dokumentumos prompt & a teljes dokumentum és a kérés egy promptban (\arm{B-doc-L} helyben, \arm{B-doc-S} a szervermodellel)\\
 vizsgaterv & a vizsga előre rögzített szerkezete kérdéshelyenként\\[3pt]
 $F,G,A,V$ & formai megfelelés, alátámasztottság, vak megoldhatóság, disztraktor-validitás\\
 $Q$ & minőségi index, $(F+G+A+V)/4$\\

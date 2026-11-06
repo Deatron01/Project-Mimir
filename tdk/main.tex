@@ -64,6 +64,7 @@
             giveninits=true,url=false,doi=true,isbn=false,eprint=true]{biblatex}
 \addbibresource{references.bib}
 \DeclareFieldFormat{titlecase}{#1}
+\appto{\bibsetup}{\sloppy}                % hosszú angol címek és azonosítók ne lógjanak ki
 
 % ---------------------------------------------------------------------
 %  Hiperhivatkozások (utolsóként)
@@ -231,6 +232,7 @@
 \include{fejezetek/modszertan}
 \include{fejezetek/kiertekeles}
 \include{fejezetek/eredmenyek}
+\include{fejezetek/modellek}
 \include{fejezetek/diszkusszio}
 \include{fejezetek/osszefoglalas}
 
@@ -256,6 +258,8 @@
 
 % ----------------------------- FÜGGELÉK ------------------------------
 \appendix
+\include{fejezetek/fuggelek_modszer}
+\include{fejezetek/fuggelek_eredmeny}
 \include{fejezetek/fuggelek}
 
 \end{document}

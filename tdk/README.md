@@ -7,20 +7,21 @@ Fordítás (TeX Live / BasicTeX / MiKTeX vagy Overleaf, pdfLaTeX + Biber):
 
 Szükséges csomagok: babel-hungarian, biblatex + biber, algorithm2e, pgfplots, makecell, float.
 
-## Felépítés (cél: kb. 50 oldal, ebből kb. 46 oldal főszöveg)
+## Felépítés (főszöveg kb. 57 oldal; az írási terv: `elemzes/TERV.md`)
 
 | Fejezet | Fájl | Tartalom |
 | --- | --- | --- |
 | Tartalmi összefoglaló | `fejezetek/osszefoglalo.tex` | magyar nyelvű absztrakt |
 | Rövidítések és fogalmak | `fejezetek/jelolesek.tex` | egy oldal |
-| 1. Bevezetés | `fejezetek/bevezetes.tex` | P1–P4, RQ1–3, H1–H5, hozzájárulások |
-| 2. Szakirodalmi háttér | `fejezetek/szakirodalom.tex` | MCQ és Bloom, kérdésgenerálás, LLM-alapok, RAG, felbontás és ellenőrzés, kis modellek, bíró és mérés, jog és magyar nyelv, kutatási rés |
-| 3. A Mimir rendszer | `fejezetek/modszertan.tex` | célok, architektúra, zéró megőrzés, VRAM, generálási módszer |
-| 4. Kiértékelési módszertan | `fejezetek/kiertekeles.tex` | tesztmenet, adatkészlet, konfigurációk, a három vizsgálat, mutatók, bíró, oktatói értékelés, statisztika |
-| 5. Eredmények | `fejezetek/eredmenyek.tex` | pilot, előzetes vizsgálat, fő vizsgálat (30 dokumentum, két modell) |
-| 6. Az eredmények értékelése | `fejezetek/diszkusszio.tex` | hipotézisek, mikor éri meg a módszer, tanulságok, ajánlás, érvényesség |
-| 7. Összefoglalás | `fejezetek/osszefoglalas.tex` | RQ-válaszok, további munka |
-| Függelék | `fejezetek/fuggelek.tex` | promptok, rubrika, paraméterek, reprodukálás |
+| 1. Bevezetés | `fejezetek/bevezetes.tex` | fejlesztési fázis és cél, P1–P4, RQ1–3, H1–H5, hozzájárulások |
+| 2. Szakirodalmi áttekintés | `fejezetek/szakirodalom.tex` | MCQ és Bloom, kérdésgenerálás, LLM-alapok, RAG, felbontás és ellenőrzés, kis modellek, bíró és mérés, magyar nyelv és hazai előzmények, jogi keret (GDPR, MI-rendelet), kutatási rés |
+| 3. A rendszer jelenlegi állapota | `fejezetek/modszertan.tex` | célok, architektúra a mai kód szerint, zéró megőrzés, megfelelés (GDPR, MI-rendelet), VRAM, generálási módszer |
+| 4. Kiértékelési módszertan | `fejezetek/kiertekeles.tex` | keretrendszer, konfigurációk, a három vizsgálat, két összevetési szabály, mutatók, bíró, statisztika |
+| 5. A módszerek kiértékelése | `fejezetek/eredmenyek.tex` | komponensek, darabolás és robusztusság, ellenőrző, költség (relatív szorzók), a mérés megbízhatósága |
+| 6. A modellek kiértékelése | `fejezetek/modellek.tex` | azonos dokumentumokon, szervermodell, a PULI kudarca, erőforrás és GPU-szintek |
+| 7. Értékelés és döntés | `fejezetek/diszkusszio.tex` | hipotézisek, irodalmi összevetés, döntési táblázat, mi kerül be / mi marad ki, ütemterv, érvényesség |
+| 8. Összefoglalás | `fejezetek/osszefoglalas.tex` | RQ-válaszok, további munka |
+| Függelék | `fejezetek/fuggelek_modszer.tex`, `fuggelek_eredmeny.tex`, `fuggelek.tex` | a módszer és az eredmények részletei, promptok, rubrika, reprodukálás, OTDK-elemek (rezümé, MI-nyilatkozat, eredménynyilatkozat, adatforrások) |
 
 ## Számok, ábrák, diagramok
 

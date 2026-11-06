@@ -1,36 +1,44 @@
 % =====================================================================
-\chapter{A \Mimir{} rendszer és generálási módszere}
+\chapter{A \Mimir{} rendszer jelenlegi állapota és generálási módszere}
 \label{ch:modszer}
+\chaptermark{A \Mimir{} rendszer}
 % =====================================================================
 
-Ez a fejezet először a rendszer tervezési céljait, felépítését, adatvédelmi megoldásait és
-memóriaigényét mutatja be (\ref{sec:architektura}--\ref{sec:vram}.~szakasz), majd lépésenként
-ismerteti a generálási módszert (\ref{sec:attekintes}.~szakasz). A módszer leírása a kiértékelő
-keretrendszer implementációját követi (\code{tests/eval/mimir\_eval/blueprint}); a paraméterek
-alapértékeit \az{\ref{app-reprodukcio}}.~függelék foglalja össze.
+Ebből a fejezetből az olvasó megtudja, hogyan épül fel ma a \Mimir{}, hogyan kezeli a tananyagot, és
+hogyan felel meg az adatvédelmi és az MI-rendeleti követelményeknek
+(\ref{sec:architektura}--\ref{sec:megfeleles}.~szakasz); mekkora GPU-memóriát igényel a helyi futtatás
+(\ref{sec:vram}.~szakasz); végül lépésenként megismeri a vizsgált generálási módszert
+(\ref{sec:attekintes}.~szakasz). A \Mimir{} fejlesztési fázisban lévő rendszer: az éles szolgáltatások ma
+a naiv RAG-ot (\arm{E0}) futtatják, a tervezett folyamat -- vizsgaterv, kérdéshelyenkénti keresés,
+ellenőrző lánc, kérdésenkénti forráshivatkozás -- a kiértékelő keretrendszerben készült el
+(\code{tests/new eval/mimir\_eval/blueprint}), és hogy mely elemei kerülnek be, azt
+\az{\ref{ch:diszkusszio}}.~fejezet mérésen alapuló döntése határozza meg. A fejezet a szolgáltatások mai
+működését a forráskód, a módszert a keretrendszer implementációja alapján írja le; a részleteket
+\az{\ref{app-modszer}}.~függelék, a paramétereket \az{\ref{app-reprodukcio}}.~függelék tartalmazza.
 
 % ---------------------------------------------------------------------
 \section{Tervezési célok}
 \label{sec:architektura}
 % ---------------------------------------------------------------------
 
-A bevezetés P1--P4 problémáiból és az AI Act emberi felügyeletre vonatkozó elvárásából~\cite{aiact2024}
-öt tervezési célt vezettünk le. \Az{\ref{tab:celok}}.~táblázat ezeket a közvetlen megközelítéssel
-(a dokumentum feltöltése egy csevegő asszisztensbe) veti össze.
+A bevezetés P1--P4 problémáiból és az MI-rendelet emberi felügyeletre vonatkozó elvárásából~\cite{aiact2024}
+öt tervezési célt vezettünk le (\ref{tab:celok}.~táblázat). A táblázat a célállapotot írja le: a G3 és a
+G5 elemei az éles rendszerben is működnek, a G1 és a G2 ma csak a kiértékelő keretrendszerben.
 
 \begin{table}[htbp]
 \centering
-\caption{Tervezési célok: a dokumentum csevegő nyelvi modellnek való átadása és a \Mimir{} összevetése.}
+\caption[Tervezési célok: a csevegő nyelvi modell és a \Mimir{} összevetése.]{Tervezési célok: a
+dokumentum csevegő nyelvi modellnek való átadása és a \Mimir{} célállapota.}
 \label{tab:celok}
 \small
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
 \toprule
-Cél & Dokumentum $\to$ csevegő modell & \Mimir{} \\
+Cél & Dokumentum $\to$ csevegő modell & \Mimir{} (célállapot) \\
 \midrule
 G1 Ellenőrizhető & A kulcs nincs ellenőrizve, nincs forráshivatkozás & Minden kérdés a forrásrészletekre hivatkozik; alátámasztottsági és vak megoldási ellenőrzés; az ellenőrzésen át nem jutott kérdés megjelölve \\
 G2 Kontrollált & Darabszám, típus, nehézség csak kérés & A vizsgaterv rögzíti a darabszámot, a típusokat és a Bloom-szinteket; lefedettségvezérelt fogalomválasztás \\
-G3 Adatvédő & Az anyag a szolgáltatóhoz kerül & Helyi modell; a tartalom a feladat végén törlődik; kapcsolható, kizárólag helyi mód \\
-G4 Megvalósítható & Hosszú kontextus, nagy modell & Rövid hívások 8\,192 tokenes kontextusban; fogyasztói GPU (8--12\,GB) \\
+G3 Adatvédő & Az anyag a szolgáltatóhoz kerül & Választható helyi modell; a feldolgozási adatok a feladat végén törlődnek; kapcsolható, kizárólag helyi mód \\
+G4 Megvalósítható & Hosszú kontextus, nagy modell & Rövid hívások 8\,192 tokenes kontextusban; fogyasztói GPU (8--12\,GiB) \\
 G5 Felügyelt & A kimenet változtatás nélkül használható & Kötelező oktatói jóváhagyás szerkesztőben, a hivatkozott forrással; MI-közreműködés jelölése az exportban \\
 \bottomrule
 \end{tabularx}
@@ -41,130 +49,164 @@ G5 Felügyelt & A kimenet változtatás nélkül használható & Kötelező okta
 \label{sec:megvalositas}
 % ---------------------------------------------------------------------
 
-A rendszer lazán csatolt, konténerizált szolgáltatásokból áll, amelyeket egy nginx-alapú API-átjáró fog
-össze (\ref{fig:architektura}.~ábra). A szolgáltatások az északi mitológia tudással kapcsolatos
-alakjairól kapták nevüket:
-a \emph{Wellspring} PDF-ből, DOCX-ből és szövegfájlból nyeri ki a szöveget (olvashatatlan PDF-oldalnál
-helyi OCR-rel);
-a \emph{RuneCarver} mondatokra bont, mondatbeágyazást számol és darabol (\ref{sec:darabolas}.~szakasz);
-a \emph{Bifrost} a generálás karmestere (feladatkezelés, indexelés, keresés, promptépítés, modellválasztás);
-a \emph{Heimdall} JSON-sémák és szabályok alapján szűri a modellválaszokat;
-a \emph{The Forge} a feladatsort és az audit naplót kezeli;
-a \emph{Skald} pedig JSON, Moodle XML és PDF formátumba exportál.
-Minden szolgáltatás FastAPI-alapú Python-alkalmazás egységes, verziózott felülettel, így a kiértékelő
-keretrendszer pontosan ugyanazokat a végpontokat hívja, mint az éles webes felület. A
-dokumentumfeldolgozás, a darabolás, a RAG-folyamat, a munkáskészlet és az export (a Moodle XML
-CDATA-blokkokkal és MathJax-támogatással, a PDF saját tördelőkóddal) saját implementáció, nem magas
-szintű keretrendszerek összekötése.
+A rendszer konténerizált, verziózott (\code{/api/v1}) felületű FastAPI-szolgáltatásokból áll, amelyeket
+egy nginx-alapú API-átjáró fog össze (\ref{fig:architektura}.~ábra); nevüket az északi mitológia
+tudással kapcsolatos alakjairól kapták:
+a \emph{Wellspring} PDF-ből, DOCX-ből és szövegfájlból nyeri ki a szöveget (olvashatatlan oldalnál a
+GenAI-szerver képfelismerő modelljével, ennek hiányában vagy helyi módban Tesseract OCR-rel);
+a \emph{RuneCarver} mondatokra bont, beágyaz és darabol (\ref{sec:darabolas}.~szakasz);
+a \emph{Bifrost} indexel, keres, promptot épít, modellt választ és a generálási feladatokat kezeli;
+a \emph{Heimdall} a kész vizsgát egy nyelvi modellel 1--10-es koherencia-pontszámmal értékeli, ez az
+audit naplóba kerül, de a kimenetet nem szűri;
+a \emph{The Forge} az audit naplót és egy adatbázis-alapú feladatsort kezel;
+a \emph{Skald} JSON, Moodle XML és PDF formátumba exportál, és kérésre elmenti a jóváhagyott vizsgát.
+A dokumentumfeldolgozás, a darabolás, a RAG-folyamat, a feladatkezelés és az export (Moodle XML
+CDATA-blokkokkal és MathJax-támogatással, PDF saját tördelőkóddal) saját implementáció. A kiértékelő
+keretrendszer az előkészítéshez ugyanezeket a végpontokat hívja, a generálást viszont a saját kódjában
+futtatja (\ref{sec:harness}.~szakasz).
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{figures/d1_architektura}
-\caption{A \Mimir{} szolgáltatásai és adatfolyama. A feltöltött tartalmat a feldolgozó szolgáltatások
-csak a feladat élettartama alatt, memóriában tartják; a nyelvi modell az egyetlen GPU-t használó
-összetevő, külső modellt csak kikapcsolt \code{LOCAL\_ONLY} kapcsoló mellett hív a rendszer.}
+\caption[A \Mimir{} szolgáltatásai és adatfolyama.]{A \Mimir{} szolgáltatásai és adatfolyama. A feltöltött
+tartalmat a feldolgozó szolgáltatások csak a feladat élettartama alatt, memóriában tartják; a beágyazó
+modellek CPU-n futnak, a GPU-t csak a helyi nyelvi modell használja. Külső modellt a rendszer csak
+kikapcsolt \code{LOCAL\_ONLY} kapcsoló mellett hív. A számok a webes felület hívási sorrendjét jelölik; a
+szürke, szaggatott keretes blokk a kiértékelő keretrendszer, amelyben a tervezett folyamat fut.}
 \label{fig:architektura}
 \end{figure}
 
-A generálás percekig tarthat, ezért a rendszer \emph{aszinkron}: a generálási kérés azonnal egy
-feladatazonosítót ad vissza, az állapot (haladás, becsült hátralévő idő) pedig egy másik végponton
-kérdezhető le. A háttérmunkát a The Forge egy adatbázistáblán alapuló sorral osztja ki, amely a
-PostgreSQL \code{FOR UPDATE SKIP LOCKED} záradékára~\cite{postgres2024skiplocked} épül: minden munkás
-a legrégebbi, még senki által nem zárolt feladatot veszi ki, így egy feladatot pontosan egy munkás kap
-meg, külön üzenetközvetítő szoftver nélkül. Mivel a GPU egyszerre egy modellt futtat, a generálási
-feladatok egymás után futnak; a párhuzamos munkások a CPU-igényes kinyerést és darabolást gyorsítják.
+\paragraph{Az éles generálási útvonal.} A webes felület a szolgáltatásokat az átjárón át, egymás után
+hívja: kinyerés, darabolás, indexelés, generálás, állapotlekérdezés. A \code{/api/v1/generate} végpont
+azonnal feladatazonosítót ad vissza, a generálást a FastAPI \code{BackgroundTasks} mechanizmusával, a
+Bifrost folyamatában indítja; az állapot (szakasz, haladás, becsült hátralévő idő) a
+\code{/api/v1/status} végponton kérdezhető le. A memóriabeli feladattár a feladatot és eredményét az
+indítás után 3\,600\,s-mal (\code{JOB\_TTL\_SECONDS}) eldobja. A modellt a Bifrost alapból az egyetemi
+GenAI-szerverről kéri (sorrendben \code{gpt-oss:120b}, \code{Qwen3.8-Flash-Next}); ha ez nem ad
+értelmezhető választ, vagy nincs API-kulcs, a helyi Ollamára vált (alapból PULI-LlumiX 8B, Q4\_K\_M,
+16\,384 tokenes kontextus, $T=0$), és ha az is hibázik, rögzített hibaüzenet-vizsgát ad vissza;
+bekapcsolt \code{LOCAL\_ONLY} mellett csak a helyi modellt hívja. A feladat végén -- sikertől
+függetlenül -- a \code{\_purge\_document\_data} függvény kiüríti a vektortárat.
 
-A React és TypeScript alapú, magyar és angol nyelvű webes felületen az oktató feltölti a dokumentumot,
-megadja a kérdések számát, típusát (feleletválasztós, igaz-hamis, kifejtős) és nehézségét, majd a kész
-vázlatot a szerkesztőben (\ref{sec:felugyelet}.~szakasz) átnézi és exportálja.
+\paragraph{Feladatsor és egyidejű használat.} A The Forge PostgreSQL-alapú feladatsora a
+\code{FOR UPDATE SKIP LOCKED} záradékra~\cite{postgres2024skiplocked} épül: a munkás a legrégebbi, még
+nem zárolt feladatot veszi ki, így egy feladatot pontosan egy munkás kap meg, üzenetközvetítő nélkül. A
+sor ma egyetlen feladattípust ismer (darabok indexelése), és a webes folyamat nem használja. A Bifrost
+vektortára memóriában futó Qdrant~\cite{qdrant2024} \emph{egyetlen közös gyűjteménnyel}, amelyet minden
+indexelés és minden feladat vége kiürít. Ez egy felhasználónál a zéró megőrzést szolgálja, egyidejű
+felhasználóknál viszont a dokumentumok összekeveredhetnek, vagy egy új indexelés törölheti egy futó
+feladat darabjait: az éles rendszer ma egyfelhasználós, egydokumentumos üzemre alkalmas.
+
+\paragraph{A webes felület.} A React és TypeScript alapú, kétnyelvű felületen az oktató feltölti a
+dokumentumot, megadja a kérdések számát, típusát (feleletválasztós, igaz-hamis, kifejtős) és nehézségét, majd a vázlatot a szerkesztőben
+(\ref{sec:felugyelet}.~szakasz) átnézi és exportálja. A \emph{legacy} API-mód a mai backendet hívja, és
+éles buildben ez az alapértelmezett; a \emph{v1} mód a témakör-munkaterületet valósítja meg egy új
+API-szerződésen (témakörök, fájlok, feladatok, kérdésenkénti forráshivatkozás). Ezt a szerződést a mai
+szolgáltatások még nem valósítják meg, ezért a v1 felület fejlesztéskor böngészőben futó ál-backenddel
+(MSW) működik; a tervezett folyamat élesítése a v1 szerződés szerveroldali megvalósítását is jelenti.
 
 % ---------------------------------------------------------------------
-\section{Adatvédelem: zéró adatmegőrzés}
+\section{Adatvédelem: zéró megőrzés a feldolgozási adatokra}
 \label{sec:zero}
 % ---------------------------------------------------------------------
 
-A G3 cél az adatminimalizálás és a tárolási korlátozás GDPR-elvein~\cite{gdpr2016} alapul: a feltöltött
-tartalom csak addig létezik, amíg a feladathoz szükséges (\ref{tab:eletciklus}.~táblázat).
+A G3 cél az adattakarékosság és a korlátozott tárolhatóság GDPR-elvén~\cite{gdpr2016} alapul. A projekt
+ezt „zéró megőrzésnek” nevezi, pontosabban: a feltöltött tartalom és minden belőle számolt adat (darabok,
+beágyazások, prompt) csak a feladat végéig él, a generált vázlat legfeljebb 60 percig marad a szerveren, a
+jóváhagyott vizsgát pedig a Skald csak kifejezett kérésre, beállítható ideig (alapból 365 napig) tárolja.
+Az adatfajták részletes életciklusát \az{\ref{tab:eletciklus}}.~táblázat
+(\ref{app-eletciklus}.~függelék) foglalja össze.
+
+Az audit napló az elszámoltathatóság miatt fontos, de nem tartalmazhat tananyagot: a feladat azonosítóját,
+a modell nevét, a promptverziót és a Heimdall pontszámát tárolja, a kérésből, a promptból és a
+kontextusból pedig csak a SHA-256 \emph{ujjlenyomatot} (kriptográfiai kivonatot) és a szöveg hosszát, 30
+napig. Az ujjlenyomattal igazolható, hogy két futás ugyanazzal a kontextussal dolgozott-e, a tartalom
+azonban nem állítható vissza belőle; a korábbi, szöveget is tároló oszlopokat a The Forge induláskor
+kiüríti. A \code{LOCAL\_ONLY} kapcsoló a Bifrostban, a Heimdallban és a Wellspringben minden külső
+modellhívást letilt. Alapértéke kikapcsolt, vagyis a mai telepítés a visszakeresett darabokat az egyetemi
+szervermodellnek küldi; a felület minden feltöltés előtt jelzi, hol történik a feldolgozás.
+
+% ---------------------------------------------------------------------
+\section{Adatvédelem és MI-rendelet a megvalósításban}
+\label{sec:megfeleles}
+% ---------------------------------------------------------------------
+
+A jogi keretet~\cite{gdpr2016,aiact2024} \az{\ref{sec:irod-jog}}.~szakasz mutatja be; itt azt foglaljuk
+össze, hogyan jelennek meg a követelmények a kódban és az üzemeltetési dokumentációban. A projekt
+megfelelőségi dokumentációja (\code{docs/gdpr/compliance.hu.md}, 2026.~szeptemberi tervezet) minden elemet
+\emph{Megvalósítva}, \emph{Részben megvalósítva} vagy \emph{Tervezett} jelöléssel lát el;
+\az{\ref{tab:megfeleles}}.~táblázat ezeket változtatás nélkül veszi át. A dokumentáció mérnöki tervezet,
+nem jogi vélemény: éles indulás előtt adatvédelmi tisztviselőnek vagy jogásznak kell átnéznie, és több
+adatkezelői adata (az adatkezelő neve, a tárhelyszolgáltató, az incidensfelelős) még kitöltetlen.
 
 \begin{table}[htbp]
 \centering
-\caption{Adatfajták életciklusa a \Mimir{} rendszerben.}
-\label{tab:eletciklus}
+\caption[Adatvédelmi és MI-rendeleti követelmények és megvalósításuk.]{Adatvédelmi és MI-rendeleti
+követelmények és megvalósításuk a \Mimir{} rendszerben. Az állapot a megfelelőségi dokumentáció
+(\code{docs/gdpr/compliance.hu.md}) jelölése.}
+\label{tab:megfeleles}
 \small
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.5cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.9cm}@{}}
 \toprule
-Adat & Tárolás & Élettartam \\
+Követelmény & Megoldás a rendszerben & Állapot \\
 \midrule
-Fájl, kinyert szöveg, darabok, promptok & memória & a feladat (ill.\ a modellhívás) végéig \\
-Beágyazások & Qdrant, memóriában & a következő dokumentum indexelése előtt törlődnek \\
-Generált vizsga (vázlat) & feladattár & 60 perc, majd automatikus törlés \\
-Jóváhagyott, mentett vizsga & MinIO & beállítható megőrzés; az oktató törölheti \\
-Audit napló & PostgreSQL & csak metaadatok és ujjlenyomatok \\
+GDPR 5.~cikk (1) c), e): adattakarékosság, korlátozott tárolhatóság & A feldolgozási adatok törlése minden feladat után; a feladat eredménye 60 perc után lejár & Megvalósítva \\
+GDPR 25.~cikk: alapértelmezett adatvédelem & A vizsga mentése csak kérésre, a megőrzési idő jelzésével; mentett vizsga legfeljebb 12 hónapig & Megvalósítva \\
+GDPR 5.~cikk (2); MI-rendelet: naplózás & Csak metaadatot és ujjlenyomatot tartalmazó működési napló, 30 napos megőrzés, a régi adatok kiürítése & Megvalósítva \\
+GDPR 28., 44--49.~cikk: adatfeldolgozó, továbbítás & Helyi mód (\code{LOCAL\_ONLY}): nincs hívás az egyetemi GenAI-szerver felé & Megvalósítva (alapból kikapcsolva) \\
+ & Adatfeldolgozói szerződések (tárhely, egyetem, e-mail) & Tervezett \\
+GDPR 12--13.~cikk: tájékoztatás & Adatkezelési tájékoztató magyarul és angolul; figyelmeztetés és megerősítés feltöltéskor; a feldolgozás helye minden feltöltés előtt látható & Megvalósítva (a tájékoztató kitöltendő mezőkkel) \\
+GDPR 15--20.~cikk: érintetti jogok & Mentett vizsga törlése; „Adataim” oldal a böngészőben tárolt adatokhoz & Megvalósítva (a törlés \code{user\_id} alapú tulajdonos-ellenőrzéssel) \\
+ & Fiókexport és -törlés & Tervezett \\
+GDPR 32.~cikk: biztonság & Hozzáférési napló paraméterek nélkül, rövidített IP-címmel & Megvalósítva \\
+ & Naplórotáció: méretalapú rotáció kész, a 14 napos időkorlát üzemeltetési feladat & Részben megvalósítva \\
+ & Valódi hitelesítés és tulajdonos-ellenőrzés & Tervezett \\
+ & Vektoradatok elkülönítése (témakörönként) & Tervezett \\
+GDPR 35.~cikk: hatásvizsgálat & Előszűrés elkészült; teljes hatásvizsgálat a bevezetés előtt & Tervezett \\
+MI-rendelet 50.~cikk: átláthatóság & Figyelmeztetés a felületen; a tájékoztató MI-ről szóló pontja; a PDF metaadat-oldala jelzi az MI közreműködését és a modellt; a szerkesztő kiírja a modellt & Megvalósítva \\
+MI-rendelet: emberi felügyelet (vö.\ 14.~cikk) & Kötelező ellenőrzési lépés a szerkesztőben az export előtt & Megvalósítva \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Az audit napló az elszámoltathatóság miatt fontos, de nem tartalmazhat tananyagot. Ezért a feladat
-azonosítóját, a modell nevét, a promptverziót és a minőségi pontszámot tárolja, a kérésből, a promptból
-és a visszakeresett kontextusból pedig csak a SHA-256 \emph{ujjlenyomatot} (kriptográfiai kivonatot) és a
-szöveg hosszát. Az ujjlenyomattal utólag igazolható, hogy két futás ugyanazzal a kontextussal dolgozott-e,
-a tartalom azonban nem állítható vissza belőle. A \code{LOCAL\_ONLY} kapcsoló minden külső modellhívást
-letilt: ilyenkor a rendszer kizárólag a helyi modellt és a helyi OCR-t használja.
+\paragraph{MI-rendeleti besorolás.} Az MI-rendelet III.~mellékletének 3.~pontja az oktatásban a tanulási
+eredmények értékelésére és a tanulási folyamat irányítására használt rendszereket magas kockázatúnak
+minősíti. A dokumentáció értelmezése szerint a \Mimir{} mai feladata, a tanár által teljes egészében
+ellenőrzött kérdések \emph{generálása}, ezen kívül esik: a rendszer nem értékel és nem pontoz vizsgázókat,
+és nem hoz a GDPR 22.~cikke szerinti automatizált döntést. A diákválaszok automatikus pontozása viszont a
+magas kockázatú kategóriába sorolná, ezért pontozási funkció csak új értékelés után vezethető be. A
+kötelező oktatói jóváhagyás (G5) így a besorolás egyik érve is.
+
+\paragraph{Nyitott pontok.} A bevezetés előtt három hiányt kell megszüntetni: a valódi hitelesítést (a
+mentett vizsgák végpontjai ma egy \code{user\_id} paraméterben bíznak meg; a dokumentáció szerint ez a
+legmagasabb prioritás), a közös vektortár témakörönkénti elkülönítését (a feladat utáni törlés a
+kockázatot csak részben csökkenti) és az egyetemi GenAI-szerverrel kötendő írásos adatfeldolgozói
+megállapodást; addig csak a \code{LOCAL\_ONLY} mód garantálja, hogy a szöveg nem hagyja el az üzemeltető
+szerverét. Az MI-jártasságra (4.~cikk) vonatkozó teendőket a dokumentáció nem tárgyalja. A tervezett
+témakör-munkaterület a darabokat és a beágyazásokat témakörönként, titkosítva megőrizné (javaslat: 90 nap
+inaktivitásig), ami a zéró megőrzést módosítaná; kiadás előtt a dokumentációt és a tájékoztatót is
+frissíteni kell.
 
 % ---------------------------------------------------------------------
 \section{A GPU-memória becslése}
 \label{sec:vram}
 % ---------------------------------------------------------------------
 
-A G4 cél kvantitatív kérdés: elfér-e a generátor egy fogyasztói videokártyán úgy, hogy mellette az
-asztali környezet is fut? A szövegelőállítás közbeni memóriaigény három tag összege:
-\begin{equation}
-M \;=\; W \;+\; \mathrm{ctx}\cdot m_{kv} \;+\; M_0,
-\label{eq:vram}
-\end{equation}
-ahol $W$ a kvantált súlyok mérete, $\mathrm{ctx}$ a kontextus hossza tokenben, $m_{kv}$ a
-KV-gyorsítótár (a már feldolgozott tokenek kulcs- és értékvektorainak tára) tokenenkénti mérete, $M_0$
-pedig a futtatókörnyezet többletigénye. Minden rétegben ($L$ réteg) minden kulcs--érték fejhez ($H_{kv}$
-fej) egy kulcs- és egy értékvektort kell tárolni, egyenként $d_h$ elemmel és elemenként 2 bájttal. A
-Qwen2.5-7B modellre~\cite{qwen25} ($L=28$, $H_{kv}=4$, $d_h=128$):
-\begin{equation*}
-m_{kv}=2\cdot 28\cdot 4\cdot 128\cdot 2\ \text{bájt}=57\,344\ \text{bájt}\approx 56\ \text{KiB},
-\end{equation*}
-így 8\,192 tokenes kontextusnál a gyorsítótár kb.\ 448\,MiB, 16\,384 tokennél kb.\ 896\,MiB.
-\Az{\ref{tab:budget}}.~táblázat több helyi generátorra mutatja a becslést.
-
-\begin{table}[htbp]
-\centering
-\caption{Becsült GPU-memóriaigény 8\,192 tokenes kontextusnál, Q4\_K\_M kvantálással és
-$M_0\approx0{,}6$\,GB többlettel. A súlyok a GGUF-fájlok mérete, $m_{kv}$ a publikált architektúrákból
-számolt érték. A Gemma 3 12B sorában mért érték áll (lásd a szöveget).}
-\label{tab:budget}
-\small
-\begin{tabular}{@{}lccccc@{}}
-\toprule
-Modell & $L/H_{kv}$ & Súlyok & $m_{kv}$ & Összesen & Kártya \\
-\midrule
-Qwen2.5-3B  & 36/2 & 1,9\,GB & 36\,KiB  & 2,8\,GB  & 8\,GB \\
-Qwen2.5-7B  & 28/4 & 4,7\,GB & 56\,KiB  & 5,8\,GB  & 8\,GB \\
-Llama-3.1-8B~\cite{grattafiori2024llama3} (= PULI-LlumiX 8B) & 32/8 & 4,9\,GB & 128\,KiB & 6,6\,GB & 8\,GB \\
-Gemma 3 12B~\cite{gemma3} & 48/8 & 8,1\,GB & ($\le$\,384\,KiB) & $\approx$\,7,8\,GiB (mért) & 12\,GB \\
-Qwen2.5-14B & 48/8 & 9,0\,GB & 192\,KiB & 11,2\,GB & 12\,GB \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-A PULI-LlumiX 8B~\cite{pulillumix} a Llama-3.1-8B architektúráját örökli, így memóriaigénye azonos vele.
-A Gemma 3 12B-nél az egyszerű képlet túlbecsül: a modell rétegeinek többsége csak egy rövid, helyi
-ablakra (\emph{sliding window}) figyel, és csak minden hatodik réteg lát a teljes kontextusra, ezért a
-gyorsítótár jóval kisebb, mint $\mathrm{ctx}\cdot m_{kv}$. Ennél a modellnél ezért a mért értéket
-használjuk: az Ollama 8\,192 tokenes kontextusnál kb.\ 7,8\,GiB-ot foglal. A becslés következtetése két
-fogyasztói szint: a 7--8B modellek 4 bites kvantálással elférnek egy 8\,GB-os kártyán, a 12B modell az
-asztali környezet foglalásával együtt már 12\,GB-os kártyát igényel. A mért értékeket
-\az{\ref{ch:eredmenyek}}.~fejezet közli.
-
-A kontextus növelése a kisebb modelleknél sem ingyenes: 32\,768 tokennél a Qwen2.5-7B gyorsítótára önmagában
-1,75\,GiB lenne. Ezért a helyi teljes dokumentumos alapvonal 16\,384 tokenes kontextussal és 30\,000
-karakterre csonkolt dokumentummal fut, a tervezett folyamat minden hívása viszont rövid.
+A G4 cél kvantitatív kérdés: elfér-e a generátor egy fogyasztói videokártyán az asztali környezet
+mellett? A memóriát bináris egységekben adjuk meg ($1\ \text{GiB}=2^{30}$ bájt), mert a GPU-memória és
+az Ollama által jelzett foglalás is így értendő; a kereskedelemben „8 GB-os” és „12 GB-os” kártyák
+memóriája 8, illetve 12\,GiB. Az igény a kvantált súlyok, a kontextussal arányos KV-gyorsítótár és a
+futtatókörnyezet többletének összege; a képletet, a Qwen2.5-7B-re végzett levezetést és öt modell
+becslését \az{\ref{eq:vram}}.~egyenlet és \az{\ref{tab:budget}}.~táblázat (\ref{app-vram}.~függelék)
+tartalmazza. A Q4\_K\_M kvantálás kb.\ 4,8 bit/súllyal a súlyokat a 16 bites méret nagyjából harmadára
+csökkenti. A becslés szerint 8\,192 tokenes kontextusnál a Qwen2.5-7B kb.\ 5,4\,GiB-ot, a
+Llama-3.1-8B-vel azonos architektúrájú PULI-LlumiX 8B kb.\ 6,1\,GiB-ot igényel, a Gemma 3 12B mért
+foglalása kb.\ 7,8\,GiB (rétegeinek többsége csak egy rövid ablakra figyel, ezért a képlet nála
+túlbecsül). A következtetés két fogyasztói szint: a 7--8B modellek 4 bites kvantálással elférnek egy
+8\,GiB-os kártyán, a 12B modell az asztali környezettel együtt 12\,GiB-os kártyát igényel. A kontextus
+növelése sem ingyenes (32\,768 tokennél a Qwen2.5-7B gyorsítótára önmagában 1,75\,GiB), ezért a helyi
+teljes dokumentumos alapvonal 16\,384 tokennel és 30\,000 karakterre csonkolt dokumentummal fut, a
+tervezett folyamat hívásai viszont rövidek. A mért értékeket \az{\ref{sec:fo-eroforras}}.~szakasz közli.
 
 % ---------------------------------------------------------------------
 \section{A generálási módszer}
@@ -172,143 +214,101 @@ karakterre csonkolt dokumentummal fut, a tervezett folyamat minden hívása visz
 % ---------------------------------------------------------------------
 
 \Az{\ref{fig:pipelines}}.~ábra a két összehasonlított generálási folyamatot mutatja. A \emph{naiv RAG}
-(\arm{E0}) a felhasználói kéréshez leginkább hasonló három darabot keresi vissza, és egyetlen hívásban
-kéri a teljes vizsgát; ez a rendszer eredeti működése és a legolcsóbb ésszerű alapvonal. A
-\emph{tervezett folyamat} (\arm{E1}--\arm{E3}) először explicit vizsgatervet készít, majd a terv minden
-pontjára (a továbbiakban: \emph{kérdéshelyére}) külön keresést, egyetlen kérdés generálását és -- az
-ellenőrző változatokban -- ellenőrzést végez.
+(\arm{E0}, a mai éles útvonal) a felhasználói kéréshez leginkább hasonló három darabot keresi vissza, és
+egyetlen hívásban kéri a teljes vizsgát; ez a legolcsóbb ésszerű alapvonal. A \emph{tervezett folyamat}
+(\arm{E1}--\arm{E3}) először explicit vizsgatervet készít, majd a terv minden pontjára (a továbbiakban:
+\emph{kérdéshelyére}) külön keresést, egyetlen kérdés generálását és -- az ellenőrző változatokban --
+ellenőrzést végez. A lényeg a feladat felbontása: a naiv alapvonalban a modell egy hívásban dönt a
+kérdések számáról, témájáról, nehézségéről és disztraktorairól (rossz válaszlehetőségeiről), a tervezett
+folyamatban a szerkezeti döntéseket determinisztikus program hozza meg, a modell pedig egy-egy rövid
+kérdést ír, csak a releváns kontextus alapján.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{figures/d2_folyamatok}
-\caption{A naiv RAG és a \Mimir{} tervezett generálási folyamata. A terv a vizsga szerkezetét még az
+\caption[A naiv RAG és a \Mimir{} tervezett generálási folyamata.]{A naiv RAG és a \Mimir{} tervezett generálási folyamata. A terv a vizsga szerkezetét még az
 első kérdés megírása előtt rögzíti, és minden kérdést a saját, hivatkozott kontextusával szemben
 ellenőriz.}
 \label{fig:pipelines}
 \end{figure}
 
-A lényegi különbség a feladat felbontása. A naiv alapvonalban a modell egyetlen hívásban dönt a
-kérdések számáról, témájáról, nehézségéről és disztraktorairól (rossz válaszlehetőségeiről). A
-tervezett folyamatban a szerkezeti döntéseket determinisztikus program hozza meg, a modell pedig egy-egy
-rövid kérdést ír, csak a releváns kontextus alapján.
-
-A módszer modellfüggetlen: minden nyelvimodell-hívás egy OpenAI-kompatibilis felületen megy át, a
-generátor tehát egy konfigurációs kulccsal cserélhető. A vizsgálatokban három helyi generátort
-használtunk: a Qwen2.5-7B-t~\cite{qwen25} (pilot és előzetes vizsgálat), valamint a NYTK magyarra
-továbbtanított, Llama-3.1 alapú PULI-LlumiX 8B~\cite{pulillumix} és a Gemma 3 12B~\cite{gemma3}
-modelljét (fő vizsgálat). Mindhárom 4 bites (Q4\_K\_M) kvantálással fut az Ollamán~\cite{ollama2024},
-$T=0{,}2$ hőmérséklettel és 8\,192 tokenes kontextussal (a \arm{B-doc-L} 16\,384 tokennel); a fő vizsgálatban a válasz hossza legfeljebb
-4\,096 token (\code{num\_predict}).
+A módszer modellfüggetlen: minden nyelvimodell-hívás OpenAI-kompatibilis felületen megy át, a generátor
+egy konfigurációs kulccsal cserélhető. A vizsgálatokban a Qwen2.5-7B~\cite{qwen25} (pilot és előzetes
+vizsgálat), valamint a NYTK magyarra továbbtanított, Llama-3.1 alapú PULI-LlumiX 8B~\cite{pulillumix} és
+a Gemma 3 12B~\cite{gemma3} (fő vizsgálat) volt a generátor. Mindhárom 4 bites (Q4\_K\_M, kb.\ 4,8
+bit/súly) kvantálással fut az Ollamán~\cite{ollama2024}, $T=0{,}2$ hőmérséklettel és 8\,192 tokenes
+kontextussal (a \arm{B-doc-L} 16\,384 tokennel); a fő vizsgálatban a válasz legfeljebb 4\,096 token
+(\code{num\_predict}). A kísérleti \arm{E0} az éles útvonal promptját használja, de ezekkel a
+paraméterekkel, a keretrendszerben; az éles végponton át futó kontrollkonfiguráció nem futott
+(\ref{sec:karok}.~szakasz).
 
 % ---------------------------------------------------------------------
 \subsection{Szemantikus darabolás}
 \label{sec:darabolas}
 % ---------------------------------------------------------------------
 
-A darabolás első lépése a mondatokra bontás. Ezután minden mondathoz egy 768 dimenziós
-beágyazóvektort rendelünk a multilingual-E5-base~\cite{wang2024me5} kódolóval. A kódoló hosszabb
-szövegablakokat dolgoz fel, és egy mondat vektora tokenjei vektorainak átlaga, így a szomszédos mondatok
-jelentését is tükrözi. Két szomszédos mondat
-\emph{szemantikus távolsága}
-\begin{equation}
-\delta_i = 1-\cos\bigl(\mathbf{v}_i,\mathbf{v}_{i+1}\bigr),
-\label{eq:delta}
-\end{equation}
-ahol $\mathbf{v}_i$ az $i$-edik mondat vektora. Témaváltásnál a távolság nagy, ezért ott vágunk, ahol
-$\delta_i$ meghaladja a \emph{vágási küszöböt} ($\tau$). Alapértelmezésben $\tau$ a távolságok
-85.~percentilise, vagyis a legnagyobb 15\,\% szomszédos távolságnál vágunk. Hogy egy darab ne nőjön túl
-hosszúra, a küszöb a célméret (1\,000 karakter) túllépése után arányosan csökken: egy kétszeres
-hosszúságú darab már fele akkora távolságnál is lezárul. Ez a \emph{puha korlát} mondat közepén soha
-nem vág.
+A RuneCarver a szöveget mondatokra bontja, minden mondathoz 768 dimenziós vektort rendel a
+multilingual-E5-base~\cite{wang2024me5} kódolóval (a mondat tokenjei vektorainak átlagát, hosszabb
+szövegablakban, így a szomszédos mondatok jelentése is benne van), és ott vág, ahol két szomszédos mondat
+koszinusz-távolsága meghaladja a vágási küszöböt: alapértelmezésben a távolságok 85.~percentilisét,
+vagyis a legnagyobb 15\,\% távolságnál. A célméret (1\,000 karakter) túllépése után a küszöb arányosan
+csökken; ez a \emph{puha korlát} mondat közepén soha nem vág (a képlet: \ref{app-darabolas}.~függelék).
+A szemantikus darabolás az éles rendszerben és a kiértékelésben ugyanaz a kód; csak a rögzített
+darabolású \arm{E5c} darabol a keretrendszerben.
 
-\paragraph{A csonkolt kódoló hibája.}\label{sec:csonkolt} \emph{A kódoló legfeljebb 512 tokenes
-bemenetet fogad. Az eredeti implementáció a teljes dokumentumot egy menetben, csonkolva kódolta, így az
-512.~token után kezdődő mondatok nullvektort kaptak, és hosszabb dokumentumon a vágás már nem a
-tartalomtól, csak a darab hosszától függött. A javított kódoló mondathatáron vágott, legfeljebb 510
-tokenes ablakokban dolgozik (rövid szövegen az eredmény azonos). Az \arm{E5a} konfiguráció a régi
-kódolót szándékosan megtartja, hogy a hiba hatása mérhető legyen.}
+\paragraph{A csonkolt kódoló hibája.}\label{sec:csonkolt} A kódoló legfeljebb 512 tokenes bemenetet fogad.
+Az eredeti implementáció a teljes dokumentumot egy menetben, csonkolva kódolta, így az 512.~token után
+kezdődő mondatok nullvektort kaptak, és hosszabb dokumentumon a vágás már nem a tartalomtól, csak a darab
+hosszától függött. A javított kódoló mondathatáron vágott, legfeljebb 510 tokenes ablakokban dolgozik
+(rövid szövegen az eredmény azonos). Az \arm{E5a} a régi kódolót szándékosan megtartja, hogy a hiba
+hatása mérhető legyen.
 
 % ---------------------------------------------------------------------
 \subsection{Indexelés és az alapvonalak}
 % ---------------------------------------------------------------------
 
-A darabokat a rendszer az E5 kódolóval beágyazza, és egy memóriában futó Qdrant~\cite{qdrant2024}
-vektortárba tölti, amely minden új dokumentum előtt kiürül. A \emph{sűrű keresés} a lekérdezéshez koszinusz-hasonlóság
-szerint legközelebbi $k$ darabot adja vissza. A \emph{naiv RAG} (\arm{E0}) lekérdezése a felhasználói kérés szövege („Készíts pontosan
-10 darab vizsgakérdést, típus: feleletválasztós\ldots”), kontextusa a három leghasonlóbb darab, promptja
-pedig a rendszer éles, v1.0-s promptja (\ref{app-prompt}.~függelék). A \emph{teljes dokumentumos prompt}
-(\arm{B-doc-L} helyben, \arm{B-doc-S} a szerveren) ugyanezt a promptot használja, de a kontextus a teljes
-dokumentum: helyben legfeljebb 30\,000, a szerveren 80\,000 karakter; a levágott rész arányát
-rögzítjük.
+A darabokat a Bifrost az E5 kódolóval beágyazza, és a Qdrant-vektortárba tölti, amely minden új
+dokumentum előtt kiürül; a \emph{sűrű keresés} a lekérdezéshez koszinusz-hasonlóság szerint legközelebbi
+$k$ darabot adja vissza. Az \arm{E0} lekérdezése a felhasználói kérés szövege („Készíts pontosan 10 darab
+vizsgakérdést, típus: feleletválasztós\ldots”), kontextusa a három leghasonlóbb darab, promptja a rendszer
+éles, v1.0-s promptja (\ref{app-prompt}.~függelék). A \emph{teljes dokumentumos prompt} (\arm{B-doc-L}
+helyben, \arm{B-doc-S} a szerveren) ugyanezt a promptot használja a teljes dokumentummal (helyben
+legfeljebb 30\,000, a szerveren 80\,000 karakter; a levágott rész arányát rögzítjük).
 
 % ---------------------------------------------------------------------
 \subsection{A vizsgaterv}
 \label{sec:blueprint}
 % ---------------------------------------------------------------------
 
-\paragraph{Fogalomtervezés.} A tervező egyetlen hívásban a dokumentum \emph{áttekintését} kapja meg:
-minden darab azonosítóját ($C_0, C_1,\dots$) és elejét, összesen legfeljebb 12\,000 karakterben
-(darabonként legalább 120 karaktert). A modell így hosszú, folytonos szöveg helyett azonosítókkal tagolt, rövid felsorolást lát, ami a
-„lost in the middle” jelenség~\cite{liu2024lost} ellen hat. A tervező $n+3$ fogalmat ad vissza ($n$ a kért kérdésszám),
-mindegyikhez egy mondatos leírást (mit kell kérdezni), az alátámasztó darabok azonosítóit és egy
-fontossági értéket (1: részlet, 2: fontos, 3: központi). Értelmezhetetlen válasznál darabonként egy
-álfogalom lép a helyükre, így a terv mindig létrejön.
+\paragraph{Fogalomtervezés.} A tervező egyetlen hívásban a dokumentum \emph{áttekintését} kapja: minden
+darab azonosítóját ($C_0, C_1,\dots$) és elejét, összesen legfeljebb 12\,000 karakterben (darabonként
+legalább 120 karaktert). A modell így folytonos szöveg helyett azonosítókkal tagolt felsorolást lát, ami a
+„lost in the middle” jelenség~\cite{liu2024lost} ellen hat. A tervező $n+3$ fogalmat ad vissza ($n$ a
+kért kérdésszám), mindegyikhez egy mondatos leírást (mit kell kérdezni), az alátámasztó darabok
+azonosítóit és egy fontossági értéket (1: részlet, 2: fontos, 3: központi). Értelmezhetetlen válasznál
+darabonként egy álfogalom lép a helyükre, így a terv mindig létrejön.
 
-\paragraph{Bloom-szintek kiosztása.} A kért nehézséghez egy Bloom-szint-eloszlás
-tartozik~\cite{anderson2001bloom} (\ref{tab:bloom}.~táblázat), amelyet a \emph{legnagyobb maradék
-módszerével} (Hamilton-módszer~\cite{balinski2001fair}) alakítunk egész darabszámokká: minden szint
-először a kérdésszám és az arány szorzatának egészrészét kapja, a maradék helyeket pedig a legnagyobb
-törtrészű szintek. Közepes nehézségnél $n=7$ kérdésre a szorzatok $(2{,}8;\,2{,}8;\,1{,}4)$, az
-egészrészek $(2,2,1)$, a két maradék hely a két legnagyobb törtrészű szinthez kerül, így a kiosztás
-$(3,3,1)$. Az összeg mindig pontosan $n$, így a nehézség nem kérés a promptban, hanem a terv szerkezeti
-tulajdonsága. A szinteket
-véletlenszerűen rendeljük a kérdéshelyekhez, a kész vizsgát pedig a könnyebbtől a nehezebb felé
-rendezzük.
-
-\begin{table}[htbp]
-\centering
-\caption{A nehézségi szintekhez rendelt Bloom-eloszlások és egy 10 kérdéses vizsga kiosztása.}
-\label{tab:bloom}
-\small
-\begin{tabular}{@{}lccccc@{\qquad}c@{}}
-\toprule
-Nehézség & Emlékezés & Megértés & Alkalmazás & Elemzés & Értékelés & Kiosztás ($n=10$) \\
-\midrule
-Könnyű   & 0,5 & 0,5 & -- & -- & -- & (5, 5, 0, 0, 0) \\
-Közepes  & -- & 0,4 & 0,4 & 0,2 & -- & (0, 4, 4, 2, 0) \\
-Nehéz    & -- & -- & 0,3 & 0,4 & 0,3 & (0, 0, 3, 4, 3) \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Lefedettségvezérelt fogalomválasztás.} A kérdéshelyekhez egy \emph{mohó} eljárás választ
-fogalmat: minden lépésben azt, amely még le nem fedett darabot érint, ezen belül a legfontosabbat; ha
-már minden darab le van fedve, a fontosság dönt. Ha a tervező legalább $n$ fogalmat javasolt, a kérdések
-így nem tömörülhetnek a dokumentum egyetlen részére. Kevesebb fogalom esetén a fogalmakat más
-Bloom-szinttel újra felhasználjuk; a ki nem választott fogalmak alkotják a \emph{tartaléklistát}.
+\paragraph{Bloom-szintek és fogalomválasztás.} A kért nehézséghez egy Bloom-szint-eloszlás
+tartozik~\cite{anderson2001bloom}, amelyet a legnagyobb maradék módszerével~\cite{balinski2001fair}
+alakítunk egész darabszámokká (\ref{tab:bloom}.~táblázat, \ref{app-bloom}.~függelék). Az összeg mindig
+pontosan $n$, így a nehézség nem kérés a promptban, hanem a terv szerkezeti tulajdonsága. A
+kérdéshelyekhez egy \emph{mohó} eljárás választ fogalmat: mindig azt, amely még le nem fedett darabot
+érint, ezen belül a legfontosabbat; ha minden darab le van fedve, a fontosság dönt. Ha a tervező legalább
+$n$ fogalmat javasolt, a kérdések így nem tömörülhetnek a dokumentum egyetlen részére; kevesebb fogalomnál
+a fogalmakat más Bloom-szinttel újra felhasználjuk, a ki nem választottak alkotják a
+\emph{tartaléklistát}.
 
 % ---------------------------------------------------------------------
 \subsection{Kérdéshelyenkénti keresés}
 \label{sec:visszakereses}
 % ---------------------------------------------------------------------
 
-Minden kérdéshely saját kontextust kap. A lekérdezés a fogalom neve és leírása, a kontextus pedig a
-fogalomhoz a tervező által rendelt első két darab, kiegészítve a keresés $k=3$ találatával (ismétlés
-nélkül), legfeljebb 6\,000 karakterig. A lényegi különbség a naiv RAG-hoz képest, hogy a lekérdezés itt
-egy tartalmi fogalom („immunológiai memória: hogyan alakul ki”), nem pedig feladatleírás („10 kérdés,
-könnyű”).
-
-A \emph{hibrid} változat (\arm{E2h}) a sűrű rangsort egy lexikális BM25-rangsorral~\cite{robertson2009bm25}
-egyesíti. A magyar ragozás miatt a szavakat egyszerű \emph{előtagtövesítéssel} normalizáljuk: a hat
-karakternél hosszabb szavakból az első hat karaktert tartjuk meg, így az „immunrendszer”,
-„immunrendszert”, „immunrendszerben” alakok közös kulcsot kapnak. A két rangsort a reciprok
-rangfúzió~\cite{cormack2009rrf} egyesíti; a $c$ darab pontszáma
-\begin{equation}
-\mathrm{RRF}(c)=\frac{1}{60+\mathrm{rang}_{\text{sűrű}}(c)}+\frac{1}{60+\mathrm{rang}_{\text{BM25}}(c)},
-\label{eq:rrf}
-\end{equation}
-ahol a rang az 1-től számozott helyezés, a 60-as konstans pedig az irodalomban bevett érték, amely
-csökkenti az első helyek túlzott súlyát.
+Minden kérdéshely saját kontextust kap: a lekérdezés a fogalom neve és leírása, a kontextus a fogalomhoz
+a tervező által rendelt első két darab, kiegészítve a keresés $k=3$ találatával (ismétlés nélkül),
+legfeljebb 6\,000 karakterig. A lényegi különbség a naiv RAG-hoz képest, hogy a lekérdezés itt tartalmi
+fogalom („immunológiai memória: hogyan alakul ki”), nem feladatleírás („10 kérdés, könnyű”). A
+\emph{hibrid} változat (\arm{E2h}) a sűrű rangsort egy előtagtövesített BM25-rangsorral egyesíti reciprok
+rangfúzióval (\ref{eq:rrf}.~egyenlet, \ref{app-hibrid}.~függelék).
 
 % ---------------------------------------------------------------------
 \subsection{Forráshoz kötött kérdésgenerálás}
@@ -326,9 +326,10 @@ igazoló darabok azonosítóit. Így minden kérdés saját, ellenőrizhető for
 \label{sec:verifier}
 % ---------------------------------------------------------------------
 
-Az ellenőrzések a legolcsóbbtól a legdrágábbig futnak (\ref{tab:checks}.~táblázat,
-\ref{fig:ellenorzo}.~ábra): ha egy szabályalapú ellenőrzés hibát talál, a nyelvi modellt igénylő
-ellenőrzések el sem indulnak. A modellalapú ellenőrzések forrása a kérdés által hivatkozott darabok.
+Az ellenőrzések a legolcsóbbtól a legdrágábbig futnak (\ref{tab:checks}.~táblázat;
+a visszacsatolás folyamatábrája: \ref{fig:ellenorzo}.~ábra, \ref{app-slot}.~függelék): ha egy szabályalapú ellenőrzés hibát talál, a nyelvi modellt igénylő
+ellenőrzések el sem indulnak. A modellalapú ellenőrzések forrása a kérdés által hivatkozott darabok. A
+lánc a kiértékelő keretrendszer része, nem azonos a Heimdall mai, egyetlen pontszámot adó lépésével.
 
 \begin{table}[htbp]
 \centering
@@ -358,47 +359,16 @@ Az \emph{alátámasztottsági} hívás azt kérdezi, igazolja-e a forrás a kulc
 válaszokkal dönt. \emph{Duplikátum} a legalább 0,9 koszinusz-hasonlóságú kérdés. Az ellenőrzést maga a
 generátor végzi, az \arm{E2x}-ben egy másik modell (Llama-3.1-8B~\cite{grattafiori2024llama3}).
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/d3_ellenorzo}
-\caption{Az ellenőrző lánc visszacsatolással. Az olcsó szabályalapú ellenőrzések előbb futnak; a hiba
-szövege a következő generálási kísérlet promptjába kerül.}
-\label{fig:ellenorzo}
-\end{figure}
+A hibák listája visszajelzésként a következő kísérlet promptjába kerül ($r=1$ újrapróbálkozás, majd egy
+tartalékfogalom); ha a kulcs nem igazolt, a keresés két darabbal bővül. Ha így sem sikerül, a legjobb
+kísérlet \emph{nem ellenőrzöttként} megjelölve marad meg, hogy az oktató lássa; hibás formánál egy
+\emph{javító} hívás pótolja a hiányzó disztraktorokat (\ref{alg:slot}.~algoritmus,
+\ref{app-slot}.~függelék). Az \arm{E1} csak a formát, a meta-hivatkozást és a duplikátumot vizsgálja. A
+technikai hiba miatt elmaradt ellenőrzés a kérdést nem tartja fel, de naplózzuk.
 
-Egy kérdéshely kitöltését \az{\ref{alg:slot}}.~algoritmus írja le. A hibák listája visszajelzésként
-(„Az előző próbálkozás hibás volt, javítsd: \dots”) a következő kísérlet promptjába kerül; ha a kulcs nem
-igazolt, a keresés két darabbal bővül. Ha egy tartalékfogalommal sem sikerül, a \emph{legjobb} kísérlet
-(formailag helyes, szivárgásmentes, legkevesebb hibájú) marad meg \emph{nem ellenőrzöttként} megjelölve,
-hogy az oktató lássa; hibás formánál egy \emph{javító} hívás pótolja a hiányzó disztraktorokat. Az
-\arm{E1} csak a formát, a meta-hivatkozást és a duplikátumot vizsgálja. Technikai hiba miatt elmaradt
-ellenőrzés a kérdést nem tartja fel, de naplózzuk.
-
-\begin{algorithm}[htbp]
-\caption{Egy kérdéshely kitöltése visszacsatolással (\arm{E2}).}
-\label{alg:slot}
-\KwIn{kérdéshely $s$ (fogalom, típus, Bloom-szint); elfogadott kérdések $\mathcal{A}$; $k=3$; $r=1$}
-\KwOut{kérdés $q$ és az \emph{ellenőrzött} jelző}
-$q^{*}\gets\emptyset$\;
-\ForEach{fogalom $c \in \bigl(s.\mathit{fogalom},\ \text{az első tartalékfogalom}\bigr)$}{
-  $h\gets\emptyset$;\quad $k'\gets k$\;
-  \For{$t=0,\dots,r$}{
-    $K\gets$ \textsc{Kontextus}$(c,k')$ \tcp*{$\le$ 6\,000 karakter}
-    $q\gets$ \textsc{Generál}$(s,c,K,\mathcal{A},h)$ \tcp*{$h$: az előző hibák}
-    $h\gets$ \textsc{Ellenőriz}$(q,K)\ \cup$ \textsc{Duplikátum}$(q,\mathcal{A})$\;
-    \lIf{$h=\emptyset$}{\KwRet $(q,\ \text{igaz})$}
-    $q^{*}\gets$ a jobb $q^{*}$ és $q$ közül\;
-    \lIf{a kulcs nem igazolt}{$k'\gets k'+2$}
-  }
-}
-\lIf{$q^{*}$ formája hibás}{$q^{*}\gets$ \textsc{Javít}$(q^{*})$}
-\KwRet $(q^{*},\ \text{hamis})$\;
-\end{algorithm}
-
-\paragraph{Költség.} A modellhívások száma a módszer fő költségtényezője. Az egyhívásos konfigurációk
-(\arm{E0}, \arm{E5a}--\arm{E5c}, \arm{B-doc}) egy hívással dolgoznak. Az ellenőrzés nélküli \arm{E1}
-legalább $1+n$ hívást igényel (egy tervezés és kérdésenként egy generálás), az ellenőrzött \arm{E2}
-legalább $1+3n$ hívást (kérdésenként generálás, alátámasztottsági ellenőrzés és vak megoldás). Tíz
+\paragraph{Költség.} Az egyhívásos konfigurációk (\arm{E0}, \arm{E5a}--\arm{E5c}, \arm{B-doc}) egy
+hívással dolgoznak, az \arm{E1} legalább $1+n$ (tervezés és kérdésenként egy generálás), az \arm{E2}
+legalább $1+3n$ hívással (kérdésenként generálás, alátámasztottsági ellenőrzés és vak megoldás). Tíz
 kérdésnél ez 11, illetve 31 hívás, ha minden kérdés elsőre átmegy; minden elutasítás további két-három
 hívással jár.
 
@@ -407,16 +377,10 @@ hívással jár.
 \label{sec:graf}
 % ---------------------------------------------------------------------
 
-Az \arm{E3} konfiguráció a tervezőhívást egy fogalomgráffal váltja ki. A darabokat legfeljebb
-3\,000 karakteres kötegekbe csoportosítjuk, és kötegenként egy hívásban kinyerjük a fogalmakat
-(definícióval, szülőfogalommal, darabazonosítókkal), a rövid tényeket és a fogalmak közötti kapcsolatokat
-(\emph{fajtája}, \emph{része}, \emph{okozza}, \emph{ellentéte} stb.); a nagyon hasonló nevű fogalmakat
-(névbeágyazásuk koszinusz-hasonlósága legalább 0,92) összevonjuk, ami a ragozott alakokat is egyesíti.
-A fogalmakat a $\mathrm{cent}(v)=\text{kapcsolatok száma}+\tfrac12\cdot\text{darabok
-száma}+\tfrac12\cdot\text{tények száma}$ centralitás szerint rendezzük, és ez a lista lép a tervező
-helyébe. A generátor disztraktor-ötletként a fogalom \emph{testvérfogalmait} kapja (azonos szülőjű
-fogalmakat, például a „T-sejt” mellett a „B-sejtet”), a kontextus pedig a szomszédos fogalmak darabjaival
-bővül. A gráf csak a vizsga élettartamáig létezik, a memóriában.
+Az \arm{E3} a tervezőhívást egy fogalomgráffal váltja ki: kötegenként kinyeri a fogalmakat, a rövid
+tényeket és a fogalmak közötti kapcsolatokat, a fogalmakat centralitás szerint rendezi, és ez a lista lép
+a tervező helyébe; disztraktor-ötletként a generátor a fogalom testvérfogalmait kapja
+(\ref{app-graf}.~függelék). A gráf csak a vizsga élettartamáig létezik, a memóriában.
 
 % ---------------------------------------------------------------------
 \subsection{Összeállítás és emberi felügyelet}
@@ -427,14 +391,27 @@ Az elfogadott kérdéseket Bloom-szint szerint rendezzük, és mindegyikhez rög
 darabokat, a tervezett fogalmat és az \emph{ellenőrzött} jelzőt. A vázlat a webes szerkesztőbe kerül
 (\ref{fig:szerkeszto}.~ábra), ahol az oktató szerkesztheti, átrendezheti és törölheti a kérdéseket,
 módosíthatja a kulcsot, egyetlen kérdést újragenerálhat, és minden kérdés alatt látja a hivatkozott
-forrásrészletet a fájl nevével és oldalszámával. Jóváhagyás nélkül semmi sem exportálható, az exportált
-dokumentum pedig feltünteti, hogy a tartalom MI-rendszer közreműködésével, melyik modellel készült (G5).
+forrásrészletet a fájl nevével és oldalszámával. Jóváhagyás nélkül semmi sem exportálható, az export
+pedig feltünteti az MI-rendszer közreműködését és a modellt (G5). A szerkesztő a legacy és a v1 módban
+ugyanaz, a jóváhagyás mindkettőben kötelező; a forrásrészlet azonban csak hivatkozást hordozó kérdésnél
+jelenik meg, a mai naiv RAG-kimenetben ilyen nincs, ezért élesben az oktató ma forráshivatkozás nélkül
+hagyja jóvá a kérdéseket.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/k1_szerkeszto.png}
-\caption{A webes szerkesztő egy generált feleletválasztós kérdéssel: a megjelölt helyes válasz, alatta a
-hivatkozott forrásrészlet („1 forrás”, fájlnév és oldalszám); jobb felül a típusválasztó, az
-újragenerálás, az áthelyezés és a törlés gombja.}
+\includegraphics[width=0.75\textwidth]{figures/k1_szerkeszto.png}
+\caption[A webes szerkesztő egy generált feleletválasztós kérdéssel.]{A webes szerkesztő egy generált
+feleletválasztós kérdéssel: a megjelölt helyes válasz, alatta a hivatkozott forrásrészlet („1 forrás”,
+fájlnév és oldalszám); jobb felül a típusválasztó, az újragenerálás, az áthelyezés és a törlés gombja. A
+forrásrészlet a v1 API-szerződés kérdésenkénti hivatkozásából jelenik meg.}
 \label{fig:szerkeszto}
 \end{figure}
+
+\bigskip
+\noindent\textbf{A fejezet tanulsága.} A \Mimir{} mai változata adatvédelmi szempontból gondosan
+kialakított naiv RAG-rendszer: a feldolgozási adatok a feladat végén törlődnek, az audit napló tartalmat
+nem tárol, a helyi mód kapcsolható, az oktatói jóváhagyás kötelező. Az ellenőrizhetőség (G1) és a
+kontrollált szerkezet (G2) a keretrendszerben elkészült módszerben van meg. Az élesítéshez el kell
+dönteni, mely lépések érik meg a költségüket (\ref{ch:diszkusszio}.~fejezet), meg kell valósítani a v1
+API-szerződést, valamint a hitelesítést és a témakörönkénti adatelkülönítést, amelyek nélkül a rendszer
+többfelhasználós üzemre nem alkalmas.

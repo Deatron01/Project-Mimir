@@ -1,0 +1,185 @@
+% =====================================================================
+%  Függelék: kiegészítő eredmények (az 5. fejezetből)
+% =====================================================================
+
+\chapter{Kiegészítő eredmények}
+\label{app-eredmeny-reszletek}
+
+Ez a függelék \az{\ref{ch:eredmenyek}}.~fejezet részletes táblázatait és számait tartalmazza; a főszöveg
+ezekre hivatkozik, és csak az összegzésüket közli. Minden szám forrása a \code{tdk/elemzes/elemzes.py}
+kimenete (\ref{app-reprodukcio}.~függelék).
+
+% ---------------------------------------------------------------------
+\section{A pilot részletei}
+\label{app-er-pilot}
+% ---------------------------------------------------------------------
+
+A pilot egyetlen rövid magyar szövegen (\code{hu-coffee}, 1\,702 karakter, négy darab) futott tíz
+konfigurációval, konfigurációnként három vizsgával, összesen 300 kérdéssel, a Qwen2.5-7B modellel.
+
+\paragraph{Csendes tartalékágak.} Ha egy kérdéshely minden kísérlete elbukott, a megtartott végső kérdésnek
+néha csak két-három válaszlehetősége volt, ami a vizsga formai megfelelését nullára, minőségi indexét
+$0{,}25$-tel csökkentette. Javításként a végső kérdés kiválasztása a formát is figyeli, és egy javító hívás
+pótolja a hiányzó disztraktorokat. A keretrendszer építése során talált másik két hiba: sikertelen modellhívások
+esetén a háttérrendszer egy beégetett, egykérdéses „tartalékvizsgát” adott vissza hibaüzenet helyett, a
+darabolás kódolója pedig a hosszabb dokumentumokat a tartalomtól függetlenül vágta (\ref{sec:csonkolt}.~szakasz).
+
+\paragraph{Válaszszivárgás.} Az \arm{E3} egyik kérdése szó szerint ez volt: „A kávéfogyasztás szokása
+Etiópiából hamar átterjedt a szomszédos Jemenbe, majd az arab világba, Európába pedig a 17.~században jutott el
+a velencei kereskedők révén.” A kulcs ugyanez a mondat volt, a disztraktorok ugyanez a 16., 18., illetve
+15.~századdal. A szivárgás ott volt a legerősebb, ahol a legtöbb újrapróbálkozás történt: az \arm{E3}
+kérdéseinek 20\,\%-a szivárgott, 47\,\%-uk törzse nem is kérdés volt, a bíró mégis többnyire 5-ös helyességi
+pontot adott, hiszen a kulcs valóban a forrásból származik, és a kérdés vakon is megoldható.
+
+\paragraph{Zaj.} Az \arm{E0} és az \arm{E5a} a pilotban azonos darabokat és azonos kontextust kapott (512
+tokennél rövidebb szövegen a régi és az új kódoló ugyanazt adja), mégis $0{,}83$, illetve $0{,}90$ minőségi
+indexet ért el; egyetlen dokumentumon ezért a $0{,}07$-nél kisebb különbségek zajnak tekintendők.
+
+% ---------------------------------------------------------------------
+\section{Az előzetes vizsgálat helyi konfigurációi}
+\label{app-er-elozetes}
+% ---------------------------------------------------------------------
+
+\Az{\ref{tab:elozetes}}.~táblázat a Qwen2.5-7B mind a 11 helyi konfigurációjának eredményét közli az előzetes
+vizsgálat hat dokumentumán; a szerveres konfigurációkat \az{\ref{sec:modellek-szerver}}.~szakasz tárgyalja.
+
+\begin{table}[htbp]
+\centering
+\caption[Az előzetes vizsgálat helyi konfigurációi (Qwen2.5-7B, hat dokumentum).]{Az előzetes vizsgálat
+helyi konfigurációi (Qwen2.5-7B, hat dokumentum; az egyhívásos konfigurációk három, a tervezettek egy
+maggal). $Q$: minőségi index 95\,\%-os bootstrap-intervallummal; F, G, A, V: formai megfelelés,
+alátámasztottság, vak megoldhatóság, disztraktor-validitás (\%); Lef.: lefedettség (\%); Min.: a
+leggyengébb dokumentum $Q$-ja. A futási időket \az{\ref{tab:koltseg}}.~táblázat adja.}
+\label{tab:elozetes}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+Konfiguráció & $Q$ & 95\,\% CI & F & G & A & V & Lef. & Min. \\
+\midrule
+\arm{B-doc-L} (teljes dok.)        & 0,83 & 0,76--0,90 & 83  & 79 & 86 & 85 & 45 & 0,71 \\
+\arm{E0} (naiv RAG)                & 0,64 & 0,46--0,81 & 100 & 43 & 62 & 52 & 25 & 0,34 \\
+\midrule
+\arm{E1} (tervezés)                & 0,88 & 0,82--0,94 & 100 & 80 & 80 & 91 & 46 & 0,76 \\
+\arm{E2} (tervezés + ellenőrzés)   & \textbf{0,96} & 0,93--0,98 & 100 & 90 & 97 & 96 & 44 & \textbf{0,89} \\
+\arm{E3} (+ fogalomgráf)           & 0,88 & 0,79--0,95 & 100 & 83 & 87 & 83 & 40 & 0,68 \\
+\midrule
+\arm{E2f} (vak próba nélkül)       & 0,90 & 0,84--0,95 & 100 & 78 & 88 & 92 & 44 & 0,81 \\
+\arm{E2h} (hibrid keresés)         & 0,92 & 0,90--0,94 & 100 & 82 & 92 & 94 & 42 & 0,88 \\
+\arm{E2x} (csak szabályok)$^\ast$  & 0,89 & 0,83--0,95 & 100 & 78 & 83 & 95 & 42 & 0,77 \\
+\midrule
+\arm{E5a} (régi kódoló)            & 0,87 & 0,81--0,92 & 100 & 74 & 84 & 90 & 36 & 0,76 \\
+\arm{E5b} (magasabb küszöb)        & 0,70 & 0,54--0,86 & 100 & 39 & 78 & 63 & 35 & 0,45 \\
+\arm{E5c} (rögzített darabolás)    & 0,86 & 0,70--0,97 & 100 & 82 & 82 & 81 & 51 & 0,50 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+{\footnotesize $^\ast$ A második modell ellenőrző hívásai hibával tértek vissza
+(\ref{sec:fo-komponensek}.~szakasz).\par}
+\end{table}
+
+A táblázatból négy megfigyelés emelhető ki. (1) A tervezett és ellenőrzött folyamat (\arm{E2}) a
+legrobusztusabb: leggyengébb dokumentuma is $0{,}89$. (2) Az ellenőrzés az \arm{E1}-hez képest öt
+dokumentumon javított, egyen sem rontott ($+0{,}08$). (3) A naiv RAG a három angol dokumentumon összeomlott
+($0{,}40$; a magyar szövegeken $0{,}88$). (4) A kiegészítő ablációk (\arm{E2f}, \arm{E2h}, \arm{E2x},
+\arm{E3}) mind elmaradtak az \arm{E2}-től. A legnagyobb hatások (\arm{E2}--\arm{E0}: mind a hat dokumentumon
+javulás; \arm{E2}--\arm{E1}: öt javulás, romlás nélkül) korrigálatlanul $p=0{,}031$-et adnak, Holm-korrekció
+után egyik sem szignifikáns (a hat dokumentumon elérhető legkisebb korrigált érték $0{,}19$).
+
+% ---------------------------------------------------------------------
+\section{Az ellenőrző lánc részletei}
+\label{app-er-ellenorzo}
+% ---------------------------------------------------------------------
+
+\begin{table}[htbp]
+\centering
+\caption[Az \arm{E2} ellenőrző láncának működése modellenként.]{Az \arm{E2} ellenőrző láncának működése
+modellenként. $n$: bírói ítélettel rendelkező kérdések (\ref{sec:fo-meres}.~szakasz); Első kísérlet: az első
+próbálkozásra elfogadott kérdéshelyek aránya; Átengedett: az ellenőrzöttként elfogadott kérdések aránya;
+pontosság, felidézés és Cohen-$\kappa$ a bíró alátámasztottsági ítéletéhez képest
+(\ref{sec:statisztika}.~szakasz). Az elutasítási okok az összes kísérletre vonatkoznak.}
+\label{tab:ellenorzo}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}lcccccccX@{}}
+\toprule
+Modell & $n$ & \makecell{Első\\kísérlet} & \makecell{Kísérlet/\\kérdéshely} & \makecell{Átenge-\\dett} & \makecell{Pontos-\\ság} & \makecell{Felidé-\\zés} & $\kappa$ & Leggyakoribb elutasítási okok \\
+\midrule
+Qwen2.5-7B     & 60  & 23\,\% & 1,8 & 52\,\% & 0,94 & 0,54 & $0{,}08$ & duplikátum, igaz lehet egy disztraktor, nem kérdés \\
+PULI-LlumiX 8B & 85  & 5\,\%  & 2,0 & 19\,\% & 0,56 & 0,21 & $0{,}05$ & duplikátum, forma, nem kérdés, vak eltérés, szivárgás \\
+Gemma 3 12B    & 157 & 70\,\% & 1,3 & 95\,\% & 0,88 & 0,95 & $0{,}00$ & duplikátum, vak eltérés \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+A Qwen ellenőrzője pontos, de szigorú: amit átenged, az 94\,\%-ban alátámasztott, de a jó kérdések közel
+felét is megjelöli; a Gemma ellenőrzője szinte mindent átenged. A PULI-nál az osztályozói mutatók mindössze 85
+bírált kérdésen alapulnak, ezért bizonytalanok. A többi ellenőrzött konfigurációban a $\kappa$ legfeljebb
+$0{,}22$ (Qwen \arm{E2h}).
+
+% ---------------------------------------------------------------------
+\section{Lefedettség, kognitív szint és felhasználhatóság}
+\label{app-er-jelleg}
+% ---------------------------------------------------------------------
+
+\paragraph{Lefedettség.} \arm{E0}$\to$\arm{E2}: Qwen 25\,\%$\to$44\,\%, PULI 10\,\%$\to$21\,\%, Gemma
+24\,\%$\to$43\,\%. A teljes dokumentumos prompt lefedettsége a Gemmánál 43\,\% (\arm{E1}, \arm{E2}: 43\,\%), a
+Qwennél 45\,\%. A lefedettség felső korlátja tíz kérdésnél $10/K$, ezért a hosszú dokumentumokon a mutató egyik
+módszert sem különbözteti meg.
+
+\paragraph{Kognitív szint.} A vizsgaterv a fő vizsgálatban a kérdések 43--45\,\%-át, az előzetes
+vizsgálatban 27\,\%-át tervezte magasabb rendű (alkalmazás, elemzés, értékelés) szintre. A bíró szerint ebből
+a tervezett konfigurációkban a Gemmánál 7--11\,\%, a Qwennél 5--13\,\%, a PULI-nál 0--2\,\% valósult meg; a
+tervezett és a megvalósult szint a Gemmánál a kérdések 12--20\,\%-ánál, a PULI-nál 6--10\,\%-ánál, a Qwennél
+33--45\,\%-ánál egyezett.
+
+\paragraph{Felhasználhatóság.} A „felhasználnám” ítélet (bekerülne-e a kérdés egy valódi dolgozatba
+legfeljebb apró javítással) aránya a Gemmánál a tervezett konfigurációkban 85--88\,\%, a teljes dokumentumos
+promptnál 83\,\%, az \arm{E5c}-nél 80\,\%, a naiv RAG-nál 42\,\%; a Qwennél az \arm{E2}-ben 80\,\%, a
+\arm{B-doc-L}-ben 68\,\%, az \arm{E0}-ban 34\,\%; a PULI-nál legfeljebb 38\,\% (\arm{E5a}, ahol vizsgánként
+átlagosan csak 2,3 kérdés készült), az \arm{E2}-ben 29\,\%. Az arány csak a bírói ítélettel rendelkező
+kérdésekre számolódik. A Gemma törzsei a tervezett konfigurációkban átlagosan 122--125 karakteresek (az
+\arm{E3}-ban 106), a teljes dokumentumos kérdéseknél 63, a naiv RAG-nál 54: a tervezett folyamat jellemzően
+magyarázó, összefüggést kérdező törzset ír.
+
+% ---------------------------------------------------------------------
+\section{A bírói ítéletek lefedettsége}
+\label{app-er-biro}
+% ---------------------------------------------------------------------
+
+A fő vizsgálatban az áttekintő bírói ítélet a tervezett konfigurációknál a kérdések 44--52\,\%-ánál (Gemma),
+illetve 29--48\,\%-ánál (PULI), az egyhívásos konfigurációknál 47--65\,\%-ánál (Gemma), illetve 70--100\,\%-ánál
+(PULI) van meg; az előzetes vizsgálatban minden kérdés kapott ítéletet. Az ítélettel rendelkező kérdések száma
+konfigurációnként 85 (PULI \arm{E2}) és 574 (Gemma \arm{E0}) között van, a tervezett konfigurációknál a PULI-nál
+85--138, a Gemmánál 132--157. \Az{\ref{tab:biro-lefedettseg}}.~táblázat a forrásonkénti bontást mutatja. Hossz
+szerint nincs érdemi különbség: a Gemma \arm{E2} Wikipédia- és angol dokumentumain a rövid, közepes és hosszú
+dokumentumokból írt kérdések 46/90, 42/90, illetve 43/90 arányban kaptak ítéletet.
+
+\begin{table}[htbp]
+\centering
+\caption[A bírói ítélettel rendelkező kérdések forrásonként.]{A bírói ítélettel rendelkező kérdések
+forrásonként (ítélettel rendelkező / összes kérdés) három jellemző konfigurációban.}
+\label{tab:biro-lefedettseg}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Konfiguráció & Angol (3 dok.) & Saját magyar (3 dok.) & Wikipédia (24 dok.) & Összesen \\
+\midrule
+Gemma \arm{E2} & 30/30 (100\,\%) & 26/30 (87\,\%)  & 101/240 (42\,\%) & 157/300 (52\,\%) \\
+Gemma \arm{E0} & 90/90 (100\,\%) & 90/90 (100\,\%) & 394/720 (55\,\%) & 574/900 (64\,\%) \\
+PULI \arm{E2}  & 9/30 (30\,\%)   & 5/30 (17\,\%)   & 71/238 (30\,\%)  & 85/298 (29\,\%) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A hiánynak három következménye van. (1) A Wikipédia-dokumentumok $G$, $A$ és $V$ értéke kevesebb kérdésen
+alapul, tehát zajosabb. (2) Ha az elutasítás a tartalomtól függ, a bírált kérdések nem véletlen mintát
+alkotnak, így e mutatók a bírált részhalmazra érvényesek. (3) Ha egy vizsga minden bírói hívása sikertelen volt,
+a vizsgaszintű $Q$ csak a formai megfelelésre (és a vak próbára) támaszkodik; ezt ellenőrzi az
+érzékenységvizsgálat (\ref{sec:fo-meres}.~szakasz).
+
+\paragraph{A bíró vakfoltja.} A teljes dokumentumos konfigurációknál a bíró a dokumentumnak csak az első
+24\,000 karakterét látja (\ref{sec:biro}.~szakasz). Az előzetes vizsgálatban ezért a 68\,000 karakteres jogi
+szövegen a szervermodell egy helyes kérdését („What is the access economy?”) alá nem támasztottnak ítélte, mert
+a fogalom a 38\,603.~karakternél áll.

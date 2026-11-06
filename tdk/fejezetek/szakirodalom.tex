@@ -3,11 +3,13 @@
 \label{ch:szakirodalom}
 % =====================================================================
 
-Ebben a fejezetben azokat a kutatási eredményeket tekintjük át, amelyekre a \Mimir{} módszere és
-kiértékelése épül. Először azt nézzük meg, \emph{mit} akarunk előállítani (a jó feleletválasztós
-kérdést), majd azt, \emph{hogyan} (kérdésgenerálás, nyelvi modellek, visszakeresés, feladatfelbontás és
-ellenőrzés, helyi futtatás), végül azt, \emph{hogyan mérjük} az eredményt. A fejezetet a jogi és nyelvi
-környezet, valamint a P1--P4 problémákhoz kötött kutatási rés zárja.
+Ebből a fejezetből az olvasó megtudja, mit vár el a szakirodalom egy jó feleletválasztós kérdéstől, mely
+megközelítések próbálták eddig gépi úton előállítani, és ezek mit oldanak meg a bevezetés négy
+problémájából: a kulcs helyességéből (P1), a vizsga szerkezetéből és lefedettségéből (P2), az
+adatvédelemből (P3) és a nagy, távoli modellektől való függésből (P4). A munkákat nem egyenként
+ismertetjük, hanem azt vizsgáljuk, mit visznek közelebb a megoldáshoz, és hol hagynak rést. A módszertani
+irodalom után a magyar nyelvtechnológiai előzmények, a jogi keret (GDPR, Infotv., MI-rendelet) és a
+kutatási rés összevetése következik.
 
 % ---------------------------------------------------------------------
 \section{A jó feleletválasztós kérdés és a Bloom-taxonómia}
@@ -26,7 +28,9 @@ a helytelen opciók legyenek hihetők, egymást kizárók, és formailag ne kül
 kulcstól, nehogy „árulkodó jelet” adjanak. Hogy ezek nem esztétikai kérdések, azt Downing~\cite{downing2005effects}
 egy orvosi vizsgán mutatta meg: a szabálysértő kérdések miatt a hallgatók 10--15\,\%-a került a
 „nem felelt meg” kategóriába, akik a hibás kérdések nélkül átmentek volna. Egy gépi rendszernél tehát
-nem elég, hogy a kérdések „jónak tűnjenek”: a szabályok betartását ellenőrizni és mérni kell.
+nem elég, hogy a kérdések „jónak tűnjenek”: a szabályok betartását ellenőrizni és mérni kell. Ez adja a
+P1 tartalmát: a helyes kérdéshez igaz kulcs, hamis, de hihető disztraktorok és árulkodó jel nélküli törzs
+kell.
 
 A disztraktorok számáról Rodriguez~\cite{rodriguez2005three} metaanalízise azt találta, hogy a legtöbb
 esetben három opció is elegendő, mert a negyedik és ötödik ritkán „működik”. Tarrant és
@@ -39,18 +43,21 @@ követi, de a disztraktorok \emph{minőségét} -- hamisak és témába vágók-
 
 A kérdések kognitív szintjének leírására Bloom taxonómiáját használjuk Anderson és Krathwohl
 átdolgozott változatában~\cite{anderson2001bloom}. Ez hat, egymásra épülő szintet különít el:
-\emph{emlékezés} (tények felidézése), \emph{megértés} (magyarázat saját szavakkal), \emph{alkalmazás}
-(ismert eljárás új helyzetben), \emph{elemzés} (összefüggések felismerése), \emph{értékelés} (ítélet
-kritériumok alapján) és \emph{alkotás} (új egész létrehozása). Feleletválasztós kérdéssel az első öt
-szint mérhető. Scully~\cite{scully2017constructing} szerint magasabb rendű gondolkodás is mérhető így, ha
-a törzs új helyzetet ír le, a gyakorlatban mégis a tényfelidéző kérdések dominálnak, mert ezeket a
-legkönnyebb megírni. Ugyanez várható egy nyelvi modelltől is, ha maga dönti el, milyen kérdést ír. A
-\Mimir{} ezért a kért nehézséghez előre rögzített Bloom-szint-eloszlást rendel, és azt a vizsgatervben
-kérdésenként kiosztja (\ref{sec:blueprint}.~szakasz).
+\emph{emlékezés}, \emph{megértés}, \emph{alkalmazás}, \emph{elemzés}, \emph{értékelés} és
+\emph{alkotás}; feleletválasztós kérdéssel az első öt mérhető. Scully~\cite{scully2017constructing} szerint
+magasabb rendű gondolkodás is mérhető így, ha a törzs új helyzetet ír le, a gyakorlatban mégis a
+tényfelidéző kérdések dominálnak, mert ezeket a legkönnyebb megírni. Ugyanez várható egy nyelvi
+modelltől is, ha maga dönti el, milyen kérdést ír. A \Mimir{} ezért a kért nehézséghez előre rögzített
+Bloom-szint-eloszlást rendel, és azt a vizsgatervben kérdésenként kiosztja (\ref{sec:blueprint}.~szakasz);
+a lefedettség (P2) így a témák mellett a kognitív szintekre is vonatkozik.
 
-A kérdések klasszikus \emph{tételelemzése} (nehézség, megkülönböztető erő) valódi hallgatói válaszokat
-igényel, így a vizsga előállításakor nem végezhető el; a generált vizsgák ilyen vizsgálata a további
-munka része (\ref{ch:osszefoglalas}.~fejezet).
+Hogy a kérdésírás milyen munkaigényes, azt a hazai tudásmérés is mutatja. A Szegedi Tudományegyetem eDia
+online diagnosztikus mérési rendszerének~\cite{csapo2019edia} feladatbankjai összesen több mint 25\,000
+feladatot tartalmaznak; ezeket képzett feladatírók készítik tartalmi keretrendszerek alapján, több
+lépcsőben lektorálják, majd hallgatói mintán kipróbálják. Ehhez képest egy gépi rendszer \emph{vázlatot}
+adhat: a lektorálást az oktatói jóváhagyás pótolhatja, a kipróbálást nem. A klasszikus
+\emph{tételelemzés} (nehézség, megkülönböztető erő) ugyanis valódi hallgatói válaszokat igényel; a
+generált vizsgák ilyen vizsgálata a további munka része (\ref{ch:osszefoglalas}.~fejezet).
 
 % ---------------------------------------------------------------------
 \section{Automatikus kérdésgenerálás: a szabályoktól a nagy nyelvi modellekig}
@@ -60,26 +67,31 @@ munka része (\ref{ch:osszefoglalas}.~fejezet).
 
 Az automatikus kérdésgenerálás (\emph{automatic question generation}, AQG) több évtizedes terület;
 Kurdi és munkatársai~\cite{kurdi2020systematic} szisztematikus áttekintése 93 oktatási célú rendszert
-elemzett. A fejlődésben három generáció különíthető el.
+elemzett. A fejlődésben három generáció különíthető el, és mindegyik másképp viszonyul a P1--P4
+problémákhoz.
 
 \paragraph{Szabály- és sablonalapú rendszerek.} Az első generáció a szöveget nyelvtanilag elemzi,
 megkeresi a „kérdezhető” mondatrészeket, és transzformációs szabályokkal kérdő mondattá alakítja őket.
 Mitkov és Ha rendszere~\cite{mitkov2003computer} a fontos főnévi csoportokat választja kulcsnak, és egy
 lexikai adatbázis rokon fogalmait ajánlja disztraktornak. Heilman és Smith~\cite{heilman2010good} a
 \emph{túlgenerálás és rangsorolás} elvét vezette be: a szabályok sok jelöltet adnak, amelyek közül egy
-statisztikai modell választja ki a legjobbakat. Ezek a rendszerek átláthatók, és a kulcs mindig a
-szövegből származik, a kérdések viszont merevek, többnyire mondat-átfogalmazások, és minden nyelvhez
-külön szabályrendszer kell.
+statisztikai modell választja ki a legjobbakat. Hazai példa a Miskolci Egyetem
+rendszere~\cite{alshboul2024hybrid}, amely Python-programrészletekből ontológia és egy nyílt
+kérdésgeneráló keretrendszer segítségével ír kérdéseket. Ezek a rendszerek helyben futnak, és a kulcs a
+forrásból származik, így a P1-et részben, a P3-at és a P4-et teljesen megoldják. A kérdések viszont
+merevek, többnyire mondat-átfogalmazások, a vizsga szerkezetéről (P2) nem döntenek, és minden nyelvhez
+külön szabályrendszer kell -- a toldalékoló magyarhoz különösen sok.
 
 \paragraph{Neurális rendszerek.} A második generációt a nagy, kézzel annotált adatkészletek tették
 lehetővé, például a Wikipédia-bekezdésekhez írt, több mint százezer kérdés--válasz párt tartalmazó
 SQuAD~\cite{rajpurkar2016squad}.
 Du és munkatársai~\cite{du2017learning} ezeken tanítottak kódoló--dekódoló hálózatot, amely a bekezdésből
 és a kiválasztott válaszból szóról szóra állítja elő a kérdést. A kérdések folyékonyabbak, de a
-tanítóadat stílusát követik, és semmi sem garantálja, hogy a forrásból megválaszolhatók.
+tanítóadat stílusát követik, és semmi sem garantálja, hogy a forrásból megválaszolhatók: a P1 itt
+romlik, mert a törzs és a kulcs kapcsolata már tanult valószínűségből adódik.
 
 A \emph{disztraktorgenerálás} külön irány; Alhazmi és munkatársai~\cite{alhazmi2024distractor} újabb
-áttekintése a tudásbázis-alapú, a korpuszalapú és a
+áttekintése a tudásbázisra épülő, a korpuszalapú és a
 generatív módszereket veti össze. Megállapításuk szerint a generatív módszerek adják a legtermészetesebb
 disztraktorokat, de gyakori hibájuk, hogy egy disztraktor valójában szintén helyes, vagy nyilvánvalóan
 abszurd. Pontosan ezt a két hibatípust vizsgálja disztraktoronként a \Mimir{} ellenőrzője és a bíró.
@@ -87,22 +99,28 @@ abszurd. Pontosan ezt a két hibatípust vizsgálja disztraktoronként a \Mimir{
 \paragraph{Nagy nyelvi modellek.} A harmadik generációban a kérdéseket egy nagy nyelvi modell írja
 utasítás alapján. Wang és munkatársai~\cite{wang2022towards} GPT-3-mal generáltak tankönyvi kérdéseket,
 amelyek egy része emberi értékelés szerint az emberek által írtakkal összemérhető volt.
-Doughty és munkatársai~\cite{doughty2024comparative} programozási kurzusokon vetették össze a GPT-4 és az
-oktatók kérdéseit: a gépi kérdések többsége jól megfogalmazott volt, kisebb részükben azonban a kulcs
-vagy egy disztraktor hibás volt -- ezek átnézés nélkül a vizsgába kerültek volna. Bitew és
-munkatársai~\cite{bitew2023distractor} a promptba tett, már jóváhagyott példakérdésekkel javították a
-disztraktorokat; ugyanez a csoport készítette az OpenStax-tankönyvekhez írt, szakértők által ellenőrzött
-EduQG adatkészletet~\cite{hadifar2023eduqg}, amelynek angol dokumentumait mi is használjuk. A kis
-modellek oldaláról Fawzi és munkatársai~\cite{fawzi2023small} kimutatták, hogy egy kis modell oktatási
-szövegeken végzett további tanítással a nagy modellekhez mérhető kérdéseket írhat. Ezek a munkák a
-kész kérdéseket utólag, emberi értékeléssel mérik; arra, hogy a generálás \emph{folyamata} hogyan
-biztosíthatja a helyességet és a lefedettséget, kevesebb figyelem jut. Ez az a pont, ahol a \Mimir{}
-hozzájárulni kíván.
+Doughty és munkatársai~\cite{doughty2024comparative} programozási kurzusokon 651 GPT-4-es és 449 oktatói
+kérdést vetettek össze hatszempontos rubrikával. A gépi kérdések 81,7\,\%-a minden szempontnak
+megfelelt, 4,9\,\%-ukban viszont több helyes válasz is volt (az oktatóiaknál 1,1\,\%), 4,0\,\%-ukban pedig
+egy nyilvánvalóan hibás disztraktor elárulta a kulcsot (0,9\,\%); ezek átnézés nélkül a vizsgába kerültek
+volna. Bitew és munkatársai~\cite{bitew2023distractor} a promptba tett, már jóváhagyott példakérdésekkel
+javították a disztraktorokat; ugyanez a csoport készítette az OpenStax-tankönyvekhez írt, szakértők által
+ellenőrzött EduQG adatkészletet~\cite{hadifar2023eduqg}, amelynek angol dokumentumait mi is használjuk. A
+kis modellek oldaláról Fawzi és munkatársai~\cite{fawzi2023small} kimutatták, hogy egy kis modell oktatási
+szövegeken végzett további tanítással a nagy modellekhez mérhető kérdéseket írhat.
+
+\paragraph{Mit oldanak meg, és mit nem?} A harmadik generáció a nyelvi minőséget megoldotta, a P1-et
+azonban csak statisztikailag javítja: a hibák aránya kicsi, de nem nulla, és a hibás kérdést semmi sem
+jelöli meg. A P2-t a munkák nem vizsgálják, mert egyenként kérnek kérdést, a vizsgát pedig ember
+állítja össze. A P3-at és a P4-et a felhőben futó nagy modellek előidézik; Fawzi és munkatársai kis
+modellje kivétel, de minden új tárgynál további tanítást igényel. A kész kérdéseket utólag, emberi
+értékeléssel mérik; arra, hogy a generálás \emph{folyamata} hogyan biztosíthatja a helyességet és a
+lefedettséget, kevés figyelem jut. A \Mimir{} ezen a ponton kíván hozzájárulni.
 
 \paragraph{A kiértékelés problémája.} Mulla és Gharpure~\cite{mulla2023aqg} szerint a rendszerek jelentős
-részét a gépi fordításból átvett, referencia-átfedésen alapuló metrikákkal (BLEU, ROUGE) mérik, amelyek azt számolják, hány szó egyezik a generált és egy ember írta
-referenciakérdés között. Egy vizsgakérdés azonban egyetlen egyező szó nélkül is lehet kiváló, hibás
-kulccsal pedig használhatatlan. Kurdi és
+részét a gépi fordításból átvett, referencia-átfedésen alapuló metrikákkal (BLEU, ROUGE) mérik, amelyek
+azt számolják, hány szó egyezik a generált és egy ember írta referenciakérdés között. Egy vizsgakérdés
+azonban egyetlen egyező szó nélkül is lehet kiváló, hibás kulccsal pedig használhatatlan. Kurdi és
 munkatársai~\cite{kurdi2020systematic} azt is kimutatták, hogy a humán értékelések jellemzően kis mintán
 készülnek, és ritkán ellenőrzik a kulcs helyességét. Munkánkban ezért a helyességet a forrással szembeni
 ítéletekkel mérjük, a referenciakérdéseket pedig csak segédmutatókhoz használjuk
@@ -113,26 +131,21 @@ készülnek, és ritkán ellenőrzik a kulcs helyességét. Munkánkban ezért a
 \label{sec:irod-llm}
 % ---------------------------------------------------------------------
 
-A mai nyelvi modellek alapja a transzformer~\cite{vaswani2017attention}, amely a szöveget
-\emph{tokenekre} (szavakra vagy szódarabokra) bontja, és minden token belső reprezentációját a többi token
-függvényében számolja ki. Két felhasználási módja alakult ki. A \emph{kódoló} modellek (például a
-BERT~\cite{devlin2019bert}) a teljes szöveget egyszerre látják, és jelentését egy vektorban
-(\emph{beágyazásban}) foglalják össze; ezeket keresésre és osztályozásra használják. A \emph{dekódoló}
-vagy generatív modellek (például a GPT-család~\cite{brown2020gpt3}) a szöveget balról jobbra, tokenenként
-állítják elő. A csevegő asszisztenseket ezen felül utasításkövetésre is hangolják. A \Mimir{} mindkét típust használja: kódoló modellt a darabolásra és a keresésre, generatív modellt a
-kérdések megírására.
-
-A szótár szódarabokból áll: a gyakori szavak egy, a ritkák több tokent kapnak. A toldalékoló magyar
-szavak ezért átlagosan több tokenre bomlanak, mint az angolok, így ugyanaz a tartalom magyarul több
-helyet foglal a modell bemenetében (\emph{kontextusában}). Két szöveg jelentésbeli hasonlóságát a
-beágyazásaik által bezárt szög koszinuszával mérjük:
+A mai nyelvi modellek a transzformer-architektúrára~\cite{vaswani2017attention} épülnek, és a szöveget
+\emph{tokenekre} (szavakra vagy szódarabokra) bontva dolgozzák fel. A \emph{kódoló} modellek (például a
+BERT~\cite{devlin2019bert}) egy szöveg jelentését egy vektorba (\emph{beágyazásba}) sűrítik, és keresésre
+használják őket; a \emph{dekódoló}, generatív modellek (például a GPT-család~\cite{brown2020gpt3}) a
+szöveget tokenenként állítják elő, a csevegő változatokat pedig utasításkövetésre is
+hangolják~\cite{ouyang2022instructgpt}. A \Mimir{} kódoló modellel darabol és keres, generatív modellel ír
+kérdést. A toldalékoló magyar szavak több tokenre bomlanak, mint az angolok, így ugyanaz a tartalom
+magyarul több helyet foglal a modell bemenetében (\emph{kontextusában}). Két szöveg hasonlóságát a
+beágyazásaik koszinuszával mérjük:
 \begin{equation}
 \cos(\mathbf{u},\mathbf{v})=\frac{\mathbf{u}\cdot\mathbf{v}}{\lVert\mathbf{u}\rVert\,\lVert\mathbf{v}\rVert},
 \label{eq:cos}
 \end{equation}
 amelynek értéke 1, ha a két vektor azonos irányú, és annál kisebb, minél jobban eltér a két szöveg
-jelentése. A dolgozatban a darabolás, a keresés, a duplikátumszűrés és a lefedettség mérése is erre a
-mértékre épül.
+jelentése. A darabolás, a keresés, a duplikátumszűrés és a lefedettség mérése is erre épül.
 
 \paragraph{Hallucináció.}\label{sec:irod-hall}
 A nyelvi modellek legfontosabb gyengesége a \emph{hallucináció}: folyékony, magabiztos, de a forrással
@@ -141,8 +154,10 @@ különítenek el. Az \emph{intrinzikus} hallucináció ellentmond a forrásnak 
 kávé a 17.~században jutott el Európába, a modell a 9.~századot írja), az \emph{extrinzikus} pedig olyan
 állítás, amely a forrásból sem nem igazolható, sem nem cáfolható. A
 kérdésgenerálásban mindkét típus súlyos: ha a kulcs ellentmond a forrásnak, a felkészült hallgató veszít
-pontot; ha a forrásban nem szerepel, a kérdés a tananyagból nem válaszolható meg. Ezért tekintjük a
-legfontosabb mutatónak az \emph{alátámasztottságot}, vagyis azt, hogy a forrás igazolja-e a kulcsot.
+pontot; ha a forrásban nem szerepel, a kérdés a tananyagból nem válaszolható meg. Mivel a hallucináció a
+valószínűségi szövegelőállítás következménye, nem alkalmi hiba, a kulcs helyességét a forrásból kell
+eldönteni, nem a modell magabiztosságából. Ezért tekintjük a legfontosabb mutatónak az
+\emph{alátámasztottságot}, vagyis azt, hogy a forrás igazolja-e a kulcsot.
 
 \paragraph{Strukturált kimenet.} A generátornak gépileg feldolgozható JSON-kimenetet kell adnia, de egy
 kis modell időnként hibás JSON-t ír. Ezt vagy utólagos ellenőrzéssel és újrakéréssel, vagy
@@ -174,10 +189,11 @@ lekérdezés szavai gyakoriak, de a gyűjteményben ritkák. Gyors, nem igényel
 szakkifejezéseket és tulajdonneveket, de a szinonimákat és a magyar ragozott alakokat nem ismeri fel. A
 \emph{sűrű} keresés a szövegeket egy közös vektortérbe képezi, és a hasonlóságot \eqref{eq:cos} szerinti
 koszinusszal méri. A DPR~\cite{karpukhin2020dpr} megmutatta, hogy ez a nyílt kérdésmegválaszolásban
-felülmúlhatja a BM25-öt. Az
-általunk használt többnyelvű E5 modell~\cite{wang2024me5} nagy szövegpárgyűjteményen, kontrasztív
-tanítással készült, és a magyart is támogatja. A keresők összehasonlító mérései szerint azonban egyik
-módszer sem a legjobb minden adatkészleten~\cite{thakur2021beir}. Ezért gyakori a \emph{hibrid} keresés,
+felülmúlhatja a BM25-öt. Az általunk használt többnyelvű E5 modell~\cite{wang2024me5} nagy
+szövegpárgyűjteményen, kontrasztív tanítással készült, és a magyart is támogatja. A keresők összehasonlító
+mérései szerint azonban egyik módszer sem a legjobb minden adatkészleten~\cite{thakur2021beir}, és magyarra
+sem egyértelmű a sűrű keresés előnye: a MILQA kérdés--válasz adatbázison a BM25 jobb visszakeresést adott
+a vizsgált vektoros megoldásoknál~\cite{novak2023milqa}. Ezért gyakori a \emph{hibrid} keresés,
 amely a két rangsort a reciprok rangfúzióval (RRF)~\cite{cormack2009rrf} egyesíti: egy részlet annál több
 pontot kap, minél előrébb áll az egyes rangsorokban. A \Mimir{} egyik konfigurációja (\arm{E2h}) ezt a
 változatot vizsgálja (\ref{sec:karok}.~szakasz).
@@ -218,11 +234,19 @@ a gyakorlatban teszik. A névleges kontextushossz viszont nem azonos a ténylege
 hosszal: Liu és munkatársai~\cite{liu2024lost} szerint a modellek a bemenet elején és végén lévő
 információt jobban használják, mint a közepén lévőt, a RULER benchmark~\cite{hsieh2024ruler} szerint pedig
 a teljesítmény a hossz növelésével folyamatosan romlik. Li és munkatársai~\cite{li2024ragvslc}
-összevetésében elegendő erőforrás mellett a hosszú kontextus átlagosan jobb, a RAG viszont nagyságrenddel
-olcsóbb, és a kérdések jelentős részén azonos eredményt ad. Ebből két várakozás következik: a teljes
+összevetésében elegendő erőforrás mellett a hosszú kontextus átlagosan jobb, a RAG viszont lényegesen
+olcsóbb, és a lekérdezések több mint 60\,\%-án (elemzésük szerint 63\,\%-án) a két megközelítés pontosan
+azonos előrejelzést ad. Ebből két várakozás következik: a teljes
 dokumentumot kapó modell kérdései a dokumentum egyes részeire tömörülhetnek (\ref{h:lefed}.~hipotézis), és
 a hosszú kontextus egy kis kártyán a memóriaigény miatt korlátos (\ref{sec:vram}.~szakasz). Ugyanakkor egy
 erős modellnél a teljes dokumentumos prompt komoly versenytárs, ezért ezt is mérjük.
+
+\paragraph{Mit old meg a visszakeresés, és mit nem?} A RAG a P4-et kezeli a legközvetlenebbül: rövid
+kontextussal működik, ezért kis, helyi modell is használhatja, ami a P3-at is lehetővé teszi. A P1-et
+csak közvetve segíti, mert az ALCE mérései szerint a promptba tett forrásból nem következik, hogy a modell
+arra támaszkodik. A P2-t a naiv RAG kifejezetten rontja, mert tartalom nélküli lekérdezéssel a dokumentum
+kis részét látja. A fejlett és moduláris változatok egy-egy hiányt pótolnak, de jellemzően nagy modellel és
+kérdésmegválaszolásban értékelték őket, nem vizsgagenerálásban.
 
 % ---------------------------------------------------------------------
 \section{Feladatfelbontás és ellenőrzés}
@@ -235,7 +259,8 @@ kisebb modell is megbízhatóbban teljesít. Wei és munkatársai~\cite{wei2022c
 \emph{least-to-most} módszer~\cite{zhou2023leasttomost} a problémát előbb részfeladatokra bontja, majd
 ezeket egymás után oldja meg, a \emph{Plan-and-Solve}~\cite{wang2023planandsolve} pedig arra kéri a
 modellt, hogy előbb tervet készítsen, és csak utána hajtsa végre -- ez a vizsgaterv gondolatának
-közvetlen megfelelője. Ezek a módszerek a felbontást a promptra bízzák. Wu, Terry és
+közvetlen megfelelője. Ezek a módszerek a felbontást a promptra bízzák, így a terv betartása ugyanúgy a
+modell utasításkövetésén múlik, mint a közvetlen megközelítésben. Wu, Terry és
 Cai~\cite{wu2022aichains} \emph{MI-láncai} ezzel szemben a programban kötik össze a nyelvi modell egymásra
 épülő hívásait. Felhasználói vizsgálatuk szerint a láncok nemcsak jobb eredményt adtak, hanem
 \emph{átláthatóbbak} és jobban \emph{irányíthatók} is voltak, mert minden köztes lépés látható és
@@ -244,8 +269,11 @@ módosítható.
 A \Mimir{} a második irányba tartozik: a szerkezeti döntéseket (hány kérdés, melyik témából, milyen
 szinten) a program hozza meg, a nyelvi modell csak jól körülhatárolt részfeladatot végez (fogalmak
 javaslása, egy kérdés megírása, egy ítélet). Így minden lépés rövid kontextussal dolgozik, ami egy kis
-modellnek kedvez; minden köztes eredmény visszakövethető; és a lépések egyenként cserélhetők, ami
-lehetővé teszi az egytényezős kísérleti tervet. Az ár a több modellhívás és a hosszabb futási idő.
+modellnek kedvez (P4); a szerkezet a program által kikényszerített tulajdonság (P2); minden köztes
+eredmény visszakövethető; és a lépések egyenként cserélhetők, ami lehetővé teszi az egytényezős kísérleti
+tervet. Az ár a több modellhívás és a hosszabb futási idő. A hivatkozott eredményeket többnyire nagy
+modellekkel, érvelési feladatokon mérték; hogy a felbontás kis modellnél vizsgagenerálásban mennyit ér,
+azt \az{\ref{ch:eredmenyek}}. és \az{\ref{ch:modellek}}.~fejezet méri.
 
 \paragraph{Ellenőrzés és önjavítás.}\label{sec:irod-ellenorzes}
 A hallucináció elleni második stratégia a kimenet utólagos ellenőrzése. A Self-Refine~\cite{madaan2023selfrefine}
@@ -281,26 +309,26 @@ szó szerinti bemásolása volt a törzsbe (\emph{szivárgás}, \ref{sec:szivarg
 A helyi futtatás feltétele, hogy a modell elférjen egy fogyasztói grafikus kártya memóriájában. Ma
 több nyílt modellcsalád ér el jó teljesítményt néhány milliárd paraméterrel, például a
 Qwen2.5~\cite{qwen25}, a Llama~3.1~\cite{grattafiori2024llama3} és a Gemma~3~\cite{gemma3}; ezek a kisebb
-méretet több és jobb minőségű tanítóadattal ellensúlyozzák. A pilotban és az előzetes vizsgálatban a Qwen2.5-7B, a fő
-vizsgálatban a Gemma~3 12B és a PULI-LlumiX 8B a generátor.
-
-A magyar nyelvtechnológiai közösség saját modelleket is készített, például a huBERT
-kódolót~\cite{nemeskey2021hubert} és a NYTK PULI modellcsaládját. Ennek legújabb tagja, a PULI-LlumiX~\cite{pulillumix}
-a Llama~3.1 8B modell magyar szövegeken folytatott további előtanításával készült. Természetes várakozás,
-hogy egy magyarra hangolt modell magyar tananyagból jobb kérdéseket ír, mint egy általános többnyelvű
-modell; ezt a várakozást a fő vizsgálatban közvetlenül teszteljük (\ref{ch:eredmenyek}.~fejezet).
+méretet több és jobb minőségű tanítóadattal ellensúlyozzák. A pilotban és az előzetes vizsgálatban a
+Qwen2.5-7B, a fő vizsgálatban a Gemma~3 12B és a NYTK magyarra továbbtanított
+PULI-LlumiX 8B modellje~\cite{pulillumix} a generátor (a magyar modellekről
+\az{\ref{sec:irod-magyar}}.~szakasz szól). Természetes várakozás, hogy egy magyarra hangolt modell magyar
+tananyagból jobb kérdéseket ír, mint egy általános többnyelvű modell; ezt a fő vizsgálatban közvetlenül
+teszteljük (\ref{ch:modellek}.~fejezet).
 
 A memóriaigény fő összetevője a súlyok mérete. Egy 7 milliárd paraméteres modell 16 bites ábrázolásban
 paraméterenként 2 bájtot, összesen 14\,GB-ot foglal. A \emph{kvantálás} a súlyokat kevesebb biten
 tárolja: a GPTQ~\cite{frantar2023gptq} a tanítás után 3--4 bitre tömörít. A
 helyi futtatás de facto szabványa a \texttt{llama.cpp}~\cite{gerganov2023llamacpp} GGUF formátuma és
-csoportos K-kvantálása; az általunk használt Q4\_K\_M változat átlagosan kb.\ 4,5--5 bitet használ
+csoportos K-kvantálása; az általunk használt Q4\_K\_M változat átlagosan kb.\ 4,8 bitet használ
 súlyonként, és erre épül az Ollama futtatókörnyezet~\cite{ollama2024} is. Átfogó kiértékelések szerint a
 4 bites súlykvantálás általános feladatokon csak kis pontosságvesztést okoz~\cite{li2024evalquant}. A
 memóriaigény második összetevője a \emph{kulcs--érték (KV) gyorsítótár}, amely a már feldolgozott tokenek
 köztes eredményeit tárolja, így a kontextus hosszával arányosan nő. Mindezek alapján egy 7--8B modell
 4 bites változata egy 8\,GB-os, a Gemma~3 12B egy 12\,GB-os fogyasztói kártyán futtatható; a számszerű
-becslést \az{\ref{sec:vram}}.~szakasz adja meg.
+becslést \az{\ref{sec:vram}}.~szakasz adja meg. A helyi futtatás tehát egyszerre kezeli a P3-at és a
+P4-et, de csak akkor, ha a módszer a kis modell rövidebb kontextusához és gyengébb utasításkövetéséhez
+igazodik; a kvantálási mérések pedig általános feladatokra szólnak, nem vizsgagenerálásra.
 
 % ---------------------------------------------------------------------
 \section{A kiértékelés: nyelvi modell mint bíró és a mérés megbízhatósága}
@@ -308,18 +336,20 @@ becslést \az{\ref{sec:vram}}.~szakasz adja meg.
 % ---------------------------------------------------------------------
 
 Az emberi értékelés drága és lassú, ezért elterjedt, hogy egy erős nyelvi modell pontozza a kimenetet
-(\emph{LLM-as-a-judge}); a dolgozatban ezt a független, pontozó modellt \emph{bírónak} nevezzük. Zheng és
-munkatársai~\cite{zheng2023judge} szerint egy erős bíró ítéletei közel annyira egyeznek az emberi
-preferenciákkal, mint az emberek ítéletei egymással. Chiang és Lee~\cite{chiang2023human} hasonló eredményre
-jutott úgy, hogy a modell szó szerint ugyanazt az utasítást és értékelőlapot kapta, mint az emberi
-szakértők -- ezt az elvet a mi rubrikánk is követi. A RAGAS~\cite{es2024ragas} a
-RAG-rendszerek referencia nélküli, nyelvi modellel számolt hűség- és relevanciamutatóit javasolja.
+(\emph{LLM-as-a-judge}); a dolgozatban ezt a kérdéseket pontozó, független nyelvi modellt \emph{bírónak}
+nevezzük. Zheng és munkatársai~\cite{zheng2023judge} szerint egy erős bíró ítéletei közel annyira egyeznek
+az emberi preferenciákkal, mint az emberek ítéletei egymással. Chiang és Lee~\cite{chiang2023human} hasonló
+eredményre jutott úgy, hogy a modell szó szerint ugyanazt az utasítást és értékelőlapot kapta, mint az
+emberi szakértők -- ezt az elvet a mi rubrikánk is követi. A RAGAS~\cite{es2024ragas} a
+RAG-rendszerek referencia nélküli, nyelvi modellel számolt hűség- és relevanciamutatóit javasolja. Ezek az
+egyezési eredmények főként párosított preferenciaítéletekre (melyik válasz a jobb) szólnak; a mi bíránk
+kérdésenként, egy forrásrészlethez mérve ítél, amire csak korlátozottan vihetők át.
 
 A bírók torzításai jól dokumentáltak: a \emph{pozíciós torzítás} az első vagy második helyen álló válasz
 előnyben részesítése~\cite{wang2024fair}, a \emph{hossztorzítás} a hosszabb válaszoké, az
 \emph{önpreferencia} pedig a saját modellcsalád szövegeié~\cite{panickssery2024selfpref}. Ezért bíránk, a
 gpt-oss-120b~\cite{gptoss2025} más modellcsaládba tartozik, mint bármelyik generátor
-(\ref{sec:biro}.~szakasz).
+(\ref{sec:biro}.~szakasz), ami az önpreferenciát csökkenti.
 
 A bíró csak akkor érvényes mérőeszköz, ha ítéletei egyeznek az emberi szakértőkével. Két értékelő
 bináris ítéleteire Cohen-$\kappa$-t~\cite{cohen1960kappa}, több értékelőre és ordinális skálára
@@ -345,34 +375,200 @@ emlékezetből is megválaszolhatja.
 Végül a mérés az oktatót is érinti. Parasuraman és Manzey~\cite{parasuraman2010complacency} szerint a
 felhasználók hajlamosak túlságosan megbízni az automatikus rendszerek jelzéseiben
 (\emph{automatizálási torzítás}): ha egy rendszer egy kérdést „ellenőrzöttnek” jelöl, az oktató kevésbé
-figyelmesen nézi át. Ezért az ellenőrző jelzéseit a \Mimir{} felületén figyelmeztetésként, nem ítéletként
-jelenítjük meg, amíg megbízhatóságukat mérések nem igazolják.
+figyelmesen nézi át; a jelenséget az MI-rendelet is megnevezi (\ref{sec:irod-jog}.~szakasz). Ezért az
+ellenőrző jelzéseit a \Mimir{} felületén figyelmeztetésként, nem ítéletként jelenítjük meg, amíg
+megbízhatóságukat mérések nem igazolják.
 
 % ---------------------------------------------------------------------
-\section{Adatvédelem, szabályozás és a magyar nyelv}
-\label{sec:irod-jog}
+\section{A magyar nyelv és a hazai előzmények}
+\label{sec:irod-magyar}
 % ---------------------------------------------------------------------
 
-Ha a tananyag személyes adatot tartalmaz (például esettanulmányban szereplő neveket vagy hallgatói
-munkákat), a felhőszolgáltató a GDPR~\cite{gdpr2016} szerint adatkezelővé vagy adatfeldolgozóvá válik, az
-adattakarékosság elve szerint pedig csak a feltétlenül szükséges adat kezelhető. Ehhez technikai kockázat
-is társul: Carlini és munkatársai~\cite{carlini2021extracting} kimutatták, hogy a tanítóadat egyes
-részletei a kész modellből szó szerint visszanyerhetők. Az EU MI-rendelete (AI Act)~\cite{aiact2024} az
-oktatásban használt rendszerek egy részét -- például a tanulási eredmények értékelésére szolgálókat --
-magas kockázatúnak minősíti, és emberi felügyeletet vár el; az UNESCO útmutatója~\cite{unesco2023guidance}
-ugyanezt fogalmazza meg oktatáspolitikai szinten. A \Mimir{} tervezési céljai -- helyi futtatás, zéró
-adatmegőrzés, kötelező oktatói jóváhagyás -- közvetlenül ezekből következnek (\ref{sec:architektura}.~szakasz).
-
-\paragraph{A magyar nyelv.}\label{sec:irod-magyar}
 A magyar két szempontból jelent külön kihívást. Agglutináló nyelv, így egy szótőnek sok alakja van
 („immunrendszer”, „immunrendszert”, „immunrendszerben”), ami a lexikális keresést nehezíti és a
 tokenszámot növeli. Emellett kis erőforrású nyelv: a MEGA kiértékelés~\cite{ahuja2023mega} szerint a
 generatív modellek teljesítménye a kisebb erőforrású nyelveken jelentősen elmarad az angoltól, ezért egy
 kis modell magyar szövegében nyelvtani hibákra is számítani kell, amit a kiértékelésnek külön mérnie kell.
-A magyar nyelvértési feladatok egységes mérésére a HuLU benchmark~\cite{ligetinagy2024hulu} szolgál, a
-MILQA~\cite{novak2023milqa} pedig magyar Wikipédia-cikkekre épülő kérdés--válasz adatbázis, amelyet
-adatforrásként használunk (\ref{sec:adatkeszlet}.~szakasz). Tudomásunk szerint magyar nyelvű
-vizsgakérdés-generálásról még nem jelent meg rendszerszintű kiértékelés.
+
+\paragraph{Magyar nyelvi modellek.} Az első széles körben használt magyar kódoló a
+huBERT~\cite{nemeskey2021hubert} volt. A HUN-REN Nyelvtudományi Kutatóközpont (NYTK) PULI-családjának első
+tagjairól az MSZNY 2023-on számoltak be~\cite{yang2023jonnek}: egy BERT-Large, egy GPT-2 és egy 6,7
+milliárd paraméteres GPT-3 típusú modellről; a BERT-Large több feladaton felülmúlta a huBERT-et, a
+GPT-3 típusú modellel pedig a szerzők az első magyar, néhány példás (\emph{few-shot}) promptolási
+kísérleteket végezték. Ugyanebben az évben egy- és háromnyelvű GPT-modelljeiket is
+közölték~\cite{yang2023puligpt3}. A dolgozatban használt PULI-LlumiX 8B a Llama~3.1 magyar szövegeken
+folytatott további előtanításával készült~\cite{pulillumix}. A csoport 2025-ben a Llama~3.1 és a Qwen2.5
+alapú, magyar utasításadatokon finomhangolt csevegő változatokat (ChatPULI) is leírt, amelyek mérésük
+szerint a magyar benchmarkokon és a többfordulós párbeszédben jobbak a korábbi
+PULI-modelleknél~\cite{yang2025chatpuli}. Ez a fő vizsgálat értelmezéséhez lényeges: mi az utólagos
+utasítás-hangolás nélküli, továbbelőtanított változatot mértük, így a PULI-ra vonatkozó következtetésünk
+erre a változatra szól (\ref{ch:modellek}.~fejezet).
+
+\paragraph{Magyar benchmarkok és kérdés--válasz rendszerek.} A magyar nyelvértési feladatok egységes
+mérésére a HuLU benchmark~\cite{ligetinagy2024hulu} szolgál. A MILQA~\cite{novak2023milqa,novak2023milqahu}
+magyar Wikipédia-cikkekre épülő, az angol SQuAD~2.0 elveit követő kérdés--válasz adatbázis, eldöntendő,
+többrészes és számolást igénylő kérdéstípusokkal bővítve; adatforrásként mi is használjuk
+(\ref{sec:adatkeszlet}.~szakasz). Erre épül a szegedi SHunQA nyíltkérdés-megválaszoló
+rendszer~\cite{berkecz2024shunqa}, amely a választ a forrásszövegben jelöli meg, hogy ellenőrizhető legyen.
+Ezek a munkák kérdésmegválaszolással foglalkoznak, de két tanulságuk átvihető: magyar szövegen a lexikális
+keresés erős alapvonal, és a forrásban megjelölt válasz teszi ellenőrizhetővé a rendszert.
+
+\paragraph{Hazai kérdésgenerálás és oktatási MI-használat.} Magyar nyelvű vizsgakérdés-generálásról
+publikált, rendszerszintű kiértékelést nem találtunk. A legközelebbi előzmény a Szegedi
+Tudományegyetem 2024--2025-ös, HUN-REN Cloudon futó projektje, amely a helyben futtatható nyelvi modellek
+tananyag alapú magyar kérdésgenerálását vizsgálta, és nehézségként a modellek eltérő magyar nyelvi
+képességét és a kérdésekkel szembeni összetett elvárásokat nevezte meg~\cite{szte2025kerdesgen};
+eredményeiről publikációt nem találtunk. Az igényt hazai felmérések is mutatják. Egy 1027 hallgatós
+felmérésben a válaszadók kb.\ 87\,\%-a használt már MI-eszközt, az aktív használat akadályai között pedig
+etikai (kb.\ 42\,\%) és adatvédelmi (kb.\ 30\,\%) aggályok is szerepeltek~\cite{rajki2024hallgatoi}. Egy
+1103 egyetemi oktatót felölelő felmérés szerint az oktatók az MI-t főként rutinfeladatokra (fordítás,
+nyelvi ellenőrzés) használják, a mélyebb pedagógiai felhasználás háttérbe szorul~\cite{tnagy2025oktatoi}.
+A vizsgakészítés ilyen mélyebb felhasználás, amelyhez megbízható és adatvédelmi szempontból vállalható
+eszköz kell.
+
+% ---------------------------------------------------------------------
+\section{Jogi keret: adatvédelem és MI-rendelet}
+\label{sec:irod-jog}
+% ---------------------------------------------------------------------
+
+A P3 jogi kereteit két közvetlenül alkalmazandó uniós rendelet, a GDPR~\cite{gdpr2016} és az
+MI-rendelet~\cite{aiact2024} adja, hazai kiegészítésekkel. Az áttekintés mérnöki olvasat, nem jogi
+tanácsadás: azt vizsgálja, milyen tervezési követelmények következnek ezekből. A megvalósítás állapotát
+\az{\ref{ch:modszer}}.~fejezet tárgyalja.
+
+\subsection{Az általános adatvédelmi rendelet}
+
+\paragraph{Szerepek.} A GDPR az \emph{adatkezelőt} (aki a célt és az eszközöket meghatározza) és az
+\emph{adatfeldolgozót} (aki az adatkezelő nevében, utasítása szerint dolgozik) különíti el. Az Európai
+Adatvédelmi Testület szerint a szerepet a tényleges tevékenység dönti el, és aki az adatot saját céljára is
+felhasználja, abban a körben maga is adatkezelő~\cite{edpb2021controller}. Egy felhőben futó csevegő
+asszisztens tehát akkor 28.~cikk szerinti adatfeldolgozó, ha az intézménnyel kötött szerződés utasításhoz,
+titoktartáshoz, biztonsági intézkedésekhez, a további adatfeldolgozók jóváhagyásához és a szerződés végi
+törléshez köti. Ha az oktató saját fogyasztói fiókkal tölti fel a jegyzetét, ilyen garancia nincs; a
+szolgáltató címzett, és ha a tartalmat például modellfejlesztésre is felhasználja, e körben adatkezelő. A
+tananyagban szereplő harmadik személyek adatai így tudtuk nélkül kerülnek új adatkezeléshez.
+
+\paragraph{Alapelvek, beépített adatvédelem, biztonság.} Az 5.~cikk alapelvei közül az
+\emph{adattakarékosság} (csak a szükséges adat) és a \emph{korlátozott tárolhatóság} (csak a szükséges
+ideig) hat közvetlenül a tervezésre: a dokumentum szövegére csak a generálás idejére van szükség, ezért a
+legkisebb kockázatú megoldás a feldolgozás utáni törlés. Az \emph{elszámoltathatóság} naplózást kíván, de
+olyat, amely nem tárol tartalmat. A 25.~cikk \emph{beépített és alapértelmezett adatvédelmet} ír elő
+(például a vizsga mentése csak kérésre történjen), a 32.~cikk a kockázattal arányos \emph{biztonsági
+intézkedéseket} (álnevesítés, titkosítás, bizalmasság, integritás, rendszeres ellenőrzés). A helyi futtatás
+a továbbítás kockázatát szünteti meg, a hozzáférés-szabályozást nem pótolja.
+
+\paragraph{Hatásvizsgálat, továbbítás, automatizált döntés.} Valószínűleg magas kockázatú, különösen új
+technológiát alkalmazó adatkezelés előtt \emph{adatvédelmi hatásvizsgálat} kell (35.~cikk); generatív MI
+és esetleges hallgatói adatok mellett intézményi bevezetés előtt ez indokolt. A modell maga is kockázat:
+a tanítóadat egyes részletei a kész modellből visszanyerhetők~\cite{carlini2021extracting}, és az EDPB
+szerint egy MI-modell nem tekinthető automatikusan anonimnak~\cite{edpb2024aimodels}; ezért felhasználói
+tartalommal nem tanítunk modellt. Az EGT-n kívülre személyes adat csak a V.~fejezet szerinti
+megfelelőségi határozat vagy megfelelő garanciák mellett továbbítható. Az Egyesült Államokba irányuló
+továbbítás alapja ma az EU--USA adatvédelmi keretrendszer~\cite{dpf2023}, amelynek érvényességéről
+fellebbezési eljárás folyik~\cite{latombe2025appeal}; a helyi futtatás ettől független. Végül a 22.~cikk
+korlátozza a kizárólag automatizált, joghatással járó döntéseket: a kérdésgenerálás ilyet nem hoz, a
+hallgatói válaszok emberi felülvizsgálat nélküli pontozása viszont már ide tartozhat.
+
+\subsection{Az Infotv. és a NAIH}
+
+Az Infotv.\ (2011.~évi CXII.~törvény)~\cite{infotv2011} kijelöli a GDPR hatálya alá tartozó adatkezelésekre
+alkalmazandó hazai kiegészítő szabályokat (2.~§ (2)~bekezdés), és létrehozza a felügyeleti hatóságot, a
+NAIH-ot; hazai üzemeltetésnél neki kell az incidenseket bejelenteni. A NAIH figyelemfelhívása szerint
+csevegőrobot használatakor lehetőleg ne töltsünk fel személyes adatot a szolgáltató felületére, mert ez
+előre nem látható adatkezeléshez vezethet, amelyért a feltöltő személyesen is felelhet~\cite{naihfigyelem}.
+A hazai bankok MI-használatáról szóló 2025-ös jelentése~\cite{naih2025bankok} az \emph{árnyék-MI}
+jelenségét elemzi: a munkatársak a szervezet tudta nélkül használnak MI-eszközöket, így a szervezet
+elveszítheti a kontrollt az általa kezelt adatok felett. Jó gyakorlatként a nem saját infrastruktúrán
+futó eszközök korlátozását, illetve a felhasználási adatok modelltanítását kizáró vállalati szerződést
+említi. A jegyzetét saját fiókkal nyilvános csevegő asszisztensbe feltöltő oktató is árnyék-MI-t
+használ: a P3 a hazai hatóság által is megnevezett kockázat.
+
+\subsection{Az MI-rendelet}
+
+\paragraph{Hatály és kockázati osztályok.} Az MI-rendelet a forgalomba hozott vagy üzembe helyezett
+rendszerekre vonatkozik; az azt megelőző kutatásra, tesztelésre és fejlesztésre -- a valós körülmények
+közötti tesztelés kivételével -- nem (2.~cikk (8)~bekezdés). A \Mimir{} kiértékelő keretrendszere ebbe a
+körbe tartozik, egy egyetemi üzembe helyezés viszont már nem; ekkor a fejlesztő \emph{szolgáltató}, az
+intézmény \emph{alkalmazó}. A rendelet négy szintet különít el: (1) \emph{tiltott gyakorlatok} (5.~cikk),
+például az érzelemfelismerés oktatási intézményben; (2) \emph{magas kockázatú} rendszerek (6.~cikk, I. és
+III.~melléklet) kockázatkezelési, dokumentációs, naplózási és emberi felügyeleti követelményekkel; (3)
+\emph{átláthatósági kötelezettségek} (50.~cikk); (4) \emph{minimális kockázat}, külön kötelezettség
+nélkül. A beépített általános célú modellek (Qwen, Gemma, Llama-alapú PULI) kötelezettségei a modellek
+szolgáltatóit terhelik.
+
+\paragraph{Oktatás a III.~mellékletben.} A III.~melléklet 3.~pontja szerint magas kockázatú (a) a
+felvétel eldöntése és a személyek intézményekhez rendelése; (b) a tanulási eredmények értékelése, akkor
+is, ha az eredmény a tanulási folyamatot irányítja; (c) annak felmérése, milyen szintű oktatásban
+részesülhet valaki; és (d) a tiltott vizsgaviselkedés megfigyelése. A 6.~cikk (3)~bekezdése szerint egy
+ilyen rendszer mégsem magas kockázatú, ha nem jelent jelentős kockázatot, például mert egy értékelés
+\emph{előkészítő feladatát} látja el -- kivéve, ha profilalkotást végez; a kivételre hivatkozó
+értékelést dokumentálni kell (6.~cikk (4)~bekezdés).
+
+\paragraph{Emberi felügyelet, MI-jártasság, átláthatóság.} A 14.~cikk szerint a magas kockázatú rendszer
+felügyelője értse a rendszer képességeit és korlátait, legyen tudatában az automatizálási torzításnak, és
+a kimenetet felülbírálhassa. A 4.~cikk eredetileg 2025.~február~2-tól a munkatársak megfelelő
+\emph{MI-jártasságának} biztosítását írta elő; a 2026-os módosítás óta az MI-jártasság fejlesztésének
+\emph{támogatását}, meghatározott szint nélkül~\cite{omnibus2026}. Az 50.~cikk szerint a felhasználót
+tájékoztatni kell, ha MI-rendszerrel érintkezik (1.~bekezdés); a szintetikus szöveget generáló rendszer
+szolgáltatója a kimenetet géppel olvasható módon MI-generáltként jelöli (2.~bekezdés); a nyilvánosság
+tájékoztatására közzétett MI-szöveget pedig fel kell tüntetni, kivéve, ha emberi szerkesztői ellenőrzésen
+ment át (4.~bekezdés).
+
+\paragraph{Alkalmazási határidők.} A rendelet 2024.~augusztus~1-jén lépett hatályba, és lépcsőzetesen
+alkalmazandó (\ref{tab:mi-hataridok}.~táblázat). A Bizottság 2025.~november~19-én „digitális omnibusz”
+csomagban (COM(2025)~836) javasolta egyebek mellett a magas kockázatú kötelezettségek halasztását. Ezt
+(EU)~2026/1744 rendeletként fogadták el; 2026.~július~24-én hirdették ki, és 2026.~július~27-én lépett
+hatályba~\cite{omnibus2026}. A III.~melléklet szerinti magas kockázatú kötelezettségek így
+2027.~december~2-tól alkalmazandók; az 50.~cikk átláthatósági kötelezettségeit viszont nem halasztották
+el, a III.~melléklet 3.~pontját pedig a módosítás nem érintette. Mivel az ütemezés egyszer már változott,
+éles bevezetés előtt a hatályos szöveget újra ellenőrizni kell. A hazai végrehajtásról a
+2025.~évi LXXV.~törvény~\cite{mitv2025} rendelkezik: létrehozta a Magyar Mesterséges Intelligencia Tanácsot,
+a NAIH jelentése szerint pedig a piacfelügyeleti feladatokat a nemzetgazdasági miniszter, a bejelentő
+hatóságiakat a Nemzeti Akkreditáló Hatóság látja el~\cite{naih2025bankok}.
+
+\begin{table}[tbp]
+\centering
+\caption[Az MI-rendelet alkalmazási időpontjai a 2026-os módosítás után.]{Az MI-rendelet alkalmazási
+időpontjai a 2026-os módosítás (digitális omnibusz) után. Források:~\cite{aiact2024,omnibus2026}; a dőlt
+sorokat a módosítás vezette be vagy változtatta meg.}
+\label{tab:mi-hataridok}
+\small
+\begin{tabular}{@{}lp{0.68\textwidth}@{}}
+\toprule
+Időpont & Mi válik alkalmazandóvá\\
+\midrule
+2024.~aug.~1. & A rendelet hatálybalépése\\
+2025.~febr.~2. & Általános rendelkezések, MI-jártasság (4.~cikk), tiltott gyakorlatok (5.~cikk)\\
+2025.~aug.~2. & Az általános célú MI-modellek szolgáltatóinak kötelezettségei, irányítás, szankciók\\
+2026.~júl.~27. & \emph{A módosító rendelet hatálybalépése, az új 4.~cikk}\\
+2026.~aug.~2. & Általános alkalmazás, köztük az 50.~cikk átláthatósági kötelezettségei\\
+2026.~dec.~2. & \emph{Az 50.~cikk (2) a korábban forgalomba hozott rendszerekre; új tilalmak (5.~cikk)}\\
+2027.~dec.~2. & \emph{III.~melléklet szerinti magas kockázatú rendszerek (eredetileg 2026.~aug.~2.)}\\
+2028.~aug.~2. & \emph{I.~melléklet szerinti magas kockázatú rendszerek (eredetileg 2027.~aug.~2.)}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{A \Mimir{} besorolása}
+
+A \Mimir{} kérdésgeneráló funkciója nem tartozik a III.~melléklet 3.~pontjába. Nem dönt felvételről vagy
+képzési szintről, nem figyeli a hallgatókat, és nem értékel tanulási eredményt: az oktatónak ad vázlatot,
+amelyet ő átnéz, szerkeszt, és csak kötelező jóváhagyás után exportálhat; a kimenet egy emberi döntés
+alapanyaga, nem maga a döntés. Ha egy szigorú értelmezés a vizsga előkészítését az értékelés részének
+tekintené, a 6.~cikk (3)~bekezdés d)~pontja (előkészítő feladat) akkor is kivételt adna, mert a rendszer
+nem végez profilalkotást; ezt dokumentálni kell. A besorolás után is kötelező az 50.~cikk (a csevegőfelület
+és az MI-generált kérdések jelölése), az MI-jártasság támogatása és a GDPR.
+
+A besorolás a felhasználástól függ, nem a technikától. Ha a rendszer a hallgatói válaszokat automatikusan
+pontozná, vagy a kérdések kiválasztásával a tanulási folyamatot irányítaná, az a 3.~b) pont szerint magas
+kockázatú felhasználás lenne, a teljes követelményrendszerrel, és a GDPR 22.~cikke is felmerülne. Ezért
+pontozási funkció nem kerül a rendszerbe, csak új kockázati értékelés után. A 14.~cikk logikáját a
+jelenlegi besorolásban is követjük: az oktató a döntéshozó, az ellenőrző jelzései figyelmeztetések, mert az
+automatizálási torzítást a rendelet és a szakirodalom~\cite{parasuraman2010complacency} egyaránt megnevezi;
+az UNESCO útmutatója~\cite{unesco2023guidance} oktatáspolitikai szinten vár el emberi ellenőrzést és
+adatvédelmet. A \Mimir{} tervezési céljai --
+helyi futtatás, zéró adatmegőrzés, kötelező oktatói jóváhagyás -- ezekből következnek
+(\ref{sec:architektura}.~szakasz).
 
 % ---------------------------------------------------------------------
 \section{Összegzés és a kutatási rés}
@@ -389,7 +585,7 @@ megbízhatósága is korlátozottnak bizonyult (\ref{ch:eredmenyek}.~fejezet).
 
 \begin{table}[tbp]
 \centering
-\caption{A kérdésgenerálási megközelítések összevetése a P1--P4 problémák szempontjából
+\caption[A kérdésgenerálási megközelítések összevetése a P1--P4 problémák szempontjából.]{A kérdésgenerálási megközelítések összevetése a P1--P4 problémák szempontjából
 (\checkmark: kezeli, $\circ$: részben, --: nem kezeli). A táblázat azt mutatja, hogy egy megközelítés
 foglalkozik-e az adott szemponttal, nem azt, hogy milyen jól.}
 \label{tab:irodalom-osszevetes}
@@ -416,10 +612,21 @@ GraphRAG~\cite{edge2024graphrag} & -- & $\circ$ & -- & -- & $\circ$ & -- \\
 \end{tabular}}
 \end{table}
 
-Az összevetésből három hiányosság rajzolódik ki. (i) Nincs olyan nyílt rendszer, amely a
+Az összevetésből három hiányosság rajzolódik ki. (i) Tudomásunk szerint nincs olyan nyílt rendszer, amely a
 kérdésgenerálást explicit tervvel, kérdésenkénti forráshivatkozással és ellenőrzéssel, fogyasztói GPU-n
 (8--12\,GB) futó kis modellel végezné. (ii) A kiértékelések ritkán mérik a kulcs helyességét és a vizsga
 lefedettségét, és hiányoznak az egytényezős kísérleti tervek, amelyek a komponensek hatását egyenként
-választják szét. (iii) A magyar nyelvű vizsgakérdés-generálás kiértékelése feltáratlan. Az első
-hiányosságra \az{\ref{ch:modszer}}., a másodikra \az{\ref{ch:kiertekeles}}., a harmadikra -- a
-rendelkezésre álló adatok korlátai között -- \az{\ref{ch:eredmenyek}}.~fejezet ad választ.
+választják szét. (iii) A magyar nyelvű vizsgakérdés-generálás kiértékelése feltáratlan: a hazai
+nyelvtechnológia erős modelleket és kérdés--válasz adatbázisokat épített, de publikált kérdésgenerálási
+kiértékelést nem találtunk. Az első hiányosságra \az{\ref{ch:modszer}}., a másodikra
+\az{\ref{ch:kiertekeles}}., a harmadikra -- a rendelkezésre álló adatok korlátai között --
+\az{\ref{ch:eredmenyek}}. és \az{\ref{ch:modellek}}.~fejezet ad választ.
+
+\paragraph{A fejezet tanulsága.} A szakirodalom mind a négy problémára kínál részmegoldást, de egyik
+megközelítés sem kezeli egyszerre mindet. A nagy modellek a kérdések nyelvi minőségét megoldották, a kulcs
+helyességét (P1) azonban csak statisztikailag javítják, a vizsga szerkezetét (P2) pedig nem vizsgálják. A
+visszakeresés és a helyi futtatás a P3-at és a P4-et kezeli, de a naiv változat a P2-t rontja. A
+feladatfelbontás és a forráshoz mért ellenőrzés a P1-et és a P2-t célozza, de eddig főként nagy
+modellekkel vizsgálták. A jogi keret a helyi, emberi jóváhagyással működő megoldás felé mutat: a tanár
+által ellenőrzött kérdésgenerálás nem magas kockázatú felhasználás, a hallgatói válaszok automatikus
+pontozása az lenne.

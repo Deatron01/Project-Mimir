@@ -1,11 +1,15 @@
 % =====================================================================
-\chapter{Az eredmények értékelése}
+\chapter{Az eredmények értékelése és döntés: mit építünk be a rendszerbe}
 \label{ch:diszkusszio}
+\chaptermark{Értékelés és döntés}
 % =====================================================================
 
-Ebben a fejezetben az eredményeket a hipotézisek szempontjából értékeljük, majd megvizsgáljuk, mikor éri meg a
-módszer, mit tanultunk az ellenőrzésről és a mérésről, és milyen gyakorlati ajánlás fogalmazható meg. A
-fejezetet az érvényességet veszélyeztető tényezők zárják.
+Ebben a fejezetben \az{\ref{ch:eredmenyek}}. és \az{\ref{ch:modellek}}.~fejezet méréseit értékeljük, és
+ezekből döntjük el, mi kerüljön a \Mimir{} éles generálási útvonalába, amely ma a naiv RAG-ot (\arm{E0})
+futtatja. Az olvasó megtudja, mely hipotéziseket támasztják alá a mérések, hogyan viszonyulnak
+eredményeink az irodalomhoz, és GPU-szintenként melyik konfiguráció a legjobb, a leggyorsabb és a
+legrobusztusabb, valamint ebből mi kerül be a rendszerbe (\ref{sec:dontes}.~szakasz). A fejezetet a mérés
+tanulságai, az érvényesség korlátai és az etikai szempontok zárják.
 
 % ---------------------------------------------------------------------
 \section{A hipotézisek értékelése}
@@ -14,30 +18,32 @@ fejezetet az érvényességet veszélyeztető tényezők zárják.
 
 \begin{table}[htbp]
 \centering
-\caption{A hipotézisek és a vizsgálatok bizonyítéka. Fő: a 30 dokumentumos fő vizsgálat (PULI-LlumiX 8B és
-Gemma 3 12B); Előzetes: a hat dokumentumos vizsgálat (Qwen2.5-7B és a szervermodell).}
+\caption[A hipotézisek és a vizsgálatok bizonyítéka.]{A hipotézisek és a vizsgálatok bizonyítéka. Fő: a 30 dokumentumos fő vizsgálat (PULI-LlumiX 8B és
+Gemma 3 12B); Előzetes: a hat dokumentumos vizsgálat (Qwen2.5-7B és a szervermodell). $\tilde p$: Holm-korrigált
+$p$-érték; G: alátámasztottság; A: vak megoldhatóság.}
 \label{tab:hipotezisek}
 \small
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.6cm}@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.9cm}@{}}
 \toprule
 Hipotézis & Bizonyíték & Értékelés \\
 \midrule
 \ref{h:terv}.\ Tervezés &
-Fő: $Q$ $+0{,}26$ (PULI) és $+0{,}23$ (Gemma), Holm után $\tilde p<0{,}001$, illetve $0{,}002$;
-alátámasztottság 27$\to$58, illetve 46$\to$88\,\%; lefedettség 10$\to$23, illetve 24$\to$42\,\%; a forma nem romlott.
-Előzetes: $+0{,}24$ (nem szignifikáns, 6 dok.) &
-\textbf{támogatott} \\
+Fő: $Q$ $+0{,}26$ (PULI) és $+0{,}23$ (Gemma), $\tilde p<0{,}001$, illetve $0{,}002$; G 27$\to$58, illetve
+46$\to$88\,\%; lefedettség 10$\to$23, illetve 24$\to$43\,\%; a forma nem romlott. Előzetes: $+0{,}24$
+(6 dok., nem szignifikáns). A rögzített darabolású naiv RAG (\arm{E5c}) a Gemmánál $0{,}97$ &
+\textbf{támogatott} a szemantikus darabolású \arm{E0}-hoz képest \\
 \ref{h:verif}.\ Ellenőrzés &
-$Q$: Qwen $+0{,}08$ (5 dok.\ javult, 0 romlott), PULI $+0{,}13$ ($\tilde p=0{,}066$), Gemma $+0{,}01$;
-az alátámasztottság csak a Qwennél nőtt; $\kappa=0{,}00$--$0{,}08$ minden modellnél &
-\textbf{részben}: modellfüggő; az egyezésre vonatkozó rész nem teljesült \\
+Fő: G csökkent (PULI 58$\to$52\,\%, Gemma 88$\to$86\,\%); $Q$ $+0{,}13$ ($\tilde p=0{,}066$), illetve $+0{,}01$
+($\tilde p=1{,}00$). Előzetes (Qwen): G 80$\to$90\,\%, A 80$\to$97\,\%, $Q$ $+0{,}08$ (5 dok.\ javult, 0 romlott,
+$\tilde p=0{,}19$). $\kappa=0{,}00$--$0{,}08$ minden modellnél &
+\textbf{a fő vizsgálatban nem támogatott}; az előzetesben leíró szinten javult \\
 \ref{h:lefed}.\ Lefedettség &
 Gemma: teljes dok.\ 43\,\% vs.\ \arm{E2} 43\,\%; Qwen: 45 vs.\ 44\,\%; a tömörülés a naiv RAG sajátja (10--25\,\%) &
 \textbf{nem támogatott} \\
 \ref{h:helyi}.\ Helyi vs.\ szerver &
-Előzetes: a közös dokumentumokon \arm{E2} $0{,}95$ vs.\ \arm{E4} $0{,}93$, és \arm{E2} $0{,}96$ vs.\
-\arm{B-doc-S} $0{,}95$; a Gemma \arm{E2} ugyanezen a hat dokumentumon $0{,}97$; a modellek 4,8--7,8\,GiB-ot foglalnak.
-A PULI-val nem teljesül ($0{,}72$) &
+Előzetes, közös dokumentumokon: Qwen \arm{E2} $0{,}95$ vs.\ szerver \arm{E4} $0{,}93$ (három angol dok.), \arm{E2}
+$0{,}96$ vs.\ \arm{B-doc-S} $0{,}95$ (hat dok.). A szervermodell a saját módszerünkkel (\arm{E4b}) $0{,}99$. A hat
+dokumentumon a Gemma \arm{E2} $0{,}97$, a PULI \arm{E2} $0{,}72$. A modellek 4,8--7,8\,GiB-ot foglalnak &
 \textbf{támogatott} (leíró, modellfüggő) \\
 \ref{h:meres}.\ Mérés &
 Az oktatói értékelés folyamatban (\ref{sec:oktatoi-eredmeny}.~szakasz) &
@@ -46,137 +52,245 @@ Az oktatói értékelés folyamatban (\ref{sec:oktatoi-eredmeny}.~szakasz) &
 \end{tabularx}
 \end{table}
 
-\paragraph{\ref{h:terv}.~hipotézis.} A vizsgaterv a dolgozat legerősebb és legjobban megismételt eredménye:
-három különböző helyi modellel, két vizsgálatban azonos irányú, és a fő vizsgálatban mindkét modellnél
-szignifikáns. A javulás forrása elsősorban az, hogy a kérdéshelyenkénti keresés a tervezett fogalommal, vagyis
-tartalmi lekérdezéssel dolgozik a naiv RAG feladatleírása helyett.
+Megjegyzések a táblázathoz. \textbf{\ref{h:terv}.} Az \arm{E1} és
+az \arm{E0} több tényezőben különbözik (lekérdezés, kérdésenkénti generálás), ezért a javulást a vizsgaterv
+egészének tulajdonítjuk, nem egyetlen lépésének. \textbf{\ref{h:verif}.} A lánc a vizsga egészét javította
+(forma, szivárgás, nem kérdő törzsek; \ref{sec:fo-ellenorzo}.~szakasz), a kérdések tartalmi helyességét nem.
+\textbf{\ref{h:lefed}.} A PULI teljes dokumentumos vizsgáinak alacsony lefedettsége a kevés kérdésből
+adódik, és tíz kérdésnél a hosszú dokumentumokon a felső korlát minden konfigurációt egyformán korlátoz.
+\textbf{\ref{h:helyi}.} A hipotézis a szervermodell \emph{naiv} változatához mér; a „helyi modell elérte a
+szervermodellt” állítás csak a szerveres teljes dokumentumos promptra igaz, a saját módszerünkkel futó
+szervermodellre nem. \textbf{\ref{h:meres}.} Addig a bíró ítéleteit relatív, a konfigurációk összevetésére
+szolgáló mérésként kezeljük. \tbd{[Az oktatói értékelés eredménye után: a hipotézis értékelése a
+Krippendorff-$\alpha$ alapján.]}
 
-\paragraph{\ref{h:verif}.~hipotézis.} Az ellenőrzés hatása a modell erősségétől függ. A Qwennél minden
-tartalmi mutatón javított, a PULI-nál a minőségi index főként a forma és a disztraktorok javulásából nőtt
-(az alátámasztottság nem), a Gemmánál pedig nem volt mit javítania, mert a kérdések 70\,\%-a elsőre átment. A
-hipotézis második fele -- hogy az ellenőrző ítélete egyezik a bíróéval -- egyik modellnél sem teljesült
-érdemben. Ezt az eredményt fontosnak tartjuk: egy önellenőrző kis modell kérdésenkénti jelzése nem helyettesíti
-sem a független bírót, sem az oktatót.
+% ---------------------------------------------------------------------
+\section{Összevetés az irodalommal}
+\label{sec:irod-osszevetes}
+% ---------------------------------------------------------------------
 
-\paragraph{\ref{h:lefed}.~hipotézis.} A teljes dokumentumot kapó modell nem tömöríti a kérdéseit a dokumentum
-egy részére; a P2 lefedettségi problémája a vizsgált hosszúságú dokumentumokon a naiv visszakeresés sajátja.
-Ehhez hozzá kell tenni, hogy tíz kérdésnél a lefedettség felső korlátja a hosszú dokumentumokon minden
-konfigurációt egyformán korlátoz.
+Az alábbiakban eredményeinket \az{\ref{ch:szakirodalom}}.~fejezetben tárgyalt munkákkal vetjük össze. Az
+irodalmi eredményeket minőségileg idézzük, mert a feladatok, a modellek és a mutatók eltérnek a mieinktől;
+az összevetés ezért irányt és nem pontos nagyságot jelez.
 
-\paragraph{\ref{h:helyi}. és \ref{h:meres}.~hipotézis.} A helyi, tervezett és ellenőrzött folyamat a vizsgált
-dokumentumokon elérte a szervermodell naiv és teljes dokumentumos változatát, fogyasztói GPU-n. Az eredmény
-azonban nem minden helyi modellre igaz: a PULI-LlumiX-szel nem. A bíró emberi validálása folyamatban van; a
-vizsgálatok addig is több bírói vakfoltot tártak fel (\ref{sec:meres-tanulsag}.~szakasz), ezért a bíró ítéleteit
-relatív, a konfigurációk összevetésére szolgáló mérésként kezeljük.
+\paragraph{Önellenőrzés külső visszajelzés nélkül.} Huang és munkatársai~\cite{huang2024selfcorrect} szerint
+a modellek külső visszajelzés nélkül nem tudják megbízhatóan javítani saját érvelésüket, és a
+teljesítmény az önjavítás után akár romolhat is. Eredményeink ezzel összhangban vannak: a PULI-nál az
+ellenőrző lánc haszna lényegében a szabályokból jött (a csak szabályalapú \arm{E2x} ugyanannyit ért el, mint
+az \arm{E2}: $0{,}67$ és $0{,}67$), a Gemmánál a különbség nem szignifikáns, a modellalapú ítélet pedig minden
+modellnél a véletlen szintjén egyezett a bíróval. A Qwennél az \arm{E2x} rosszabb volt ($0{,}89$ vs.\
+$0{,}96$, egy dokumentumon jobb, ötön rosszabb), ami arra utal, hogy a forrásszöveggel szembeni ítélet --
+vagyis külső információ -- egy közepes modellnél adhat hozzá. Ezt az \arm{E2x} hibás futása miatt újra kell
+mérni (\ref{sec:dontes}.~szakasz).
+
+\paragraph{Darabolás.} Qu, Tu és Bao~\cite{qu2024chunking} szerint a szemantikus darabolás többletköltségét
+a mért előnyök nem indokolják. Nálunk a rögzített, 800 karakteres darabolás (\arm{E5c}) a Gemmánál
+($0{,}72\to0{,}97$, 23 dokumentumon jobb) és a Qwennél ($0{,}64\to0{,}86$, leíró szinten) is jobb volt, mint a
+szemantikus \arm{E0}; a PULI-nál egyik változat sem adott értékelhető vizsgát. Eredményünk a
+megállapításukat egy konkrét mechanizmussal egészíti ki: a minimális darabméret nélküli szemantikus
+darabolás rövid, tartalom nélküli darabokat hoz létre, és a feladatleírás típusú lekérdezés éppen ezeket
+találja meg (\ref{sec:fo-robusztus}.~szakasz).
+
+\paragraph{Lekérdezés-átírás.} A HyDE~\cite{gao2023hyde} abból indul ki, hogy a lekérdezésnek a keresett
+szöveghez kell hasonlítania, ezért egy generált hipotetikus dokumentum beágyazásával keres. A mi
+eredményünk ugyanezt támasztja alá a vizsgagenerálásban: a kereső tartalmi kérdéssel jól működik (a
+referenciakérdések igazoló darabja a fő vizsgálat dokumentumain 86\,\%-ban az első három találat között volt), a naiv
+RAG kudarca tehát a feladatleírásból képzett lekérdezésből fakad. A vizsgaterv tartalmi fogalmai a
+lekérdezés-átírás egy egyszerű formájának tekinthetők; egy HyDE-szerű lekérdezés a naiv útvonalon
+továbbfejlesztési lehetőség.
+
+\paragraph{Hosszú kontextus és RAG.} Li és munkatársai~\cite{li2024ragvslc} szerint elegendő erőforrás
+mellett a hosszú kontextus átlagosan jobb a RAG-nál, a RAG viszont jóval olcsóbb, a lekérdezések 63\,\%-án a
+kettő előrejelzése azonos, és a kérdésenként választó útválasztással a költség csökkenthető. Nálunk ez modellfüggő: a Gemma teljes
+dokumentumos promptja ($0{,}96$) versenyképes a tervezett folyamattal és a jól darabolt naiv RAG-gal, a
+gyengébb modelleknél viszont a teljes dokumentumos prompt elmarad (Qwen $0{,}83$, PULI $0{,}41$). Az
+útválasztás gondolata a mi adaptív ellenőrzésünkkel rokon (\ref{sec:dontes}.~szakasz).
+
+\paragraph{A hosszú bemenet egyenetlen használata.} Liu és munkatársai~\cite{liu2024lost} eredménye alapján
+azt vártuk, hogy a teljes dokumentumot kapó modell kérdései a dokumentum egyes részeire tömörülnek
+(\ref{h:lefed}.~hipotézis). A lefedettségben ez nem jelent meg. Leíró szinten a Gemma teljes dokumentumos
+promptja a hosszú dokumentumokon valamivel gyengébb ($0{,}94$), mint a rövideken ($0{,}98$), ami a hossz
+növelésével romló teljesítmény irányába mutat~\cite{hsieh2024ruler}, de a különbség kicsi, és a bíró 24\,000
+karakteres ablaka miatt a hosszú dokumentumokon az alátámasztottság alsó becslés.
+
+\paragraph{Hibás kulcsok a generált kérdésekben.} Doughty és munkatársai~\cite{doughty2024comparative}
+szerint a GPT-4 kérdéseinek 81,7\,\%-a minden szempontnak megfelelt, de 4,9\,\%-ukban több helyes válasz
+volt (az oktatói kérdéseknél 1,1\,\%), 4,0\,\%-ukban pedig egy disztraktor elárulta a kulcsot (0,9\,\%); Wang és munkatársai~\cite{wang2022towards} a GPT-3
+kérdéseinek egy részét az emberiekkel összemérhetőnek találták. A mi méréseink ugyanezt a képet adják: a
+Gemma tervezett konfigurációiban a bíró a kérdések 85--88\,\%-át használná fel, a Qwen \arm{E2} kérdéseinek
+80\,\%-át, a szervermodell \arm{E4b} kérdéseinek 98\,\%-át, és még a legjobb helyi konfigurációk kérdéseinek
+is 4--14\,\%-a a bíró szerint nem alátámasztott. A mutatók és a tárgyterületek eltérnek, így ez nem közvetlen
+összevetés, de a következtetés azonos: oktatói átnézés nélkül hibás kérdések kerülnének a vizsgába.
+
+\paragraph{A bíró érvényessége.} Zheng és munkatársai~\cite{zheng2023judge} szerint egy erős bíró több mint
+80\,\%-ban egyezik az emberi preferenciákkal, nagyjából annyira, mint az emberek egymással, és pozíciós,
+hossz- és önpreferencia-torzítást is azonosítottak; Chiang és Lee~\cite{chiang2023human} az emberi
+szakértőkével azonos utasítással kapott hasonló egyezést. Ezek az eredmények páros preferenciákra és más
+feladatokra vonatkoznak, ezért nem vihetők át a mi forrásalapú, pontszámos rubrikánkra. A vizsgálatok több
+bírói vakfoltot is feltártak: a szivárgó és a tartalmilag üres kérdéseket a bíró magasra pontozta, a teljes
+dokumentumos kérdéseket a 24\,000 karakteres ablak miatt alulpontozhatta, és ítéletei forrásfüggően
+hiányoztak (\ref{sec:meres-tanulsag}.~szakasz). A más modellcsaládba tartozó bíró az önpreferenciát
+csökkenti~\cite{panickssery2024selfpref}, de a bíró érvényességét csak az oktatói validálás döntheti el
+(\ref{h:meres}.~hipotézis).
 
 % ---------------------------------------------------------------------
 \section{Mikor éri meg a módszer?}
 \label{sec:mikor}
 % ---------------------------------------------------------------------
 
-A dolgozat kiinduló állítása az volt, hogy a vizsgagenerálás megbízhatóságát nem egy jobb prompt, hanem a
-feladat ellenőrizhető lépésekre bontása biztosítja. A három modellen végzett mérés ezt az állítást
-pontosítja: \emph{a módszer haszna fordítottan arányos a modell képességével} (\ref{fig:lepesek}.~ábra).
+A módszer haszna a modell képességétől függ (\ref{fig:lepesek}.~ábra). Gyenge formátumkövető modellnél
+(PULI-LlumiX 8B) csak a felbontás ad értékelhető vizsgát, de a modellt ez sem teszi alkalmassá. Közepes
+modellnél (Qwen2.5-7B) éri meg a legjobban: a többlethívások árán a szerveres teljes dokumentumos prompt
+szintjét éri el, összhangban azzal, hogy a futás közbeni többletszámítás a nagyobb modellt részben
+helyettesítheti~\cite{snell2025scaling}. Erős modellnél (Gemma 3 12B) átlagos minőségben nem ad hozzá, értéke
+a kérdésenkénti forrás (P1) és a terv (P2). A szintenkénti számokat \az{\ref{tab:dontes}}.~táblázat adja.
 
-\begin{itemize}
-\item \textbf{Gyenge, rossz formátumkövető modellnél} (PULI-LlumiX 8B) a teljes dokumentumos prompt és a
-naiv RAG használhatatlan ($Q\le0{,}41$), és csak a felbontás ad értékelhető vizsgát ($0{,}67$). A módszer itt a
-formátumot és a darabszámot is kikényszeríti, amit a modell magától nem tart be.
-\item \textbf{Közepes modellnél} (Qwen2.5-7B) a módszer emeli a minőséget a szervermodell szintjére
-($0{,}83\to0{,}96$), egy 8\,GB-os kártyán.
-\item \textbf{Erős helyi modellnél} (Gemma 3 12B) a teljes dokumentumos prompt is $0{,}96$-ot ér el, a módszer
-pedig átlagban nem ad hozzá. Itt a felbontás értéke nem az átlagos minőség, hanem az, amit egy prompt nem tud:
-minden kérdés a saját forrásdarabjára hivatkozik, így az oktató a szerkesztőben egy kattintással ellenőrizheti
-(P1); a darabszám, a típus és a Bloom-szint a terv része, nem kérés (P2); és az eredmény nem függ a darabolás
-részleteitől.
-\end{itemize}
+% ---------------------------------------------------------------------
+\section{Döntés: mit építünk be}
+\label{sec:dontes}
+% ---------------------------------------------------------------------
 
-Két megfigyelés minden modellnél azonos. Egyrészt \emph{a naiv RAG törékeny}: a feladatleírásból képzett
-lekérdezés a tartalom nélküli darabokhoz áll a legközelebb, és ugyanaz a modell a darabolás egy apró
-részletén múlóan $0{,}72$ vagy $0{,}97$ minőséget ad. Ez a hiba a gyakorlatban észrevétlen maradna, mert a
-kérdések formailag hibátlanok. Másrészt \emph{a modellválasztás nagyobb hatású, mint bármely komponens}:
-ugyanaz a teljes módszer a PULI-val $0{,}67$-et, a Gemmával $0{,}95$-öt ad. A PULI-LlumiX eredménye külön
-tanulság: a magyar nyelvi továbbtanítás nem pótolja az utasításkövetést, és egy strukturált feladatra a
-többnyelvű, jól formátumkövető modell a jobb választás magyar dokumentumokon is.
+\Az{\ref{tab:dontes}}.~táblázat GPU-szintenként a legjobb minőségű, a leggyorsabb és a legrobusztusabb
+(a leggyengébb dokumentumon is legjobb) konfigurációt mutatja.
+
+\begin{table}[htbp]
+\centering
+\caption[Döntési táblázat GPU-szintenként.]{Döntési táblázat GPU-szintenként. $Q$: minőségi index; Min.: a leggyengébb dokumentum
+$Q$-ja; Idő: a medián futási idő szorzója az azonos modellel futó \arm{E0}-hoz képest. A 8\,GB-os szint
+a hat dokumentumos előzetes, a 12\,GB-os a 30 dokumentumos fő vizsgálat adatai. A szintén 8\,GB-on futó
+PULI-LlumiX 8B egyik szempontból sem ajánlott (legjobb \arm{E2} $0{,}67$, a leggyengébb dokumentumon
+$0{,}38$, 18 dokumentum $0{,}70$ alatt).}
+\label{tab:dontes}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.6cm}lccc>{\raggedright\arraybackslash}X@{}}
+\toprule
+Szempont & Konfig. & $Q$ & Min. & Idő & Megjegyzés \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{8\,GB: Qwen2.5-7B}} \\
+Legjobb minőség & \arm{E2} & 0,96 & 0,89 & $\approx11\times$ & a szerveres teljes dokumentumos prompt
+($0{,}95$) szintje; kérdésenkénti forrás \\
+Leggyorsabb & \arm{E5c} & 0,86 & 0,50 & $\approx1\times$ & a saját magyar szövegeken $0{,}77$, a törzsek
+44\,\%-a nem kérdés; csak vázlatnak \\
+Legrobusztusabb & \arm{E2} & 0,96 & 0,89 & $\approx11\times$ & azonos a legjobb minőségűvel; a következő
+az \arm{E2h} (0,88) \\
+\textbf{Beépül} & \arm{E2} & 0,96 & 0,89 & $\approx11\times$ & adaptív ellenőrzéssel (lent) \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{12\,GB: Gemma 3 12B}} \\
+Legjobb minőség & \arm{E5c} & 0,97 & 0,81 & $\approx1\times$ & a \arm{B-doc-L}, \arm{E2f}, \arm{E2h}, \arm{E5a}
+($0{,}96$) a konfidencia-intervallumon belül; nincs kérdésenkénti forrás és terv \\
+Leggyorsabb & \arm{E5c} & 0,97 & 0,81 & $\approx1\times$ & az \arm{E0}, \arm{E5a} és \arm{B-doc-L} is
+$\approx1\times$ \\
+Legrobusztusabb & \arm{E2h} & 0,96 & 0,88 & $\approx8\times$ & a tervezett konfigurációk minimuma
+$0{,}80$--$0{,}88$, egy-egy dokumentumon múlik; a hibrid keresés más modelleknél rontott \\
+\textbf{Beépül} & \arm{E1}--\arm{E2} & 0,95 & 0,80--0,82 & $\approx5$--$8{,}5\times$ & tervezett folyamat adaptív
+ellenőrzéssel; gyors vázlathoz \arm{E5c} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+A 8\,GB-os szinten a tervezett és ellenőrzött folyamat egyszerre a legjobb és a legrobusztusabb. A
+12\,GB-os szinten a győztesek minősége a konfidencia-intervallumokon belül azonos, ezért azt választjuk, amit
+csak a tervezett folyamat ad meg: a kérdésenkénti forrást és a tervet; a rögzített darabolású naiv RAG gyors
+vázlatként marad meg.
+
+\subsection*{Mi kerül be}
+
+\begin{description}[style=nextline,leftmargin=0.6cm]
+\item[Kérdésenkénti forráshivatkozás (P1).] Még a legjobb helyi konfigurációk kérdéseinek egy része is
+alátámasztatlan (\ref{sec:irod-osszevetes}.~szakasz), és a bíró sem validált, ezért az oktatói ellenőrzés nem
+hagyható el. A forrásdarab megjelenítése ezt a szerkesztőben egy kattintásra rövidíti, és a hivatkozás az
+automatikus alátámasztottsági ellenőrzés feltétele is.
+\item[Vizsgaterv (P2).] A terv kikényszeríti a darabszámot, a típust és a Bloom-kiosztást, ami egy
+promptban csak kérés: a PULI egy hívásban átlagosan 1,8 kérdést adott a kért tíz helyett, a tervvel 9,9-et. A Gemmánál a bíró szerint megvalósult magasabb rendű kérdések aránya az
+egyhívásos konfigurációk 1--4\,\%-áról 7--11\,\%-ra nőtt; ez is jóval elmarad a tervezett 43\,\%-tól, amit a
+felületen jelezni kell (\ref{sec:fo-jelleg}.~szakasz).
+\item[Szabályalapú ellenőrzés.] A forma, a szivárgás, a kérdésforma és a duplikátum szabályai olcsók,
+determinisztikusak, és a lánc hasznának nagy részét adják (\arm{E2x} $\approx$ \arm{E2}, lásd az
+önellenőrzésről szóló bekezdést). A szivárgás szabályát a pilot tette szükségessé
+(\ref{sec:szivargas}.~szakasz).
+\item[Rögzített vagy minimális méretű darabolás a naiv útvonalon is.] A legolcsóbb mért javítás: a Gemmánál a
+$0{,}70$ alatti dokumentumok száma 16-ról nullára csökkent, változatlan futási idő mellett. A minimális
+darabméretű szemantikus darabolást és a tervezett folyamat darabolásfüggését nem mértük, ezek elvárások.
+\item[Adaptív ellenőrzés.] Az elsőre elfogadott kérdéshelyek aránya a Gemmánál 70\,\%, a Qwennél 23\,\%, a
+PULI-nál 5\,\%; minél kisebb ez az arány, annál nagyobb az ellenőrzés haszna
+(\ref{tab:hipotezisek}.~táblázat), költsége viszont minden modellnél jelentős. A rendszer ezért az első kérdéshelyeken a teljes láncot futtatja, és ha
+az első kísérletek sikeraránya magas, a továbbiakon csak a szabályokat. A küszöb még meghatározandó
+(\tbd{[küszöb: a bevezetés előtt mérendő]}); a változatot nem mértük, hatása elvárás.
+\end{description}
+
+\subsection*{Mi marad ki}
+
+\begin{description}[style=nextline,leftmargin=0.6cm]
+\item[Fogalomgráf (\arm{E3}).] Egyik modellnél sem javított (Gemma $-0{,}01$, PULI $-0{,}10$, Qwen $-0{,}07$),
+miközben a legdrágább tervezett változat (Gemma: $\approx10{,}6\times$, 55,5 hívás az \arm{E2} 43 hívásával szemben).
+\item[Hibrid keresés (\arm{E2h}).] A Gemmánál nem szignifikánsan jobb ($+0{,}01$), a PULI-nál ($-0{,}08$, 17
+dokumentumon rosszabb) és a Qwennél ($-0{,}04$, öt dokumentumon rosszabb) rontott, és külön lexikális indexet
+igényel; a Gemmánál mért legmagasabb minimuma egyetlen dokumentumon múlik.
+\item[Az LLM-alapú ellenőrzés mint kérdésenkénti ítélet.] Ítélete a bíróéval a véletlen szintjén egyezik; a
+Qwennél a bíró szerint alátámasztott kérdések közel felét is megjelölte, a Gemmánál szinte mindent
+átengedett. Figyelmeztetésként („ezt nézd meg alaposabban”) megmarad, de a felület nem jelöli a kérdést
+„ellenőrzöttnek”, mert ez az automatizálási torzítás~\cite{parasuraman2010complacency} miatt éppen az
+átengedett kérdések átnézését gyengítené.
+\end{description}
+
+\paragraph{Modellválasztás.} Strukturált feladatban az utasításkövetés fontosabb a magyar nyelvi
+specializációnál -- ezt a PULI-LlumiX 8B esetére szűkítve állítjuk, amely a modellkártya szerint a
+Llama-3.1-8B-Instruct utólagos utasítás-hangolás nélküli magyar továbbelőtanítása, és amelynél a többnyelvű
+Gemma 3 12B minden konfigurációban, a Qwen2.5-7B a hat közös dokumentumon jobb volt
+(\ref{ch:modellek}.~fejezet). A rendszer 8\,GB-on a Qwen2.5-7B-t, 12\,GB-on a Gemma 3 12B-t ajánlja.
+
+\paragraph{Fejlesztési ütemterv} (időpontok: \tbd{[ütemezés a témavezetővel egyeztetve]}).
+(1)~Rögzített darabolás a meglévő naiv útvonalon. (2)~A tervezett folyamat (vizsgaterv, forráshivatkozás,
+szabályalapú és adaptív ellenőrzés) integrálása a Bifrost háttérfeladatába, GPU-szint szerinti
+modellválasztással. (3)~A v1 szerkesztő éles backendje az ál-backend helyett. (4)~Ezekkel párhuzamosan a
+hiányzó mérések: a hiányzó bírói ítéletek újrapontozása, az \arm{E2x} újramérése működő második
+ellenőrzővel, az oktatói validálás (\ref{h:meres}.~hipotézis), a szervermodell a 30 dokumentumon, valamint az
+adaptív küszöb és a minimális darabméret mérése.
 
 % ---------------------------------------------------------------------
 \section{Mit tanultunk az ellenőrzésről és a mérésről?}
 \label{sec:meres-tanulsag}
 % ---------------------------------------------------------------------
 
-\paragraph{Az ellenőrzés a vizsgát javítja, nem a jelzést.} Az ellenőrző lánc jelzései egyenként zajosak, de az
-újrapróbálkozás miatt összegződnek: ha egy kérdést elutasítunk, és a generátor újat ír, az új kérdés átlagosan
-jobb. A lánc így szűrőként és „második esélyként” működik, nem megbízható osztályozóként -- összhangban azzal,
-hogy a modellek önellenőrzése külső visszajelzés nélkül nem megbízható~\cite{huang2024selfcorrect}, de a
-forrásszöveggel és determinisztikus szabályokkal kombinálva javíthat. A szabályok szerepe védelmi: a
-szivárgás és a nem kérdő törzsek elleni szabályok nélkül a visszacsatolás a forrás szó szerinti másolása felé
-tolja a modellt.
-
-\paragraph{A mérés a valósnál jobb eredményt mutatott volna.} A munka egyik fő tanulsága módszertani: a mérés
-több ponton is torzított volna, ha nem ellenőrizzük. A tartalékvizsga, a csonkolt kódoló és a válaszszivárgás
-mind \emph{felfelé} torzított; a szervermodell tartalmilag üres kérdéseit a bíró hibátlannak pontozta; a bíró
-24\,000 karakteres ablaka a hosszú dokumentumok végéről írt helyes kérdéseket \emph{lefelé} torzította. A fő
-vizsgálatban két újabb csendes hiba jelent meg: a független ellenőrző (\arm{E2x}) hívásai harmadszor is
-hibáztak, így a konfiguráció nem azt mérte, amit a neve ígért, és a bíró kéréseinek egy része hibával tért
-vissza. A közös vonás, hogy a mérőrendszer mindvégig „működött”: hihető számokat adott, és nem jelzett
-hibát. A nyelvi modellekre épülő rendszerek kiértékelésében ezért (i) a nyers kimenetek kézi átolvasása nem
-helyettesíthető automatizmussal, és (ii) minden csendes tartalékágat (kihagyott ellenőrzés, sikertelen bírói
-hívás, tartalékkérdés) a jelentésben is meg kell mutatni.
-
-\paragraph{Gyakorlati következmény a felületre.} Az ellenőrző jelzését az oktatónak \emph{figyelmeztetésként}
-kell megmutatni („ezt a kérdést nézd meg alaposabban”), nem ítéletként: a Qwennél a megjelölt kérdések többsége
-valójában rendben volt, a Gemmánál pedig szinte minden kérdés átment. Ha a rendszer az átengedett kérdéseket
-„ellenőrzöttként” hirdetné, az automatizálási torzítás~\cite{parasuraman2010complacency} miatt az oktató éppen
-ezeket nézné át kevésbé figyelmesen.
-
-% ---------------------------------------------------------------------
-\section{Gyakorlati ajánlás}
-% ---------------------------------------------------------------------
-
-\begin{itemize}
-\item \textbf{8\,GB-os kártyán} (például egy oktatói asztali gépen): a Qwen2.5-7B a teljes módszerrel
-(\arm{E2}), vizsgánként 3--5 perc alatt, a vizsgált dokumentumokon a nagy szervermodellel azonos minőséget ad.
-\item \textbf{12\,GB-os kártyán}: a Gemma 3 12B a tervezéssel (\arm{E1}, kb.\ 3 perc) vagy ellenőrzéssel
-(\arm{E2}, kb.\ 5 perc); rövid dokumentumnál a teljes dokumentumos prompt is jó, de ott a kérdések forrása nem
-követhető vissza.
-\item \textbf{A naiv RAG nem ajánlott}, mert minősége a darabolás részleteitől függően kiszámíthatatlan; ha
-mégis ezt használjuk, a darabolónak minimális darabméretet kell kapnia.
-\item \textbf{Modellválasztásnál} az utasítás- és formátumkövetés fontosabb a magyar nyelvi
-specializációnál.
-\item \textbf{Minden esetben} oktatói átnézés szükséges; a \Mimir{} ezt kötelezővé is teszi.
-\end{itemize}
+Az ellenőrző lánc szűrőként és „második esélyként” működik, nem osztályozóként: jelzései egyenként
+zajosak, de az elutasított kérdés helyére írt új kérdés átlagosan jobb. A mérés több ponton csendben
+torzított volna (tartalékvizsga, csonkolt kódoló, szivárgás, a bíró ablaka, a hibás \arm{E2x}-hívások), miközben
+hihető számokat adott; a nyers kimenetek kézi átolvasása ezért nem hagyható el. A bírói ítéletek
+forrásfüggően hiányoznak: a Wikipédia-cikkek kérdései kisebb arányban kaptak ítéletet (a Gemma \arm{E2}-ben
+összesen 52\,\%, a PULI \arm{E2}-ben 29\,\%). Ez a következtetéseket nem fordítja meg (\ref{sec:fo-meres}.~szakasz),
+de a forrásonkénti összevetéseket gyengíti.
 
 % ---------------------------------------------------------------------
 \section{Az érvényességet veszélyeztető tényezők}
 \label{sec:validitas}
 % ---------------------------------------------------------------------
 
-\paragraph{Belső érvényesség.} Az egytényezős terv a különbségeket egy-egy tényezőhöz köti, de a tényezők nem
-teljesen függetlenek: az ellenőrzés például a kérdések hosszát is megváltoztatja, ami közvetve hathat a bíróra.
-A tervezett konfigurációk egy maggal futottak, így dokumentumonkénti értékükben a futásról futásra jelentkező
-zaj is benne van. A három vizsgálat a rendszer kissé eltérő változatait méri, ezért összevetést csak vizsgálaton
-belül végeztünk. Az \arm{E2x} a tervezettől eltérő konfigurációt mért, és a PULI-nál a második ellenőrző
-(Llama-3.1-8B) amúgy sem tartozott volna más modellcsaládba.
+\paragraph{Belső.} Az \arm{E1} és az \arm{E0} több tényezőben különbözik, az ellenőrzés a kérdések hosszát is
+megváltoztatja, és a tervezett konfigurációk egy maggal futottak, így a dokumentumonkénti értékekben futási
+zaj is van. A vizsgálatok közötti összevetés minden esetben azonos dokumentumokon, a hat közös
+dokumentumon történt. Az \arm{E2x} a tervezettől eltérő konfigurációt mért.
+\paragraph{Konstrukciós.} A formai megfelelés vizsgaszintű, ezért minden komponenst külön is közlünk. A
+tartalmi mutatók egyetlen, még nem validált bíróra épülnek, amely csak a kérdés saját forrását látja, és
+ítéletei forrásfüggően hiányoznak (\ref{sec:fo-meres}.~szakasz).
+\paragraph{Külső.} A 30 dokumentumból 24 magyar Wikipédia-cikk, az angol részhalmaz három dokumentum; a
+szervermodell csak a hat dokumentumon futott; csak feleletválasztós kérdéseket értékeltünk; a nyílt
+dokumentumok a tanítóadatban is szerepelhettek~\cite{sainz2023contamination}. A futási időt ugyanazon a GPU-n
+mért relatív szorzóként értelmezzük.
+\paragraph{Következtetési.} A 30 dokumentum a nagy hatások kimutatására elegendő, a kicsikére (például az
+ellenőrzés hatására a Gemmánál) nem; a hat dokumentumos vizsgálat következtetései leíró jellegűek.
 
-\paragraph{Konstrukciós érvényesség.} A minőségi index egyenlő súlyú komponensei közül a formai megfelelés
-vizsgaszintű, ezért egy formai hiba nagy hatású; ezért minden komponenst külön is közlünk. A tartalmi mutatók
-egyetlen, oktatókkal még nem validált bíróra épülnek, amely a kérdés saját forrását látja, a dokumentum más
-részeiben lévő ellentmondást tehát nem. A fő vizsgálatban a bírói ítéletek egy része hiányzik; az
-érzékenységvizsgálat szerint ez a következtetéseket nem befolyásolja (\ref{sec:fo-meres}.~szakasz), de a
-becslések pontosságát csökkenti.
+% ---------------------------------------------------------------------
+\section{Etikai és jogi szempontok}
+% ---------------------------------------------------------------------
 
-\paragraph{Külső érvényesség.} A fő vizsgálat 30 dokumentumából 27 magyar, 24 Wikipédia-cikk; az angol
-részhalmaz három dokumentum, így nyelvi összevetésre nem alkalmas. A szervermodell csak a hat dokumentumos
-előzetes vizsgálatban szerepelt. Csak feleletválasztós kérdéseket értékeltünk. A nyílt dokumentumok a modellek
-tanítóadatában is szerepelhettek~\cite{sainz2023contamination}, ezért a vak megoldhatóságot mindig az
-alátámasztottsággal együtt értelmezzük.
+A döntés a jogi keret (\ref{sec:irod-jog}.~szakasz) követelményeit is szolgálja: a beépülő változat helyben
+futtatható, így helyi módban (\code{LOCAL\_ONLY}) a tananyag nem hagyja el az oktató gépét; a feltöltött
+tartalom a feladat végén törlődik (\ref{sec:zero}.~szakasz); a forráshivatkozás és a kötelező oktatói
+jóváhagyás az emberi felügyeletet konkrét munkafolyamattá teszi. A rendszer kérdést generál, nem értékeli a
+hallgatókat, és az export feltünteti az MI-közreműködést~\cite{aiact2024}.
 
-\paragraph{Következtetési érvényesség.} A dokumentumszintű nemparaméteres próbák konzervatívak; a 30 dokumentum
-a nagy hatások kimutatására elegendő, a kicsikére (például az ellenőrzés $+0{,}01$-es hatására a Gemmánál) nem.
-A hat dokumentumos előzetes vizsgálat következtetései leíró jellegűek.
-
-\paragraph{Etikai és jogi szempontok.} A rendszer hallgatói adatot nem kezel, a feltöltött dokumentumok a
-feladat végén törlődnek, minden kérdés oktatói jóváhagyást igényel, az export pedig feltünteti az
-MI-közreműködést~\cite{aiact2024}. A kiértékelő dokumentumok saját vagy nyílt licencű művek, a szerveres modellek
-és a bíró az egyetem saját infrastruktúráján futottak, így a kiértékelés során sem került tananyag külső
-szolgáltatóhoz.
+\paragraph{Tanulság.} A \Mimir{} a naiv RAG helyett a tervezett folyamatot építi be forráshivatkozással,
+szabályalapú és adaptív ellenőrzéssel, a naiv útvonalon rögzített darabolással; a fogalomgráf és a hibrid
+keresés kimarad. Az erős modellnél a döntés az ellenőrizhetőségen alapul, ezért az oktatói validálás
+erősítheti meg vagy módosíthatja.
