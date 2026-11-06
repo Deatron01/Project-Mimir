@@ -1,0 +1,18 @@
+flowchart TB
+  subgraph naiv["E0 – naiv RAG (alapvonal): egyetlen modellhívás"]
+    direction LR
+    n1["Dokumentum"] --> n2["Szemantikus<br/>darabok"] --> n3["A <i>kéréshez</i> legközelebbi 3 darab<br/><small>lekérdezés: „10 feleletválasztós kérdés…”</small>"] --> n4["1 hívás:<br/>a teljes vizsga"] --> n5(["Vizsga"])
+  end
+  subgraph terv["E1–E3 – a Mimir tervezett folyamata"]
+    direction LR
+    t1["Dokumentum<br/>és darabok"] --> t2["Vizsgaterv<br/><small>fogalom, típus, Bloom-szint<br/>kérdéshelyenként</small>"] --> t3
+    subgraph loop["minden kérdéshelyre"]
+      direction LR
+      t3["Keresés a<br/><i>fogalommal</i>"] --> t4["1 kérdés<br/>forrás-<br/>hivatkozással"] --> t5{"Ellenőrző<br/>lánc<br/><small>E2, E3</small>"}
+      t5 -. "hiba: visszajelzés" .-> t3
+    end
+    t5 -- "rendben" --> t6["Összeállítás"] --> t7(["Oktatói<br/>jóváhagyás"])
+  end
+  naiv ~~~ terv
+  classDef hl fill:#e8eefa,stroke:#35507a,stroke-width:2px;
+  class t2,t5 hl;

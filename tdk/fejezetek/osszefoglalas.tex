@@ -5,85 +5,54 @@
 
 \section{Összefoglalás}
 
-Dolgozatunkban a vizsgakérdés-generálás négy gyakorlati problémájából indultunk ki: a kulcsok
-helyessége nincs ellenőrizve (P1), a vizsga szerkezete és lefedettsége nincs kontrollálva (P2), a
-tananyag egy harmadik félhez kerül (P3), és a módszer nagy, távoli modellekre támaszkodik (P4). Ezekre a
-\Mimir{} rendszerrel válaszoltunk, amely az egyetlen promptot explicit, ellenőrizhető módszerrel váltja
-fel, és egyetlen fogyasztói GPU-n, adatmegőrzés nélkül fut.
+Dolgozatunkban a vizsgakérdés-generálás négy gyakorlati problémájából indultunk ki: a kulcsok helyessége nincs
+ellenőrizve (P1), a vizsga szerkezete és lefedettsége nincs kontrollálva (P2), a tananyag egy harmadik félhez
+kerül (P3), és a módszer nagy, távoli modellekre támaszkodik (P4). Ezekre a \Mimir{} rendszerrel válaszoltunk,
+amely az egyetlen promptot ellenőrizhető lépésekre bontott módszerrel váltja fel, és egyetlen fogyasztói
+GPU-n, adatmegőrzés nélkül fut. A módszert egy nyílt kiértékelő keretrendszerrel, 14 konfigurációval, három
+vizsgálatban és három helyi modellel mértük.
 
-A munka eredményei a következőkben foglalhatók össze.
+A kutatási kérdésekre a következő válaszokat adhatjuk.
 
-\begin{enumerate}[label=(\arabic*)]
-\item \textbf{Szakirodalmi megalapozás.} Áttekintettük a feleletválasztós kérdés tesztelméleti
-követelményeit, az automatikus kérdésgenerálás fejlődését, a visszakereséssel kiegészített generálást, a
-hosszú kontextus korlátait, az ellenőrzés és önjavítás eredményeit, a kis és kvantált modelleket, valamint
-a nyelvi modellel végzett kiértékelést, és megfogalmaztuk a kutatási rést.
-\item \textbf{Generálási módszer és architektúra.} Kidolgoztuk és implementáltuk a tervezésvezérelt,
-forráshivatkozásos csővezetéket (szemantikus darabolás, lefedettségvezérelt vizsgaterv Bloom-kiosztással,
-slotonkénti keresés, egyenkénti generálás, ellenőrző lánc visszacsatolással és tartalékokkal, fogalomgráf),
-és egy zéró adatmegőrzésű, kapcsolható módon kizárólag helyben futó mikroszolgáltatás-architektúrát.
-\item \textbf{Kiértékelési módszertan.} Tizennégy egytényezős kísérleti kart, 39 dokumentumos kétnyelvű
-adatkészletet, forrásalapú mutatókat, modellcsaládon kívüli bírót, közös bíró--oktató rubrikát és
-dokumentumszintű statisztikát tartalmazó, nyílt és reprodukálható keretrendszert hoztunk létre.
-\item \textbf{Pilot eredmények.} Egyetlen dokumentumon a tervezés kis mértékben javított; az azonos modellel
-végzett önellenőrzés a bíróval csak véletlenszintű egyezést mutatott; a visszacsatolás a kulcs kérdésbe
-szivárgását idézte elő, amely a mutatókat és a bírót egyaránt félrevezette; a futásról futásra jelentkező
-zaj ($\approx0{,}07$) pedig megmutatta, hogy egyetlen dokumentumon a legtöbb különbség nem értelmezhető.
-Ezekből a megfigyelésekből közvetlenül következtek a fő vizsgálat javításai.
-\item \textbf{A fő vizsgálat eredményei.} Tizennégy karral, kilenc magyar és angol dokumentumon
-(karonként hat), 1\,670 kérdésen: a helyi 7B modellel futó tervezett és ellenőrzött csővezeték érte el a
-legmagasabb minőségi indexet a közös dokumentumokon ($0{,}96$), mind a hat dokumentumon legalább
-$0{,}89$-cel, szemben a naiv RAG $0{,}64$-es, a helyi teljes dokumentumos prompt $0{,}83$-as és a teljes
-dokumentumot kapó szervermodell $0{,}95$-ös értékével. A tervezés $+0{,}24$-dal, az ellenőrzés mind a hat
-dokumentumon $+0{,}08$-dal javított; az ellenőrzés haszna főként a modellalapú ítéletekből -- a gyanús
-disztraktorok és a vak próba jelzéseiből -- ered, a szabályok a szivárgást szorították le 0--3\,\%-ra. A
-fogalomgráf rontott, a hibrid keresés nem javított; a naiv RAG az angol dokumentumokon a rövid szerkezeti
-darabok miatt összeomlott; ugyanaz a csővezeték a szervermodellel $0{,}99$-et ért el. A helyi modell
-5,0--5,6\,GiB GPU-memóriát foglalt. A Holm-korrekció után egyik összevetés sem szignifikáns.
-\end{enumerate}
+\paragraph{RQ1.} A strukturált generálás minden vizsgált modellnél jelentősen jobb, mint a naiv visszakeresés
+(a fő vizsgálatban $+0{,}23$ és $+0{,}39$ közötti javulás, Holm-korrekció után is szignifikánsan), és jobb
+lefedettséget ad. A teljes dokumentumos prompttal szemben az előny a modelltől függ: a gyengébb modelleknél
+nagy ($0{,}41\to0{,}67$ és $0{,}83\to0{,}96$), az erős Gemma 3 12B-nél nincs ($0{,}96$ és $0{,}95$), és a
+lefedettség sem jobb.
 
-A kutatási kérdésekre a két vizsgálat alapján a következő válaszokat adhatjuk. \textbf{RQ1:} a strukturált
-generálás a vizsgált dokumentumokon érvényesebb és egyenletesebb minőségű vizsgát adott, mint ha ugyanannak a
-modellnek a dokumentumot vagy annak visszakeresett részleteit egyetlen promptban adjuk át ($0{,}96$ vs.\
-$0{,}83$ és $0{,}64$), és a lefedettsége jobb volt a naiv RAG-énál; a teljes dokumentumos promptnál azonban
-nem volt jobb a lefedettsége (\ref{h:lefed}.~hipotézis nem teljesült). \textbf{RQ2:} a tervezés 17
-hívásért, az ellenőrzés további 34 hívásért javított, a vak megoldási próba a lánc hasznos eleme; a
-fogalomgráf és a hibrid keresés a többletköltségéért nem javított; a naiv RAG-ot a darabolás apró részletei
-is jelentősen befolyásolták. \textbf{RQ3:} a helyi 7B modell a tervezett és ellenőrzött csővezetékben a
-közös dokumentumokon elérte a szervermodell naiv RAG-os ($0{,}95$ vs.\ $0{,}93$) és teljes dokumentumos
-($0{,}96$ vs.\ $0{,}95$) változatát, vizsgánként 3,5 perc alatt, egy 8\,GB-os kártyán is elférő
-memóriaigénnyel; ugyanazzal a csővezetékkel a szervermodell $0{,}99$-et ért el.
+\paragraph{RQ2.} A legnagyobb hatású komponens a vizsgaterv, amely kérdéshelyenként tartalmi lekérdezéssel
+keres. Az ellenőrző lánc a gyengébb modelleknél javít ($+0{,}08$, $+0{,}13$), az erősnél nem, és kérdésenkénti
+ítélete a bíróéval a véletlen szintjén egyezik. A fogalomgráf és a hibrid keresés a többletköltségéért nem
+javított. A naiv RAG minőségét a darabolás apró részletei is drámaian befolyásolták.
+
+\paragraph{RQ3.} A helyi, tervezett folyamat a vizsgált dokumentumokon elérte a szervermodell naiv és teljes
+dokumentumos változatát, 8\,GB-os (Qwen2.5-7B) vagy 12\,GB-os (Gemma 3 12B) fogyasztói kártyán, vizsgánként
+3--5 perc alatt. Az eredmény erősen függ a helyi modelltől: a magyarra továbbtanított PULI-LlumiX 8B a
+formátumkövetésben elbukott, így a magyar dokumentumokon is a többnyelvű modellek voltak jobbak.
+
+Módszertani eredményként a vizsgálatok több olyan hibát tártak fel, amely a mérést a valósnál jobbnak mutatta
+volna -- köztük a válaszszivárgást, amelyben az ellenőrző visszacsatolása a helyes választ a kérdés szövegébe
+írta. A tanulság általános: egy nyelvi modellekre épülő rendszer kiértékelésében minden csendes tartalékágat
+láthatóvá kell tenni, és a nyers kimeneteket kézzel is át kell olvasni.
 
 \section{További munka}
 
-A közvetlen folytatás a fő vizsgálat kiterjesztése \az{\ref{ch:kiertekeles}}.~fejezetben rögzített
-protokoll szerint: a fő karok futtatása mind a 39 dokumentumon, köztük a 24 magyar Wikipédia-cikken,
-azonos dokumentumokon a helyi és a szerverkarokkal; a bíró validálása három oktató vak értékelésével
-(\ref{sec:oktatoi}.~szakasz); és a bíró kontextusablakának bővítése a teljes dokumentumos karokra. Ezen túl a
-következő irányokat tartjuk ígéretesnek.
-
 \begin{itemize}
-\item \textbf{A független ellenőrző újramérése.} Az \arm{E2x} kar a futtató gépen nem érte el a
-Llama-ellenőrzőt, így az a kérdés, hogy egy más modellcsaládba tartozó ellenőrző jobb-e az önellenőrzésnél,
-nyitva maradt. A kart úgy kell újrafuttatni, hogy a keretrendszer a kihagyott ellenőrzéseket hibaként
-jelezze.
-\item \textbf{Minimális darabméret.} A naiv RAG angol dokumentumokon mért összeomlását a szerkezeti
-sorokból képzett, tartalom nélküli darabok okozták; a darabolóba illesztett minimális darabméret egyszerű
-javítás, amelynek hatása egy újabb \arm{E0}-futással mérhető.
-\item \textbf{Megbízhatóbb ellenőrző.} Az ellenőrzés javítja a vizsgát, de a kérdésenkénti jelzése a bíróval
-csak gyengén egyezik. Természetes nyelvi következtetésre (NLI) tanított kisebb
-osztályozó~\cite{laban2022summac} vagy atomi tényellenőrzés~\cite{min2023factscore} lehet a következő lépés.
-\item \textbf{A megvalósult Bloom-szint ellenőrzése.} A kis modell a kért kognitív szintet a kérdések
-harmadában valósította meg; egy szintosztályozó ellenőrzés az ellenőrző láncba illeszthető.
-\item \textbf{Adaptív ellenőrzés.} Az ellenőrzés költségét csökkentené, ha csak a bizonytalan
-kérdésekre futna.
-\item \textbf{Nyelvi összevetés.} Az angol dokumentumok egy részének magyar fordítása lehetővé tenné a
-nyelv hatásának a forrástól független mérését; a magyar nyelvre hangolt helyi modellek (például a
-Llama-3.1 alapú PULI-LlumiX) összevetése a Qwen2.5-7B-vel szintén ide tartozik.
-\item \textbf{Tanórai kipróbálás.} Az igaz--hamis és a kifejtős kérdések kiértékelése, valamint a generált
-vizsgák pszichometriai elemzése (nehézségi és diszkriminációs index, nem funkcionáló
-disztraktorok~\cite{tarrant2009distractors}) valós hallgatói válaszokon.
+\item \textbf{A bíró validálása.} Az oktatói értékelés befejezése és elemzése (\ref{sec:oktatoi}.~szakasz), amely
+eldönti \az{\ref{h:meres}}.~hipotézist.
+\item \textbf{A hiányzó mérések pótlása.} A sikertelen bírói hívások újrapontozása, a független ellenőrző
+(\arm{E2x}) újramérése úgy, hogy a keretrendszer a kihagyott ellenőrzést hibaként jelezze, és a szervermodell
+futtatása a fő vizsgálat 30 dokumentumán.
+\item \textbf{Adaptív folyamat.} Mivel a módszer haszna a modelltől függ, a rendszer a modell első
+kísérleteinek sikerarányából eldöntheti, szükség van-e ellenőrzésre; erős modellnél így a futási idő a
+töredékére csökkenthető.
+\item \textbf{Megbízhatóbb ellenőrző és Bloom-szint.} Természetes nyelvi következtetésre tanított
+osztályozó~\cite{laban2022summac} a kérdésenkénti jelzéshez, és egy szintosztályozó lépés, mert a kis modellek a
+kért magasabb rendű szintet ritkán valósították meg.
+\item \textbf{Tanórai kipróbálás.} Az igaz--hamis és a kifejtős kérdések kiértékelése, valamint a generált vizsgák
+tételelemzése (nehézség, megkülönböztető erő, nem működő disztraktorok~\cite{tarrant2009distractors}) valós
+hallgatói válaszokon.
 \end{itemize}
 
-A \Mimir{} nyílt forráskódú: a kód, a konfigurációk, az adatkészlet-manifesztek, a pilot és a fő vizsgálat
-nyers kimenetei és jelentései a reprodukáláshoz rendelkezésre állnak.
+A \Mimir{} nyílt forráskódú: a kód, a konfigurációk, az adatkészlet-leírások és a vizsgálatok nyers kimenetei a
+reprodukáláshoz rendelkezésre állnak.

@@ -5,121 +5,117 @@
 \chapter{Promptok}
 \label{app-prompt}
 
-Ez a függelék a csővezetékek promptjait közli (rövidítve, a JSON-sémák elhagyásával ott, ahol a
-törzsszövegből egyértelműek). A belső lépések (tervező, gráf, ellenőrző) promptjai angol nyelvűek,
-mert a kis helyi modellek ezeket megbízhatóbban követik; a generátor promptja magyar, és megismétli az
-éles prompt szabályait, így az \arm{E0} és az \arm{E1+} karok szerkezetben, nem szabályokban
-különböznek.
+Ez a függelék a generálási folyamatok promptjainak lényegi sorait közli; a kihagyásokat […] jelöli, a
+kapcsos zárójelben álló részek helyére a program illeszti be az aktuális értéket. A belső lépések
+(tervező, gráf, ellenőrző) promptjai angol nyelvűek, mert a kis helyi modellek ezeket megbízhatóbban
+követik; a generátor promptja magyar, és megismétli az éles prompt szabályait, így az \arm{E0} és az
+\arm{E1}--\arm{E3} konfigurációk szerkezetben, nem szabályokban különböznek. A teljes szövegek:
+\code{services/bifrost/prompts.py} és \code{tests/eval/mimir\_eval/blueprint/prompts.py}.
 
-\section{A naiv alapvonal (\arm{E0}) és a teljes dokumentumos alapvonal promptja}
-\begin{lstlisting}
+\section{A naiv RAG (\arm{E0}) és a teljes dokumentumos prompt (\arm{B-doc})}
+\begin{kodblokk}
 Te egy kiemelkedő tudású oktatásmódszertani szakértő és professzionális vizsgakészítő vagy.
-
 KÖTELEZŐ SZABÁLYOK, AMIKET SZIGORÚAN BE KELL TARTANOD:
-1. ZÉRÓ HALLUCINÁCIÓ: KIZÁRÓLAG a megadott KONTEXTUS alapján dolgozz! Ha a kontextus nem
-   tartalmazza a választ, ne találj ki semmit!
-2. FELHASZNÁLÓI UTASÍTÁS KÖVETÉSE: ... Pontosan a kért mennyiséget és típust generáld le!
+1. ZÉRÓ HALLUCINÁCIÓ: KIZÁRÓLAG a megadott KONTEXTUS alapján dolgozz! […]
+2. FELHASZNÁLÓI UTASÍTÁS KÖVETÉSE: […] Pontosan a kért mennyiséget és típust generáld le!
 3. DISZTRAKTOROK: Feleletválasztós (mcq) kérdés esetén 1 helyes és 3 hihető, de helytelen válasz.
 4. NO LATEX: Szigorúan TILOS LaTeX formázást vagy dollárjeleket ($) használni!
-5. META-REFERENCIA TILALOM: Szigorúan TILOS a dokumentum szerkezetére kérdezni.
-
+5. META-REFERENCIA TILALOM: Szigorúan TILOS a dokumentum szerkezetére kérdezni. […]
 KONTEXTUS:
-{context_text}
-
+{context_text}            (E0: a 3 legközelebbi darab; B-doc: a teljes dokumentum)
 FELADAT (A felhasználó pontos kérése):
-"{query}"
-
-KIMENETI FORMÁTUM: kizárólag egy érvényes JSON objektum:
+"Készíts pontosan 10 darab vizsgakérdést, típus: feleletválasztós (mcq). Nehézségi szint: …"
+KIMENETI FORMÁTUM: […] kizárólag egy érvényes JSON objektum:
 {"title": "Mimir AI Vizsga", "format": "pdf", "questions": [
-  {"type": "mcq", "text": "...?", "answers": [{"text": "...", "is_correct": true}, ...]}]}
-\end{lstlisting}
+  {"type": "mcq", "text": "...?", "answers": [{"text": "...", "is_correct": true}, …]}]}
+\end{kodblokk}
 
-\section{A tervező promptja}
-\begin{lstlisting}
+\section{A tervező}
+\begin{kodblokk}
 [planner] You design exam blueprints. Reply with one valid JSON object only.
-
 Below is a document split into numbered chunks (C0, C1, ...). Some chunks are shortened.
-{overview}
-List the {n_concepts} most important, clearly distinct concepts, facts or ideas a student should
-be tested on. Cover the whole document: every major part should have at least one concept. Prefer
-central ideas over trivia. Write concept names and descriptions in {language}.
-JSON shape:
-{"concepts": [{"concept": "short name", "description": "one sentence: what exactly should be
-  tested", "chunk_ids": ["C0"], "importance": 3}]}
+{overview}                (darabonként az eleje, összesen legfeljebb 12 000 karakter)
+List the {n+3} most important, clearly distinct concepts, facts or ideas a student should be
+tested on. Cover the whole document: every major part should have at least one concept. Prefer
+central ideas over trivia. […]
+JSON shape: {"concepts": [{"concept": "short name", "description": "one sentence: what exactly
+  should be tested", "chunk_ids": ["C0"], "importance": 3}]}
 importance: 3 = central, 2 = important, 1 = detail.
-\end{lstlisting}
+\end{kodblokk}
 
-\section{A generátor promptja}
-\begin{lstlisting}
+\section{A generátor}
+\begin{kodblokk}
 [generator] Te egy kiemelkedő tudású oktatásmódszertani szakértő és professzionális vizsgakészítő
 vagy. Kizárólag érvényes JSON formátumban válaszolj, markdown formázás nélkül!
-
 Készíts PONTOSAN EGY vizsgakérdést az alábbi terv szerint.
 TERV:
-- Fogalom: {concept}
-- Mit kérdezzen: {description}
+- Fogalom: {concept}       - Mit kérdezzen: {description}
 - Kérdéstípus: feleletválasztós ("mcq"): pontosan 4 válasz, ebből pontosan 1 helyes és 3 hihető,
-  de a kontextus szerint egyértelműen helytelen disztraktor; a válaszok hossza és formája legyen
-  hasonló.
+  de a kontextus szerint egyértelműen helytelen disztraktor; […] hossza és formája legyen hasonló.
 - Bloom-szint: {pl. Megértés (magyarázat, összehasonlítás, saját szavakkal)}
-- Vizsga nehézsége: {difficulty}
-- Nyelv: a kérdést és a válaszokat {magyar} nyelven írd.
+- Vizsga nehézsége: {difficulty}    - Nyelv: […] {magyar} nyelven írd.
 KÖTELEZŐ SZABÁLYOK:
-1. ZÉRÓ HALLUCINÁCIÓ: KIZÁRÓLAG a KONTEXTUS alapján dolgozz. A helyes válasznak a kontextusból
-   igazolhatónak kell lennie.
+1. ZÉRÓ HALLUCINÁCIÓ: KIZÁRÓLAG a KONTEXTUS alapján dolgozz. […]
 2. HIVATKOZÁS: a "citations" mezőbe írd azoknak a részleteknek az azonosítóját (pl. "C3"),
    amelyek igazolják a helyes választ.
-3. NO LATEX.  4. META-REFERENCIA TILALOM.
+3. NO LATEX. […]  4. META-REFERENCIA TILALOM: […]
 5. NE ISMÉTELD a már elkészült kérdéseket: {existing}
-[DISZTRAKTOR-ÖTLETEK (rokon fogalmak a dokumentumból) - csak E3]
-[AZ ELŐZŐ PRÓBÁLKOZÁS HIBÁS VOLT, JAVÍTSD: {feedback}]
+[DISZTRAKTOR-ÖTLETEK (rokon fogalmak a dokumentumból) …]          (csak E3)
+[AZ ELŐZŐ PRÓBÁLKOZÁS HIBÁS VOLT, JAVÍTSD: {feedback}]             (csak újrapróbálkozáskor)
 KONTEXTUS:
-[C3] ...
-[C1] ...
+[C3] …
+[C1] …
 KIMENETI FORMÁTUM (csak ez a JSON objektum):
-{"type": "mcq", "text": "A kérdés szövege?", "answers": [...], "citations": ["C0"],
+{"type": "mcq", "text": "A kérdés szövege?", "answers": […], "citations": ["C0"],
  "bloom": "understand", "explanation": "egy mondat: miért ez a helyes válasz"}
-\end{lstlisting}
+\end{kodblokk}
 
-\section{Az ellenőrző promptjai}
-\begin{lstlisting}
+\section{A javító hívás}
+\begin{kodblokk}
+[repair] Te egy gondos vizsgakészítő vagy, aki hibás formájú kérdéseket javít. […]
+Az alábbi feleletválasztós kérdés formája hibás. Javítsd ki úgy, hogy PONTOSAN 4 válasz legyen,
+ebből PONTOSAN 1 helyes; a hiányzó rossz válaszokat a kontextus alapján egyértelműen hibás, de
+hihető állításokkal pótold. A kérdés tartalmán és a helyes válaszon ne változtass […]. A kérdés ne
+tartalmazza a helyes választ, és kérdőjellel végződjön.
+KÉRDÉS: {text}   VÁLASZOK: {options}   KONTEXTUS: {chunks}   KIMENETI FORMÁTUM: […]
+\end{kodblokk}
+
+\section{Az ellenőrző}
+\begin{kodblokk}
 [verifier] You check exam questions against source text. Reply with one valid JSON object only.
-
-SOURCE: """{source}"""
+--- alátámasztottság és disztraktorok ---
+SOURCE: """{a hivatkozott darabok}"""
 QUESTION (mcq): {text}
-A. ...   <-- marked correct
-B. ...
+A. …   <-- marked correct
+B. …  […]
 Check strictly against the SOURCE only:
 1. key_supported: is the marked-correct answer clearly supported by the SOURCE?
-2. For every option NOT marked correct: is it clearly wrong according to the SOURCE?
-   (options_wrong, in order)
+2. For every option NOT marked correct: is it clearly wrong according to the SOURCE? […]
 3. ambiguous: could a careful reader argue that more than one option is correct?
 4. problems: one short sentence describing any problem ("" if none).
 JSON shape: {"key_supported": true, "options_wrong": [true, true, true], "ambiguous": false,
              "problems": ""}
-
 --- vak megoldás ---
-SOURCE: """{source}"""
+SOURCE: """{a hivatkozott darabok}"""
 Answer the question using only the SOURCE. Exactly one option is correct.
 {text}
-A. ...  B. ...  C. ...  D. ...        (véletlen permutáció)
+A. …  B. …  C. …  D. …        (véletlen permutáció)
 JSON shape: {"answer": "A"}
-\end{lstlisting}
+\end{kodblokk}
 
-\section{A fogalomgráf promptja (\arm{E3})}
-\begin{lstlisting}
+\section{A fogalomgráf (\arm{E3})}
+\begin{kodblokk}
 [graph] You extract knowledge graphs from teaching material. Reply with one valid JSON object only.
-
 Extract the knowledge in these chunks as a small concept graph. Chunk ids are in brackets.
-{chunks_block}
+{chunks_block}            (legfeljebb 3 000 karakteres köteg)
 Rules:
 - concepts: the key terms, entities, processes or ideas (max 8 per chunk). "parent" is the broader
-  category the concept belongs to (e.g. "T-sejt" -> "limfocita"), or "" if none.
-- facts: short atomic statements from the text (max 6 per chunk), with the concepts they mention.
+  category the concept belongs to (e.g. "T-sejt" -> "limfocita"), or "" if none. […]
+- facts: short atomic statements from the text (max 6 per chunk), […]
 - relations: typed links between concepts: is_a, part_of, causes, contrasts_with, used_for,
-  related_to.
-JSON shape: {"concepts": [...], "facts": [...], "relations": [...]}
-\end{lstlisting}
+  related_to. […]
+JSON shape: {"concepts": […], "facts": […], "relations": […]}
+\end{kodblokk}
 
 \chapter{A bíró és az oktatók rubrikája}
 \label{app-rubrika}
@@ -144,113 +140,105 @@ közepes: alkalmazás/megértés; nehéz: elemzés/értékelés). 1 = egyértelm
 \end{description}
 
 A bíró áttekintő hívása ezen felül kéri a kulcsot igazoló mondat szó szerinti idézését
-(\code{key\_evidence} mező), disztraktoronként a \code{is\_wrong} és \code{on\_topic} ítéletet, a kérdés
-Bloom-szintjét és egy egy-két mondatos indoklást kér.
+(\code{key\_evidence} mező), disztraktoronként az \code{is\_wrong} és az \code{on\_topic} ítéletet, a
+kérdés Bloom-szintjét és egy-két mondatos indoklást.
 
-\chapter{Konfigurációk és reprodukálás}
+\chapter{Paraméterek és reprodukálás}
 \label{app-reprodukcio}
 
-\section{Példakonfigurációk}
+\section{A generálási folyamat paraméterei}
 
-Minden kísérleti kar egy YAML-fájl a \code{tests/eval/configs} könyvtárban. Az alábbi két
-konfiguráció az \arm{E2} és az \arm{E3} kart írja le; a két fájl egyetlen kulcsban (\code{graph})
-különbözik, ami az egytényezős tervet a konfiguráció szintjén is láthatóvá teszi.
+\begin{table}[H]
+\centering
+\caption{A generálási folyamat paraméterei és alapértékei az előzetes és a fő vizsgálatban.}
+\label{tab:parameterek}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+Paraméter & Alapérték & Megjegyzés \\
+\midrule
+darabolás & percentilis, 85 & célméret 1\,000 karakter, puha korlát; \arm{E5b}: átlag $+\,1{,}5$ szórás; \arm{E5c}: rögzített 800 karakter \\
+visszakeresett darabok ($k$) & 3 & \arm{E0}: a teljes vizsgához; tervezett folyamat: kérdéshelyenként \\
+keresés módja & sűrű & \arm{E2h}: BM25 + sűrű, RRF ($c=60$), 6 karakteres előtagtövesítés \\
+áttekintés kerete & 12\,000 karakter & a tervező ennyit lát; darabonként legalább 120 karakter \\
+fogalmak száma & $n+3$ & 3 tartalékfogalom \\
+kérdéshely-kontextus kerete & 6\,000 karakter & + 2 darab, ha a kulcs nem igazolt \\
+újrapróbálkozás ($r$) & 1 & pilot: 2; utána 1 tartalékfogalom \\
+ellenőrző lánc & \arm{E1}: ki; \arm{E2}, \arm{E3}: be & vak megoldás: be (\arm{E2f}: ki) \\
+szivárgási szabályok, javító hívás & be & a pilot után bevezetve \\
+duplikátumküszöb & 0,9 & koszinusz-hasonlóság (E5-beágyazás) \\
+fogalomgráf (\arm{E3}) & 3\,000 karakteres köteg & összevonás 0,92 hasonlóság felett \\
+teljes dokumentum (\arm{B-doc}) & 30\,000 / 80\,000 karakter & helyi / szerver; helyben 16\,384 tokenes kontextus \\
+generátor & Q4\_K\_M, $T=0{,}2$ & 8\,192 tokenes kontextus; \code{num\_predict} 4\,096 (fő vizsgálat) \\
+bíró & gpt-oss-120b, $T=0$ & „low” gondolkodás; forrás legfeljebb 24\,000 karakter \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
-\begin{lstlisting}
-# E2 - E1 + verifier chain ("Thorough" mode): schema, meta-reference, citations, grounding +
-# distractor check, blind answer test; max 1 retry per slot with feedback, then 1 replacement.
+Minden konfiguráció egy YAML-fájl a \code{tests/eval/configs} könyvtárban, amely csak az alapértékektől
+(\code{mimir\_eval/config.py}) eltérő kulcsokat adja meg. Az egytényezős terv a fájlok szintjén is
+látható: az \arm{E2} és az \arm{E3} konfiguráció például egyetlen kulcsban (\code{graph}) különbözik.
+
+\begin{kodblokk}
+# E2 - E1 + verifier chain: schema, meta-reference, citations, grounding + distractor check,
+# blind answer test; max 1 retry per slot with feedback, then 1 replacement.
 name: E2
-description: "Blueprint + verifier (max 1 retry, blind answer test on)"
 seeds: [1]
-exam: {n_questions: 10, types: [mcq]}
-pipeline: {kind: blueprint, retrieval: dense, retrieval_k: 3, verifier: true, blind_test: true,
-           max_retries: 1, graph: false}
-chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
-generator: {provider: ollama, model: "qwen2.5:7b", temperature: 0.2, num_ctx: 8192}
-
-# E3 - E2 + concept graph
-name: E3
-pipeline: {kind: blueprint, retrieval: dense, retrieval_k: 3, verifier: true, blind_test: true,
-           max_retries: 1, graph: true}
-\end{lstlisting}
+exam:
+  n_questions: 10
+  types: [mcq]
+pipeline:
+  kind: blueprint        # retrieval: dense, retrieval_k: 3
+  verifier: true
+  blind_test: true
+  max_retries: 1
+  graph: false           # E3: true
+chunking:
+  method: percentile     # threshold: 85, target_size: 1000
+generator:
+  provider: ollama
+  model: "hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M"
+  temperature: 0.2
+  num_ctx: 8192
+\end{kodblokk}
 
 \section{A reprodukálás lépései}
 
-\begin{lstlisting}
-# 1. Szolgáltatások és helyi modell
-ollama pull qwen2.5:7b
-docker-compose up -d --build
+A nyers eredmények a tárolóban vannak: a fő vizsgálaté a \code{tests/eval/results}, az előzetes
+vizsgálaté a \code{tests/eval/results\_qwen\_2026-09}, a pilotté a \code{tests/eval/results\_pilot}
+könyvtárban (konfigurációnként egy-egy futáskönyvtár \code{run.json}, \code{exams.jsonl},
+\code{questions.jsonl} és \code{exam\_metrics.csv} fájlokkal). A dolgozat minden száma egyetlen
+szkriptből származik: a \code{python tdk/elemzes/elemzes.py} parancs a három futáskészletből a
+\code{tdk/elemzes/szamok.md} (olvasható) és \code{szamok.json} (gépi) fájlt állítja elő.
 
-# 2. Kiértékelő környezet
+\begin{kodblokk}
+# 1. Szolgáltatások és helyi modellek
+docker-compose up -d --build
+ollama pull hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M
+ollama pull gemma3:12b
+ollama pull llama3.1:8b                      # az E2x ellenőrzője
+
+# 2. Kiértékelő környezet és ellenőrzés
 cd tests/eval
 pip install -r requirements.txt
-python -m mimir_eval check configs/e0_naive_local.yaml      # adatkészlet és szolgáltatások
+python -m pytest tests_unit -q               # a keretrendszer saját tesztjei
+python -m mimir_eval check configs/e0_naive_local.yaml --judge-model gpt-oss:120b
 
-# 3. Egy kar futtatása, pontozása és a jelentés
-python -m mimir_eval run   configs/e1_blueprint.yaml
-python -m mimir_eval score results/E1_<időbélyeg>
-python -m mimir_eval report --results results --name main
+# 3. Egy konfiguráció: futtatás, pontozás
+python -m mimir_eval run   configs/e2_blueprint_verifier.yaml
+python -m mimir_eval score results/E2_<időbélyeg> --judge-model gpt-oss:120b
 
-# 4. A teljes mátrix (Windows PowerShell)
-./run_all.ps1
-\end{lstlisting}
+# 4. A teljes mátrix (Windows PowerShell); megszakítás után folytatható
+./run_all.ps1                                # PULI-LlumiX 8B (alapértelmezett generátor)
+./run_all.ps1 -Model gemma3:12b              # a helyi konfigurációk a második generátorral
 
-\section{A fő vizsgálat futtatási terve}
-\label{sec:futasterv}
+# 5. A dolgozat számai (a tároló gyökeréből)
+python tdk/elemzes/elemzes.py                # -> tdk/elemzes/szamok.md, szamok.json
+\end{kodblokk}
 
-\begin{table}[H]
-\centering
-\caption{A fő vizsgálat futtatási terve.}
-\label{tab:futasterv}
-\small
-\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.2cm}l@{}}
-\toprule
-Lépés & Tartalom & Erőforrás & Becsült idő \\
-\midrule
-R0 & füstteszt minden karon 2 dokumentumon (egy hosszú) & helyi GPU + szerver & 2--3 óra \\
-R1 & helyi karok mind a 39 dokumentumon & helyi GPU & 2--3 nap \\
-R2 & szerverkarok mind a 39 dokumentumon & egyetemi szerver & kb.\ 1 nap \\
-R3 & pontozás a bíróval & egyetemi szerver & kb.\ 1 nap \\
-R4 & oktatói értékelés: 3 oktató $\times$ (60 + 10) kérdés & oktatók & 1--2 hét \\
-R5 & \code{report}: táblázatok, ábrák, tesztek & -- & 1--2 nap \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-A terv végrehajtásának állapota a dolgozat lezárásakor: az R1 és R2 lépés a 2026. szeptember 27--28-i
-futásban karonként hat dokumentumon készült el (\ref{sec:fo-beallitasok}.~szakasz), az R3 pontozás és az
-R5 jelentés megtörtént (\code{tests/eval/report\_main/main}), az R4 oktatói értékelés a dolgozat lezárásáig
-nem készült el.
-
-\section{A közölt számok forrásai}
-
-\begin{table}[H]
-\centering
-\caption{A dolgozat táblázatainak és ábráinak adatforrásai a tárolóban (a \code{tests/eval} könyvtárhoz
-viszonyítva).}
-\label{tab:forrasok}
-\footnotesize
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}X@{}}
-\toprule
-Dolgozatbeli elem & Forrás \\
-\midrule
-\ref{tab:pilot-fo}.\ táblázat & \code{results\_pilot/*/exam\_metrics.csv}, \code{questions.jsonl}; \code{report\_pilot/pilot} \\
-\ref{tab:pilot-verifier}.\ táblázat & \code{results\_pilot/\{E2,E2f,E2h,E3\}\_*/exams.jsonl} (\code{verified}) és \code{questions.jsonl} (\code{grounded}) \\
-Pilot: szivárgás, zaj, GPU-memória & \code{results\_pilot/*/questions.jsonl} (\code{key\_in\_stem}, \code{stem\_is\_question}); \code{exams.jsonl} (\code{retrieved}, \code{vram\_baseline\_mib}, \code{vram\_peak\_mib}) \\
-Pilotpéldák & \code{results\_pilot/\{E0,E3\}\_*/questions.jsonl}, 1.\ mag \\
-\ref{tab:budget}.\ táblázat & publikált modellarchitektúrák és GGUF-fájlméretek; $M_0$ becslés \\
-\ref{tab:adatkeszlet}.\ táblázat & \code{dataset/manifest*.yaml} \\
-\ref{tab:fo-vizsgalat}.\ táblázat, \ref{fig:fo-minoseg-ido}.\ ábra & \code{report\_main/main/latex/tab\_main.tex}, \code{fig\_quality\_time.dat}, \code{paper\_numbers.json} \\
-\ref{tab:fo-dokumentumok}.\ táblázat & \code{report\_main/main/adatkeszlet.csv}; \code{configs/e4*\_server\_*.yaml} (\code{documents}); darabszám: \code{exam\_metrics.csv} (\code{n\_chunks}) \\
-\ref{tab:fo-dok}.\ táblázat & \code{results/*/exam\_metrics.csv}: $Q$ vizsgánként a négy komponensből, majd dokumentumonként a magokra átlagolva \\
-\ref{tab:fo-szignifikancia}.\ táblázat & \code{report\_main/main/szignifikancia.csv} \\
-\ref{tab:fo-elutasitas}.\ táblázat & \code{results/*/exams.jsonl}, \code{blueprint.slot\_logs[].attempts[].problems}; az \arm{E2x} kihagyott ellenőrzései: \code{blueprint.verifier\_skipped}, \code{llm.errors} \\
-\ref{tab:fo-verifier-karok}.\ táblázat & \code{report\_main/main/latex/tab\_verifier.tex}, \code{tab\_verifier\_arms.tex} \\
-\ref{tab:fo-szivargas}.\ táblázat & \code{report\_main/main/latex/tab\_leakage.tex} \\
-\ref{tab:fo-rubrika}.\ táblázat & \code{results/*/questions.jsonl} (\code{judge\_*}, \code{bloom}, \code{judge\_bloom\_level}, \code{text}, \code{options}) \\
-\ref{tab:fo-vram}.\ táblázat & \code{results/*/exams.jsonl} (\code{vram\_baseline\_mib}, \code{vram\_peak\_mib}); GPU: \code{run.json} (\code{hardware.gpus}) \\
-Nyelvenkénti értékek, rangsor & \code{report\_main/main/abra*.pdf}, \code{eredmenyek.md} (5.~táblázat) \\
-\ref{tab:fo-peldak}.\ táblázat & \code{report\_main/main/peldak.md}; karakterpozíciók: \code{dataset/docs/eduqg/en-law-long-03.txt} \\
-\bottomrule
-\end{tabularx}
-\end{table}
+A \code{-Model} kapcsoló a helyi konfigurációkat egy másik Ollama-modellel futtatja új néven (például
+\arm{E2} $\to$ \code{E2-gemma3-12b}), így a két generátor eredményei egymás mellett maradnak; a
+szerverkonfigurációkat (\arm{B-doc-S}, \arm{E4}, \arm{E4b}) ilyenkor kihagyja. Az előzetes vizsgálat
+ugyanígy, \code{-Model qwen2.5:7b} kapcsolóval ismételhető meg. A bíró a GenAI-szerver kulcsát a
+tároló \code{.env} fájljából (\code{OE\_GENAI\_API\_KEY}) olvassa; válaszai a futáskönyvtár
+\code{judge\_cache.jsonl} fájljába kerülnek, így az újrapontozás nem igényel új bírói hívást.

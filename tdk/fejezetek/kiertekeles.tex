@@ -3,12 +3,12 @@
 \label{ch:kiertekeles}
 % =====================================================================
 
-\Az{\ref{ch:szakirodalom}}.~fejezetben láttuk, hogy a kérdésgenerálás kiértékelése jellemzően a
-referenciakérdésekkel való szóegyezésre és kis, nem vak emberi értékelésekre támaszkodik, és ritkán
-ellenőrzi a kulcs helyességét. Ebben a fejezetben olyan kiértékelési módszertant mutatunk be, amely
-(i) a forráshoz viszonyított helyességet méri, (ii) egytényezős kísérleti tervvel választja szét a
-komponensek hatását, (iii) a mérőeszközt (a bírót) is ellenőrzi, és (iv) a dokumentumot tekinti a
-statisztikai elemzés egységének. A módszertan minden eleme a nyílt forráskódú keretrendszerben
+\Az{\ref{ch:szakirodalom}}.~fejezetben láttuk, hogy a kérdésgenerálás kiértékelése többnyire
+referenciakérdésekkel való szóegyezésre és kis, nem vak emberi értékelésre támaszkodik, és ritkán
+ellenőrzi a kulcs helyességét. Az itt bemutatott módszertan ezzel szemben (i) a forráshoz viszonyított
+helyességet méri, (ii) egytényezős kísérleti tervvel választja szét a komponensek hatását, (iii) a
+mérőeszközt, vagyis a kérdéseket pontozó, független nyelvi modellt (a \emph{bírót}) is ellenőrzi, és (iv) a
+dokumentumot tekinti a statisztikai elemzés egységének. Minden eleme a nyílt forráskódú keretrendszerben
 (\code{tests/eval}) implementált.
 
 % ---------------------------------------------------------------------
@@ -16,410 +16,329 @@ statisztikai elemzés egységének. A módszertan minden eleme a nyílt forrásk
 \label{sec:harness}
 % ---------------------------------------------------------------------
 
-A kiértékelés alapegysége egy \emph{teszt}: egy kísérleti kar (a csővezeték egy konfigurációja) egy
-dokumentumon, egy véletlenmaggal egy tízkérdéses, feleletválasztós vizsgát állít elő, amelyet ezután
-automatikus mutatókkal és egy független nyelvi modellel (a bíróval) pontozunk. Egy teszt lépései:
-\begin{enumerate}
-\item \textbf{Előkészítés.} A keretrendszer betölti a dokumentumot, és a futó szolgáltatásokon keresztül
-elvégzi a szövegkinyerést és a darabolást -- pontosan úgy, ahogyan az éles rendszer.
-\item \textbf{Generálás.} A kar konfigurációja szerinti csővezeték elkészíti a vizsgát. Minden
-modellhívásról rögzítjük a szakaszt (tervezés, generálás, ellenőrzés), a tokenszámot és az időt, a
-GPU-memóriát pedig egy háttérszál mintavételezi.
-\item \textbf{Automatikus pontozás.} A program kiszámítja a bírót nem igénylő mutatókat (forma,
-lefedettség, szivárgás, duplikátumok, \ref{sec:mutatok}.~szakasz).
-\item \textbf{Bírói pontozás.} A bíró minden kérdést két hívásban értékel: egyszer a kulcs ismeretében
-(alátámasztottság, disztraktorok, rubrikapontok), egyszer vakon (megoldja-e a kérdést a forrás alapján).
-\item \textbf{Jelentés.} A \code{report} lépés dokumentumonként, majd karonként összesíti az
-eredményeket, statisztikai próbákat végez, és elkészíti a dolgozat táblázatait és ábráit.
-\end{enumerate}
+A kiértékelés alapegysége egy \emph{teszt}: egy \emph{konfiguráció} (a generálási folyamat egy rögzített
+beállítása, rövid jele például \arm{E0} vagy \arm{E2}) egy dokumentumon, egy véletlenmaggal egy
+tízkérdéses feleletválasztós vizsgát állít elő, amelyet ezután automatikus mutatókkal és a bíróval
+pontozunk (\ref{fig:kiertekeles}.~ábra). Az előkészítés (szövegkinyerés, darabolás, indexelés) a futó szolgáltatásokon át, az éles
+rendszerrel azonos módon történik. Generálás közben minden modellhívás szakaszát, tokenszámát és idejét
+rögzítjük, a GPU-memóriát egy háttérszál mintavételezi.
 
-A reprodukálhatóságot négy mechanizmus biztosítja. (1) Minden futás rögzíti a teljes konfigurációt, a
-programkód verzióját, az adatkészlet verzióját és a hardvert (GPU típusa, memóriája). (2) A bíró válaszai
-gyorsítótárba kerülnek, így az újrapontozás determinisztikus. (3) A megszakított futások folytathatók: a
-már elkészült tesztek nem futnak újra. (4) A teljes folyamatot ál-szolgáltatásokkal és ál-nyelvi modellel
-futó automatikus tesztek (40 tesztfüggvény) fedik le, így a keretrendszer saját hibái is kiszűrhetők.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/d4_kiertekeles}
+\caption{Egy teszt lépései: előkészítés a szolgáltatásokon, generálás a konfiguráció szerint,
+automatikus mutatók, bírói pontozás és összesítés.}
+\label{fig:kiertekeles}
+\end{figure}
+
+A reprodukálhatóságot négy mechanizmus biztosítja: (1) minden futás rögzíti a teljes konfigurációt, a
+kód és az adatkészlet verzióját és a hardvert; (2) a bíró válaszai gyorsítótárba kerülnek, így az
+újrapontozás determinisztikus; (3) a megszakított futások folytathatók; (4) a keretrendszert 43
+automatikus teszt fedi le, köztük ál-szolgáltatásokkal és ál-nyelvi modellel a teljes folyamat.
 
 % ---------------------------------------------------------------------
 \section{Adatkészlet}
 \label{sec:adatkeszlet}
 % ---------------------------------------------------------------------
 
-A kiértékelő adatkészlet (\code{eval-v1}) 39 dokumentumból áll, három forrásból
-(\ref{tab:adatkeszlet}.~táblázat). A forrásokat az döntötte el, hogy minden referenciakérdéshez
-rendelkezésre álljon a forrásszakasz \emph{és} a választ igazoló mondat, mert a keresési mutatók ezt
-igénylik.
+Az \code{eval-v1} adatkészlet 39 dokumentumból áll, három forrásból
+(\ref{tab:adatkeszlet}.~táblázat). Minden referenciakérdéshez rendelkezésre áll a forrásszakasz \emph{és} a választ igazoló mondat,
+mert a keresési mutatók ezt igénylik. A három saját, rövid magyar oktatási szöveghez (kávé,
+immunrendszer, játékelmélet) négy-négy kézzel írt referenciakérdés tartozik; az
+EduQG~\cite{hadifar2023eduqg} OpenStax-tankönyvrészletekhez írt szakértői kérdéseket, a
+MILQA~\cite{novak2023milqa} magyar Wikipédia-cikkekre épülő szövegértési kérdéseket ad. Az importált
+forrásokból csak azokat a kérdéseket tartottuk meg, amelyek igazoló mondata szó szerint szerepel a
+dokumentumban.
 
 \begin{table}[htbp]
 \centering
-\caption{Az \code{eval-v1} kiértékelő adatkészlet. R/K/H: rövid ($\le$\,6\,000), közepes
-(6\,000--25\,000) és hosszú (25\,000--90\,000 karakteres) dokumentumok száma.}
+\caption{Az \code{eval-v1} adatkészlet és a fő vizsgálatban használt része. R/K/H: rövid
+($\le$\,6\,000), közepes (6\,000--25\,000) és hosszú (25\,000--90\,000 karakteres) dokumentumok.}
 \label{tab:adatkeszlet}
 \small
-\begin{tabular}{@{}llrcrrl@{}}
+\begin{tabular}{@{}llrcrccl@{}}
 \toprule
-Forrás & Nyelv & Dok. & R/K/H & Medián kar. & Ref.\ kérdés & Licenc \\
+ & & \multicolumn{3}{c}{\code{eval-v1}} & \multicolumn{2}{c}{Fő vizsgálat} & \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-7}
+Forrás & Nyelv & Dok. & R/K/H & Ref.\ kérdés & Dok. & R/K/H & Licenc \\
 \midrule
-Saját oktatási szövegek & magyar & 3 & 3/0/0 & 1\,923 & 12 & saját \\
-OpenStax, EduQG~\cite{hadifar2023eduqg} & angol & 12 & 4/4/4 & 16\,752 & 74 & CC BY 4.0 \\
-Wikipédia, MILQA~\cite{novak2023milqa} & magyar & 24 & 8/8/8 & 8\,072 & 240 & CC BY-SA 4.0 \\
+Saját oktatási szövegek & magyar & 3 & 3/0/0 & 12 & 3 & 3/0/0 & saját \\
+OpenStax, EduQG & angol & 12 & 4/4/4 & 74 & 3 & 1/1/1 & CC BY 4.0 \\
+Wikipédia, MILQA & magyar & 24 & 8/8/8 & 240 & 24 & 8/8/8 & CC BY-SA 4.0 \\
 \midrule
-Összesen & & 39 & 15/12/12 & 7\,919 & 326 & \\
+Összesen & & 39 & 15/12/12 & 326 & 30 & 12/9/9 & \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{Saját szövegek.} Három rövid magyar oktatási szöveg (a kávé története és feldolgozása; az
-immunrendszer; a játékelmélet alapjai) könnyű, közepes és nehéz vizsgaszinttel, dokumentumonként négy
-kézzel írt referenciakérdéssel.
+A fő vizsgálat a 39 dokumentumból 30-at használt: mind a 24 MILQA-cikket, a 3 saját szöveget és 3
+OpenStax-részletet (\code{en-economics-short-01}, \code{en-humanities-medium-02},
+\code{en-law-long-03}), összesen 27 magyar és 3 angol dokumentumot. A szűkítés oka a futásidő volt; az
+elsődleges cél a magyar nyelvű kiértékelés, az angol részletek a nyelvi összevetést szolgálják.
 
-\paragraph{EduQG.} Az EduQG~\cite{hadifar2023eduqg} OpenStax-tankönyvekhez írt, szakértői
-feleletválasztós kérdéseket tartalmaz. Tárgyterületenként (élettudományok, társadalomtudományok, jog,
-közgazdaságtan) egy rövid, egy közepes és egy hosszú, összefüggő tankönyvi részletet választottunk, és csak
-azokat a kérdéseket tartottuk meg, amelyek igazoló mondata szó szerint szerepel a részletben.
-
-\paragraph{MILQA.} A MILQA~\cite{novak2023milqa} magyar Wikipédia-cikkekre épülő szövegértési adatbázis.
-A dokumentumok a cikkek aktuális változatából készültek; referenciakérdésként azokat tartottuk meg,
-amelyek igazoló mondata a cikkben is megtalálható.
-
-A referenciakérdéseket \emph{nem} használjuk célként, hiszen egy jó vizsgakérdésnek nem kell egy
-referenciakérdéshez hasonlítania. Arra szolgálnak, hogy igazoló mondataik alapján mérjük a keresés
-pontosságát, és hogy lássuk, a generált kérdések érintik-e a szakértő által fontosnak tartott tényeket.
+A referenciakérdések \emph{nem} célok, hiszen egy jó vizsgakérdésnek nem kell hozzájuk hasonlítania;
+a keresés pontosságát és a tematikus egyezést mérjük velük (\ref{sec:mutatok}.~szakasz).
 
 % ---------------------------------------------------------------------
-\section{A kísérleti karok (tesztkonfigurációk)}
+\section{A kísérleti konfigurációk}
 \label{sec:karok}
 % ---------------------------------------------------------------------
 
-A kísérleti terv \emph{egytényezős}: minden kar egy referenciakarhoz képest pontosan egy tényezőben tér el,
-így a két kar közötti különbség az adott tényezőnek tulajdonítható. A karok öt csoportba sorolhatók.
-Minden helyi kar a Qwen2.5-7B-Instruct modellt használja Q4\_K\_M kvantálással és $0{,}2$-es
-hőmérséklettel; a szerverkarok az egyetemi GenAI-szerver nagy, szintén Qwen-családba tartozó modelljét.
-\Az{\ref{tab:karok}}.~táblázat a karok összefoglalását, a lenti leírás a részleteket adja.
+A kísérleti terv \emph{egytényezős}: minden konfiguráció egy referenciakonfigurációhoz képest pontosan
+egy tényezőben tér el, így a kettő közötti különbség az adott tényezőnek tulajdonítható
+(\ref{fig:kiserleti-terv}.~ábra). \Az{\ref{tab:karok}}.~táblázat a 14 konfigurációt három csoportban
+foglalja össze.
 
 \begin{table}[htbp]
 \centering
-\caption{A kísérleti karok. Ref.: a referenciakar, amelytől a kar egyetlen tényezőben eltér; Magok:
-dokumentumonkénti ismétlések száma.}
+\caption{A kísérleti konfigurációk. Ref.: amelytől a konfiguráció egyetlen tényezőben eltér; Magok:
+dokumentumonkénti ismétlések száma az előzetes és a fő vizsgálatban (a pilotban mindenhol 3);
+Vizsg.: P = pilot, Ev = előzetes vizsgálat, F = fő vizsgálat.}
 \label{tab:karok}
 \small
-\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}Xcc@{}}
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}Xccl@{}}
 \toprule
-Kar & Mit csinál & Ref. & Magok \\
+Jel & Mit változtat & Ref. & Magok & Vizsg. \\
 \midrule
-\multicolumn{4}{@{}l}{\emph{A) Alapvonalak}} \\
-\arm{B-doc-L} & teljes dokumentum egy promptban, helyi 7B modell (status quo, helyben) & -- & 3 \\
-\arm{B-doc-S} & teljes dokumentum egy promptban, szervermodell (status quo) & -- & 3 \\
-\arm{E0}  & naiv RAG: 3 darab, a teljes vizsga egy hívásban & -- & 3 \\
+\multicolumn{5}{@{}l}{\emph{Alapvonalak}} \\
+\arm{B-doc-L} & teljes dokumentum egy promptban, helyi modell ($\le$\,30\,000 karakter) & -- & 3 & Ev, F \\
+\arm{B-doc-S} & ugyanez a szervermodellel ($\le$\,80\,000 karakter) & -- & 3 & Ev \\
+\arm{E0}  & naiv RAG: a kéréshez legközelebbi 3 darab, a vizsga egy hívásban & -- & 3 & P, Ev, F \\
 \midrule
-\multicolumn{4}{@{}l}{\emph{B) A módszer felépítése lépésenként}} \\
-\arm{E1}  & vizsgaterv: tervező, slotonkénti keresés, kérdésenként egy hívás & \arm{E0} & 1 \\
-\arm{E2}  & \arm{E1} + ellenőrző lánc visszacsatolással (a teljes módszer) & \arm{E1} & 1 \\
-\arm{E3}  & \arm{E2} + fogalomgráf & \arm{E2} & 1 \\
+\multicolumn{5}{@{}l}{\emph{A módszer lépései}} \\
+\arm{E1}  & vizsgaterv, kérdéshelyenkénti keresés és generálás, ellenőrzés nélkül & \arm{E0} & 1 & P, Ev, F \\
+\arm{E2}  & \arm{E1} + ellenőrző lánc visszacsatolással (a teljes módszer) & \arm{E1} & 1 & P, Ev, F \\
+\arm{E3}  & \arm{E2} + fogalomgráf & \arm{E2} & 1 & P, Ev, F \\
 \midrule
-\multicolumn{4}{@{}l}{\emph{C) Az ellenőrző lánc változatai}} \\
-\arm{E2f} & \arm{E2} vak megoldási próba nélkül & \arm{E2} & 1 \\
-\arm{E2h} & \arm{E2} hibrid (BM25 + sűrű) kereséssel & \arm{E2} & 1 \\
-\arm{E2x} & \arm{E2} más modellcsaládba tartozó ellenőrzővel (Llama-3.1-8B) & \arm{E2} & 1 \\
-\midrule
-\multicolumn{4}{@{}l}{\emph{D) Modellméret}} \\
-\arm{E4}  & \arm{E0} a szervermodellel & \arm{E0} & 3 \\
-\arm{E4b} & \arm{E2} a szervermodellel & \arm{E2} & 1 \\
-\midrule
-\multicolumn{4}{@{}l}{\emph{E) Darabolás}} \\
-\arm{E5a} & \arm{E0} a régi, 512 tokenre csonkolt kódolóval & \arm{E0} & 3 \\
-\arm{E5b} & \arm{E0} szórásalapú vágási küszöbbel & \arm{E0} & 3 \\
-\arm{E5c} & \arm{E0} rögzített, 800 karakteres darabokkal & \arm{E0} & 3 \\
+\multicolumn{5}{@{}l}{\emph{Kiegészítő ablációk}} \\
+\arm{E2f} & \arm{E2} vak megoldási próba nélkül & \arm{E2} & 1 & P, Ev, F \\
+\arm{E2h} & \arm{E2} hibrid (BM25 + sűrű) kereséssel & \arm{E2} & 1 & P, Ev, F \\
+\arm{E2x} & \arm{E2}, az ellenőrzést egy másik modell (Llama-3.1-8B) végzi & \arm{E2} & 1 & Ev, F \\
+\arm{E4}  & \arm{E0} a szervermodellel & \arm{E0} & 3 & P, Ev \\
+\arm{E4b} & \arm{E2} a szervermodellel & \arm{E2} & 1 & Ev \\
+\arm{E5a} & \arm{E0} a régi, 512 tokenre csonkolt kódolóval & \arm{E0} & 3 & P, Ev, F \\
+\arm{E5b} & \arm{E0}, vágási küszöb: átlag $+\,1{,}5$ szórás & \arm{E0} & 3 & P, Ev, F \\
+\arm{E5c} & \arm{E0} rögzített, 800 karakteres darabokkal & \arm{E0} & 3 & P, Ev, F \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\paragraph{A) Alapvonalak.} Ezek a karok azt modellezik, amit egy oktató a \Mimir{} nélkül tenne, és ezekhez
-mérjük a módszert.
-\begin{itemize}
-\item \arm{B-doc-S} -- \emph{a mai gyakorlat}. A teljes dokumentum (80\,000 karakterig) és az éles prompt
-egyetlen hívásban kerül a nagy szervermodellhez, amely egyszerre adja vissza a tíz kérdést. Ez felel meg
-annak, amikor az oktató a jegyzetét egy csevegő asszisztensbe tölti fel. \emph{Kérdés:} mennyire jó a
-status quo, és mennyire tömörülnek a kérdései?
-\item \arm{B-doc-L} -- \emph{a mai gyakorlat helyben}. Ugyanez a helyi 7B modellel, 16\,384 tokenes
-kontextussal és 30\,000 karakterre csonkolt dokumentummal. \emph{Kérdés:} mit ad egy kis modell, ha a
-feladatot nem bontjuk fel?
-\item \arm{E0} -- \emph{naiv RAG}. A dokumentumot darabolja, a kéréshez leghasonlóbb három darabot adja át,
-és egy hívásban kéri a vizsgát; ez volt a rendszer eredeti működése. \emph{Kérdés:} mit ad a legegyszerűbb
-visszakereséses megoldás?
-\end{itemize}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/d5_kiserleti_terv}
+\caption{A konfigurációk egytényezős fája: minden él egyetlen tényező megváltoztatása.}
+\label{fig:kiserleti-terv}
+\end{figure}
 
-\paragraph{B) A módszer felépítése lépésenként.} Ezek a karok a \Mimir{} komponenseit egyenként kapcsolják
-be, így a hozzájárulásuk külön mérhető.
-\begin{itemize}
-\item \arm{E1} -- \emph{tervezés}. Vizsgaterv (fogalmak, Bloom-szintek), slotonkénti keresés és
-kérdésenkénti generálás, ellenőrzés nélkül (csak a duplikátum- és formaszűrés fut). Az \arm{E0}-hoz
-képest a különbség a tervezés. \emph{Kérdés:} javítja-e a terv a helyességet és a lefedettséget
-(\ref{h:terv}.~hipotézis)?
-\item \arm{E2} -- \emph{tervezés és ellenőrzés}, a teljes módszer. Az \arm{E1}-hez képest bekapcsolja a
-\ref{tab:checks}.~táblázat ellenőrző láncát; az ellenőrzést ugyanaz a Qwen-modell végzi, amely a kérdést
-írta. \emph{Kérdés:} mennyit ad hozzá az ellenőrzés, és mennyire egyezik az ítélete a bíróéval
-(\ref{h:verif}.~hipotézis)?
-\item \arm{E3} -- \emph{fogalomgráf}. Az \arm{E2} kiegészítése a \ref{sec:graf}.~szakasz gráfjával
-(tervezői bemenet, disztraktor-ötletek, bővített kontextus). \emph{Kérdés:} megéri-e a gráfépítés
-többletköltsége?
-\end{itemize}
+\paragraph{Alapvonalak.} Azt modellezik, amit egy oktató a \Mimir{} nélkül tenne. A \arm{B-doc-S} a mai
+gyakorlat: a teljes dokumentum és az éles prompt egy hívásban kerül a nagy szervermodellhez, mintha az
+oktató a jegyzetét egy csevegő asszisztensbe töltené fel. A \arm{B-doc-L} ugyanez a helyi modellel,
+16\,384 tokenes kontextussal; azt mutatja, mit ad egy kis modell, ha a feladatot nem bontjuk fel. Az
+\arm{E0} a legegyszerűbb visszakereséses megoldás és a rendszer eredeti működése.
 
-\paragraph{C) Az ellenőrző lánc változatai.} Ezek a karok az \arm{E2} egy-egy elemét változtatják meg.
-\begin{itemize}
-\item \arm{E2f} -- \emph{vak próba nélkül}. Kikapcsolja a vak megoldási ellenőrzést (gyorsabb, olcsóbb).
-\emph{Kérdés:} szükséges-e a lánc legdrágább eleme?
-\item \arm{E2h} -- \emph{hibrid keresés}. A sűrű keresést BM25 + sűrű, RRF-fel egyesített keresésre cseréli.
-\emph{Kérdés:} segít-e a lexikális keresés, különösen a szakkifejezéseknél?
-\item \arm{E2x} -- \emph{független ellenőrző}. Az ellenőrző hívásokat egy másik modellcsaládba tartozó
-modell (Llama-3.1-8B) végzi. \emph{Kérdés:} az önellenőrzés vagy általában az ellenőrzés hat-e, és jobb-e
-egy a generátortól független ellenőrző?
-\end{itemize}
+\paragraph{A módszer lépései.} Ezek a konfigurációk a \Mimir{} komponenseit egyenként kapcsolják be. Az
+\arm{E1}--\arm{E0} különbség a tervezés hatása (\ref{h:terv}.~és \ref{h:lefed}.~hipotézis), az
+\arm{E2}--\arm{E1} az ellenőrzésé (\ref{h:verif}.~hipotézis), az \arm{E3}--\arm{E2} a fogalomgráfé. Az
+\arm{E2}-ben az ellenőrzést ugyanaz a modell végzi, amely a kérdést írta.
 
-\paragraph{D) Modellméret.} Ezek a karok a helyi modellt a nagy szervermodellre cserélik.
-\begin{itemize}
-\item \arm{E4} -- \emph{naiv RAG a szervermodellel}. \emph{Kérdés:} mennyit ad önmagában a nagyobb modell
-(\ref{h:helyi}.~hipotézis)?
-\item \arm{E4b} -- \emph{a teljes módszer a szervermodellel}. \emph{Kérdés:} modellfüggetlen-e a módszer,
-vagyis nagy modellel is javít-e?
-\end{itemize}
+\paragraph{Kiegészítő ablációk.} Az \arm{E2f} a lánc legdrágább elemét, a vak megoldást hagyja el; az
+\arm{E2h} azt vizsgálja, segít-e a lexikális keresés; az \arm{E2x} azt, hogy jobb-e egy a generátortól
+eltérő ellenőrző (a PULI-LlumiX esetében ez a generátor alapmodellje, tehát nem független család). Az
+\arm{E4} és az \arm{E4b} a helyi modellt a nagy szervermodellre cseréli (\ref{h:helyi}.~hipotézis), az
+\arm{E5a}--\arm{E5c} pedig az \arm{E0} darabolását változtatja meg: a régi, hibás kódoló
+(\ref{sec:csonkolt}.~szakasz), egy másik küszöbszabály és a tartalomtól független, rögzített
+darabolás~\cite{qu2024chunking}.
 
-\paragraph{E) Darabolás.} Ezek a karok az \arm{E0} darabolását változtatják meg, a többi beállítás azonos.
-\begin{itemize}
-\item \arm{E5a} -- \emph{régi kódoló}: a \ref{sec:csonkolt}.~szakaszban leírt hibás, 512 tokenre
-csonkolt kódolás. \emph{Kérdés:} mekkora volt a hiba hatása?
-\item \arm{E5b} -- \emph{szórásalapú küszöb}: a percentilis helyett az átlag $+1{,}5$ szórás a vágási
-küszöb. \emph{Kérdés:} érzékeny-e az eredmény a küszöbválasztásra?
-\item \arm{E5c} -- \emph{rögzített darabok}: 800 karakteres, a tartalomtól független ablakok.
-\emph{Kérdés:} megéri-e egyáltalán a szemantikus darabolás~\cite{qu2024chunking}?
-\end{itemize}
-
-A tervezett karok (\arm{E1--E3}, \arm{E4b}) dokumentumonként egy véletlenmaggal futnak, mert egy vizsga
-2--8 percet igényel, és a variancia elsődleges forrása a dokumentum, nem a mag; az egyhívásos karok három
-maggal futnak, mert olcsók, és egyetlen futásuk zaja jelentős (\ref{sec:zaj}.~szakasz). A tervben
-szereplő további kontrollkar (\arm{E0s}: az \arm{E0} az éles végponton keresztül) nem futott le, ezért a
-dolgozat 14 karral dolgozik. A tervezett páros összehasonlítások: \arm{E1}--\arm{E0} (tervezés, RQ1--2),
-\arm{E2}--\arm{E1} (ellenőrzés, RQ2), \arm{E2x}--\arm{E2} és \arm{E3}--\arm{E2} (az ellenőrző és a gráf,
-RQ2), \arm{E1}--\arm{B-doc-L} (módszer vs.\ status quo, RQ1) és \arm{E4}--\arm{E0} (modellméret, RQ3); a
-többi kar leíró összevetést szolgál.
+A tervezett konfigurációk egy maggal futnak, mert egy vizsga perceket igényel, és a variancia fő
+forrása a dokumentum; az olcsó egyhívásos konfigurációk zaját három mag csökkenti. A tervben szereplő \arm{E0s} kontrollkonfiguráció (az
+\arm{E0} az éles végponton át) egyik vizsgálatban sem futott. Előre rögzített, a többszörös
+összehasonlítás korrekciójába tartozó páros összehasonlítás hat van: \arm{E1}--\arm{E0} (tervezés),
+\arm{E2}--\arm{E1} (ellenőrzés), \arm{E2}--\arm{E0} (teljes módszer), \arm{E2}--\arm{B-doc-L} (módszer
+vs.\ teljes dokumentumos prompt), \arm{E2x}--\arm{E2} (ellenőrző modell) és \arm{E3}--\arm{E2} (gráf). A
+többi összevetés leíró jellegű.
 
 % ---------------------------------------------------------------------
-\section{A két vizsgálat}
+\section{A három vizsgálat}
 \label{sec:vizsgalatok}
 % ---------------------------------------------------------------------
 
-A kísérleteket két lépcsőben futtattuk (\ref{tab:vizsgalatok}.~táblázat).
-
-\paragraph{Pilot vizsgálat (2026. szeptember 23.).} Célja nem a hipotézisek eldöntése volt -- egyetlen
-dokumentumon ez a \ref{sec:statisztika}.~szakasz szerint elvileg sem lehetséges --, hanem (i) a teljes
-mérési lánc kipróbálása, (ii) a komponensek hatásának és költségének előzetes becslése, és (iii) a fő
-vizsgálat tervének megalapozása. Egyetlen rövid magyar dokumentumon (\code{hu-coffee}) futott tíz karral,
-karonként három ismétléssel.
-
-\paragraph{Fő vizsgálat (2026. szeptember 27--28.).} A pilot tapasztalatai alapján javított
-csővezetékkel futott: bekerültek a szivárgási szabályok és a javító hívás, az újrapróbálkozások száma
-$r=1$-re csökkent, a bíró pedig a teljes dokumentum helyett a kérdés saját forrásdarabjait kapta. A
-tervezett 39 dokumentumból időkorlát miatt karonként hat dokumentum készült el (kilenc különböző
-dokumentum, \ref{sec:fo-beallitasok}.~szakasz).
+A kísérleteket három lépcsőben futtattuk (\ref{tab:vizsgalatok}.~táblázat). A \emph{pilot} a mérési
+láncot próbálta ki; egy dokumentumon hipotézist eldönteni elvileg sem lehet
+(\ref{sec:statisztika}.~szakasz). Az \emph{előzetes vizsgálat} a pilot után javított folyamattal
+(szivárgási szabályok, javító hívás, $r=1$, a bíró a kérdés forrásdarabjait kapja), a \emph{fő vizsgálat}
+ugyanezzel, 30 dokumentumon és két helyi generátorral futott.
 
 \begin{table}[htbp]
 \centering
-\caption{A pilot és a fő vizsgálat beállításai.}
+\caption{A három vizsgálat beállításai.}
 \label{tab:vizsgalatok}
 \small
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{3.1cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
 \toprule
- & Pilot & Fő vizsgálat \\
+ & Pilot & Előzetes vizsgálat & Fő vizsgálat \\
 \midrule
-Dokumentumok & 1 (magyar, 1\,702 karakter) & 9 (3 magyar, 6 angol; karonként 6) \\
-Karok & 10 & 14 \\
-Ismétlés & 3 mag minden karon & 3 mag (egyhívásos karok), 1 mag (tervezett karok) \\
-Kérdések & 300 & 1\,670 \\
-Újrapróbálkozás ($r$) & 2 & 1 \\
-Szivárgási szabály, javító hívás & nincs & van \\
-Bíró forrása & a teljes dokumentum & a kérdés forrásdarabjai (teljes dokumentumos karoknál a dokumentum első 24\,000 karaktere) \\
-Helyi GPU & GeForce RTX 3070 Ti (8\,GB), asztali PC & RTX A4500 (20\,GB), egyetemi munkaállomás \\
+Időpont (2026) & szept.\ 23. & szept.\ 27--28. & okt.\ 7.\ -- nov.\ 1. \\
+Dokumentumok & 1 (\code{hu-coffee}, 1\,702 karakter) & 9 (3 saját magyar, 6 angol); konfigurációnként 6 & 30 (24 MILQA, 3 saját, 3 OpenStax) \\
+Konfigurációk & 10 & 14 & 11 helyi, mindkét generátorral \\
+Generátor & Qwen2.5-7B (\arm{E4}: szervermodell) & Qwen2.5-7B; szervermodell (\arm{B-doc-S}, \arm{E4}, \arm{E4b}) & PULI-LlumiX 8B és Gemma 3 12B \\
+Ismétlés & 3 mag mindenhol & 3 mag (egyhívásos konfigurációk), 1 mag (tervezett konfigurációk) & mint az előzetes vizsgálatban \\
+Bírált kérdések & 300 & 1\,670 & PULI: 2\,935; Gemma: 6\,212 \\
+Újrapróbálkozás ($r$) & 2 & 1 & 1 \\
+Szivárgási szabály, javító hívás & nincs & van & van \\
+Bíró forrása & a teljes dokumentum & a kérdés forrásdarabjai (teljes dokumentumos konfigurációknál a dokumentum első 24\,000 karaktere) & mint az előzetes vizsgálatban \\
+GPU & RTX 3070 Ti (8\,GB), asztali PC & RTX A4500 (20\,GB), egyetemi munkaállomás & RTX A4500 (20\,GB), egyetemi munkaállomás \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-A két vizsgálat csővezetéke tehát eltér, így eredményeik nem közvetlenül összevethetők: a pilot az akkori,
-a fő vizsgálat a javított implementációt méri. A fő vizsgálat egy 20\,GB-os munkaállomás-kártyán futott,
-hogy a hosszú futás ne foglalja le az asztali gépet; a modell, a kvantálás és a kontextushossz azonos volt,
-így a minőségi eredményekre ez nincs hatással, a memóriamérés pedig a modell tényleges foglalását méri
-(\ref{sec:fo-eroforras}.~szakasz). A futásidők csak azonos hardveren hasonlíthatók össze.
+Az előzetes vizsgálatban az \arm{E4} és az \arm{E4b} hat angol dokumentumon futott (ebből három
+közös), a többi konfiguráció a közös hat dokumentumon. A PULI-LlumiX-nél azért kevesebb a bírált kérdés,
+mert gyakran tíznél kevesebb kérdést adott vissza. A három vizsgálat kissé eltérő implementációt mér
+(a pilot az akkori, a másik kettő a javított folyamatot, más dokumentumokon és generátorral), ezért
+összehasonlítást mindig egy vizsgálaton belül végzünk. Az előzetes és a fő vizsgálat egy 20\,GB-os munkaállomás-kártyán futott; a modell, a kvantálás és a
+kontextus ugyanaz, mint egy fogyasztói kártyán, így ez a minőséget nem befolyásolja, a memóriamérés a
+modell saját foglalását adja, a futásidők viszont csak azonos hardveren vethetők össze.
 
 % ---------------------------------------------------------------------
 \section{Mutatók}
 \label{sec:mutatok}
 % ---------------------------------------------------------------------
 
-A mutatók három csoportba sorolhatók: a bírót nem igénylő \emph{automatikus} mutatók, a bíró ítéletein
-alapuló \emph{tartalmi} mutatók és a \emph{költség}mutatók. Minden ráta 0 és 1 (0 és 100\,\%) közötti,
-és -- a szivárgás és a duplikátumok kivételével -- a nagyobb érték a jobb.
+Minden ráta 0 és 1 (0 és 100\,\%) közötti, és a szivárgás, a nem kérdő törzs és a duplikátumok
+kivételével a nagyobb érték a jobb.
 
-\subsection{Tartalmi mutatók}
+\paragraph{Tartalmi mutatók.} Az \emph{alátámasztottság} ($G$) azon kérdések aránya, amelyeknél a bíró
+szerint a forrás igazolja a megjelölt kulcsot; a bírónak az igazoló mondatot szó szerint idéznie kell. A
+\emph{vak megoldhatóság} ($A$) azoké, amelyeket a bíró a kulcs ismerete nélkül, összekevert válaszokkal,
+csak a forrás alapján helyesen old meg; ez a kulcs helyességét és a kérdés egyértelműségét együtt méri. A
+\emph{disztraktor-validitás} ($V$) a kérdésenkénti azon disztraktorok aránya, amelyek a forrás szerint
+hamisak \emph{és} témába vágók. A \emph{formai megfelelés} ($F$) vizsgaszintű igen/nem érték: a vizsga
+pontosan a kért számú kérdést tartalmazza, és minden kérdésnek pontosan négy válasza és egy kulcsa van.
 
-\begin{description}[style=nextline,leftmargin=0.6cm]
-\item[Alátámasztottság (\emph{G})] Azon kérdések aránya, amelyeknél a bíró szerint a forrás igazolja a
-megjelölt kulcsot. A bírónak a kulcsot igazoló mondatot szó szerint idéznie kell.
-\item[Vak megoldhatóság (\emph{A})] Azon kérdések aránya, amelyeket a bíró a kulcs ismerete nélkül,
-összekevert sorrendű válaszokkal, csak a forrás alapján helyesen old meg. Ez a kulcs helyességének és a
-kérdés egyértelműségének együttes mércéje: ha a kulcs hibás, vagy két válasz is védhető, a megoldó
-várhatóan mást választ.
-\item[Disztraktor-validitás (\emph{V})] A kérdésenkénti azon disztraktorok aránya, amelyek a forrás szerint
-hamisak \emph{és} témába vágók, a kérdésekre átlagolva.
-\item[Formai megfelelés (\emph{F})] Vizsgaszintű igen/nem érték: a vizsga pontosan a kért számú kérdést
-tartalmazza, és minden feleletválasztós kérdésnek pontosan négy válasza és pontosan egy kulcsa van.
-\end{description}
-
-\paragraph{Minőségi index.} A négy mutatót egyetlen számmá foglaljuk össze:
+\paragraph{Minőségi index.} A négy mutatót egy számmá foglaljuk össze:
 \begin{equation}
 Q=\frac{F+G+A+V}{4}.
 \label{eq:qindex}
 \end{equation}
-A $Q$ szándékosan egyszerű, súlyozatlan átlag. Következménye, hogy a formai megfelelés súlya egyenlő a
-tartalmi mutatókéval: egyetlen hibás formájú kérdés egy tízkérdéses vizsgában a $Q$-t $0{,}25$-tel
-csökkenti. Ezt tudatosan vállaljuk, mert egy hibás formájú kérdés a gyakorlatban használhatatlanná teszi a
-vizsgát (a hiányzó vagy kettős kulcs miatt nem javítható), de minden komponenst külön is közlünk.
+A $Q$ szándékosan egyszerű, súlyozatlan átlag, amelyet vizsgánként számolunk; a sikertelen vizsga
+(értelmezhetetlen modellválasz) $Q$-ja 0, a technikai (szolgáltatás-) hibák kimaradnak. Egyetlen hibás formájú vagy hiányzó kérdés így
+a $Q$-t $0{,}25$-tel csökkenti; ezt vállaljuk, mert egy hiányos vagy hibás kulcsú vizsga nem használható
+változtatás nélkül. A komponenseket külön is közöljük.
 
-\paragraph{Rubrika.} A bíró emellett négy szempontot 1--5 skálán pontoz, és egy igen/nem ítéletet ad
-(\ref{app-rubrika}.~függelék): \emph{helyesség} (1: hibás kulcs vagy két helyes opció, 5: teljesen helyes
-és egyértelmű), \emph{érthetőség} (1: zavaros, 5: vizsgakész megfogalmazás), \emph{disztraktorok} (1:
-abszurd vagy szintén helyes, 5: mind hihető és hibás), \emph{szintillesztés} (1: egyértelműen rossz
-Bloom-szint, 5: illik a kért nehézséghez), valamint \emph{felhasználnám} (bekerülne-e egy valódi
-dolgozatba legfeljebb apró javítással). A rubrika szó szerint azonos a bíró és az oktatók számára, ami a
-bíró validálásának (\ref{h:meres}.~hipotézis) előfeltétele.
+\paragraph{Rubrika.} A bíró emellett négy szempontot 1--5 skálán pontoz -- \emph{helyesség},
+\emph{érthetőség}, \emph{disztraktorok}, \emph{szintillesztés} --, és egy igen/nem ítéletet ad
+(\emph{felhasználnám}: bekerülne-e egy valódi dolgozatba legfeljebb apró javítással). A rubrika szövege
+(\ref{app-rubrika}.~függelék) a bíró és az oktatók számára azonos, ami a bíró validálásának
+(\ref{h:meres}.~hipotézis) előfeltétele.
 
-\subsection{Automatikus mutatók}
-
-\paragraph{Lefedettség.} Azt méri, mennyire oszlik el a vizsga a tananyagon (a P2 probléma közvetlen
-mérőszáma). Minden kérdéshez (a törzs és a kulcs együtt) megkeressük azt a darabot, amelynek beágyazása
-hozzá a legközelebb áll, és megszámoljuk, hány különböző darab került így elő:
+\paragraph{Lefedettség.} Azt méri, mennyire oszlik el a vizsga a tananyagon (a P2 probléma mérőszáma).
+Minden kérdéshez (törzs és kulcs együtt) megkeressük a beágyazás szerint legközelebbi darabot:
 \begin{equation}
-\mathrm{Lef}=\frac{\text{a kérdésekhez legközelebbi különböző darabok száma}}{\text{a dokumentum darabjainak száma}}.
+\mathrm{Lef}=\frac{\text{a kérdésekhez legközelebbi különböző darabok száma}}{K},
 \label{eq:cov}
 \end{equation}
-Egy tízkérdéses vizsga egy négydarabos dokumentumon elvben 100\,\%-os, egy százdarabos dokumentumon
-legfeljebb 10\,\%-os lefedettséget érhet el. A lefedettség szerkezeti, nem minőségi mutató, ezért a $Q$
-indexbe nem számít bele.
+ahol $K$ a dokumentum darabjainak száma. Egy tízkérdéses vizsga lefedettsége legfeljebb $10/K$, így egy
+százdarabos dokumentumon legfeljebb 10\,\%; a mutató ezért csak azonos dokumentumon, konfigurációk között
+hasonlítható, és szerkezeti, nem minőségi mutatóként a $Q$-ba nem számít bele.
 
-\paragraph{Válaszszivárgás és nem kérdő törzs.} A kérdés \emph{szivárogtatja a kulcsot}, ha a legalább
-háromszavas kulcs szavainak legalább 80\,\%-a a törzsben is szerepel; a háromszavas alsó korlát kizárja,
-hogy egy egyszavas tulajdonnév (például „Arabica”) téves jelzést adjon. A törzs \emph{nem kérdés}, ha sem
-kérdőjelre, sem kettőspontra nem végződik. Mindkettőt a pilotban feltárt hibamód motiválta
-(\ref{sec:szivargas}.~szakasz).
+\paragraph{Szivárgás és nem kérdő törzs.} Ugyanazzal a szabállyal mérjük, mint az ellenőrző
+(\ref{sec:verifier}.~szakasz): \emph{szivárgás}, ha a legalább háromszavas kulcs szavainak legalább
+80\,\%-a a törzsben is szerepel (egy egyszavas tulajdonnév így nem ad téves jelzést); \emph{nem kérdés}
+a törzs, ha sem kérdőjelre, sem kettőspontra nem végződik (vö.\ \ref{sec:szivargas}.~szakasz).
 
 \paragraph{További mutatók.} A \emph{duplikátumráta} azon kérdéspárok aránya, amelyek
 koszinusz-hasonlósága meghaladja a 0,9-et; a \emph{meta-hivatkozás} aránya azoké, amelyek „a szöveg
 szerint” jellegű fordulatot tartalmaznak. A \emph{keresési találati arány} (recall@3) azt méri, hogy a
-referenciakérdésekre futtatott keresés első három találata között szerepel-e az igazoló mondatot tartalmazó
-darab.
-
-\subsection{Költségmutatók}
-
-Vizsgánként rögzítjük a futási időt (szakaszonként is), a nyelvimodell-hívások számát szakaszonként, a
-felhasznált tokenek számát, az értelmezhetetlen válaszok számát, a GPU-memória alapszintjét és csúcsát,
-valamint azt, hogy a modell teljes egészében a GPU-n futott-e.
+referenciakérdésekkel futtatott keresés első három találata között szerepel-e az igazoló mondatot
+tartalmazó darab; a \emph{tematikus hasonlóság} azt, hogy a referenciakérdések mekkora részéhez van
+beágyazás szerint közeli generált kérdés. \emph{Költségmutató} a futási idő (szakaszonként), a modellhívások és
+tokenek száma, valamint a GPU-memória alapszintje és csúcsa.
 
 % ---------------------------------------------------------------------
 \section{A bíró}
 \label{sec:biro}
 % ---------------------------------------------------------------------
 
-A bíró a gpt-oss-120b~\cite{gptoss2025} modell az egyetemi GenAI-szerveren, nulla hőmérséklettel
-(determinisztikus válaszokkal), alacsony gondolkodási szinttel. A választás elsődleges szempontja, hogy más
-modellcsaládba tartozzon, mint bármelyik generátor (Qwen, Llama), így az önpreferencia
-torzítása~\cite{panickssery2024selfpref} nem lép fel. Kérdésenként két hívást végez:
-\begin{enumerate}
-\item \textbf{Áttekintés} (látja a kulcsot): igazolja-e a forrás a kulcsot, egy szó szerinti igazoló
-mondat idézésével; minden disztraktorra, hogy a forrás szerint hamis-e és témába vágó-e; a négy
-rubrikapontszám; a kérdés megvalósult Bloom-szintje; és a „felhasználnám”-ítélet, rövid indoklással.
-\item \textbf{Vak megoldás} (nem látja a kulcsot): a forrás alapján válaszolnia kell a kérdésre,
-véletlenül permutált opciókkal.
-\end{enumerate}
+A bíró a gpt-oss-120b~\cite{gptoss2025} modell az egyetemi GenAI-szerveren, nulla hőmérséklettel és
+alacsony („low”) gondolkodási szinttel. Más modellcsaládba tartozik, mint bármelyik generátor (Qwen,
+Llama/PULI, Gemma), így az önpreferencia torzítása~\cite{panickssery2024selfpref} nem lép fel.
+Kérdésenként két hívást végez: az \emph{áttekintő} hívás látja a kulcsot (alátámasztottság szó szerinti
+idézettel, disztraktoronkénti ítélet, rubrikapontok, megvalósult Bloom-szint, „felhasználnám”), a
+\emph{vak} hívás nem, és permutált válaszokkal kell megoldania a kérdést.
 
-A fő vizsgálatban a bíró forrásként a kérdéshez tartozó darabokat kapja, nem a teljes dokumentumot. Ezt a
-futási idő indokolja: a bíró egy hívása a megosztott szerveren kb.\ 14 másodperc, és ez a mérés szűk
-keresztmetszete. A választás korlátja, hogy a bíró a dokumentum más részeiben lévő ellentmondást nem
-láthatja. A teljes dokumentumos karoknál, ahol a kérdésekhez nem tartozik forrásdarab, a bíró a
-dokumentum elejét kapja, legfeljebb 24\,000 karaktert; ennek következményét \az{\ref{sec:fo-bdoc}}.~szakasz tárgyalja.
+Forrásként a bíró a kérdéshez tartozó darabokat kapja (a tervezett konfigurációknál a kérdéshely
+kontextusát, az \arm{E0}-nál a visszakeresett darabokat), nem a teljes dokumentumot. Ezt a megosztott
+szerver futásideje indokolta; ára, hogy a dokumentum más részeiben lévő ellentmondást a bíró nem látja. A teljes dokumentumos konfigurációknál a bíró a dokumentum első 24\,000 karakterét kapja, így
+egy hosszú dokumentum későbbi részéből írt kérdést nem tud igazolni; ezeknél az alátámasztottság alsó
+becslés.
 
 % ---------------------------------------------------------------------
 \section{Oktatói értékelés}
 \label{sec:oktatoi}
 % ---------------------------------------------------------------------
 
-A bíró csak akkor tekinthető érvényes mérőeszköznek, ha ítéletei az emberi szakértőkével egyeznek
-(\ref{h:meres}.~hipotézis). Ennek ellenőrzésére a következő protokollt dolgoztuk ki: három oktató vakon
-értékel egy rétegzett mintát a négy fő karból (\arm{B-doc-S}, \arm{E0}, \arm{E1}, \arm{E2}), karonként 15
-kérdést, azaz oktatónként 60 kérdést, valamint 10 közös kalibrációs kérdést. A lapok nem tartalmazzák a
-kar nevét, a kérdések sorrendje véletlen, a rubrika azonos a bíróéval. Az oktatók egymás közötti egyezését
-Krippendorff-$\alpha$-val, a bíró és az oktatók egyezését szempontonként Spearman-féle rangkorrelációval és
-Krippendorff-$\alpha$-val, a bináris ítéletekre Cohen-$\kappa$-val mérjük. Az értékelőlapok
-exportálását és visszaolvasását a keretrendszer automatizálja; a dolgozat lezárásáig az oktatói értékelés
-nem készült el, így ez a mérés a további munka része (\ref{ch:osszefoglalas}.~fejezet).
+A bíró csak akkor érvényes mérőeszköz, ha ítéletei az emberi szakértőkével egyeznek
+(\ref{h:meres}.~hipotézis). Az oktatói értékelés a dolgozat lezárásakor folyamatban van; protokollját a
+keretrendszer \code{rate-export} és \code{rate-import} lépése valósítja meg. Alapbeállításban a kiválasztott
+konfigurációkból konfigurációnként 30 kérdést mintavételezünk (előbb minden dokumentumból egyet), 3
+értékelővel és 10 közös kalibrációs kérdéssel. Az xlsx-lapok vakok: a konfiguráció neve nem szerepel, a
+sorrend értékelőnként eltérő véletlen sorrend; minden kérdés mellett egy, minden konfigurációnál azonos
+módon kiválasztott forrásrészlet áll, a rubrika a bíróéval azonos. Az oktatók egymás közötti egyezését szempontonként
+Krippendorff-$\alpha$-val~\cite{krippendorff2004}, a bíró és az oktatók egyezését Spearman-féle
+rangkorrelációval és Krippendorff-$\alpha$-val, a bináris ítéletekre (a bíró „alátámasztott” ítélete
+vs.\ oktatói helyesség $\ge 4$) Cohen-$\kappa$-val mérjük. Az eredményeket
+\az{\ref{sec:oktatoi-eredmeny}}.~szakasz közli.
 
 % ---------------------------------------------------------------------
 \section{Statisztikai elemzés}
 \label{sec:statisztika}
 % ---------------------------------------------------------------------
 
-\paragraph{Az elemzés egysége a dokumentum.} Egy vizsga tíz kérdése nem független egymástól: ugyanabból a
-dokumentumból, ugyanazon a futáson belül készül. Ha a kérdéseket független megfigyelésnek tekintenénk, a
-próbák a valósnál sokkal biztosabbnak mutatnák az eredményt. Ezért minden mutatót először dokumentumon
-belül átlagolunk (a kérdésekre és a magokra), és a statisztikai következtetés egysége a
-\emph{dokumentum}. A karonkénti értékek a dokumentumonkénti átlagok átlagai.
+\paragraph{Az elemzés egysége a dokumentum.} Egy vizsga tíz kérdése nem független: ugyanabból a
+dokumentumból, egy futáson belül készül, így független megfigyelésként kezelve a próbák a valósnál
+biztosabbnak mutatnák az eredményt. Ezért minden mutatót előbb dokumentumon belül
+átlagolunk (a kérdésekre és a magokra), és a következtetés egysége a \emph{dokumentum}; a
+konfigurációnkénti érték a dokumentumonkénti átlagok átlaga. Bizonytalanságát
+\emph{bootstrap}-módszerrel~\cite{efron1993} becsüljük: a dokumentumokból 10\,000-szer húzunk
+visszatevéssel, és a kapott átlagok középső 95\,\%-a adja a 95\,\%-os konfidenciaintervallumot.
 
-\paragraph{Konfidenciaintervallum.} A karonkénti átlag bizonytalanságát \emph{bootstrap}
-módszerrel~\cite{efron1993} becsüljük: a dokumentumokból 10\,000-szer húzunk visszatevéssel ugyanannyi
-dokumentumot, mindegyik mintán kiszámoljuk az átlagot, és a kapott átlagok középső 95\,\%-a adja a 95\,\%-os
-konfidenciaintervallumot. Szűk intervallum azt jelenti, hogy a kar a dokumentumok között egyenletesen
-teljesít.
-
-\paragraph{Páros összehasonlítás.} Két kar összevetésére a páros Wilcoxon-féle előjeles
-rangpróbát~\cite{wilcoxon1945} használjuk. A próba minden dokumentumra kiszámítja a két kar különbségét,
-a különbségeket abszolút értékük szerint rangsorolja, és azt vizsgálja, hogy a pozitív és a negatív
-különbségek rangösszege egyensúlyban van-e. Nem feltételez normális eloszlást, ami a 0 és 1 közé szorított,
-gyakran a plafonhoz közeli rátáknál lényeges. A hatás nagyságát a rangbiszeriális
-korrelációval~\cite{kerby2014} adjuk meg:
+\paragraph{Páros összehasonlítás.} Két konfigurációt a páros Wilcoxon-féle előjeles
+rangpróbával~\cite{wilcoxon1945} vetünk össze, amely a dokumentumonkénti különbségek rangjaival dolgozik,
+és nem feltételez normális eloszlást (ez a plafonhoz közeli rátáknál lényeges). A hatás nagysága a
+rangbiszeriális korreláció~\cite{kerby2014}:
 \begin{equation}
 r_{rb}=\frac{W^{+}-W^{-}}{W^{+}+W^{-}},
+\label{eq:rrb}
 \end{equation}
-ahol $W^{+}$ a pozitív, $W^{-}$ a negatív különbségek rangösszege. Értéke $-1$ és $+1$ közé esik:
-$+1$, ha az új kar minden dokumentumon jobb, $-1$, ha minden dokumentumon rosszabb, 0, ha kiegyenlített.
+ahol $W^{+}$ és $W^{-}$ a pozitív, illetve a negatív különbségek rangösszege; $+1$, ha az új
+konfiguráció minden dokumentumon jobb, $-1$, ha mindenütt rosszabb.
 
-\paragraph{A minimális mintaméret.} Ha egy összevetésben csak $D$ dokumentum van, a Wilcoxon-próba
-legkisebb elérhető (kétoldali) $p$-értéke $2\cdot 2^{-D}$, és ezt akkor kapjuk, ha minden különbség azonos
-előjelű. Öt dokumentumnál ez $0{,}0625$, hatnál $0{,}031$. Hat dokumentumnál kevesebből tehát $p<0{,}05$
-\emph{elvileg sem} érhető el, ezért az egyetlen dokumentumos pilot eredményei kizárólag leíró jellegűek, a
-fő vizsgálat hat dokumentuma pedig éppen a legkisebb olyan szám, amelyen egy összevetés egyáltalán
-szignifikáns lehet.
+\paragraph{A minimális mintaméret.} $D$ dokumentum esetén a legkisebb elérhető kétoldali $p$-érték
+$2\cdot 2^{-D}$, amelyet akkor kapunk, ha minden különbség azonos előjelű. Hat dokumentumnál ez $0{,}031$,
+ötnél $0{,}0625$: a pilot ezért csak leíró, az előzetes vizsgálat hat dokumentuma pedig a legkisebb
+szám, amelyen egy összevetés egyáltalán szignifikáns lehet. A fő vizsgálat 30 dokumentumán a
+szignifikancia valóban elérhető.
 
-\paragraph{Többszörös összehasonlítás.} Ha sok összevetést végzünk, a véletlen „szignifikáns”
-eredmények esélye nő. Ezt Holm módszerével~\cite{holm1979} kezeljük: a $p$-értékeket növekvő sorrendbe
-rakjuk, a legkisebbet az összevetések számával ($M$), a másodikat $M-1$-gyel stb.\ szorozzuk, és egy
-összevetést csak akkor tekintünk szignifikánsnak, ha a korrigált értéke (és minden nála kisebbé)
-$0{,}05$ alatt van. Hat összevetésnél például a legkisebb, $0{,}031$-es $p$-érték korrigált értéke
-$6\cdot0{,}031=0{,}19$.
+\paragraph{Többszörös összehasonlítás.} A hat előre rögzített összehasonlítás (\ref{sec:karok}.~szakasz)
+$p$-értékeit Holm módszerével~\cite{holm1979} korrigáljuk: növekvő sorrendben a legkisebbet 6-tal, a
+következőt 5-tel stb.\ szorozzuk, és egy összevetés csak akkor szignifikáns, ha korrigált értéke (és minden
+nála kisebbé) $0{,}05$ alatt van. Hat dokumentumnál a legkisebb elérhető $p=0{,}031$ korrigált értéke
+$0{,}19$, vagyis az előzetes vizsgálatban egyetlen összevetés sem lehet korrekció után szignifikáns.
 
-\paragraph{Egyezési mutatók.} Két értékelő (vagy az ellenőrző és a bíró) igen/nem ítéleteinek egyezését
-Cohen-$\kappa$-val~\cite{cohen1960kappa} mérjük:
+\paragraph{Egyezés és az ellenőrző mint osztályozó.} Két igen/nem ítéletsor (például az ellenőrzőé és a
+bíróé) egyezését Cohen-$\kappa$-val~\cite{cohen1960kappa} mérjük:
 \begin{equation}
 \kappa=\frac{p_o-p_e}{1-p_e},
+\label{eq:kappa}
 \end{equation}
-ahol $p_o$ a megfigyelt egyezési arány, $p_e$ pedig a véletlenül várható egyezés (amely a két értékelő
-„igen” és „nem” arányaiból számolható). $\kappa=0$ azt jelenti, hogy az egyezés nem jobb a véletlennél,
-$\kappa=1$ a teljes egyezést. Az értelmezés Landis és Koch~\cite{landis1977} skáláját követi
-(\ref{sec:irod-biro}.~szakasz).
-
-\paragraph{Az ellenőrző mint osztályozó.} Az ellenőrző lánc minden kérdést \emph{átengedett} vagy
-\emph{megjelölt} kategóriába sorol, vagyis bináris osztályozó. A bíró alátámasztottsági ítéletét
-referenciának tekintve két mutatóval jellemezzük:
+ahol $p_o$ a megfigyelt, $p_e$ a véletlenül várható egyezési arány; $\kappa=0$ a véletlen szintje,
+$\kappa=1$ a teljes egyezés, az értelmezés Landis és Koch~\cite{landis1977} skáláját követi. Az ellenőrző
+lánc minden kérdést \emph{átengedett} vagy \emph{megjelölt} kategóriába sorol; a bíró alátámasztottsági
+ítéletét referenciának tekintve
 \begin{equation}
 \text{pontosság}=\frac{\text{átengedett és alátámasztott}}{\text{átengedett}},\qquad
 \text{felidézés}=\frac{\text{átengedett és alátámasztott}}{\text{alátámasztott}}.
+\label{eq:precrec}
 \end{equation}
-A pontosság azt mondja meg, mennyire bízhatunk egy átengedett kérdésben; a felidézés azt, hogy a jó
-kérdések közül mennyit enged át az ellenőrző. Egy hasznos ellenőrzőtől mindkettő magas értéke és
-$\kappa\gg0$ várható; $\kappa\approx0$ azt jelenti, hogy a jelzése az oktató számára nem hordoz
-információt.
+Hasznos ellenőrzőtől mindkettő magas értéke és $\kappa\gg0$ várható; $\kappa\approx0$ esetén a
+jelzése az oktatónak nem hordoz információt.

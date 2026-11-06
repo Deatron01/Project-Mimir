@@ -1,0 +1,22 @@
+flowchart LR
+  subgraph alap["Alapvonalak"]
+    direction TB
+    bdl["<b>B-doc-L</b><br/>teljes dokumentum,<br/>helyi modell"]
+    bds["<b>B-doc-S</b><br/>teljes dokumentum,<br/>szervermodell"]
+    e0["<b>E0</b><br/>naiv RAG"]
+  end
+  e0 -- "+ vizsgaterv" --> e1["<b>E1</b><br/>tervezés"]
+  e1 -- "+ ellenőrző lánc" --> e2["<b>E2</b><br/>a teljes módszer"]
+  e2 -- "+ fogalomgráf" --> e3["<b>E3</b>"]
+  e2 -- "– vak próba" --> e2f["<b>E2f</b>"]
+  e2 -- "hibrid keresés" --> e2h["<b>E2h</b>"]
+  e2 -- "más ellenőrző modell" --> e2x["<b>E2x</b>"]
+  e2 -- "szervermodell" --> e4b["<b>E4b</b>"]
+  e0 -- "szervermodell" --> e4["<b>E4</b>"]
+  e0 -- "régi kódoló" --> e5a["<b>E5a</b>"]
+  e0 -- "szórásalapú küszöb" --> e5b["<b>E5b</b>"]
+  e0 -- "rögzített darabok" --> e5c["<b>E5c</b>"]
+  classDef main fill:#e8eefa,stroke:#35507a,stroke-width:2px;
+  classDef srv fill:#fdf1e3,stroke:#b26a00;
+  class e1,e2 main;
+  class bds,e4,e4b srv;

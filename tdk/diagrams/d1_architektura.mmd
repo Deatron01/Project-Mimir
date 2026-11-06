@@ -1,0 +1,28 @@
+flowchart TB
+  oktato(["Oktató (böngésző)"]) --> fe["Webes felület<br/><small>React, TypeScript</small>"] --> gw["API-átjáró<br/><small>Nginx, TLS, JWT</small>"]
+  gw --> bif
+  gw --> skald
+
+  subgraph job["Feladat-hatókörű tartalom – a feladat végén törlődik (zéró megőrzés)"]
+    direction LR
+    well["<b>Wellspring</b><br/>szövegkinyerés<br/><small>PDF, DOCX, TXT, OCR</small>"]
+    rune["<b>RuneCarver</b><br/>beágyazás,<br/>darabolás"]
+    bif["<b>Bifrost</b><br/>a generálás vezérlése:<br/>terv, keresés, prompt"]
+    oll["<b>Ollama</b><br/>helyi nyelvi modell<br/><small>egy fogyasztói GPU</small>"]
+    qd[("Qdrant<br/><small>memóriában</small>")]
+    heim["<b>Heimdall</b><br/>séma- és<br/>formaszűrés"]
+    well <--> bif
+    rune <--> bif
+    bif <--> oll
+    bif <--> qd
+    bif <--> heim
+  end
+
+  bif --> forge["<b>The Forge</b><br/>feladatsor, audit napló<br/><small>csak ujjlenyomatok</small>"] <--> pg[("PostgreSQL")]
+  skald["<b>Skald</b><br/>export: JSON, Moodle XML, PDF"] <--> minio[("MinIO<br/><small>jóváhagyott vizsgák</small>")]
+  bif -. "csak ha nincs LOCAL_ONLY" .-> genai["Egyetemi GenAI-szerver<br/><small>opcionális</small>"]
+
+  classDef gpu fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+  classDef ext fill:#fdf1e3,stroke:#b26a00,stroke-dasharray:4 3;
+  class oll gpu;
+  class genai ext;

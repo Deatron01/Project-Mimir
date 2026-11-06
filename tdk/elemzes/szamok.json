@@ -1,0 +1,4840 @@
+{
+ "generated_by": "tdk/elemzes/elemzes.py",
+ "sets": {
+  "qwen": {
+   "model": "Qwen2.5-7B",
+   "runs": {
+    "B-doc-L": "B-doc-L_20260927_130112",
+    "B-doc-S": "B-doc-S_20260928_000032",
+    "E0": "E0_20260927_121353",
+    "E1": "E1_20260927_173119",
+    "E2": "E2_20260927_184417",
+    "E2f": "E2f_20260927_210952",
+    "E2h": "E2h_20260927_215454",
+    "E2x": "E2x_20260927_195117",
+    "E3": "E3_20260927_224855",
+    "E4": "E4_20260928_025504",
+    "E4b": "E4b_20260928_055715",
+    "E5a": "E5a_20260928_115954",
+    "E5b": "E5b_20260928_132736",
+    "E5c": "E5c_20260928_145756"
+   },
+   "n_documents": 9,
+   "documents_by_source": {
+    "en-openstax": 6,
+    "hu-sajat": 3
+   },
+   "infra_errors_excluded": 1,
+   "n_questions_judged": 1670,
+   "arms": {
+    "B-doc-L": {
+     "Q": 0.833,
+     "ci": [
+      0.764,
+      0.896
+     ],
+     "n_docs": 6,
+     "n_exams": 18,
+     "Q_min_doc": 0.706,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 0.833,
+     "grounding_rate": 0.794,
+     "blind_answerability": 0.856,
+     "distractor_validity": 0.849,
+     "coverage": 0.449,
+     "leakage_rate": 0.011,
+     "non_question_rate": 0.167,
+     "duplicate_rate": 0.22,
+     "meta_reference_rate": 0.067,
+     "recall@3": 0.925,
+     "questions_per_exam": 10.0,
+     "time_median_min": 0.366,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 0.961,
+     "Q_pooled": 0.833,
+     "Q_pooled_ci": [
+      0.763,
+      0.896
+     ],
+     "G_pooled": 0.794,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 6716.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 5360.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 3.967,
+     "judge_clarity": 4.8,
+     "judge_distractor_quality": 3.765,
+     "judge_bloom_fit": 4.267,
+     "would_use": 0.683,
+     "n_questions": 180,
+     "higher_order_realized": 0.061,
+     "stem_len": 85.533
+    },
+    "B-doc-S": {
+     "Q": 0.949,
+     "ci": [
+      0.871,
+      0.994
+     ],
+     "n_docs": 6,
+     "n_exams": 18,
+     "Q_min_doc": 0.761,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.9,
+     "blind_answerability": 1.0,
+     "distractor_validity": 0.894,
+     "coverage": 0.473,
+     "leakage_rate": 0.0,
+     "non_question_rate": 0.011,
+     "duplicate_rate": 0.142,
+     "meta_reference_rate": 0.033,
+     "recall@3": 0.925,
+     "questions_per_exam": 10.0,
+     "time_median_min": 3.958,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 0.961,
+     "Q_pooled": 0.949,
+     "Q_pooled_ci": [
+      0.871,
+      0.994
+     ],
+     "G_pooled": 0.9,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 993.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": null,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 4.611,
+     "judge_clarity": 4.911,
+     "judge_distractor_quality": 4.217,
+     "judge_bloom_fit": 4.517,
+     "would_use": 0.872,
+     "n_questions": 180,
+     "higher_order_realized": 0.111,
+     "stem_len": 68.394
+    },
+    "E0": {
+     "Q": 0.641,
+     "ci": [
+      0.456,
+      0.811
+     ],
+     "n_docs": 6,
+     "n_exams": 18,
+     "Q_min_doc": 0.335,
+     "docs_below_0.7": 3,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.433,
+     "blind_answerability": 0.618,
+     "distractor_validity": 0.519,
+     "coverage": 0.254,
+     "leakage_rate": 0.0,
+     "non_question_rate": 0.061,
+     "duplicate_rate": 0.151,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.925,
+     "questions_per_exam": 10.0,
+     "time_median_min": 0.317,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 0.589,
+     "Q_pooled": 0.646,
+     "Q_pooled_ci": [
+      0.458,
+      0.816
+     ],
+     "G_pooled": 0.433,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 6102.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 4896.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 2.661,
+     "judge_clarity": 4.794,
+     "judge_distractor_quality": 2.939,
+     "judge_bloom_fit": 4.372,
+     "would_use": 0.344,
+     "n_questions": 180,
+     "higher_order_realized": 0.022,
+     "stem_len": 52.9
+    },
+    "E1": {
+     "Q": 0.878,
+     "ci": [
+      0.817,
+      0.942
+     ],
+     "n_docs": 6,
+     "n_exams": 6,
+     "Q_min_doc": 0.758,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.8,
+     "blind_answerability": 0.8,
+     "distractor_validity": 0.911,
+     "coverage": 0.455,
+     "leakage_rate": 0.083,
+     "non_question_rate": 0.117,
+     "duplicate_rate": 0.085,
+     "meta_reference_rate": 0.067,
+     "recall@3": 0.925,
+     "questions_per_exam": 10.0,
+     "time_median_min": 1.877,
+     "calls_median": 18.0,
+     "unverified_mean": 1.167,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 1.0,
+     "Q_pooled": 0.878,
+     "Q_pooled_ci": [
+      0.817,
+      0.942
+     ],
+     "G_pooled": 0.8,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 6108.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 4896.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 3.733,
+     "judge_clarity": 4.317,
+     "judge_distractor_quality": 3.95,
+     "judge_bloom_fit": 4.45,
+     "would_use": 0.65,
+     "n_questions": 60,
+     "higher_order_realized": 0.083,
+     "higher_order_planned": 0.267,
+     "bloom_match": 0.333,
+     "stem_len": 113.15
+    },
+    "E2": {
+     "Q": 0.956,
+     "ci": [
+      0.926,
+      0.979
+     ],
+     "n_docs": 6,
+     "n_exams": 6,
+     "Q_min_doc": 0.892,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.9,
+     "blind_answerability": 0.967,
+     "distractor_validity": 0.956,
+     "coverage": 0.436,
+     "leakage_rate": 0.033,
+     "non_question_rate": 0.083,
+     "duplicate_rate": 0.17,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.925,
+     "questions_per_exam": 10.0,
+     "time_median_min": 3.46,
+     "calls_median": 51.0,
+     "unverified_mean": 4.833,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 1.0,
+     "Q_pooled": 0.956,
+     "Q_pooled_ci": [
+      0.926,
+      0.979
+     ],
+     "G_pooled": 0.9,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 6108.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 4896.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 4.483,
+     "judge_clarity": 4.483,
+     "judge_distractor_quality": 4.233,
+     "judge_bloom_fit": 4.55,
+     "would_use": 0.8,
+     "n_questions": 60,
+     "higher_order_realized": 0.083,
+     "higher_order_planned": 0.267,
+     "bloom_match": 0.35,
+     "stem_len": 113.833
+    },
+    "E2f": {
+     "Q": 0.896,
+     "ci": [
+      0.842,
+      0.947
+     ],
+     "n_docs": 6,
+     "n_exams": 6,
+     "Q_min_doc": 0.808,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.783,
+     "blind_answerability": 0.883,
+     "distractor_validity": 0.917,
+     "coverage": 0.436,
+     "leakage_rate": 0.033,
+     "non_question_rate": 0.05,
+     "duplicate_rate": 0.137,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.925,
+     "questions_per_exam": 10.0,
+     "time_median_min": 2.847,
+     "calls_median": 37.0,
+     "unverified_mean": 3.667,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 1.0,
+     "Q_pooled": 0.896,
+     "Q_pooled_ci": [
+      0.842,
+      0.947
+     ],
+     "G_pooled": 0.783,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 6108.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 4896.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 3.967,
+     "judge_clarity": 4.45,
+     "judge_distractor_quality": 3.9,
+     "judge_bloom_fit": 4.45,
+     "would_use": 0.733,
+     "n_questions": 60,
+     "higher_order_realized": 0.05,
+     "higher_order_planned": 0.267,
+     "bloom_match": 0.4,
+     "stem_len": 116.283
+    },
+    "E2h": {
+     "Q": 0.918,
+     "ci": [
+      0.896,
+      0.94
+     ],
+     "n_docs": 6,
+     "n_exams": 6,
+     "Q_min_doc": 0.875,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.817,
+     "blind_answerability": 0.917,
+     "distractor_validity": 0.939,
+     "coverage": 0.422,
+     "leakage_rate": 0.017,
+     "non_question_rate": 0.083,
+     "duplicate_rate": 0.181,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.925,
+     "questions_per_exam": 10.0,
+     "time_median_min": 3.738,
+     "calls_median": 55.0,
+     "unverified_mean": 5.167,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 1.0,
+     "Q_pooled": 0.918,
+     "Q_pooled_ci": [
+      0.896,
+      0.94
+     ],
+     "G_pooled": 0.817,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 6108.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 4896.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 4.067,
+     "judge_clarity": 4.4,
+     "judge_distractor_quality": 4.133,
+     "judge_bloom_fit": 4.633,
+     "would_use": 0.767,
+     "n_questions": 60,
+     "higher_order_realized": 0.133,
+     "higher_order_planned": 0.267,
+     "bloom_match": 0.433,
+     "stem_len": 113.667
+    },
+    "E2x": {
+     "Q": 0.892,
+     "ci": [
+      0.833,
+      0.947
+     ],
+     "n_docs": 6,
+     "n_exams": 6,
+     "Q_min_doc": 0.767,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.783,
+     "blind_answerability": 0.833,
+     "distractor_validity": 0.95,
+     "coverage": 0.424,
+     "leakage_rate": 0.017,
+     "non_question_rate": 0.033,
+     "duplicate_rate": 0.144,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.925,
+     "questions_per_exam": 10.0,
+     "time_median_min": 7.568,
+     "calls_median": 20.0,
+     "unverified_mean": 2.5,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 1.0,
+     "Q_pooled": 0.892,
+     "Q_pooled_ci": [
+      0.833,
+      0.947
+     ],
+     "G_pooled": 0.783,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 6104.0,
+     "vram_model_mib_median": 1.0,
+     "ollama_ps_vram_mib_median": 4896.0,
+     "llm_errors": 88,
+     "verifier_skipped": 88,
+     "parse_failures": 0,
+     "judge_correctness": 4.067,
+     "judge_clarity": 4.483,
+     "judge_distractor_quality": 4.183,
+     "judge_bloom_fit": 4.567,
+     "would_use": 0.75,
+     "n_questions": 60,
+     "higher_order_realized": 0.1,
+     "higher_order_planned": 0.267,
+     "bloom_match": 0.433,
+     "stem_len": 110.467
+    },
+    "E3": {
+     "Q": 0.883,
+     "ci": [
+      0.792,
+      0.947
+     ],
+     "n_docs": 6,
+     "n_exams": 6,
+     "Q_min_doc": 0.675,
+     "docs_below_0.7": 1,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.833,
+     "blind_answerability": 0.867,
+     "distractor_validity": 0.833,
+     "coverage": 0.404,
+     "leakage_rate": 0.0,
+     "non_question_rate": 0.05,
+     "duplicate_rate": 0.222,
+     "meta_reference_rate": 0.033,
+     "recall@3": 0.925,
+     "questions_per_exam": 10.0,
+     "time_median_min": 5.519,
+     "calls_median": 54.5,
+     "unverified_mean": 4.833,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 1.0,
+     "Q_pooled": 0.883,
+     "Q_pooled_ci": [
+      0.792,
+      0.947
+     ],
+     "G_pooled": 0.833,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 6106.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 4896.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 3.917,
+     "judge_clarity": 4.583,
+     "judge_distractor_quality": 3.8,
+     "judge_bloom_fit": 4.567,
+     "would_use": 0.733,
+     "n_questions": 60,
+     "higher_order_realized": 0.1,
+     "higher_order_planned": 0.267,
+     "bloom_match": 0.45,
+     "stem_len": 90.133
+    },
+    "E4": {
+     "Q": 0.906,
+     "ci": [
+      0.796,
+      0.982
+     ],
+     "n_docs": 6,
+     "n_exams": 18,
+     "Q_min_doc": 0.65,
+     "docs_below_0.7": 1,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.772,
+     "blind_answerability": 0.982,
+     "distractor_validity": 0.87,
+     "coverage": 0.088,
+     "leakage_rate": 0.0,
+     "non_question_rate": 0.0,
+     "duplicate_rate": 0.494,
+     "meta_reference_rate": 0.094,
+     "recall@3": 0.887,
+     "questions_per_exam": 10.0,
+     "time_median_min": 5.27,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 0.994,
+     "Q_pooled": 0.906,
+     "Q_pooled_ci": [
+      0.796,
+      0.982
+     ],
+     "G_pooled": 0.772,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 993.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": null,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 4.089,
+     "judge_clarity": 4.733,
+     "judge_distractor_quality": 4.206,
+     "judge_bloom_fit": 4.533,
+     "would_use": 0.767,
+     "n_questions": 180,
+     "higher_order_realized": 0.128,
+     "stem_len": 52.344
+    },
+    "E4b": {
+     "Q": 0.992,
+     "ci": [
+      0.975,
+      1.0
+     ],
+     "n_docs": 6,
+     "n_exams": 6,
+     "Q_min_doc": 0.95,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.983,
+     "blind_answerability": 1.0,
+     "distractor_validity": 0.983,
+     "coverage": 0.282,
+     "leakage_rate": 0.0,
+     "non_question_rate": 0.0,
+     "duplicate_rate": 0.059,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.887,
+     "questions_per_exam": 10.0,
+     "time_median_min": 47.727,
+     "calls_median": 37.0,
+     "unverified_mean": 0.0,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 1.0,
+     "Q_pooled": 0.992,
+     "Q_pooled_ci": [
+      0.975,
+      1.0
+     ],
+     "G_pooled": 0.983,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 993.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": null,
+     "llm_errors": 2,
+     "verifier_skipped": 1,
+     "parse_failures": 0,
+     "judge_correctness": 4.933,
+     "judge_clarity": 4.767,
+     "judge_distractor_quality": 4.65,
+     "judge_bloom_fit": 4.9,
+     "would_use": 0.983,
+     "n_questions": 60,
+     "higher_order_realized": 0.2,
+     "higher_order_planned": 0.2,
+     "bloom_match": 0.617,
+     "stem_len": 111.767
+    },
+    "E5a": {
+     "Q": 0.869,
+     "ci": [
+      0.811,
+      0.924
+     ],
+     "n_docs": 6,
+     "n_exams": 18,
+     "Q_min_doc": 0.764,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.739,
+     "blind_answerability": 0.841,
+     "distractor_validity": 0.896,
+     "coverage": 0.363,
+     "leakage_rate": 0.017,
+     "non_question_rate": 0.056,
+     "duplicate_rate": 0.226,
+     "meta_reference_rate": 0.022,
+     "recall@3": 0.948,
+     "questions_per_exam": 10.0,
+     "time_median_min": 0.344,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 0.972,
+     "Q_pooled": 0.869,
+     "Q_pooled_ci": [
+      0.811,
+      0.924
+     ],
+     "G_pooled": 0.739,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 6058.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 4896.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 3.844,
+     "judge_clarity": 4.711,
+     "judge_distractor_quality": 4.028,
+     "judge_bloom_fit": 4.306,
+     "would_use": 0.672,
+     "n_questions": 180,
+     "higher_order_realized": 0.111,
+     "stem_len": 76.467
+    },
+    "E5b": {
+     "Q": 0.702,
+     "ci": [
+      0.543,
+      0.855
+     ],
+     "n_docs": 6,
+     "n_exams": 18,
+     "Q_min_doc": 0.447,
+     "docs_below_0.7": 3,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.394,
+     "blind_answerability": 0.783,
+     "distractor_validity": 0.633,
+     "coverage": 0.347,
+     "leakage_rate": 0.011,
+     "non_question_rate": 0.111,
+     "duplicate_rate": 0.179,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.929,
+     "questions_per_exam": 10.0,
+     "time_median_min": 0.321,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 0.572,
+     "Q_pooled": 0.696,
+     "Q_pooled_ci": [
+      0.53,
+      0.855
+     ],
+     "G_pooled": 0.394,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 6056.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 4896.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 2.506,
+     "judge_clarity": 4.7,
+     "judge_distractor_quality": 3.183,
+     "judge_bloom_fit": 4.383,
+     "would_use": 0.356,
+     "n_questions": 180,
+     "higher_order_realized": 0.039,
+     "stem_len": 72.222
+    },
+    "E5c": {
+     "Q": 0.862,
+     "ci": [
+      0.703,
+      0.973
+     ],
+     "n_docs": 6,
+     "n_exams": 17,
+     "Q_min_doc": 0.495,
+     "docs_below_0.7": 1,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.817,
+     "blind_answerability": 0.823,
+     "distractor_validity": 0.809,
+     "coverage": 0.512,
+     "leakage_rate": 0.017,
+     "non_question_rate": 0.444,
+     "duplicate_rate": 0.344,
+     "meta_reference_rate": 0.006,
+     "recall@3": 0.897,
+     "questions_per_exam": 10.0,
+     "time_median_min": 0.334,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 1.0,
+     "judge_blind_coverage": 0.982,
+     "Q_pooled": 0.862,
+     "Q_pooled_ci": [
+      0.703,
+      0.973
+     ],
+     "G_pooled": 0.817,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 6053.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 4896.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 4.024,
+     "judge_clarity": 4.624,
+     "judge_distractor_quality": 3.659,
+     "judge_bloom_fit": 4.4,
+     "would_use": 0.676,
+     "n_questions": 170,
+     "higher_order_realized": 0.018,
+     "stem_len": 83.459
+    }
+   },
+   "subsets": {
+    "B-doc-L": {
+     "hu-sajat": [
+      0.894,
+      3
+     ],
+     "en-openstax": [
+      0.773,
+      3
+     ],
+     "short": [
+      0.886,
+      4
+     ],
+     "medium": [
+      0.75,
+      1
+     ],
+     "long": [
+      0.706,
+      1
+     ]
+    },
+    "B-doc-S": {
+     "hu-sajat": [
+      0.994,
+      3
+     ],
+     "en-openstax": [
+      0.903,
+      3
+     ],
+     "short": [
+      0.985,
+      4
+     ],
+     "medium": [
+      0.989,
+      1
+     ],
+     "long": [
+      0.761,
+      1
+     ]
+    },
+    "E0": {
+     "hu-sajat": [
+      0.884,
+      3
+     ],
+     "en-openstax": [
+      0.397,
+      3
+     ],
+     "short": [
+      0.747,
+      4
+     ],
+     "medium": [
+      0.439,
+      1
+     ],
+     "long": [
+      0.417,
+      1
+     ]
+    },
+    "E1": {
+     "hu-sajat": [
+      0.85,
+      3
+     ],
+     "en-openstax": [
+      0.906,
+      3
+     ],
+     "short": [
+      0.846,
+      4
+     ],
+     "medium": [
+      0.992,
+      1
+     ],
+     "long": [
+      0.892,
+      1
+     ]
+    },
+    "E2": {
+     "hu-sajat": [
+      0.964,
+      3
+     ],
+     "en-openstax": [
+      0.947,
+      3
+     ],
+     "short": [
+      0.96,
+      4
+     ],
+     "medium": [
+      1.0,
+      1
+     ],
+     "long": [
+      0.892,
+      1
+     ]
+    },
+    "E2f": {
+     "hu-sajat": [
+      0.861,
+      3
+     ],
+     "en-openstax": [
+      0.931,
+      3
+     ],
+     "short": [
+      0.885,
+      4
+     ],
+     "medium": [
+      0.958,
+      1
+     ],
+     "long": [
+      0.875,
+      1
+     ]
+    },
+    "E2h": {
+     "hu-sajat": [
+      0.911,
+      3
+     ],
+     "en-openstax": [
+      0.925,
+      3
+     ],
+     "short": [
+      0.902,
+      4
+     ],
+     "medium": [
+      0.958,
+      1
+     ],
+     "long": [
+      0.942,
+      1
+     ]
+    },
+    "E2x": {
+     "hu-sajat": [
+      0.872,
+      3
+     ],
+     "en-openstax": [
+      0.911,
+      3
+     ],
+     "short": [
+      0.879,
+      4
+     ],
+     "medium": [
+      0.967,
+      1
+     ],
+     "long": [
+      0.867,
+      1
+     ]
+    },
+    "E3": {
+     "hu-sajat": [
+      0.842,
+      3
+     ],
+     "en-openstax": [
+      0.925,
+      3
+     ],
+     "short": [
+      0.865,
+      4
+     ],
+     "medium": [
+      0.858,
+      1
+     ],
+     "long": [
+      0.983,
+      1
+     ]
+    },
+    "E4": {
+     "en-openstax": [
+      0.906,
+      6
+     ],
+     "short": [
+      0.972,
+      2
+     ],
+     "medium": [
+      0.985,
+      2
+     ],
+     "long": [
+      0.762,
+      2
+     ]
+    },
+    "E4b": {
+     "en-openstax": [
+      0.992,
+      6
+     ],
+     "short": [
+      0.975,
+      2
+     ],
+     "medium": [
+      1.0,
+      2
+     ],
+     "long": [
+      1.0,
+      2
+     ]
+    },
+    "E5a": {
+     "hu-sajat": [
+      0.866,
+      3
+     ],
+     "en-openstax": [
+      0.872,
+      3
+     ],
+     "short": [
+      0.871,
+      4
+     ],
+     "medium": [
+      0.967,
+      1
+     ],
+     "long": [
+      0.764,
+      1
+     ]
+    },
+    "E5b": {
+     "hu-sajat": [
+      0.894,
+      3
+     ],
+     "en-openstax": [
+      0.51,
+      3
+     ],
+     "short": [
+      0.791,
+      4
+     ],
+     "medium": [
+      0.447,
+      1
+     ],
+     "long": [
+      0.6,
+      1
+     ]
+    },
+    "E5c": {
+     "hu-sajat": [
+      0.766,
+      3
+     ],
+     "en-openstax": [
+      0.958,
+      3
+     ],
+     "short": [
+      0.811,
+      4
+     ],
+     "medium": [
+      0.964,
+      1
+     ],
+     "long": [
+      0.967,
+      1
+     ]
+    }
+   },
+   "tests": [
+    {
+     "name": "tervezes",
+     "new": "E1",
+     "ref": "E0",
+     "n": 6,
+     "ref_Q": 0.641,
+     "new_Q": 0.878,
+     "diff": 0.237,
+     "r_rb": 0.619,
+     "p": 0.219,
+     "better_docs": 4,
+     "worse_docs": 2,
+     "p_holm": 0.438
+    },
+    {
+     "name": "ellenorzes",
+     "new": "E2",
+     "ref": "E1",
+     "n": 6,
+     "ref_Q": 0.878,
+     "new_Q": 0.956,
+     "diff": 0.078,
+     "r_rb": 1.0,
+     "p": 0.0312,
+     "better_docs": 5,
+     "worse_docs": 0,
+     "p_holm": 0.188
+    },
+    {
+     "name": "teljes_modszer",
+     "new": "E2",
+     "ref": "E0",
+     "n": 6,
+     "ref_Q": 0.641,
+     "new_Q": 0.956,
+     "diff": 0.315,
+     "r_rb": 1.0,
+     "p": 0.0312,
+     "better_docs": 6,
+     "worse_docs": 0,
+     "p_holm": 0.188
+    },
+    {
+     "name": "modszer_vs_teljes_dok",
+     "new": "E2",
+     "ref": "B-doc-L",
+     "n": 6,
+     "ref_Q": 0.833,
+     "new_Q": 0.956,
+     "diff": 0.122,
+     "r_rb": 0.905,
+     "p": 0.0625,
+     "better_docs": 5,
+     "worse_docs": 1,
+     "p_holm": 0.25
+    },
+    {
+     "name": "terv_vs_teljes_dok",
+     "new": "E1",
+     "ref": "B-doc-L",
+     "n": 6,
+     "ref_Q": 0.833,
+     "new_Q": 0.878,
+     "diff": 0.044,
+     "r_rb": 0.238,
+     "p": 0.688,
+     "better_docs": 3,
+     "worse_docs": 3
+    },
+    {
+     "name": "csak_szabaly_vs_E2",
+     "new": "E2x",
+     "ref": "E2",
+     "n": 6,
+     "ref_Q": 0.956,
+     "new_Q": 0.892,
+     "diff": -0.064,
+     "r_rb": -0.905,
+     "p": 0.0625,
+     "better_docs": 1,
+     "worse_docs": 5,
+     "p_holm": 0.25
+    },
+    {
+     "name": "graf",
+     "new": "E3",
+     "ref": "E2",
+     "n": 6,
+     "ref_Q": 0.956,
+     "new_Q": 0.883,
+     "diff": -0.072,
+     "r_rb": -0.619,
+     "p": 0.219,
+     "better_docs": 1,
+     "worse_docs": 5,
+     "p_holm": 0.438
+    },
+    {
+     "name": "vak_proba_nelkul",
+     "new": "E2f",
+     "ref": "E2",
+     "n": 6,
+     "ref_Q": 0.956,
+     "new_Q": 0.896,
+     "diff": -0.06,
+     "r_rb": -0.867,
+     "p": 0.125,
+     "better_docs": 1,
+     "worse_docs": 4
+    },
+    {
+     "name": "hibrid",
+     "new": "E2h",
+     "ref": "E2",
+     "n": 6,
+     "ref_Q": 0.956,
+     "new_Q": 0.918,
+     "diff": -0.037,
+     "r_rb": -0.619,
+     "p": 0.219,
+     "better_docs": 1,
+     "worse_docs": 5
+    },
+    {
+     "name": "regi_kodolo",
+     "new": "E5a",
+     "ref": "E0",
+     "n": 6,
+     "ref_Q": 0.641,
+     "new_Q": 0.869,
+     "diff": 0.229,
+     "r_rb": 0.714,
+     "p": 0.156,
+     "better_docs": 5,
+     "worse_docs": 1
+    },
+    {
+     "name": "szoras_kuszob",
+     "new": "E5b",
+     "ref": "E0",
+     "n": 6,
+     "ref_Q": 0.641,
+     "new_Q": 0.702,
+     "diff": 0.061,
+     "r_rb": 0.619,
+     "p": 0.219,
+     "better_docs": 5,
+     "worse_docs": 1
+    },
+    {
+     "name": "fix_darabolas",
+     "new": "E5c",
+     "ref": "E0",
+     "n": 6,
+     "ref_Q": 0.641,
+     "new_Q": 0.862,
+     "diff": 0.222,
+     "r_rb": 0.619,
+     "p": 0.219,
+     "better_docs": 4,
+     "worse_docs": 2
+    }
+   ],
+   "verifier": {
+    "E2": {
+     "n": 60,
+     "passed_share": 0.517,
+     "precision": 0.935,
+     "recall": 0.537,
+     "grounded_if_flagged": 0.862,
+     "kappa": 0.075,
+     "first_attempt_pass": 0.233,
+     "attempts_per_slot": 1.767,
+     "reasons": {
+      "vak_elteres": 8,
+      "szivargas": 11,
+      "nem_kerdes": 15,
+      "duplikatum": 46,
+      "diszt_igaz": 32,
+      "forma": 2,
+      "hivatkozas": 1,
+      "meta": 1
+     }
+    },
+    "E2f": {
+     "n": 60,
+     "passed_share": 0.633,
+     "precision": 0.789,
+     "recall": 0.638,
+     "grounded_if_flagged": 0.773,
+     "kappa": 0.018,
+     "first_attempt_pass": 0.383,
+     "attempts_per_slot": 1.617,
+     "reasons": {
+      "forma": 5,
+      "hivatkozas": 3,
+      "duplikatum": 35,
+      "nem_kerdes": 10,
+      "diszt_igaz": 26,
+      "szivargas": 8,
+      "meta": 1
+     }
+    },
+    "E2h": {
+     "n": 60,
+     "passed_share": 0.483,
+     "precision": 0.931,
+     "recall": 0.551,
+     "grounded_if_flagged": 0.71,
+     "kappa": 0.217,
+     "first_attempt_pass": 0.2,
+     "attempts_per_slot": 1.8,
+     "reasons": {
+      "vak_elteres": 17,
+      "szivargas": 9,
+      "nem_kerdes": 17,
+      "diszt_igaz": 27,
+      "forma": 4,
+      "hivatkozas": 2,
+      "duplikatum": 39
+     }
+    },
+    "E2x": {
+     "n": 60,
+     "passed_share": 0.75,
+     "precision": 0.822,
+     "recall": 0.787,
+     "grounded_if_flagged": 0.667,
+     "kappa": 0.163,
+     "first_attempt_pass": 0.5,
+     "attempts_per_slot": 1.5,
+     "reasons": {
+      "nem_kerdes": 8,
+      "forma": 2,
+      "hivatkozas": 2,
+      "duplikatum": 38,
+      "szivargas": 8,
+      "meta": 3
+     }
+    },
+    "E3": {
+     "n": 60,
+     "passed_share": 0.517,
+     "precision": 0.871,
+     "recall": 0.54,
+     "grounded_if_flagged": 0.793,
+     "kappa": 0.08,
+     "first_attempt_pass": 0.267,
+     "attempts_per_slot": 1.733,
+     "reasons": {
+      "vak_elteres": 19,
+      "duplikatum": 41,
+      "diszt_igaz": 22,
+      "nem_kerdes": 9,
+      "szivargas": 6,
+      "forma": 1,
+      "meta": 8,
+      "hivatkozas": 3
+     }
+    },
+    "E4b": {
+     "n": 60,
+     "passed_share": 1.0,
+     "precision": 0.983,
+     "recall": 1.0,
+     "grounded_if_flagged": null,
+     "kappa": 0.0,
+     "first_attempt_pass": 0.833,
+     "attempts_per_slot": 1.167,
+     "reasons": {
+      "diszt_igaz": 1,
+      "ketertelmu": 1,
+      "nem_kerdes": 1,
+      "duplikatum": 9,
+      "szivargas": 3,
+      "kulcs_nem_igazolt": 2
+     }
+    }
+   },
+   "per_doc_Q": {
+    "B-doc-L": {
+     "en-economics-short-01": 0.864,
+     "en-humanities-medium-02": 0.75,
+     "en-law-long-03": 0.706,
+     "hu-coffee": 0.961,
+     "hu-gametheory": 0.853,
+     "hu-immune": 0.867
+    },
+    "B-doc-S": {
+     "en-economics-short-01": 0.958,
+     "en-humanities-medium-02": 0.989,
+     "en-law-long-03": 0.761,
+     "hu-coffee": 0.983,
+     "hu-gametheory": 1.0,
+     "hu-immune": 1.0
+    },
+    "E0": {
+     "en-economics-short-01": 0.335,
+     "en-humanities-medium-02": 0.439,
+     "en-law-long-03": 0.417,
+     "hu-coffee": 0.886,
+     "hu-gametheory": 0.889,
+     "hu-immune": 0.878
+    },
+    "E1": {
+     "en-economics-short-01": 0.833,
+     "en-humanities-medium-02": 0.992,
+     "en-law-long-03": 0.892,
+     "hu-coffee": 0.758,
+     "hu-gametheory": 0.833,
+     "hu-immune": 0.958
+    },
+    "E2": {
+     "en-economics-short-01": 0.95,
+     "en-humanities-medium-02": 1.0,
+     "en-law-long-03": 0.892,
+     "hu-coffee": 0.958,
+     "hu-gametheory": 0.967,
+     "hu-immune": 0.967
+    },
+    "E2f": {
+     "en-economics-short-01": 0.958,
+     "en-humanities-medium-02": 0.958,
+     "en-law-long-03": 0.875,
+     "hu-coffee": 0.808,
+     "hu-gametheory": 0.808,
+     "hu-immune": 0.967
+    },
+    "E2h": {
+     "en-economics-short-01": 0.875,
+     "en-humanities-medium-02": 0.958,
+     "en-law-long-03": 0.942,
+     "hu-coffee": 0.917,
+     "hu-gametheory": 0.892,
+     "hu-immune": 0.925
+    },
+    "E2x": {
+     "en-economics-short-01": 0.9,
+     "en-humanities-medium-02": 0.967,
+     "en-law-long-03": 0.867,
+     "hu-coffee": 0.767,
+     "hu-gametheory": 0.867,
+     "hu-immune": 0.983
+    },
+    "E3": {
+     "en-economics-short-01": 0.933,
+     "en-humanities-medium-02": 0.858,
+     "en-law-long-03": 0.983,
+     "hu-coffee": 0.933,
+     "hu-gametheory": 0.675,
+     "hu-immune": 0.917
+    },
+    "E4": {
+     "en-economics-medium-05": 1.0,
+     "en-economics-short-01": 0.961,
+     "en-humanities-long-06": 0.65,
+     "en-humanities-medium-02": 0.969,
+     "en-law-long-03": 0.873,
+     "en-lifesciences-short-04": 0.983
+    },
+    "E4b": {
+     "en-economics-medium-05": 1.0,
+     "en-economics-short-01": 1.0,
+     "en-humanities-long-06": 1.0,
+     "en-humanities-medium-02": 1.0,
+     "en-law-long-03": 1.0,
+     "en-lifesciences-short-04": 0.95
+    },
+    "E5a": {
+     "en-economics-short-01": 0.886,
+     "en-humanities-medium-02": 0.967,
+     "en-law-long-03": 0.764,
+     "hu-coffee": 0.903,
+     "hu-gametheory": 0.783,
+     "hu-immune": 0.911
+    },
+    "E5b": {
+     "en-economics-short-01": 0.483,
+     "en-humanities-medium-02": 0.447,
+     "en-law-long-03": 0.6,
+     "hu-coffee": 0.933,
+     "hu-gametheory": 0.833,
+     "hu-immune": 0.914
+    },
+    "E5c": {
+     "en-economics-short-01": 0.944,
+     "en-humanities-medium-02": 0.964,
+     "en-law-long-03": 0.967,
+     "hu-coffee": 0.803,
+     "hu-gametheory": 1.0,
+     "hu-immune": 0.495
+    }
+   }
+  },
+  "puli": {
+   "model": "PULI-LlumiX 8B",
+   "runs": {
+    "B-doc-L": "B-doc-L_20261007_110220",
+    "E0": "E0_20261008_142600",
+    "E1": "E1_20261012_025859",
+    "E2": "E2_20261021_170342",
+    "E2f": "E2f_20261022_141608",
+    "E2h": "E2h_20261026_003720",
+    "E2x": "E2x_20261022_001205",
+    "E3": "E3_20261028_130345",
+    "E5a": "E5a_20261029_005931",
+    "E5b": "E5b_20261029_021544",
+    "E5c": "E5c_20261029_030854"
+   },
+   "n_documents": 30,
+   "documents_by_source": {
+    "hu-wiki": 24,
+    "hu-sajat": 3,
+    "en-openstax": 3
+   },
+   "infra_errors_excluded": 6,
+   "n_questions_judged": 2935,
+   "arms": {
+    "B-doc-L": {
+     "Q": 0.414,
+     "ci": [
+      0.351,
+      0.48
+     ],
+     "n_docs": 30,
+     "n_exams": 84,
+     "Q_min_doc": 0.25,
+     "docs_below_0.7": 26,
+     "failed_exams": 0,
+     "format_compliant": 0.033,
+     "grounding_rate": 0.482,
+     "blind_answerability": 0.818,
+     "distractor_validity": 0.32,
+     "coverage": 0.127,
+     "leakage_rate": 0.096,
+     "non_question_rate": 0.344,
+     "duplicate_rate": 0.787,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.86,
+     "questions_per_exam": 5.56,
+     "time_median_min": 0.246,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 0.996,
+     "judge_blind_coverage": 0.957,
+     "Q_pooled": 0.444,
+     "Q_pooled_ci": [
+      0.373,
+      0.518
+     ],
+     "G_pooled": 0.501,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 9920.5,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 6700.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 2.727,
+     "judge_clarity": 4.452,
+     "judge_distractor_quality": 2.621,
+     "judge_bloom_fit": 3.796,
+     "would_use": 0.267,
+     "n_questions": 467,
+     "higher_order_realized": 0.002,
+     "stem_len": 150.54
+    },
+    "E0": {
+     "Q": 0.283,
+     "ci": [
+      0.252,
+      0.313
+     ],
+     "n_docs": 30,
+     "n_exams": 90,
+     "Q_min_doc": 0.0,
+     "docs_below_0.7": 30,
+     "failed_exams": 0,
+     "format_compliant": 0.011,
+     "grounding_rate": 0.267,
+     "blind_answerability": 0.786,
+     "distractor_validity": 0.09,
+     "coverage": 0.095,
+     "leakage_rate": 0.176,
+     "non_question_rate": 0.261,
+     "duplicate_rate": 0.626,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.86,
+     "questions_per_exam": 1.789,
+     "time_median_min": 0.225,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 0.901,
+     "judge_blind_coverage": 0.882,
+     "Q_pooled": 0.284,
+     "Q_pooled_ci": [
+      0.251,
+      0.316
+     ],
+     "G_pooled": 0.292,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 8892.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 5660.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 1.338,
+     "judge_clarity": 3.683,
+     "judge_distractor_quality": 1.455,
+     "judge_bloom_fit": 2.269,
+     "would_use": 0.007,
+     "n_questions": 161,
+     "higher_order_realized": 0.006,
+     "stem_len": 120.155
+    },
+    "E1": {
+     "Q": 0.54,
+     "ci": [
+      0.479,
+      0.601
+     ],
+     "n_docs": 30,
+     "n_exams": 30,
+     "Q_min_doc": 0.15,
+     "docs_below_0.7": 24,
+     "failed_exams": 0,
+     "format_compliant": 0.467,
+     "grounding_rate": 0.581,
+     "blind_answerability": 0.621,
+     "distractor_validity": 0.491,
+     "coverage": 0.232,
+     "leakage_rate": 0.335,
+     "non_question_rate": 0.454,
+     "duplicate_rate": 0.621,
+     "meta_reference_rate": 0.004,
+     "recall@3": 0.86,
+     "questions_per_exam": 9.267,
+     "time_median_min": 95.913,
+     "calls_median": 24.0,
+     "unverified_mean": 6.667,
+     "judge_review_coverage": 0.475,
+     "judge_blind_coverage": 0.594,
+     "Q_pooled": 0.54,
+     "Q_pooled_ci": [
+      0.479,
+      0.601
+     ],
+     "G_pooled": 0.581,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 9210.5,
+     "vram_model_mib_median": 4.5,
+     "ollama_ps_vram_mib_median": 5660.0,
+     "llm_errors": 103,
+     "verifier_skipped": 0,
+     "parse_failures": 128,
+     "judge_correctness": 1.917,
+     "judge_clarity": 3.833,
+     "judge_distractor_quality": 2.076,
+     "judge_bloom_fit": 3.106,
+     "would_use": 0.152,
+     "n_questions": 278,
+     "higher_order_realized": 0.004,
+     "higher_order_planned": 0.435,
+     "bloom_match": 0.086,
+     "stem_len": 252.0
+    },
+    "E2": {
+     "Q": 0.673,
+     "ci": [
+      0.61,
+      0.735
+     ],
+     "n_docs": 30,
+     "n_exams": 30,
+     "Q_min_doc": 0.375,
+     "docs_below_0.7": 18,
+     "failed_exams": 0,
+     "format_compliant": 0.867,
+     "grounding_rate": 0.515,
+     "blind_answerability": 0.62,
+     "distractor_validity": 0.657,
+     "coverage": 0.207,
+     "leakage_rate": 0.124,
+     "non_question_rate": 0.217,
+     "duplicate_rate": 0.596,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.86,
+     "questions_per_exam": 9.933,
+     "time_median_min": 11.769,
+     "calls_median": 60.5,
+     "unverified_mean": 8.267,
+     "judge_review_coverage": 0.285,
+     "judge_blind_coverage": 0.359,
+     "Q_pooled": 0.673,
+     "Q_pooled_ci": [
+      0.61,
+      0.735
+     ],
+     "G_pooled": 0.515,
+     "exams_without_grounding": 2,
+     "vram_peak_mib_median": 10832.0,
+     "vram_model_mib_median": 0.5,
+     "ollama_ps_vram_mib_median": 5676.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 294,
+     "judge_correctness": 2.353,
+     "judge_clarity": 4.435,
+     "judge_distractor_quality": 2.918,
+     "judge_bloom_fit": 3.329,
+     "would_use": 0.294,
+     "n_questions": 298,
+     "higher_order_realized": 0.0,
+     "higher_order_planned": 0.436,
+     "bloom_match": 0.06,
+     "stem_len": 118.181
+    },
+    "E2f": {
+     "Q": 0.587,
+     "ci": [
+      0.534,
+      0.637
+     ],
+     "n_docs": 30,
+     "n_exams": 30,
+     "Q_min_doc": 0.25,
+     "docs_below_0.7": 22,
+     "failed_exams": 0,
+     "format_compliant": 0.8,
+     "grounding_rate": 0.472,
+     "blind_answerability": 0.524,
+     "distractor_validity": 0.552,
+     "coverage": 0.253,
+     "leakage_rate": 0.23,
+     "non_question_rate": 0.321,
+     "duplicate_rate": 0.556,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.86,
+     "questions_per_exam": 9.5,
+     "time_median_min": 10.518,
+     "calls_median": 40.0,
+     "unverified_mean": 7.667,
+     "judge_review_coverage": 0.442,
+     "judge_blind_coverage": 0.523,
+     "Q_pooled": 0.587,
+     "Q_pooled_ci": [
+      0.534,
+      0.637
+     ],
+     "G_pooled": 0.472,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 8042.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 5676.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 304,
+     "judge_correctness": 1.873,
+     "judge_clarity": 3.976,
+     "judge_distractor_quality": 2.119,
+     "judge_bloom_fit": 3.04,
+     "would_use": 0.167,
+     "n_questions": 285,
+     "higher_order_realized": 0.011,
+     "higher_order_planned": 0.446,
+     "bloom_match": 0.077,
+     "stem_len": 186.642
+    },
+    "E2h": {
+     "Q": 0.591,
+     "ci": [
+      0.534,
+      0.649
+     ],
+     "n_docs": 30,
+     "n_exams": 30,
+     "Q_min_doc": 0.25,
+     "docs_below_0.7": 24,
+     "failed_exams": 0,
+     "format_compliant": 0.767,
+     "grounding_rate": 0.472,
+     "blind_answerability": 0.534,
+     "distractor_validity": 0.593,
+     "coverage": 0.24,
+     "leakage_rate": 0.193,
+     "non_question_rate": 0.277,
+     "duplicate_rate": 0.506,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.86,
+     "questions_per_exam": 9.933,
+     "time_median_min": 11.775,
+     "calls_median": 55.5,
+     "unverified_mean": 8.567,
+     "judge_review_coverage": 0.463,
+     "judge_blind_coverage": 0.557,
+     "Q_pooled": 0.591,
+     "Q_pooled_ci": [
+      0.534,
+      0.649
+     ],
+     "G_pooled": 0.472,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 8044.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 5676.0,
+     "llm_errors": 1,
+     "verifier_skipped": 0,
+     "parse_failures": 328,
+     "judge_correctness": 2.13,
+     "judge_clarity": 4.094,
+     "judge_distractor_quality": 2.413,
+     "judge_bloom_fit": 3.232,
+     "would_use": 0.225,
+     "n_questions": 298,
+     "higher_order_realized": 0.017,
+     "higher_order_planned": 0.43,
+     "bloom_match": 0.101,
+     "stem_len": 169.953
+    },
+    "E2x": {
+     "Q": 0.67,
+     "ci": [
+      0.63,
+      0.71
+     ],
+     "n_docs": 30,
+     "n_exams": 30,
+     "Q_min_doc": 0.417,
+     "docs_below_0.7": 18,
+     "failed_exams": 0,
+     "format_compliant": 0.933,
+     "grounding_rate": 0.485,
+     "blind_answerability": 0.619,
+     "distractor_validity": 0.644,
+     "coverage": 0.224,
+     "leakage_rate": 0.148,
+     "non_question_rate": 0.212,
+     "duplicate_rate": 0.578,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.86,
+     "questions_per_exam": 9.9,
+     "time_median_min": 17.141,
+     "calls_median": 33.0,
+     "unverified_mean": 7.767,
+     "judge_review_coverage": 0.441,
+     "judge_blind_coverage": 0.559,
+     "Q_pooled": 0.67,
+     "Q_pooled_ci": [
+      0.63,
+      0.71
+     ],
+     "G_pooled": 0.485,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 6890.5,
+     "vram_model_mib_median": 55.0,
+     "ollama_ps_vram_mib_median": 5676.0,
+     "llm_errors": 395,
+     "verifier_skipped": 394,
+     "parse_failures": 284,
+     "judge_correctness": 2.053,
+     "judge_clarity": 4.29,
+     "judge_distractor_quality": 2.565,
+     "judge_bloom_fit": 3.237,
+     "would_use": 0.198,
+     "n_questions": 297,
+     "higher_order_realized": 0.003,
+     "higher_order_planned": 0.431,
+     "bloom_match": 0.088,
+     "stem_len": 113.091
+    },
+    "E3": {
+     "Q": 0.571,
+     "ci": [
+      0.46,
+      0.674
+     ],
+     "n_docs": 30,
+     "n_exams": 30,
+     "Q_min_doc": 0.0,
+     "docs_below_0.7": 20,
+     "failed_exams": 0,
+     "format_compliant": 0.8,
+     "grounding_rate": 0.672,
+     "blind_answerability": 0.509,
+     "distractor_validity": 0.597,
+     "coverage": 0.169,
+     "leakage_rate": 0.184,
+     "non_question_rate": 0.324,
+     "duplicate_rate": 0.536,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.86,
+     "questions_per_exam": 8.3,
+     "time_median_min": 16.713,
+     "calls_median": 80.0,
+     "unverified_mean": 7.067,
+     "judge_review_coverage": 0.426,
+     "judge_blind_coverage": 0.618,
+     "Q_pooled": 0.571,
+     "Q_pooled_ci": [
+      0.46,
+      0.674
+     ],
+     "G_pooled": 0.672,
+     "exams_without_grounding": 5,
+     "vram_peak_mib_median": 7285.5,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 5676.0,
+     "llm_errors": 1,
+     "verifier_skipped": 0,
+     "parse_failures": 620,
+     "judge_correctness": 2.5,
+     "judge_clarity": 3.981,
+     "judge_distractor_quality": 2.632,
+     "judge_bloom_fit": 3.311,
+     "would_use": 0.255,
+     "n_questions": 249,
+     "higher_order_realized": 0.008,
+     "higher_order_planned": 0.434,
+     "bloom_match": 0.076,
+     "stem_len": 125.317
+    },
+    "E5a": {
+     "Q": 0.277,
+     "ci": [
+      0.213,
+      0.343
+     ],
+     "n_docs": 30,
+     "n_exams": 90,
+     "Q_min_doc": 0.0,
+     "docs_below_0.7": 29,
+     "failed_exams": 26,
+     "format_compliant": 0.056,
+     "grounding_rate": 0.411,
+     "blind_answerability": 0.717,
+     "distractor_validity": 0.321,
+     "coverage": 0.175,
+     "leakage_rate": 0.222,
+     "non_question_rate": 0.37,
+     "duplicate_rate": 0.777,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.9,
+     "questions_per_exam": 2.311,
+     "time_median_min": 0.314,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 0.702,
+     "judge_blind_coverage": 0.846,
+     "Q_pooled": 0.358,
+     "Q_pooled_ci": [
+      0.282,
+      0.438
+     ],
+     "G_pooled": 0.452,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 7281.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 5676.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 2.671,
+     "judge_clarity": 3.959,
+     "judge_distractor_quality": 2.568,
+     "judge_bloom_fit": 2.801,
+     "would_use": 0.384,
+     "n_questions": 208,
+     "higher_order_realized": 0.019,
+     "stem_len": 159.663
+    },
+    "E5b": {
+     "Q": 0.252,
+     "ci": [
+      0.202,
+      0.305
+     ],
+     "n_docs": 30,
+     "n_exams": 90,
+     "Q_min_doc": 0.0,
+     "docs_below_0.7": 29,
+     "failed_exams": 13,
+     "format_compliant": 0.044,
+     "grounding_rate": 0.29,
+     "blind_answerability": 0.755,
+     "distractor_validity": 0.177,
+     "coverage": 0.167,
+     "leakage_rate": 0.167,
+     "non_question_rate": 0.207,
+     "duplicate_rate": 0.568,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.872,
+     "questions_per_exam": 1.378,
+     "time_median_min": 0.201,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 0.815,
+     "judge_blind_coverage": 0.774,
+     "Q_pooled": 0.297,
+     "Q_pooled_ci": [
+      0.235,
+      0.36
+     ],
+     "G_pooled": 0.298,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 7280.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 5676.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 1.515,
+     "judge_clarity": 3.386,
+     "judge_distractor_quality": 1.663,
+     "judge_bloom_fit": 2.208,
+     "would_use": 0.059,
+     "n_questions": 124,
+     "higher_order_realized": 0.0,
+     "stem_len": 132.524
+    },
+    "E5c": {
+     "Q": 0.249,
+     "ci": [
+      0.204,
+      0.296
+     ],
+     "n_docs": 30,
+     "n_exams": 90,
+     "Q_min_doc": 0.0,
+     "docs_below_0.7": 30,
+     "failed_exams": 22,
+     "format_compliant": 0.033,
+     "grounding_rate": 0.276,
+     "blind_answerability": 0.761,
+     "distractor_validity": 0.216,
+     "coverage": 0.136,
+     "leakage_rate": 0.109,
+     "non_question_rate": 0.207,
+     "duplicate_rate": 0.797,
+     "meta_reference_rate": 0.011,
+     "recall@3": 0.876,
+     "questions_per_exam": 3.0,
+     "time_median_min": 0.299,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 0.756,
+     "judge_blind_coverage": 0.804,
+     "Q_pooled": 0.331,
+     "Q_pooled_ci": [
+      0.28,
+      0.387
+     ],
+     "G_pooled": 0.295,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 7280.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 5676.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 1.789,
+     "judge_clarity": 4.162,
+     "judge_distractor_quality": 2.167,
+     "judge_bloom_fit": 3.005,
+     "would_use": 0.142,
+     "n_questions": 270,
+     "higher_order_realized": 0.004,
+     "stem_len": 93.289
+    }
+   },
+   "subsets": {
+    "B-doc-L": {
+     "hu-sajat": [
+      0.483,
+      3
+     ],
+     "hu-wiki": [
+      0.394,
+      24
+     ],
+     "en-openstax": [
+      0.503,
+      3
+     ],
+     "short": [
+      0.461,
+      12
+     ],
+     "medium": [
+      0.306,
+      9
+     ],
+     "long": [
+      0.46,
+      9
+     ]
+    },
+    "E0": {
+     "hu-sajat": [
+      0.389,
+      3
+     ],
+     "hu-wiki": [
+      0.274,
+      24
+     ],
+     "en-openstax": [
+      0.25,
+      3
+     ],
+     "short": [
+      0.315,
+      12
+     ],
+     "medium": [
+      0.302,
+      9
+     ],
+     "long": [
+      0.221,
+      9
+     ]
+    },
+    "E1": {
+     "hu-sajat": [
+      0.507,
+      3
+     ],
+     "hu-wiki": [
+      0.528,
+      24
+     ],
+     "en-openstax": [
+      0.664,
+      3
+     ],
+     "short": [
+      0.56,
+      12
+     ],
+     "medium": [
+      0.548,
+      9
+     ],
+     "long": [
+      0.505,
+      9
+     ]
+    },
+    "E2": {
+     "hu-sajat": [
+      0.744,
+      3
+     ],
+     "hu-wiki": [
+      0.661,
+      24
+     ],
+     "en-openstax": [
+      0.703,
+      3
+     ],
+     "short": [
+      0.684,
+      12
+     ],
+     "medium": [
+      0.671,
+      9
+     ],
+     "long": [
+      0.661,
+      9
+     ]
+    },
+    "E2f": {
+     "hu-sajat": [
+      0.765,
+      3
+     ],
+     "hu-wiki": [
+      0.561,
+      24
+     ],
+     "en-openstax": [
+      0.621,
+      3
+     ],
+     "short": [
+      0.6,
+      12
+     ],
+     "medium": [
+      0.598,
+      9
+     ],
+     "long": [
+      0.559,
+      9
+     ]
+    },
+    "E2h": {
+     "hu-sajat": [
+      0.704,
+      3
+     ],
+     "hu-wiki": [
+      0.581,
+      24
+     ],
+     "en-openstax": [
+      0.56,
+      3
+     ],
+     "short": [
+      0.59,
+      12
+     ],
+     "medium": [
+      0.542,
+      9
+     ],
+     "long": [
+      0.642,
+      9
+     ]
+    },
+    "E2x": {
+     "hu-sajat": [
+      0.753,
+      3
+     ],
+     "hu-wiki": [
+      0.66,
+      24
+     ],
+     "en-openstax": [
+      0.674,
+      3
+     ],
+     "short": [
+      0.671,
+      12
+     ],
+     "medium": [
+      0.627,
+      9
+     ],
+     "long": [
+      0.713,
+      9
+     ]
+    },
+    "E3": {
+     "hu-sajat": [
+      0.255,
+      3
+     ],
+     "hu-wiki": [
+      0.603,
+      24
+     ],
+     "en-openstax": [
+      0.629,
+      3
+     ],
+     "short": [
+      0.478,
+      12
+     ],
+     "medium": [
+      0.691,
+      9
+     ],
+     "long": [
+      0.574,
+      9
+     ]
+    },
+    "E5a": {
+     "hu-sajat": [
+      0.37,
+      3
+     ],
+     "hu-wiki": [
+      0.255,
+      24
+     ],
+     "en-openstax": [
+      0.358,
+      3
+     ],
+     "short": [
+      0.349,
+      12
+     ],
+     "medium": [
+      0.191,
+      9
+     ],
+     "long": [
+      0.266,
+      9
+     ]
+    },
+    "E5b": {
+     "hu-sajat": [
+      0.194,
+      3
+     ],
+     "hu-wiki": [
+      0.257,
+      24
+     ],
+     "en-openstax": [
+      0.269,
+      3
+     ],
+     "short": [
+      0.203,
+      12
+     ],
+     "medium": [
+      0.292,
+      9
+     ],
+     "long": [
+      0.278,
+      9
+     ]
+    },
+    "E5c": {
+     "hu-sajat": [
+      0.25,
+      3
+     ],
+     "hu-wiki": [
+      0.238,
+      24
+     ],
+     "en-openstax": [
+      0.337,
+      3
+     ],
+     "short": [
+      0.276,
+      12
+     ],
+     "medium": [
+      0.196,
+      9
+     ],
+     "long": [
+      0.266,
+      9
+     ]
+    }
+   },
+   "tests": [
+    {
+     "name": "tervezes",
+     "new": "E1",
+     "ref": "E0",
+     "n": 30,
+     "ref_Q": 0.283,
+     "new_Q": 0.54,
+     "diff": 0.257,
+     "r_rb": 0.97,
+     "p": 5.05e-06,
+     "better_docs": 27,
+     "worse_docs": 2,
+     "p_holm": 2.52e-05
+    },
+    {
+     "name": "ellenorzes",
+     "new": "E2",
+     "ref": "E1",
+     "n": 30,
+     "ref_Q": 0.54,
+     "new_Q": 0.673,
+     "diff": 0.134,
+     "r_rb": 0.48,
+     "p": 0.0218,
+     "better_docs": 19,
+     "worse_docs": 10,
+     "p_holm": 0.0655
+    },
+    {
+     "name": "teljes_modszer",
+     "new": "E2",
+     "ref": "E0",
+     "n": 30,
+     "ref_Q": 0.283,
+     "new_Q": 0.673,
+     "diff": 0.391,
+     "r_rb": 0.996,
+     "p": 1.91e-06,
+     "better_docs": 29,
+     "worse_docs": 1,
+     "p_holm": 1.15e-05
+    },
+    {
+     "name": "modszer_vs_teljes_dok",
+     "new": "E2",
+     "ref": "B-doc-L",
+     "n": 30,
+     "ref_Q": 0.414,
+     "new_Q": 0.673,
+     "diff": 0.259,
+     "r_rb": 0.83,
+     "p": 9.48e-05,
+     "better_docs": 24,
+     "worse_docs": 5,
+     "p_holm": 0.000379
+    },
+    {
+     "name": "terv_vs_teljes_dok",
+     "new": "E1",
+     "ref": "B-doc-L",
+     "n": 30,
+     "ref_Q": 0.414,
+     "new_Q": 0.54,
+     "diff": 0.126,
+     "r_rb": 0.531,
+     "p": 0.0125,
+     "better_docs": 20,
+     "worse_docs": 9
+    },
+    {
+     "name": "csak_szabaly_vs_E2",
+     "new": "E2x",
+     "ref": "E2",
+     "n": 30,
+     "ref_Q": 0.673,
+     "new_Q": 0.67,
+     "diff": -0.003,
+     "r_rb": 0.006,
+     "p": 0.975,
+     "better_docs": 14,
+     "worse_docs": 16,
+     "p_holm": 0.975
+    },
+    {
+     "name": "graf",
+     "new": "E3",
+     "ref": "E2",
+     "n": 30,
+     "ref_Q": 0.673,
+     "new_Q": 0.571,
+     "diff": -0.103,
+     "r_rb": -0.181,
+     "p": 0.388,
+     "better_docs": 15,
+     "worse_docs": 15,
+     "p_holm": 0.775
+    },
+    {
+     "name": "vak_proba_nelkul",
+     "new": "E2f",
+     "ref": "E2",
+     "n": 30,
+     "ref_Q": 0.673,
+     "new_Q": 0.587,
+     "diff": -0.086,
+     "r_rb": -0.514,
+     "p": 0.014,
+     "better_docs": 9,
+     "worse_docs": 21
+    },
+    {
+     "name": "hibrid",
+     "new": "E2h",
+     "ref": "E2",
+     "n": 30,
+     "ref_Q": 0.673,
+     "new_Q": 0.591,
+     "diff": -0.082,
+     "r_rb": -0.398,
+     "p": 0.0614,
+     "better_docs": 12,
+     "worse_docs": 17
+    },
+    {
+     "name": "regi_kodolo",
+     "new": "E5a",
+     "ref": "E0",
+     "n": 30,
+     "ref_Q": 0.283,
+     "new_Q": 0.277,
+     "diff": -0.006,
+     "r_rb": -0.071,
+     "p": 0.736,
+     "better_docs": 15,
+     "worse_docs": 14
+    },
+    {
+     "name": "szoras_kuszob",
+     "new": "E5b",
+     "ref": "E0",
+     "n": 30,
+     "ref_Q": 0.283,
+     "new_Q": 0.252,
+     "diff": -0.031,
+     "r_rb": -0.345,
+     "p": 0.198,
+     "better_docs": 6,
+     "worse_docs": 12
+    },
+    {
+     "name": "fix_darabolas",
+     "new": "E5c",
+     "ref": "E0",
+     "n": 30,
+     "ref_Q": 0.283,
+     "new_Q": 0.249,
+     "diff": -0.034,
+     "r_rb": -0.274,
+     "p": 0.222,
+     "better_docs": 9,
+     "worse_docs": 17
+    }
+   ],
+   "verifier": {
+    "E2": {
+     "n": 85,
+     "passed_share": 0.188,
+     "precision": 0.562,
+     "recall": 0.214,
+     "grounded_if_flagged": 0.478,
+     "kappa": 0.052,
+     "first_attempt_pass": 0.047,
+     "attempts_per_slot": 1.953,
+     "reasons": {
+      "szivargas": 82,
+      "nem_kerdes": 142,
+      "forma": 161,
+      "duplikatum": 383,
+      "vak_elteres": 116,
+      "egyeb": 49,
+      "diszt_igaz": 5,
+      "hivatkozas": 4
+     }
+    },
+    "E2f": {
+     "n": 126,
+     "passed_share": 0.151,
+     "precision": 0.789,
+     "recall": 0.246,
+     "grounded_if_flagged": 0.43,
+     "kappa": 0.188,
+     "first_attempt_pass": 0.073,
+     "attempts_per_slot": 1.927,
+     "reasons": {
+      "szivargas": 126,
+      "nem_kerdes": 172,
+      "forma": 155,
+      "duplikatum": 368,
+      "diszt_igaz": 13,
+      "egyeb": 73,
+      "hivatkozas": 9
+     }
+    },
+    "E2h": {
+     "n": 138,
+     "passed_share": 0.181,
+     "precision": 0.64,
+     "recall": 0.242,
+     "grounded_if_flagged": 0.442,
+     "kappa": 0.121,
+     "first_attempt_pass": 0.027,
+     "attempts_per_slot": 1.973,
+     "reasons": {
+      "szivargas": 108,
+      "nem_kerdes": 173,
+      "vak_elteres": 123,
+      "forma": 152,
+      "duplikatum": 351,
+      "diszt_igaz": 4,
+      "hivatkozas": 13,
+      "egyeb": 64
+     }
+    },
+    "E2x": {
+     "n": 131,
+     "passed_share": 0.252,
+     "precision": 0.485,
+     "recall": 0.242,
+     "grounded_if_flagged": 0.51,
+     "kappa": -0.019,
+     "first_attempt_pass": 0.07,
+     "attempts_per_slot": 1.93,
+     "reasons": {
+      "szivargas": 96,
+      "nem_kerdes": 139,
+      "duplikatum": 383,
+      "forma": 155,
+      "egyeb": 58,
+      "hivatkozas": 5
+     }
+    },
+    "E3": {
+     "n": 106,
+     "passed_share": 0.142,
+     "precision": 0.667,
+     "recall": 0.145,
+     "grounded_if_flagged": 0.648,
+     "kappa": 0.007,
+     "first_attempt_pass": 0.02,
+     "attempts_per_slot": 1.98,
+     "reasons": {
+      "vak_elteres": 81,
+      "duplikatum": 302,
+      "forma": 111,
+      "szivargas": 106,
+      "nem_kerdes": 165,
+      "diszt_igaz": 2,
+      "egyeb": 63,
+      "hivatkozas": 11
+     }
+    }
+   },
+   "per_doc_Q": {
+    "B-doc-L": {
+     "en-economics-short-01": 0.733,
+     "en-humanities-medium-02": 0.25,
+     "en-law-long-03": 0.528,
+     "hu-coffee": 0.545,
+     "hu-gametheory": 0.319,
+     "hu-immune": 0.583,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.25,
+     "hu-wiki-long-06-kek-balna": 0.667,
+     "hu-wiki-long-09-hamburg": 0.75,
+     "hu-wiki-long-12-matyas-templom": 0.25,
+     "hu-wiki-long-15-arany-janos-kolto": 0.5,
+     "hu-wiki-long-18-pompeii": 0.583,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.363,
+     "hu-wiki-long-24-feher-golya": 0.25,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.25,
+     "hu-wiki-medium-05-lady-gaga": 0.417,
+     "hu-wiki-medium-08-berlini-fal": 0.25,
+     "hu-wiki-medium-11-seuso-kincs": 0.25,
+     "hu-wiki-medium-14-joseph-haydn": 0.333,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.25,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.5,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.25,
+     "hu-wiki-short-01-nurnbergi-per": 0.25,
+     "hu-wiki-short-04-liszt-ferenc": 0.567,
+     "hu-wiki-short-07-isztambul": 0.736,
+     "hu-wiki-short-10-torokorszag": 0.265,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.25,
+     "hu-wiki-short-16-feher-capa": 0.75,
+     "hu-wiki-short-19-asperger-szindroma": 0.25,
+     "hu-wiki-short-22-gardonyi-geza": 0.279
+    },
+    "E0": {
+     "en-economics-short-01": 0.25,
+     "en-humanities-medium-02": 0.25,
+     "en-law-long-03": 0.25,
+     "hu-coffee": 0.417,
+     "hu-gametheory": 0.333,
+     "hu-immune": 0.417,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.25,
+     "hu-wiki-long-06-kek-balna": 0.0,
+     "hu-wiki-long-09-hamburg": 0.235,
+     "hu-wiki-long-12-matyas-templom": 0.25,
+     "hu-wiki-long-15-arany-janos-kolto": 0.25,
+     "hu-wiki-long-18-pompeii": 0.25,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.25,
+     "hu-wiki-long-24-feher-golya": 0.25,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.25,
+     "hu-wiki-medium-05-lady-gaga": 0.25,
+     "hu-wiki-medium-08-berlini-fal": 0.417,
+     "hu-wiki-medium-11-seuso-kincs": 0.25,
+     "hu-wiki-medium-14-joseph-haydn": 0.514,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.25,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.292,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.25,
+     "hu-wiki-short-01-nurnbergi-per": 0.25,
+     "hu-wiki-short-04-liszt-ferenc": 0.25,
+     "hu-wiki-short-07-isztambul": 0.333,
+     "hu-wiki-short-10-torokorszag": 0.361,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.25,
+     "hu-wiki-short-16-feher-capa": 0.333,
+     "hu-wiki-short-19-asperger-szindroma": 0.333,
+     "hu-wiki-short-22-gardonyi-geza": 0.25
+    },
+    "E1": {
+     "en-economics-short-01": 0.667,
+     "en-humanities-medium-02": 0.833,
+     "en-law-long-03": 0.492,
+     "hu-coffee": 0.531,
+     "hu-gametheory": 0.507,
+     "hu-immune": 0.483,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.25,
+     "hu-wiki-long-06-kek-balna": 0.458,
+     "hu-wiki-long-09-hamburg": 0.375,
+     "hu-wiki-long-12-matyas-templom": 0.304,
+     "hu-wiki-long-15-arany-janos-kolto": 0.6,
+     "hu-wiki-long-18-pompeii": 0.65,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.833,
+     "hu-wiki-long-24-feher-golya": 0.579,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.444,
+     "hu-wiki-medium-05-lady-gaga": 0.542,
+     "hu-wiki-medium-08-berlini-fal": 0.725,
+     "hu-wiki-medium-11-seuso-kincs": 0.533,
+     "hu-wiki-medium-14-joseph-haydn": 0.625,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.433,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.237,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.562,
+     "hu-wiki-short-01-nurnbergi-per": 0.543,
+     "hu-wiki-short-04-liszt-ferenc": 0.75,
+     "hu-wiki-short-07-isztambul": 0.762,
+     "hu-wiki-short-10-torokorszag": 0.667,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.75,
+     "hu-wiki-short-16-feher-capa": 0.5,
+     "hu-wiki-short-19-asperger-szindroma": 0.405,
+     "hu-wiki-short-22-gardonyi-geza": 0.15
+    },
+    "E2": {
+     "en-economics-short-01": 0.542,
+     "en-humanities-medium-02": 0.833,
+     "en-law-long-03": 0.733,
+     "hu-coffee": 0.4,
+     "hu-gametheory": 0.833,
+     "hu-immune": 1.0,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.643,
+     "hu-wiki-long-06-kek-balna": 0.854,
+     "hu-wiki-long-09-hamburg": 0.854,
+     "hu-wiki-long-12-matyas-templom": 0.375,
+     "hu-wiki-long-15-arany-janos-kolto": 0.604,
+     "hu-wiki-long-18-pompeii": 0.5,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.8,
+     "hu-wiki-long-24-feher-golya": 0.583,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.458,
+     "hu-wiki-medium-05-lady-gaga": 1.0,
+     "hu-wiki-medium-08-berlini-fal": 0.75,
+     "hu-wiki-medium-11-seuso-kincs": 0.75,
+     "hu-wiki-medium-14-joseph-haydn": 0.562,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.667,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.5,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.521,
+     "hu-wiki-short-01-nurnbergi-per": 0.514,
+     "hu-wiki-short-04-liszt-ferenc": 0.625,
+     "hu-wiki-short-07-isztambul": 0.542,
+     "hu-wiki-short-10-torokorszag": 0.915,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.662,
+     "hu-wiki-short-16-feher-capa": 0.542,
+     "hu-wiki-short-19-asperger-szindroma": 1.0,
+     "hu-wiki-short-22-gardonyi-geza": 0.637
+    },
+    "E2f": {
+     "en-economics-short-01": 0.467,
+     "en-humanities-medium-02": 0.729,
+     "en-law-long-03": 0.667,
+     "hu-coffee": 0.646,
+     "hu-gametheory": 0.783,
+     "hu-immune": 0.867,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.25,
+     "hu-wiki-long-06-kek-balna": 0.479,
+     "hu-wiki-long-09-hamburg": 0.714,
+     "hu-wiki-long-12-matyas-templom": 0.325,
+     "hu-wiki-long-15-arany-janos-kolto": 0.688,
+     "hu-wiki-long-18-pompeii": 0.537,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.7,
+     "hu-wiki-long-24-feher-golya": 0.667,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.75,
+     "hu-wiki-medium-05-lady-gaga": 0.5,
+     "hu-wiki-medium-08-berlini-fal": 0.333,
+     "hu-wiki-medium-11-seuso-kincs": 0.688,
+     "hu-wiki-medium-14-joseph-haydn": 0.75,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.5,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.537,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.594,
+     "hu-wiki-short-01-nurnbergi-per": 0.536,
+     "hu-wiki-short-04-liszt-ferenc": 0.583,
+     "hu-wiki-short-07-isztambul": 0.438,
+     "hu-wiki-short-10-torokorszag": 0.667,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.567,
+     "hu-wiki-short-16-feher-capa": 0.509,
+     "hu-wiki-short-19-asperger-szindroma": 0.725,
+     "hu-wiki-short-22-gardonyi-geza": 0.417
+    },
+    "E2h": {
+     "en-economics-short-01": 0.458,
+     "en-humanities-medium-02": 0.588,
+     "en-law-long-03": 0.633,
+     "hu-coffee": 0.569,
+     "hu-gametheory": 0.9,
+     "hu-immune": 0.642,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.517,
+     "hu-wiki-long-06-kek-balna": 0.741,
+     "hu-wiki-long-09-hamburg": 0.938,
+     "hu-wiki-long-12-matyas-templom": 0.562,
+     "hu-wiki-long-15-arany-janos-kolto": 0.631,
+     "hu-wiki-long-18-pompeii": 0.667,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.769,
+     "hu-wiki-long-24-feher-golya": 0.325,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.375,
+     "hu-wiki-medium-05-lady-gaga": 0.875,
+     "hu-wiki-medium-08-berlini-fal": 0.592,
+     "hu-wiki-medium-11-seuso-kincs": 0.475,
+     "hu-wiki-medium-14-joseph-haydn": 0.562,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.25,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.537,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.625,
+     "hu-wiki-short-01-nurnbergi-per": 0.525,
+     "hu-wiki-short-04-liszt-ferenc": 0.753,
+     "hu-wiki-short-07-isztambul": 0.371,
+     "hu-wiki-short-10-torokorszag": 0.475,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.604,
+     "hu-wiki-short-16-feher-capa": 0.646,
+     "hu-wiki-short-19-asperger-szindroma": 0.488,
+     "hu-wiki-short-22-gardonyi-geza": 0.65
+    },
+    "E2x": {
+     "en-economics-short-01": 0.667,
+     "en-humanities-medium-02": 0.604,
+     "en-law-long-03": 0.75,
+     "hu-coffee": 0.792,
+     "hu-gametheory": 0.783,
+     "hu-immune": 0.683,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.483,
+     "hu-wiki-long-06-kek-balna": 0.875,
+     "hu-wiki-long-09-hamburg": 0.838,
+     "hu-wiki-long-12-matyas-templom": 0.6,
+     "hu-wiki-long-15-arany-janos-kolto": 0.692,
+     "hu-wiki-long-18-pompeii": 0.771,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.741,
+     "hu-wiki-long-24-feher-golya": 0.667,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.792,
+     "hu-wiki-medium-05-lady-gaga": 0.812,
+     "hu-wiki-medium-08-berlini-fal": 0.725,
+     "hu-wiki-medium-11-seuso-kincs": 0.67,
+     "hu-wiki-medium-14-joseph-haydn": 0.588,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.562,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.417,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.475,
+     "hu-wiki-short-01-nurnbergi-per": 0.615,
+     "hu-wiki-short-04-liszt-ferenc": 0.688,
+     "hu-wiki-short-07-isztambul": 0.708,
+     "hu-wiki-short-10-torokorszag": 0.607,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.65,
+     "hu-wiki-short-16-feher-capa": 0.533,
+     "hu-wiki-short-19-asperger-szindroma": 0.556,
+     "hu-wiki-short-22-gardonyi-geza": 0.771
+    },
+    "E3": {
+     "en-economics-short-01": 0.555,
+     "en-humanities-medium-02": 0.658,
+     "en-law-long-03": 0.675,
+     "hu-coffee": 0.764,
+     "hu-gametheory": 0.0,
+     "hu-immune": 0.0,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.8,
+     "hu-wiki-long-06-kek-balna": 0.644,
+     "hu-wiki-long-09-hamburg": 0.628,
+     "hu-wiki-long-12-matyas-templom": 0.45,
+     "hu-wiki-long-15-arany-janos-kolto": 0.646,
+     "hu-wiki-long-18-pompeii": 0.417,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.312,
+     "hu-wiki-long-24-feher-golya": 0.592,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.0,
+     "hu-wiki-medium-05-lady-gaga": 0.975,
+     "hu-wiki-medium-08-berlini-fal": 0.975,
+     "hu-wiki-medium-11-seuso-kincs": 0.675,
+     "hu-wiki-medium-14-joseph-haydn": 0.72,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.958,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.726,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.533,
+     "hu-wiki-short-01-nurnbergi-per": 0.525,
+     "hu-wiki-short-04-liszt-ferenc": 0.825,
+     "hu-wiki-short-07-isztambul": 0.646,
+     "hu-wiki-short-10-torokorszag": 0.0,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.583,
+     "hu-wiki-short-16-feher-capa": 1.0,
+     "hu-wiki-short-19-asperger-szindroma": 0.833,
+     "hu-wiki-short-22-gardonyi-geza": 0.0
+    },
+    "E5a": {
+     "en-economics-short-01": 0.407,
+     "en-humanities-medium-02": 0.25,
+     "en-law-long-03": 0.417,
+     "hu-coffee": 0.5,
+     "hu-gametheory": 0.361,
+     "hu-immune": 0.25,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.417,
+     "hu-wiki-long-06-kek-balna": 0.333,
+     "hu-wiki-long-09-hamburg": 0.243,
+     "hu-wiki-long-12-matyas-templom": 0.083,
+     "hu-wiki-long-15-arany-janos-kolto": 0.481,
+     "hu-wiki-long-18-pompeii": 0.083,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.0,
+     "hu-wiki-long-24-feher-golya": 0.333,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.167,
+     "hu-wiki-medium-05-lady-gaga": 0.163,
+     "hu-wiki-medium-08-berlini-fal": 0.25,
+     "hu-wiki-medium-11-seuso-kincs": 0.083,
+     "hu-wiki-medium-14-joseph-haydn": 0.0,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.333,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.0,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.471,
+     "hu-wiki-short-01-nurnbergi-per": 0.417,
+     "hu-wiki-short-04-liszt-ferenc": 0.333,
+     "hu-wiki-short-07-isztambul": 0.087,
+     "hu-wiki-short-10-torokorszag": 0.167,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.585,
+     "hu-wiki-short-16-feher-capa": 0.75,
+     "hu-wiki-short-19-asperger-szindroma": 0.25,
+     "hu-wiki-short-22-gardonyi-geza": 0.083
+    },
+    "E5b": {
+     "en-economics-short-01": 0.25,
+     "en-humanities-medium-02": 0.306,
+     "en-law-long-03": 0.25,
+     "hu-coffee": 0.083,
+     "hu-gametheory": 0.333,
+     "hu-immune": 0.167,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.5,
+     "hu-wiki-long-06-kek-balna": 0.5,
+     "hu-wiki-long-09-hamburg": 0.25,
+     "hu-wiki-long-12-matyas-templom": 0.25,
+     "hu-wiki-long-15-arany-janos-kolto": 0.25,
+     "hu-wiki-long-18-pompeii": 0.25,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.0,
+     "hu-wiki-long-24-feher-golya": 0.25,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.25,
+     "hu-wiki-medium-05-lady-gaga": 0.417,
+     "hu-wiki-medium-08-berlini-fal": 0.25,
+     "hu-wiki-medium-11-seuso-kincs": 0.167,
+     "hu-wiki-medium-14-joseph-haydn": 0.75,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.25,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.0,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.241,
+     "hu-wiki-short-01-nurnbergi-per": 0.0,
+     "hu-wiki-short-04-liszt-ferenc": 0.25,
+     "hu-wiki-short-07-isztambul": 0.267,
+     "hu-wiki-short-10-torokorszag": 0.167,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.25,
+     "hu-wiki-short-16-feher-capa": 0.167,
+     "hu-wiki-short-19-asperger-szindroma": 0.25,
+     "hu-wiki-short-22-gardonyi-geza": 0.25
+    },
+    "E5c": {
+     "en-economics-short-01": 0.28,
+     "en-humanities-medium-02": 0.244,
+     "en-law-long-03": 0.486,
+     "hu-coffee": 0.167,
+     "hu-gametheory": 0.25,
+     "hu-immune": 0.333,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.083,
+     "hu-wiki-long-06-kek-balna": 0.0,
+     "hu-wiki-long-09-hamburg": 0.569,
+     "hu-wiki-long-12-matyas-templom": 0.25,
+     "hu-wiki-long-15-arany-janos-kolto": 0.247,
+     "hu-wiki-long-18-pompeii": 0.083,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.333,
+     "hu-wiki-long-24-feher-golya": 0.338,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.136,
+     "hu-wiki-medium-05-lady-gaga": 0.176,
+     "hu-wiki-medium-08-berlini-fal": 0.083,
+     "hu-wiki-medium-11-seuso-kincs": 0.167,
+     "hu-wiki-medium-14-joseph-haydn": 0.167,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.167,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.379,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.25,
+     "hu-wiki-short-01-nurnbergi-per": 0.417,
+     "hu-wiki-short-04-liszt-ferenc": 0.083,
+     "hu-wiki-short-07-isztambul": 0.417,
+     "hu-wiki-short-10-torokorszag": 0.278,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.333,
+     "hu-wiki-short-16-feher-capa": 0.25,
+     "hu-wiki-short-19-asperger-szindroma": 0.25,
+     "hu-wiki-short-22-gardonyi-geza": 0.25
+    }
+   }
+  },
+  "gemma": {
+   "model": "Gemma 3 12B",
+   "runs": {
+    "B-doc-L": "B-doc-L-gemma3-12b_20261029_222545",
+    "E0": "E0-gemma3-12b_20261029_225724",
+    "E1": "E1-gemma3-12b_20261030_162022",
+    "E2": "E2-gemma3-12b_20261029_232651",
+    "E2f": "E2f-gemma3-12b_20261031_011026",
+    "E2h": "E2h-gemma3-12b_20261031_035023",
+    "E2x": "E2x-gemma3-12b_20261030_203953",
+    "E3": "E3-gemma3-12b_20261031_065301",
+    "E5a": "E5a-gemma3-12b_20261031_113223",
+    "E5b": "E5b-gemma3-12b_20261031_140540",
+    "E5c": "E5c-gemma3-12b_20261031_164534"
+   },
+   "n_documents": 30,
+   "documents_by_source": {
+    "hu-wiki": 24,
+    "hu-sajat": 3,
+    "en-openstax": 3
+   },
+   "infra_errors_excluded": 8,
+   "n_questions_judged": 6212,
+   "arms": {
+    "B-doc-L": {
+     "Q": 0.961,
+     "ci": [
+      0.947,
+      0.974
+     ],
+     "n_docs": 30,
+     "n_exams": 86,
+     "Q_min_doc": 0.839,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.931,
+     "blind_answerability": 0.964,
+     "distractor_validity": 0.95,
+     "coverage": 0.426,
+     "leakage_rate": 0.001,
+     "non_question_rate": 0.0,
+     "duplicate_rate": 0.03,
+     "meta_reference_rate": 0.024,
+     "recall@3": 0.86,
+     "questions_per_exam": 10.0,
+     "time_median_min": 0.601,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 0.645,
+     "judge_blind_coverage": 0.835,
+     "Q_pooled": 0.961,
+     "Q_pooled_ci": [
+      0.947,
+      0.974
+     ],
+     "G_pooled": 0.931,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 12268.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 7993.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 4.668,
+     "judge_clarity": 4.89,
+     "judge_distractor_quality": 4.45,
+     "judge_bloom_fit": 4.036,
+     "would_use": 0.829,
+     "n_questions": 860,
+     "higher_order_realized": 0.033,
+     "stem_len": 62.78
+    },
+    "E0": {
+     "Q": 0.719,
+     "ci": [
+      0.639,
+      0.798
+     ],
+     "n_docs": 30,
+     "n_exams": 90,
+     "Q_min_doc": 0.392,
+     "docs_below_0.7": 16,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.456,
+     "blind_answerability": 0.868,
+     "distractor_validity": 0.569,
+     "coverage": 0.235,
+     "leakage_rate": 0.001,
+     "non_question_rate": 0.003,
+     "duplicate_rate": 0.085,
+     "meta_reference_rate": 0.176,
+     "recall@3": 0.86,
+     "questions_per_exam": 10.0,
+     "time_median_min": 0.575,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 0.638,
+     "judge_blind_coverage": 0.55,
+     "Q_pooled": 0.723,
+     "Q_pooled_ci": [
+      0.644,
+      0.8
+     ],
+     "G_pooled": 0.455,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 11736.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 7977.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 2.913,
+     "judge_clarity": 4.671,
+     "judge_distractor_quality": 3.382,
+     "judge_bloom_fit": 3.984,
+     "would_use": 0.415,
+     "n_questions": 900,
+     "higher_order_realized": 0.036,
+     "stem_len": 53.846
+    },
+    "E1": {
+     "Q": 0.946,
+     "ci": [
+      0.926,
+      0.965
+     ],
+     "n_docs": 30,
+     "n_exams": 30,
+     "Q_min_doc": 0.817,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.883,
+     "blind_answerability": 0.971,
+     "distractor_validity": 0.931,
+     "coverage": 0.425,
+     "leakage_rate": 0.0,
+     "non_question_rate": 0.0,
+     "duplicate_rate": 0.079,
+     "meta_reference_rate": 0.02,
+     "recall@3": 0.86,
+     "questions_per_exam": 10.0,
+     "time_median_min": 2.855,
+     "calls_median": 14.0,
+     "unverified_mean": 0.6,
+     "judge_review_coverage": 0.447,
+     "judge_blind_coverage": 0.56,
+     "Q_pooled": 0.946,
+     "Q_pooled_ci": [
+      0.926,
+      0.965
+     ],
+     "G_pooled": 0.883,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 11738.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 7977.0,
+     "llm_errors": 11,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 4.485,
+     "judge_clarity": 4.552,
+     "judge_distractor_quality": 4.373,
+     "judge_bloom_fit": 4.604,
+     "would_use": 0.851,
+     "n_questions": 300,
+     "higher_order_realized": 0.07,
+     "higher_order_planned": 0.433,
+     "bloom_match": 0.16,
+     "stem_len": 121.567
+    },
+    "E2": {
+     "Q": 0.952,
+     "ci": [
+      0.933,
+      0.969
+     ],
+     "n_docs": 30,
+     "n_exams": 30,
+     "Q_min_doc": 0.799,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.86,
+     "blind_answerability": 0.988,
+     "distractor_validity": 0.961,
+     "coverage": 0.432,
+     "leakage_rate": 0.0,
+     "non_question_rate": 0.0,
+     "duplicate_rate": 0.069,
+     "meta_reference_rate": 0.003,
+     "recall@3": 0.86,
+     "questions_per_exam": 10.0,
+     "time_median_min": 4.904,
+     "calls_median": 43.0,
+     "unverified_mean": 0.567,
+     "judge_review_coverage": 0.523,
+     "judge_blind_coverage": 0.647,
+     "Q_pooled": 0.952,
+     "Q_pooled_ci": [
+      0.933,
+      0.969
+     ],
+     "G_pooled": 0.86,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 11738.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 7977.0,
+     "llm_errors": 17,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 4.471,
+     "judge_clarity": 4.586,
+     "judge_distractor_quality": 4.363,
+     "judge_bloom_fit": 4.611,
+     "would_use": 0.847,
+     "n_questions": 300,
+     "higher_order_realized": 0.107,
+     "higher_order_planned": 0.433,
+     "bloom_match": 0.203,
+     "stem_len": 124.557
+    },
+    "E2f": {
+     "Q": 0.96,
+     "ci": [
+      0.943,
+      0.975
+     ],
+     "n_docs": 30,
+     "n_exams": 30,
+     "Q_min_doc": 0.846,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.906,
+     "blind_answerability": 0.973,
+     "distractor_validity": 0.959,
+     "coverage": 0.426,
+     "leakage_rate": 0.0,
+     "non_question_rate": 0.0,
+     "duplicate_rate": 0.064,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.86,
+     "questions_per_exam": 10.0,
+     "time_median_min": 3.928,
+     "calls_median": 27.5,
+     "unverified_mean": 0.467,
+     "judge_review_coverage": 0.457,
+     "judge_blind_coverage": 0.61,
+     "Q_pooled": 0.96,
+     "Q_pooled_ci": [
+      0.943,
+      0.975
+     ],
+     "G_pooled": 0.906,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 11737.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 7977.0,
+     "llm_errors": 21,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 4.547,
+     "judge_clarity": 4.54,
+     "judge_distractor_quality": 4.307,
+     "judge_bloom_fit": 4.577,
+     "would_use": 0.861,
+     "n_questions": 300,
+     "higher_order_realized": 0.09,
+     "higher_order_planned": 0.433,
+     "bloom_match": 0.163,
+     "stem_len": 123.213
+    },
+    "E2h": {
+     "Q": 0.96,
+     "ci": [
+      0.946,
+      0.973
+     ],
+     "n_docs": 30,
+     "n_exams": 30,
+     "Q_min_doc": 0.875,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.921,
+     "blind_answerability": 0.967,
+     "distractor_validity": 0.951,
+     "coverage": 0.411,
+     "leakage_rate": 0.0,
+     "non_question_rate": 0.0,
+     "duplicate_rate": 0.073,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.86,
+     "questions_per_exam": 10.0,
+     "time_median_min": 4.597,
+     "calls_median": 42.0,
+     "unverified_mean": 0.567,
+     "judge_review_coverage": 0.453,
+     "judge_blind_coverage": 0.567,
+     "Q_pooled": 0.96,
+     "Q_pooled_ci": [
+      0.946,
+      0.973
+     ],
+     "G_pooled": 0.921,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 11737.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 7977.0,
+     "llm_errors": 16,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 4.574,
+     "judge_clarity": 4.625,
+     "judge_distractor_quality": 4.456,
+     "judge_bloom_fit": 4.647,
+     "would_use": 0.875,
+     "n_questions": 300,
+     "higher_order_realized": 0.087,
+     "higher_order_planned": 0.433,
+     "bloom_match": 0.17,
+     "stem_len": 123.717
+    },
+    "E2x": {
+     "Q": 0.937,
+     "ci": [
+      0.915,
+      0.956
+     ],
+     "n_docs": 30,
+     "n_exams": 30,
+     "Q_min_doc": 0.798,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.866,
+     "blind_answerability": 0.938,
+     "distractor_validity": 0.943,
+     "coverage": 0.425,
+     "leakage_rate": 0.0,
+     "non_question_rate": 0.0,
+     "duplicate_rate": 0.077,
+     "meta_reference_rate": 0.0,
+     "recall@3": 0.86,
+     "questions_per_exam": 10.0,
+     "time_median_min": 7.375,
+     "calls_median": 14.5,
+     "unverified_mean": 0.567,
+     "judge_review_coverage": 0.44,
+     "judge_blind_coverage": 0.587,
+     "Q_pooled": 0.937,
+     "Q_pooled_ci": [
+      0.915,
+      0.956
+     ],
+     "G_pooled": 0.866,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 11740.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 7977.0,
+     "llm_errors": 415,
+     "verifier_skipped": 405,
+     "parse_failures": 0,
+     "judge_correctness": 4.455,
+     "judge_clarity": 4.561,
+     "judge_distractor_quality": 4.356,
+     "judge_bloom_fit": 4.652,
+     "would_use": 0.848,
+     "n_questions": 300,
+     "higher_order_realized": 0.09,
+     "higher_order_planned": 0.433,
+     "bloom_match": 0.147,
+     "stem_len": 123.097
+    },
+    "E3": {
+     "Q": 0.945,
+     "ci": [
+      0.926,
+      0.963
+     ],
+     "n_docs": 30,
+     "n_exams": 30,
+     "Q_min_doc": 0.804,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.915,
+     "blind_answerability": 0.962,
+     "distractor_validity": 0.901,
+     "coverage": 0.346,
+     "leakage_rate": 0.0,
+     "non_question_rate": 0.0,
+     "duplicate_rate": 0.071,
+     "meta_reference_rate": 0.017,
+     "recall@3": 0.86,
+     "questions_per_exam": 10.0,
+     "time_median_min": 6.106,
+     "calls_median": 55.5,
+     "unverified_mean": 1.067,
+     "judge_review_coverage": 0.45,
+     "judge_blind_coverage": 0.63,
+     "Q_pooled": 0.945,
+     "Q_pooled_ci": [
+      0.926,
+      0.963
+     ],
+     "G_pooled": 0.915,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 11737.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 7977.0,
+     "llm_errors": 20,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 4.556,
+     "judge_clarity": 4.696,
+     "judge_distractor_quality": 4.333,
+     "judge_bloom_fit": 4.348,
+     "would_use": 0.859,
+     "n_questions": 300,
+     "higher_order_realized": 0.067,
+     "higher_order_planned": 0.433,
+     "bloom_match": 0.117,
+     "stem_len": 106.437
+    },
+    "E5a": {
+     "Q": 0.959,
+     "ci": [
+      0.945,
+      0.971
+     ],
+     "n_docs": 30,
+     "n_exams": 89,
+     "Q_min_doc": 0.867,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 0.978,
+     "grounding_rate": 0.96,
+     "blind_answerability": 0.967,
+     "distractor_validity": 0.93,
+     "coverage": 0.449,
+     "leakage_rate": 0.002,
+     "non_question_rate": 0.002,
+     "duplicate_rate": 0.024,
+     "meta_reference_rate": 0.039,
+     "recall@3": 0.889,
+     "questions_per_exam": 9.91,
+     "time_median_min": 0.565,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 0.485,
+     "judge_blind_coverage": 0.853,
+     "Q_pooled": 0.959,
+     "Q_pooled_ci": [
+      0.945,
+      0.971
+     ],
+     "G_pooled": 0.96,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 11728.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 7977.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 4.759,
+     "judge_clarity": 4.876,
+     "judge_distractor_quality": 4.387,
+     "judge_bloom_fit": 3.834,
+     "would_use": 0.766,
+     "n_questions": 882,
+     "higher_order_realized": 0.012,
+     "stem_len": 63.873
+    },
+    "E5b": {
+     "Q": 0.773,
+     "ci": [
+      0.691,
+      0.849
+     ],
+     "n_docs": 30,
+     "n_exams": 88,
+     "Q_min_doc": 0.417,
+     "docs_below_0.7": 11,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.558,
+     "blind_answerability": 0.858,
+     "distractor_validity": 0.693,
+     "coverage": 0.369,
+     "leakage_rate": 0.0,
+     "non_question_rate": 0.0,
+     "duplicate_rate": 0.068,
+     "meta_reference_rate": 0.096,
+     "recall@3": 0.869,
+     "questions_per_exam": 10.0,
+     "time_median_min": 0.571,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 0.468,
+     "judge_blind_coverage": 0.592,
+     "Q_pooled": 0.777,
+     "Q_pooled_ci": [
+      0.696,
+      0.852
+     ],
+     "G_pooled": 0.559,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 11726.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 7977.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 3.214,
+     "judge_clarity": 4.762,
+     "judge_distractor_quality": 3.687,
+     "judge_bloom_fit": 3.854,
+     "would_use": 0.447,
+     "n_questions": 880,
+     "higher_order_realized": 0.016,
+     "stem_len": 56.651
+    },
+    "E5c": {
+     "Q": 0.969,
+     "ci": [
+      0.954,
+      0.98
+     ],
+     "n_docs": 30,
+     "n_exams": 89,
+     "Q_min_doc": 0.808,
+     "docs_below_0.7": 0,
+     "failed_exams": 0,
+     "format_compliant": 1.0,
+     "grounding_rate": 0.96,
+     "blind_answerability": 0.965,
+     "distractor_validity": 0.95,
+     "coverage": 0.395,
+     "leakage_rate": 0.002,
+     "non_question_rate": 0.006,
+     "duplicate_rate": 0.047,
+     "meta_reference_rate": 0.032,
+     "recall@3": 0.863,
+     "questions_per_exam": 10.0,
+     "time_median_min": 0.566,
+     "calls_median": 1.0,
+     "unverified_mean": null,
+     "judge_review_coverage": 0.479,
+     "judge_blind_coverage": 0.88,
+     "Q_pooled": 0.969,
+     "Q_pooled_ci": [
+      0.955,
+      0.981
+     ],
+     "G_pooled": 0.961,
+     "exams_without_grounding": 0,
+     "vram_peak_mib_median": 11728.0,
+     "vram_model_mib_median": 0.0,
+     "ollama_ps_vram_mib_median": 7977.0,
+     "llm_errors": 0,
+     "verifier_skipped": 0,
+     "parse_failures": 0,
+     "judge_correctness": 4.796,
+     "judge_clarity": 4.913,
+     "judge_distractor_quality": 4.427,
+     "judge_bloom_fit": 3.878,
+     "would_use": 0.796,
+     "n_questions": 890,
+     "higher_order_realized": 0.013,
+     "stem_len": 63.207
+    }
+   },
+   "subsets": {
+    "B-doc-L": {
+     "hu-sajat": [
+      0.971,
+      3
+     ],
+     "hu-wiki": [
+      0.959,
+      24
+     ],
+     "en-openstax": [
+      0.969,
+      3
+     ],
+     "short": [
+      0.979,
+      12
+     ],
+     "medium": [
+      0.963,
+      9
+     ],
+     "long": [
+      0.936,
+      9
+     ]
+    },
+    "E0": {
+     "hu-sajat": [
+      0.985,
+      3
+     ],
+     "hu-wiki": [
+      0.72,
+      24
+     ],
+     "en-openstax": [
+      0.442,
+      3
+     ],
+     "short": [
+      0.875,
+      12
+     ],
+     "medium": [
+      0.718,
+      9
+     ],
+     "long": [
+      0.512,
+      9
+     ]
+    },
+    "E1": {
+     "hu-sajat": [
+      0.979,
+      3
+     ],
+     "hu-wiki": [
+      0.946,
+      24
+     ],
+     "en-openstax": [
+      0.916,
+      3
+     ],
+     "short": [
+      0.944,
+      12
+     ],
+     "medium": [
+      0.939,
+      9
+     ],
+     "long": [
+      0.957,
+      9
+     ]
+    },
+    "E2": {
+     "hu-sajat": [
+      0.971,
+      3
+     ],
+     "hu-wiki": [
+      0.949,
+      24
+     ],
+     "en-openstax": [
+      0.964,
+      3
+     ],
+     "short": [
+      0.965,
+      12
+     ],
+     "medium": [
+      0.948,
+      9
+     ],
+     "long": [
+      0.94,
+      9
+     ]
+    },
+    "E2f": {
+     "hu-sajat": [
+      0.983,
+      3
+     ],
+     "hu-wiki": [
+      0.954,
+      24
+     ],
+     "en-openstax": [
+      0.978,
+      3
+     ],
+     "short": [
+      0.959,
+      12
+     ],
+     "medium": [
+      0.97,
+      9
+     ],
+     "long": [
+      0.95,
+      9
+     ]
+    },
+    "E2h": {
+     "hu-sajat": [
+      0.953,
+      3
+     ],
+     "hu-wiki": [
+      0.96,
+      24
+     ],
+     "en-openstax": [
+      0.97,
+      3
+     ],
+     "short": [
+      0.96,
+      12
+     ],
+     "medium": [
+      0.966,
+      9
+     ],
+     "long": [
+      0.954,
+      9
+     ]
+    },
+    "E2x": {
+     "hu-sajat": [
+      0.972,
+      3
+     ],
+     "hu-wiki": [
+      0.931,
+      24
+     ],
+     "en-openstax": [
+      0.942,
+      3
+     ],
+     "short": [
+      0.921,
+      12
+     ],
+     "medium": [
+      0.945,
+      9
+     ],
+     "long": [
+      0.948,
+      9
+     ]
+    },
+    "E3": {
+     "hu-sajat": [
+      0.986,
+      3
+     ],
+     "hu-wiki": [
+      0.939,
+      24
+     ],
+     "en-openstax": [
+      0.946,
+      3
+     ],
+     "short": [
+      0.968,
+      12
+     ],
+     "medium": [
+      0.926,
+      9
+     ],
+     "long": [
+      0.932,
+      9
+     ]
+    },
+    "E5a": {
+     "hu-sajat": [
+      0.98,
+      3
+     ],
+     "hu-wiki": [
+      0.955,
+      24
+     ],
+     "en-openstax": [
+      0.963,
+      3
+     ],
+     "short": [
+      0.961,
+      12
+     ],
+     "medium": [
+      0.95,
+      9
+     ],
+     "long": [
+      0.964,
+      9
+     ]
+    },
+    "E5b": {
+     "hu-sajat": [
+      0.982,
+      3
+     ],
+     "hu-wiki": [
+      0.777,
+      24
+     ],
+     "en-openstax": [
+      0.535,
+      3
+     ],
+     "short": [
+      0.872,
+      12
+     ],
+     "medium": [
+      0.904,
+      9
+     ],
+     "long": [
+      0.511,
+      9
+     ]
+    },
+    "E5c": {
+     "hu-sajat": [
+      0.981,
+      3
+     ],
+     "hu-wiki": [
+      0.969,
+      24
+     ],
+     "en-openstax": [
+      0.954,
+      3
+     ],
+     "short": [
+      0.975,
+      12
+     ],
+     "medium": [
+      0.952,
+      9
+     ],
+     "long": [
+      0.978,
+      9
+     ]
+    }
+   },
+   "tests": [
+    {
+     "name": "tervezes",
+     "new": "E1",
+     "ref": "E0",
+     "n": 30,
+     "ref_Q": 0.719,
+     "new_Q": 0.946,
+     "diff": 0.227,
+     "r_rb": 0.756,
+     "p": 0.000375,
+     "better_docs": 22,
+     "worse_docs": 7,
+     "p_holm": 0.00187
+    },
+    {
+     "name": "ellenorzes",
+     "new": "E2",
+     "ref": "E1",
+     "n": 30,
+     "ref_Q": 0.946,
+     "new_Q": 0.952,
+     "diff": 0.006,
+     "r_rb": 0.118,
+     "p": 0.585,
+     "better_docs": 15,
+     "worse_docs": 13,
+     "p_holm": 1.0
+    },
+    {
+     "name": "teljes_modszer",
+     "new": "E2",
+     "ref": "E0",
+     "n": 30,
+     "ref_Q": 0.719,
+     "new_Q": 0.952,
+     "diff": 0.233,
+     "r_rb": 0.816,
+     "p": 0.000124,
+     "better_docs": 23,
+     "worse_docs": 6,
+     "p_holm": 0.000744
+    },
+    {
+     "name": "modszer_vs_teljes_dok",
+     "new": "E2",
+     "ref": "B-doc-L",
+     "n": 30,
+     "ref_Q": 0.961,
+     "new_Q": 0.952,
+     "diff": -0.009,
+     "r_rb": -0.044,
+     "p": 0.837,
+     "better_docs": 16,
+     "worse_docs": 13,
+     "p_holm": 1.0
+    },
+    {
+     "name": "terv_vs_teljes_dok",
+     "new": "E1",
+     "ref": "B-doc-L",
+     "n": 30,
+     "ref_Q": 0.961,
+     "new_Q": 0.946,
+     "diff": -0.015,
+     "r_rb": -0.285,
+     "p": 0.204,
+     "better_docs": 12,
+     "worse_docs": 14
+    },
+    {
+     "name": "csak_szabaly_vs_E2",
+     "new": "E2x",
+     "ref": "E2",
+     "n": 30,
+     "ref_Q": 0.952,
+     "new_Q": 0.937,
+     "diff": -0.016,
+     "r_rb": -0.12,
+     "p": 0.574,
+     "better_docs": 14,
+     "worse_docs": 15,
+     "p_holm": 1.0
+    },
+    {
+     "name": "graf",
+     "new": "E3",
+     "ref": "E2",
+     "n": 30,
+     "ref_Q": 0.952,
+     "new_Q": 0.945,
+     "diff": -0.008,
+     "r_rb": -0.203,
+     "p": 0.375,
+     "better_docs": 9,
+     "worse_docs": 16,
+     "p_holm": 1.0
+    },
+    {
+     "name": "vak_proba_nelkul",
+     "new": "E2f",
+     "ref": "E2",
+     "n": 30,
+     "ref_Q": 0.952,
+     "new_Q": 0.96,
+     "diff": 0.007,
+     "r_rb": 0.16,
+     "p": 0.477,
+     "better_docs": 14,
+     "worse_docs": 12
+    },
+    {
+     "name": "hibrid",
+     "new": "E2h",
+     "ref": "E2",
+     "n": 30,
+     "ref_Q": 0.952,
+     "new_Q": 0.96,
+     "diff": 0.008,
+     "r_rb": 0.017,
+     "p": 0.939,
+     "better_docs": 12,
+     "worse_docs": 14
+    },
+    {
+     "name": "regi_kodolo",
+     "new": "E5a",
+     "ref": "E0",
+     "n": 30,
+     "ref_Q": 0.719,
+     "new_Q": 0.959,
+     "diff": 0.24,
+     "r_rb": 0.852,
+     "p": 8.17e-05,
+     "better_docs": 23,
+     "worse_docs": 5
+    },
+    {
+     "name": "szoras_kuszob",
+     "new": "E5b",
+     "ref": "E0",
+     "n": 30,
+     "ref_Q": 0.719,
+     "new_Q": 0.773,
+     "diff": 0.054,
+     "r_rb": 0.303,
+     "p": 0.152,
+     "better_docs": 18,
+     "worse_docs": 12
+    },
+    {
+     "name": "fix_darabolas",
+     "new": "E5c",
+     "ref": "E0",
+     "n": 30,
+     "ref_Q": 0.719,
+     "new_Q": 0.969,
+     "diff": 0.25,
+     "r_rb": 0.811,
+     "p": 2.69e-05,
+     "better_docs": 23,
+     "worse_docs": 7
+    }
+   ],
+   "verifier": {
+    "E2": {
+     "n": 157,
+     "passed_share": 0.949,
+     "precision": 0.879,
+     "recall": 0.949,
+     "grounded_if_flagged": 0.875,
+     "kappa": 0.003,
+     "first_attempt_pass": 0.697,
+     "attempts_per_slot": 1.303,
+     "reasons": {
+      "duplikatum": 103,
+      "egyeb": 14,
+      "meta": 9,
+      "vak_elteres": 21,
+      "forma": 2
+     }
+    },
+    "E2f": {
+     "n": 137,
+     "passed_share": 0.956,
+     "precision": 0.908,
+     "recall": 0.96,
+     "grounded_if_flagged": 0.833,
+     "kappa": 0.048,
+     "first_attempt_pass": 0.763,
+     "attempts_per_slot": 1.237,
+     "reasons": {
+      "duplikatum": 93,
+      "egyeb": 18,
+      "meta": 7,
+      "forma": 1
+     }
+    },
+    "E2h": {
+     "n": 136,
+     "passed_share": 0.963,
+     "precision": 0.916,
+     "recall": 0.96,
+     "grounded_if_flagged": 1.0,
+     "kappa": -0.053,
+     "first_attempt_pass": 0.713,
+     "attempts_per_slot": 1.287,
+     "reasons": {
+      "duplikatum": 105,
+      "szivargas": 3,
+      "vak_elteres": 14,
+      "egyeb": 14,
+      "hivatkozas": 1,
+      "meta": 5,
+      "forma": 3
+     }
+    },
+    "E2x": {
+     "n": 132,
+     "passed_share": 0.955,
+     "precision": 0.873,
+     "recall": 0.957,
+     "grounded_if_flagged": 0.833,
+     "kappa": 0.021,
+     "first_attempt_pass": 0.753,
+     "attempts_per_slot": 1.247,
+     "reasons": {
+      "duplikatum": 102,
+      "egyeb": 10,
+      "meta": 6,
+      "forma": 1,
+      "hivatkozas": 1
+     }
+    },
+    "E3": {
+     "n": 135,
+     "passed_share": 0.904,
+     "precision": 0.918,
+     "recall": 0.903,
+     "grounded_if_flagged": 0.923,
+     "kappa": -0.005,
+     "first_attempt_pass": 0.553,
+     "attempts_per_slot": 1.447,
+     "reasons": {
+      "duplikatum": 144,
+      "meta": 33,
+      "vak_elteres": 48,
+      "egyeb": 15,
+      "szivargas": 3,
+      "kulcs_nem_igazolt": 1,
+      "hivatkozas": 1
+     }
+    }
+   },
+   "per_doc_Q": {
+    "B-doc-L": {
+     "en-economics-short-01": 0.969,
+     "en-humanities-medium-02": 0.992,
+     "en-law-long-03": 0.947,
+     "hu-coffee": 0.994,
+     "hu-gametheory": 0.928,
+     "hu-immune": 0.992,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.931,
+     "hu-wiki-long-06-kek-balna": 0.935,
+     "hu-wiki-long-09-hamburg": 0.913,
+     "hu-wiki-long-12-matyas-templom": 1.0,
+     "hu-wiki-long-15-arany-janos-kolto": 0.839,
+     "hu-wiki-long-18-pompeii": 0.942,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 1.0,
+     "hu-wiki-long-24-feher-golya": 0.914,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.988,
+     "hu-wiki-medium-05-lady-gaga": 0.967,
+     "hu-wiki-medium-08-berlini-fal": 0.958,
+     "hu-wiki-medium-11-seuso-kincs": 0.988,
+     "hu-wiki-medium-14-joseph-haydn": 0.97,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.969,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.961,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.871,
+     "hu-wiki-short-01-nurnbergi-per": 0.977,
+     "hu-wiki-short-04-liszt-ferenc": 1.0,
+     "hu-wiki-short-07-isztambul": 0.996,
+     "hu-wiki-short-10-torokorszag": 0.946,
+     "hu-wiki-short-13-johann-sebastian-bach": 1.0,
+     "hu-wiki-short-16-feher-capa": 0.981,
+     "hu-wiki-short-19-asperger-szindroma": 0.98,
+     "hu-wiki-short-22-gardonyi-geza": 0.986
+    },
+    "E0": {
+     "en-economics-short-01": 0.487,
+     "en-humanities-medium-02": 0.446,
+     "en-law-long-03": 0.392,
+     "hu-coffee": 1.0,
+     "hu-gametheory": 0.956,
+     "hu-immune": 1.0,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.619,
+     "hu-wiki-long-06-kek-balna": 0.469,
+     "hu-wiki-long-09-hamburg": 0.573,
+     "hu-wiki-long-12-matyas-templom": 0.451,
+     "hu-wiki-long-15-arany-janos-kolto": 0.597,
+     "hu-wiki-long-18-pompeii": 0.472,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.514,
+     "hu-wiki-long-24-feher-golya": 0.521,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.991,
+     "hu-wiki-medium-05-lady-gaga": 0.542,
+     "hu-wiki-medium-08-berlini-fal": 0.597,
+     "hu-wiki-medium-11-seuso-kincs": 0.928,
+     "hu-wiki-medium-14-joseph-haydn": 0.983,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.542,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.646,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.789,
+     "hu-wiki-short-01-nurnbergi-per": 0.976,
+     "hu-wiki-short-04-liszt-ferenc": 0.802,
+     "hu-wiki-short-07-isztambul": 0.96,
+     "hu-wiki-short-10-torokorszag": 0.959,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.989,
+     "hu-wiki-short-16-feher-capa": 0.95,
+     "hu-wiki-short-19-asperger-szindroma": 0.994,
+     "hu-wiki-short-22-gardonyi-geza": 0.424
+    },
+    "E1": {
+     "en-economics-short-01": 0.831,
+     "en-humanities-medium-02": 0.917,
+     "en-law-long-03": 1.0,
+     "hu-coffee": 0.938,
+     "hu-gametheory": 1.0,
+     "hu-immune": 1.0,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.875,
+     "hu-wiki-long-06-kek-balna": 0.983,
+     "hu-wiki-long-09-hamburg": 0.95,
+     "hu-wiki-long-12-matyas-templom": 1.0,
+     "hu-wiki-long-15-arany-janos-kolto": 0.887,
+     "hu-wiki-long-18-pompeii": 0.917,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 1.0,
+     "hu-wiki-long-24-feher-golya": 1.0,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.979,
+     "hu-wiki-medium-05-lady-gaga": 1.0,
+     "hu-wiki-medium-08-berlini-fal": 0.979,
+     "hu-wiki-medium-11-seuso-kincs": 0.875,
+     "hu-wiki-medium-14-joseph-haydn": 0.917,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 1.0,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.875,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.908,
+     "hu-wiki-short-01-nurnbergi-per": 0.817,
+     "hu-wiki-short-04-liszt-ferenc": 1.0,
+     "hu-wiki-short-07-isztambul": 0.938,
+     "hu-wiki-short-10-torokorszag": 0.969,
+     "hu-wiki-short-13-johann-sebastian-bach": 1.0,
+     "hu-wiki-short-16-feher-capa": 0.979,
+     "hu-wiki-short-19-asperger-szindroma": 0.917,
+     "hu-wiki-short-22-gardonyi-geza": 0.938
+    },
+    "E2": {
+     "en-economics-short-01": 0.925,
+     "en-humanities-medium-02": 0.992,
+     "en-law-long-03": 0.975,
+     "hu-coffee": 0.972,
+     "hu-gametheory": 0.942,
+     "hu-immune": 1.0,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.929,
+     "hu-wiki-long-06-kek-balna": 0.917,
+     "hu-wiki-long-09-hamburg": 0.933,
+     "hu-wiki-long-12-matyas-templom": 0.933,
+     "hu-wiki-long-15-arany-janos-kolto": 1.0,
+     "hu-wiki-long-18-pompeii": 1.0,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.799,
+     "hu-wiki-long-24-feher-golya": 0.972,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.986,
+     "hu-wiki-medium-05-lady-gaga": 0.969,
+     "hu-wiki-medium-08-berlini-fal": 0.917,
+     "hu-wiki-medium-11-seuso-kincs": 0.875,
+     "hu-wiki-medium-14-joseph-haydn": 1.0,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.875,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 1.0,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.917,
+     "hu-wiki-short-01-nurnbergi-per": 1.0,
+     "hu-wiki-short-04-liszt-ferenc": 0.952,
+     "hu-wiki-short-07-isztambul": 0.875,
+     "hu-wiki-short-10-torokorszag": 1.0,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.917,
+     "hu-wiki-short-16-feher-capa": 1.0,
+     "hu-wiki-short-19-asperger-szindroma": 1.0,
+     "hu-wiki-short-22-gardonyi-geza": 1.0
+    },
+    "E2f": {
+     "en-economics-short-01": 0.983,
+     "en-humanities-medium-02": 0.967,
+     "en-law-long-03": 0.983,
+     "hu-coffee": 1.0,
+     "hu-gametheory": 1.0,
+     "hu-immune": 0.95,
+     "hu-wiki-long-03-sclerosis-multiplex": 1.0,
+     "hu-wiki-long-06-kek-balna": 0.979,
+     "hu-wiki-long-09-hamburg": 1.0,
+     "hu-wiki-long-12-matyas-templom": 0.846,
+     "hu-wiki-long-15-arany-janos-kolto": 0.938,
+     "hu-wiki-long-18-pompeii": 0.938,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.917,
+     "hu-wiki-long-24-feher-golya": 0.95,
+     "hu-wiki-medium-02-vaskapu-szoros": 1.0,
+     "hu-wiki-medium-05-lady-gaga": 0.958,
+     "hu-wiki-medium-08-berlini-fal": 1.0,
+     "hu-wiki-medium-11-seuso-kincs": 1.0,
+     "hu-wiki-medium-14-joseph-haydn": 1.0,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.938,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.967,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.9,
+     "hu-wiki-short-01-nurnbergi-per": 0.848,
+     "hu-wiki-short-04-liszt-ferenc": 0.938,
+     "hu-wiki-short-07-isztambul": 0.9,
+     "hu-wiki-short-10-torokorszag": 1.0,
+     "hu-wiki-short-13-johann-sebastian-bach": 1.0,
+     "hu-wiki-short-16-feher-capa": 1.0,
+     "hu-wiki-short-19-asperger-szindroma": 1.0,
+     "hu-wiki-short-22-gardonyi-geza": 0.889
+    },
+    "E2h": {
+     "en-economics-short-01": 0.944,
+     "en-humanities-medium-02": 0.967,
+     "en-law-long-03": 1.0,
+     "hu-coffee": 0.875,
+     "hu-gametheory": 0.983,
+     "hu-immune": 1.0,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.9,
+     "hu-wiki-long-06-kek-balna": 1.0,
+     "hu-wiki-long-09-hamburg": 1.0,
+     "hu-wiki-long-12-matyas-templom": 0.917,
+     "hu-wiki-long-15-arany-janos-kolto": 0.938,
+     "hu-wiki-long-18-pompeii": 0.896,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 1.0,
+     "hu-wiki-long-24-feher-golya": 0.933,
+     "hu-wiki-medium-02-vaskapu-szoros": 1.0,
+     "hu-wiki-medium-05-lady-gaga": 1.0,
+     "hu-wiki-medium-08-berlini-fal": 0.938,
+     "hu-wiki-medium-11-seuso-kincs": 1.0,
+     "hu-wiki-medium-14-joseph-haydn": 0.933,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 1.0,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.967,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.886,
+     "hu-wiki-short-01-nurnbergi-per": 1.0,
+     "hu-wiki-short-04-liszt-ferenc": 0.938,
+     "hu-wiki-short-07-isztambul": 0.979,
+     "hu-wiki-short-10-torokorszag": 0.95,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.917,
+     "hu-wiki-short-16-feher-capa": 1.0,
+     "hu-wiki-short-19-asperger-szindroma": 0.972,
+     "hu-wiki-short-22-gardonyi-geza": 0.967
+    },
+    "E2x": {
+     "en-economics-short-01": 0.889,
+     "en-humanities-medium-02": 0.938,
+     "en-law-long-03": 1.0,
+     "hu-coffee": 0.938,
+     "hu-gametheory": 0.979,
+     "hu-immune": 1.0,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.969,
+     "hu-wiki-long-06-kek-balna": 0.983,
+     "hu-wiki-long-09-hamburg": 1.0,
+     "hu-wiki-long-12-matyas-templom": 0.983,
+     "hu-wiki-long-15-arany-janos-kolto": 0.812,
+     "hu-wiki-long-18-pompeii": 0.95,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.9,
+     "hu-wiki-long-24-feher-golya": 0.938,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.904,
+     "hu-wiki-medium-05-lady-gaga": 0.95,
+     "hu-wiki-medium-08-berlini-fal": 1.0,
+     "hu-wiki-medium-11-seuso-kincs": 0.887,
+     "hu-wiki-medium-14-joseph-haydn": 0.929,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 1.0,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.967,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.933,
+     "hu-wiki-short-01-nurnbergi-per": 0.798,
+     "hu-wiki-short-04-liszt-ferenc": 1.0,
+     "hu-wiki-short-07-isztambul": 0.95,
+     "hu-wiki-short-10-torokorszag": 0.853,
+     "hu-wiki-short-13-johann-sebastian-bach": 1.0,
+     "hu-wiki-short-16-feher-capa": 0.865,
+     "hu-wiki-short-19-asperger-szindroma": 0.844,
+     "hu-wiki-short-22-gardonyi-geza": 0.938
+    },
+    "E3": {
+     "en-economics-short-01": 1.0,
+     "en-humanities-medium-02": 0.938,
+     "en-law-long-03": 0.9,
+     "hu-coffee": 1.0,
+     "hu-gametheory": 0.958,
+     "hu-immune": 1.0,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.979,
+     "hu-wiki-long-06-kek-balna": 0.896,
+     "hu-wiki-long-09-hamburg": 0.917,
+     "hu-wiki-long-12-matyas-templom": 0.986,
+     "hu-wiki-long-15-arany-janos-kolto": 0.969,
+     "hu-wiki-long-18-pompeii": 0.9,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.9,
+     "hu-wiki-long-24-feher-golya": 0.938,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.964,
+     "hu-wiki-medium-05-lady-gaga": 0.958,
+     "hu-wiki-medium-08-berlini-fal": 0.875,
+     "hu-wiki-medium-11-seuso-kincs": 0.804,
+     "hu-wiki-medium-14-joseph-haydn": 0.892,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 1.0,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.979,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.925,
+     "hu-wiki-short-01-nurnbergi-per": 1.0,
+     "hu-wiki-short-04-liszt-ferenc": 0.875,
+     "hu-wiki-short-07-isztambul": 0.875,
+     "hu-wiki-short-10-torokorszag": 0.95,
+     "hu-wiki-short-13-johann-sebastian-bach": 1.0,
+     "hu-wiki-short-16-feher-capa": 1.0,
+     "hu-wiki-short-19-asperger-szindroma": 0.958,
+     "hu-wiki-short-22-gardonyi-geza": 1.0
+    },
+    "E5a": {
+     "en-economics-short-01": 0.936,
+     "en-humanities-medium-02": 0.985,
+     "en-law-long-03": 0.969,
+     "hu-coffee": 1.0,
+     "hu-gametheory": 0.94,
+     "hu-immune": 1.0,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.983,
+     "hu-wiki-long-06-kek-balna": 0.972,
+     "hu-wiki-long-09-hamburg": 0.964,
+     "hu-wiki-long-12-matyas-templom": 0.963,
+     "hu-wiki-long-15-arany-janos-kolto": 0.91,
+     "hu-wiki-long-18-pompeii": 0.972,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.969,
+     "hu-wiki-long-24-feher-golya": 0.971,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.977,
+     "hu-wiki-medium-05-lady-gaga": 0.948,
+     "hu-wiki-medium-08-berlini-fal": 0.87,
+     "hu-wiki-medium-11-seuso-kincs": 0.994,
+     "hu-wiki-medium-14-joseph-haydn": 0.995,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.937,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.867,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.978,
+     "hu-wiki-short-01-nurnbergi-per": 0.947,
+     "hu-wiki-short-04-liszt-ferenc": 0.974,
+     "hu-wiki-short-07-isztambul": 1.0,
+     "hu-wiki-short-10-torokorszag": 0.975,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.994,
+     "hu-wiki-short-16-feher-capa": 0.896,
+     "hu-wiki-short-19-asperger-szindroma": 0.954,
+     "hu-wiki-short-22-gardonyi-geza": 0.914
+    },
+    "E5b": {
+     "en-economics-short-01": 0.472,
+     "en-humanities-medium-02": 0.686,
+     "en-law-long-03": 0.446,
+     "hu-coffee": 0.983,
+     "hu-gametheory": 0.992,
+     "hu-immune": 0.972,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.763,
+     "hu-wiki-long-06-kek-balna": 0.478,
+     "hu-wiki-long-09-hamburg": 0.592,
+     "hu-wiki-long-12-matyas-templom": 0.475,
+     "hu-wiki-long-15-arany-janos-kolto": 0.514,
+     "hu-wiki-long-18-pompeii": 0.444,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.417,
+     "hu-wiki-long-24-feher-golya": 0.472,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.992,
+     "hu-wiki-medium-05-lady-gaga": 1.0,
+     "hu-wiki-medium-08-berlini-fal": 0.936,
+     "hu-wiki-medium-11-seuso-kincs": 0.941,
+     "hu-wiki-medium-14-joseph-haydn": 0.891,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.775,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.963,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.949,
+     "hu-wiki-short-01-nurnbergi-per": 0.969,
+     "hu-wiki-short-04-liszt-ferenc": 0.994,
+     "hu-wiki-short-07-isztambul": 0.983,
+     "hu-wiki-short-10-torokorszag": 0.983,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.972,
+     "hu-wiki-short-16-feher-capa": 0.888,
+     "hu-wiki-short-19-asperger-szindroma": 0.762,
+     "hu-wiki-short-22-gardonyi-geza": 0.497
+    },
+    "E5c": {
+     "en-economics-short-01": 0.952,
+     "en-humanities-medium-02": 0.948,
+     "en-law-long-03": 0.961,
+     "hu-coffee": 0.993,
+     "hu-gametheory": 0.983,
+     "hu-immune": 0.967,
+     "hu-wiki-long-03-sclerosis-multiplex": 0.983,
+     "hu-wiki-long-06-kek-balna": 0.994,
+     "hu-wiki-long-09-hamburg": 1.0,
+     "hu-wiki-long-12-matyas-templom": 0.953,
+     "hu-wiki-long-15-arany-janos-kolto": 0.993,
+     "hu-wiki-long-18-pompeii": 0.944,
+     "hu-wiki-long-21-csontvary-kosztka-tivada": 0.979,
+     "hu-wiki-long-24-feher-golya": 0.995,
+     "hu-wiki-medium-02-vaskapu-szoros": 0.966,
+     "hu-wiki-medium-05-lady-gaga": 0.963,
+     "hu-wiki-medium-08-berlini-fal": 1.0,
+     "hu-wiki-medium-11-seuso-kincs": 0.989,
+     "hu-wiki-medium-14-joseph-haydn": 0.931,
+     "hu-wiki-medium-17-gizai-nagy-piramis": 0.808,
+     "hu-wiki-medium-20-szent-gyorgyi-albert": 0.972,
+     "hu-wiki-medium-23-wolfgang-amadeus-mozart": 0.994,
+     "hu-wiki-short-01-nurnbergi-per": 0.963,
+     "hu-wiki-short-04-liszt-ferenc": 0.989,
+     "hu-wiki-short-07-isztambul": 0.938,
+     "hu-wiki-short-10-torokorszag": 0.988,
+     "hu-wiki-short-13-johann-sebastian-bach": 0.942,
+     "hu-wiki-short-16-feher-capa": 0.979,
+     "hu-wiki-short-19-asperger-szindroma": 1.0,
+     "hu-wiki-short-22-gardonyi-geza": 1.0
+    }
+   }
+  }
+ },
+ "cross_model": [
+  {
+   "arm": "E0",
+   "a": "puli",
+   "b": "gemma",
+   "n": 30,
+   "Q_a": 0.283,
+   "Q_b": 0.719,
+   "p": 1.73e-06
+  },
+  {
+   "arm": "E0",
+   "a": "qwen",
+   "b": "puli",
+   "n": 6,
+   "Q_a": 0.641,
+   "Q_b": 0.319,
+   "p": 0.0312
+  },
+  {
+   "arm": "E0",
+   "a": "qwen",
+   "b": "gemma",
+   "n": 6,
+   "Q_a": 0.641,
+   "Q_b": 0.713,
+   "p": 0.0938
+  },
+  {
+   "arm": "E1",
+   "a": "puli",
+   "b": "gemma",
+   "n": 30,
+   "Q_a": 0.54,
+   "Q_b": 0.946,
+   "p": 1.73e-06
+  },
+  {
+   "arm": "E1",
+   "a": "qwen",
+   "b": "puli",
+   "n": 6,
+   "Q_a": 0.878,
+   "Q_b": 0.586,
+   "p": 0.0312
+  },
+  {
+   "arm": "E1",
+   "a": "qwen",
+   "b": "gemma",
+   "n": 6,
+   "Q_a": 0.878,
+   "Q_b": 0.948,
+   "p": 0.219
+  },
+  {
+   "arm": "E2",
+   "a": "puli",
+   "b": "gemma",
+   "n": 30,
+   "Q_a": 0.673,
+   "Q_b": 0.952,
+   "p": 5.25e-06
+  },
+  {
+   "arm": "E2",
+   "a": "qwen",
+   "b": "puli",
+   "n": 6,
+   "Q_a": 0.956,
+   "Q_b": 0.724,
+   "p": 0.0625
+  },
+  {
+   "arm": "E2",
+   "a": "qwen",
+   "b": "gemma",
+   "n": 6,
+   "Q_a": 0.956,
+   "Q_b": 0.968,
+   "p": 0.656
+  },
+  {
+   "arm": "B-doc-L",
+   "a": "puli",
+   "b": "gemma",
+   "n": 30,
+   "Q_a": 0.414,
+   "Q_b": 0.961,
+   "p": 1.73e-06
+  },
+  {
+   "arm": "B-doc-L",
+   "a": "qwen",
+   "b": "puli",
+   "n": 6,
+   "Q_a": 0.833,
+   "Q_b": 0.493,
+   "p": 0.0312
+  },
+  {
+   "arm": "B-doc-L",
+   "a": "qwen",
+   "b": "gemma",
+   "n": 6,
+   "Q_a": 0.833,
+   "Q_b": 0.97,
+   "p": 0.0312
+  },
+  {
+   "arm": "E2f",
+   "a": "puli",
+   "b": "gemma",
+   "n": 30,
+   "Q_a": 0.587,
+   "Q_b": 0.96,
+   "p": 1.73e-06
+  },
+  {
+   "arm": "E2f",
+   "a": "qwen",
+   "b": "puli",
+   "n": 6,
+   "Q_a": 0.896,
+   "Q_b": 0.693,
+   "p": 0.0312
+  },
+  {
+   "arm": "E2f",
+   "a": "qwen",
+   "b": "gemma",
+   "n": 6,
+   "Q_a": 0.896,
+   "Q_b": 0.981,
+   "p": 0.0938
+  },
+  {
+   "arm": "E2h",
+   "a": "puli",
+   "b": "gemma",
+   "n": 30,
+   "Q_a": 0.591,
+   "Q_b": 0.96,
+   "p": 1.73e-06
+  },
+  {
+   "arm": "E2h",
+   "a": "qwen",
+   "b": "puli",
+   "n": 6,
+   "Q_a": 0.918,
+   "Q_b": 0.632,
+   "p": 0.0625
+  },
+  {
+   "arm": "E2h",
+   "a": "qwen",
+   "b": "gemma",
+   "n": 6,
+   "Q_a": 0.918,
+   "Q_b": 0.962,
+   "p": 0.0938
+  },
+  {
+   "arm": "E3",
+   "a": "puli",
+   "b": "gemma",
+   "n": 30,
+   "Q_a": 0.571,
+   "Q_b": 0.945,
+   "p": 4.33e-06
+  },
+  {
+   "arm": "E3",
+   "a": "qwen",
+   "b": "puli",
+   "n": 6,
+   "Q_a": 0.883,
+   "Q_b": 0.442,
+   "p": 0.0312
+  },
+  {
+   "arm": "E3",
+   "a": "qwen",
+   "b": "gemma",
+   "n": 6,
+   "Q_a": 0.883,
+   "Q_b": 0.966,
+   "p": 0.219
+  },
+  {
+   "arm": "E5a",
+   "a": "puli",
+   "b": "gemma",
+   "n": 30,
+   "Q_a": 0.277,
+   "Q_b": 0.959,
+   "p": 1.86e-09
+  },
+  {
+   "arm": "E5a",
+   "a": "qwen",
+   "b": "puli",
+   "n": 6,
+   "Q_a": 0.869,
+   "Q_b": 0.364,
+   "p": 0.0312
+  },
+  {
+   "arm": "E5a",
+   "a": "qwen",
+   "b": "gemma",
+   "n": 6,
+   "Q_a": 0.869,
+   "Q_b": 0.972,
+   "p": 0.0312
+  },
+  {
+   "arm": "E5b",
+   "a": "puli",
+   "b": "gemma",
+   "n": 30,
+   "Q_a": 0.252,
+   "Q_b": 0.773,
+   "p": 1.92e-06
+  },
+  {
+   "arm": "E5b",
+   "a": "qwen",
+   "b": "puli",
+   "n": 6,
+   "Q_a": 0.702,
+   "Q_b": 0.231,
+   "p": 0.0312
+  },
+  {
+   "arm": "E5b",
+   "a": "qwen",
+   "b": "gemma",
+   "n": 6,
+   "Q_a": 0.702,
+   "Q_b": 0.759,
+   "p": 0.312
+  },
+  {
+   "arm": "E5c",
+   "a": "puli",
+   "b": "gemma",
+   "n": 30,
+   "Q_a": 0.249,
+   "Q_b": 0.969,
+   "p": 1.73e-06
+  },
+  {
+   "arm": "E5c",
+   "a": "qwen",
+   "b": "puli",
+   "n": 6,
+   "Q_a": 0.862,
+   "Q_b": 0.293,
+   "p": 0.0312
+  },
+  {
+   "arm": "E5c",
+   "a": "qwen",
+   "b": "gemma",
+   "n": 6,
+   "Q_a": 0.862,
+   "Q_b": 0.967,
+   "p": 0.688
+  }
+ ],
+ "common6": {
+  "docs": [
+   "en-economics-short-01",
+   "en-humanities-medium-02",
+   "en-law-long-03",
+   "hu-coffee",
+   "hu-gametheory",
+   "hu-immune"
+  ],
+  "table": {
+   "B-doc-L": {
+    "qwen": [
+     0.833,
+     6
+    ],
+    "puli": [
+     0.493,
+     6
+    ],
+    "gemma": [
+     0.97,
+     6
+    ]
+   },
+   "B-doc-S": {
+    "qwen": [
+     0.949,
+     6
+    ]
+   },
+   "E0": {
+    "qwen": [
+     0.641,
+     6
+    ],
+    "puli": [
+     0.319,
+     6
+    ],
+    "gemma": [
+     0.713,
+     6
+    ]
+   },
+   "E1": {
+    "qwen": [
+     0.878,
+     6
+    ],
+    "puli": [
+     0.586,
+     6
+    ],
+    "gemma": [
+     0.948,
+     6
+    ]
+   },
+   "E2": {
+    "qwen": [
+     0.956,
+     6
+    ],
+    "puli": [
+     0.724,
+     6
+    ],
+    "gemma": [
+     0.968,
+     6
+    ]
+   },
+   "E2f": {
+    "qwen": [
+     0.896,
+     6
+    ],
+    "puli": [
+     0.693,
+     6
+    ],
+    "gemma": [
+     0.981,
+     6
+    ]
+   },
+   "E2h": {
+    "qwen": [
+     0.918,
+     6
+    ],
+    "puli": [
+     0.632,
+     6
+    ],
+    "gemma": [
+     0.962,
+     6
+    ]
+   },
+   "E2x": {
+    "qwen": [
+     0.892,
+     6
+    ],
+    "puli": [
+     0.713,
+     6
+    ],
+    "gemma": [
+     0.957,
+     6
+    ]
+   },
+   "E3": {
+    "qwen": [
+     0.883,
+     6
+    ],
+    "puli": [
+     0.442,
+     6
+    ],
+    "gemma": [
+     0.966,
+     6
+    ]
+   },
+   "E4": {
+    "qwen": [
+     0.935,
+     3
+    ]
+   },
+   "E4b": {
+    "qwen": [
+     1.0,
+     3
+    ]
+   },
+   "E5a": {
+    "qwen": [
+     0.869,
+     6
+    ],
+    "puli": [
+     0.364,
+     6
+    ],
+    "gemma": [
+     0.972,
+     6
+    ]
+   },
+   "E5b": {
+    "qwen": [
+     0.702,
+     6
+    ],
+    "puli": [
+     0.231,
+     6
+    ],
+    "gemma": [
+     0.759,
+     6
+    ]
+   },
+   "E5c": {
+    "qwen": [
+     0.862,
+     6
+    ],
+    "puli": [
+     0.293,
+     6
+    ],
+    "gemma": [
+     0.967,
+     6
+    ]
+   }
+  }
+ }
+}

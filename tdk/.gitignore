@@ -1,0 +1,18 @@
+# LaTeX segédfájlok (a main.pdf a tárolóban marad)
+*.aux
+*.bbl
+*.bcf
+*.bcf-SAVE-ERROR
+*.bbl-SAVE-ERROR
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.log
+*.out
+*.run.xml
+*.toc
+*.synctex.gz
+# az ábraszkript előnézetei (a PDF-ek a figures/ mappában vannak)
+elemzes/*.png

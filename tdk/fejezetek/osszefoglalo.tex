@@ -5,39 +5,29 @@
 \addcontentsline{toc}{chapter}{Tartalmi összefoglaló}
 \thispagestyle{plain}
 
-A vizsgakérdések írása lassú, hibalehetőségekkel teli szakmai munka: a kérdésnek egyértelműnek kell
-lennie, a megadott helyes válasznak a tananyagból kell következnie, feleletválasztós kérdésnél pedig a rossz
-válaszoknak (disztraktoroknak) hihetőnek, de igazolhatóan hibásnak kell lenniük. A nagy nyelvi modellek
-(LLM) megjelenésével a legelterjedtebb gyakorlat az lett, hogy az oktató feltölti a jegyzetét egy felhőben
-futó csevegő asszisztensbe, és „tíz vizsgakérdést” kér. Ez kényelmes, de négy lényeges
-hiányossága van: (P1) semmi sem ellenőrzi, hogy a megjelölt helyes válasz valóban következik-e a
-dokumentumból; (P2) a kérdések száma, típusa és nehézsége csak kérés, és a kérdések a tananyag néhány
-részére tömörülhetnek; (P3) a tananyag egy harmadik félhez kerül; (P4) a módszer nagy, távoli modellekre
-támaszkodik.
+A vizsgakérdések írása lassú, hibalehetőségekkel teli munka: a megadott helyes válasznak a tananyagból kell
+következnie, a rossz válaszoknak (disztraktoroknak) pedig hihetőnek, de igazolhatóan hibásnak kell lenniük.
+A nagy nyelvi modellek (LLM) megjelenésével elterjedt gyakorlat, hogy az oktató egy felhőben futó csevegő
+asszisztenstől kér kérdéseket. Ez azonban nem ellenőrzi a válaszokat, nem szabályozza a vizsga szerkezetét, és
+a tananyagot egy harmadik félnek adja át.
 
-Dolgozatunkban bemutatjuk a \Mimir{} rendszert, amely az egyetlen promptot explicit, ellenőrizhető
-\emph{módszerrel} váltja fel, és fogyasztói GPU-n futtatható
-nyelvi modellekkel működik. A rendszer feleletválasztós, igaz--hamis és kifejtős kérdéseket egyaránt előállít.
-A módszer lépései: a dokumentum szemantikus darabolása; egy vizsgaterv, amely a kérdésekhez előre kiosztja
-a típusokat, a témákat és a kognitív (Bloom-) szinteket; kérdésenkénti keresés a
-dokumentumban; egyenként generált, a forrásrészletekre hivatkozó kérdések; valamint egy ellenőrző lánc
-(formai és szivárgási szabályok, a válasz forrással való alátámasztottsága, a disztraktorok hamissága, „vak”
-megoldási próba), amely hiba esetén visszajelzéssel újrapróbálkozik. A rendszer a feltöltött tartalmat csak
-a feladat idejére tárolja.
+Dolgozatunkban bemutatjuk a \Mimir{} rendszert, amely az egyetlen kérést ellenőrizhető lépésekre bontott
+módszerrel váltja fel, és fogyasztói GPU-n, helyben futó, kvantált nyelvi modellekkel működik. A módszer a
+dokumentum szemantikus darabolása után vizsgatervet készít a kérdések témájáról és kognitív (Bloom-) szintjéről,
+kérdésenként keres a dokumentumban, forráshivatkozással ellátott kérdéseket ír, végül egy ellenőrző lánccal
+vizsgálja, hogy a forrás alátámasztja-e a helyes választ, és hogy a disztraktorok valóban hibásak-e. A rendszer
+a tananyagot csak a feladat idejére tárolja, a végső döntést pedig az oktatóra bízza.
 
-A módszert egy nyílt kiértékelő keretrendszerrel vizsgáltuk: tizennégy, egyszerre egy tényezőt változtató
-kísérleti kar, 39 magyar és angol dokumentumból álló adatkészlet, a generátoroktól eltérő modellcsaládba
-tartozó nyelvi modell mint bíró, és dokumentumszintű statisztika. Egy egydokumentumos pilot három, a mérést
-felfelé torzító hibát tárt fel, köztük egy új hibamódot: az ellenőrző visszacsatolása a helyes választ a
-kérdés szövegébe szivárogtatta. A javított rendszerrel, feleletválasztós kérdéseken végzett fő vizsgálatban
-(14 kar, kilenc dokumentum, 1\,670 kérdés) a helyi modellel futó, tervezett és ellenőrzött csővezeték érte el a legmagasabb minőségi
-indexet (0,96), szemben a naiv visszakereséses megoldás (0,64), a teljes dokumentumot egy promptban kapó helyi
-modell (0,83) és a teljes dokumentumot kapó nagy szervermodell (0,95) értékével, és mind a hat dokumentumon
-legalább 0,89-et ért el. A tervezés 0,24-dal, az ellenőrzés mind a hat dokumentumon 0,08-dal javított; a
-modell 5--5,6\,GB GPU-memóriát foglalt, így 8\,GB-os kártyán is fut. Az ellenőrző kérdésenkénti ítélete a
-bíróéval csak gyengén egyezett, a kis modell a kért kognitív szintet csak a kérdések harmadánál valósította
-meg, a kis minta miatt pedig a különbségek statisztikailag nem szignifikánsak. A teljes adatkészleten
-végzett futás és a bíró oktatói validálása a következő lépés.
+A módszert egy nyílt kiértékelő keretrendszerrel vizsgáltuk: 14, egyszerre egy tényezőt változtató
+konfiguráció, egy független, bíróként működő nyelvi modell és dokumentumszintű statisztika. Egy pilot feltárta,
+hogy az ellenőrző visszacsatolása a helyes választ a kérdés szövegébe szivárogtathatja. A 30 dokumentumos fő
+vizsgálatban két helyi modellel (PULI-LlumiX 8B és Gemma 3 12B) a vizsgaterv mindkét modellnél
+szignifikánsan javított a naiv visszakereséses megoldáshoz képest ($+0{,}26$, illetve $+0{,}23$ a minőségi
+indexen). A módszer haszna a modell képességével csökkent: a gyengébb modelleknél nagy, egy erős 12B modellnél
+a teljes dokumentumot egy promptban kapó megoldás is hasonlóan jó. Egy hat dokumentumos előzetes vizsgálatban
+a 8\,GB-os kártyán futó Qwen2.5-7B a módszerrel elérte a nagy szervermodell minőségét (0,96, illetve 0,95). A
+magyarra továbbtanított modell a formátumkövetésben bukott el, így a modellválasztás bármely komponensnél
+nagyobb hatásúnak bizonyult. A bíró oktatói validálása folyamatban van.
 
 \medskip
 \noindent\textbf{Kulcsszavak:} automatikus kérdésgenerálás, visszakereséssel kiegészített generálás (RAG),
