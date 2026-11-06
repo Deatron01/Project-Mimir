@@ -1,0 +1,116 @@
+{
+  "teszt_metaadatok": {
+    "tema": "business ethics ch. 10",
+    "nehezseg": "easy",
+    "nyelv": "en",
+    "forras": "EduQG / OpenStax business_ethics chapter 10"
+  },
+  "kerdesek": [
+    {
+      "id": "fs-idm229191040",
+      "kerdes": "When considering the issue of work-life balance, which of the following points does not apply?",
+      "helyes_valasz": "Workers with families at home should be entitled to a “better” balance.",
+      "disztraktorok": [
+        "Each employee probably assesses this differently.",
+        "Managers and workers as cohorts often have different perspectives on it.",
+        "All employees have a right to pursue this."
+      ],
+      "evidence": [
+        "It may be difficult for remote workers to maintain a work-life balance when their home becomes their office (especially if their hours are flexible)."
+      ]
+    },
+    {
+      "id": "fs-idm229855776",
+      "kerdes": "Which of the following is not a potential downside of a corporate campus?",
+      "helyes_valasz": "Impaired productivity",
+      "disztraktorok": [
+        "Reduced ability of labor markets to adjust to changing conditions",
+        "Adverse impact on local businesses",
+        "Increased fiscal burden on local government"
+      ],
+      "evidence": [
+        "According to global consulting giant Accenture, AI is “a collection of advanced technologies that allows machines to sense, comprehend, act and learn.” Accenture contends that AI will be the next great advance in the workplace: “It is set to transform business in ways we have not seen since the Industrial Revolution; fundamentally reinventing how businesses run, compete and thrive.",
+        "When implemented holistically, these technologies help improve productivity and lower costs, unlocking more creative jobs and creating new growth opportunities.” 76 Accenture looked at twelve of the world’ s most developed countries, which account for more than half of world economic output, to assess the impact of AI in sixteen specific industries.",
+        "As the April 2018 shooting of employees at YouTube’ s headquarters suggests, corporate campuses may have a greater need for security, with duties that dovetail those of the city police.",
+        "Growth of the compound will challenge managers to comply with city planning and zoning regulations.",
+        "How should these villages within a city contribute to the municipal services they need for the population they draw?",
+        "Should the city be able to require a greater tax contribution from mega-corporate campus developers that equals the load they add to the city’ s fiscal responsibilities?",
+        "Furthermore, to the extent that mega-corporate campuses do tie workers to their jobs, reduced worker mobility means that labor markets will be less able to adjust to changing conditions."
+      ]
+    },
+    {
+      "id": "fs-idm226493952",
+      "kerdes": "A successful telecommuting program would include which of the following?",
+      "helyes_valasz": "a written policy that spells out expectations",
+      "disztraktorok": [
+        "an oral policy the manager can change at will",
+        "subjective criteria for each individual worker",
+        "preference for some people to telecommute over others"
+      ],
+      "evidence": [
+        "Telecommuting workers must be trained in time-management skills so they can maintain their productivity in an environment that may have more or different distractions than a traditional workplace and may make different demands on their time.",
+        "Training should also strengthen communication skills, such as responding to messages promptly, that help ensure success in a remote setting.",
+        "To help guard against the risk that telecommuting employees will be unfairly considered “out of sight, out of mind,” the ethical company will adopt written expectations about timely communication in both directions."
+      ]
+    },
+    {
+      "id": "fs-idm336749184",
+      "kerdes": "Which of the following is correct about the use of robots at work?",
+      "helyes_valasz": "can reduce the exposure of humans to dangerous working conditions",
+      "disztraktorok": [
+        "costs more than human labor",
+        "must first be approved by the Occupational Safety and Health Administration",
+        "is unlikely to affect the number of people in the overall workforce"
+      ],
+      "evidence": [
+        "One application allows scientists a clear field of vision in extreme weather conditions that are otherwise difficult or impossible for humans to study.",
+        "New uses of robots include hazardous cleanup in the wake of the 2011 earthquake and tsunami disaster that destroyed the Fukushima Daiichi nuclear power plant.",
+        "Furthermore, robotics will have less impact in poorer countries because these nations’ workers are already paid so little that employers will save less on labor costs by automating.",
+        "A McKinsey Global Institute study of eight hundred occupations in nearly fifty countries showed that more than 800 million jobs, or 20 percent of the global workforce, could be lost to robotics by the year 2030.",
+        "The downside, however, is that some reasonably well-paying jobs that provided middle-class employment for humans have become the province of machines."
+      ]
+    },
+    {
+      "id": "fs-idm207406400",
+      "kerdes": "Some employers allow workers a compressed work week as long as what condition is met?",
+      "helyes_valasz": "the employee can completely finish the work in a shorter time",
+      "disztraktorok": [
+        "the work can be put off until the next week",
+        "the workplace is a store",
+        "it is a week in which a holiday falls on Monday"
+      ],
+      "evidence": [
+        "Some companies allow a compressed work week that caters to the efficient employee who can get a week’ s work done in less than forty hours."
+      ]
+    },
+    {
+      "id": "fs-idm371003920",
+      "kerdes": "Which of the following is correct about worker retraining programs for employees who lose their jobs to robots?",
+      "helyes_valasz": "are an obligation taken on by ethical companies",
+      "disztraktorok": [
+        "are a “Band-Aid” solution most of the time",
+        "will be needed only for a small minority of the workers who lose their jobs",
+        "are offered and funded by the employers only if a sufficient number of workers are displaced"
+      ],
+      "evidence": [
+        "The ethical question facing the business community, and all of us on a broader level, is about the type of society in which we all want to live and the role automation will play in it.",
+        "The answer is not simply about efficiency; a company should consider many variables as it moves toward increased automation (Figure 10.9)."
+      ]
+    },
+    {
+      "id": "fs-idm229464816",
+      "kerdes": "Which of the following is not a prospective benefit to the firm of implementing a telecommuting program?",
+      "helyes_valasz": "greater connectivity and collaboration among employees",
+      "disztraktorok": [
+        "higher productivity of telecommuting workers",
+        "lower operating costs",
+        "more satisfied workers"
+      ],
+      "evidence": [
+        "More broadly, there is a good deal of evidence suggesting that telecommuting has beneficial effects on worker productivity.",
+        "For example, a call-center study reported in the Harvard Business Review found that telecommuting employees made 13.5 percent more calls, resigned their positions at only half the usual rate, and had much higher job satisfaction compared with employees who did not telecommute.",
+        "Telecommuting facilitates increased efficiency and productivity and also typically results in higher retention of workers, thereby reducing recruiting and training costs for firms."
+      ]
+    }
+  ]
+}

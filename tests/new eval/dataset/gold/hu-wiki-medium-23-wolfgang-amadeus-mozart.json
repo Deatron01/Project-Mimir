@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Wolfgang Amadeus Mozart",
+    "nehezseg": "medium",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Wolfgang Amadeus Mozart"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Milyen végzettséggel rendelkezett Mozart anyai nagyapja?",
+      "helyes_valasz": "jogi",
+      "evidence": [
+        "A legtöbbre a zeneszerző anyai nagyapja, Nicolaus Wolfgang Pertlt vitte, aki elvégezte a jogi egyetemet, és körzeti elöljáró volt St. Gilgenben."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen viszonyban volt egymással Leopold Mozart és Lorenz Hagenauer?",
+      "helyes_valasz": "A Mozart házaspár az esküvő után egy gazdag kereskedő, Lorenz Hagenauer házában talált otthonra. A Hagenauer és a Mozart családot szoros barátság fűzte egymáshoz: gyermekeik együtt nőttek fel, Leopoldnak Lorenz Hagenauer volt a gazdasági és a pénzügyi tanácsadója, aki később jelentősebb összegekkel segítette elő a Mozart család európai körútjait.",
+      "evidence": [
+        "A Mozart házaspár az esküvő után egy gazdag kereskedő, Lorenz Hagenauer házában talált otthonra. A Hagenauer és a Mozart családot szoros barátság fűzte egymáshoz: gyermekeik együtt nőttek fel, Leopoldnak Lorenz Hagenauer volt a gazdasági és a pénzügyi tanácsadója, aki később jelentősebb összegekkel segítette elő a Mozart család európai körútjait."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Kinek a tanácsára utasította el Mozart Franz Albert müncheni fogadós állásajánlatát?",
+      "helyes_valasz": "Leopold Mozart tanácsára",
+      "evidence": [
+        "Albert komolyan vette a dolgot és csakhamar nyolc tagot toborzott össze a vállalkozáshoz, ami hosszabb távon megtérülhetett volna Mozartéknak, de Leopold kockázatosnak találta a dolgot. Leveleiben arra intetett fiát és feleségét, hogy mihamarább hagyják el a bajor fővárost, így ebből az ajánlatból sem lett semmi."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Ki írta a Figaro házassága című színdarabot?",
+      "helyes_valasz": "Beaumarchais",
+      "evidence": [
+        "Az 1780-as évek közepén Mozart már évek óta megfelelő operatéma után kutatott, de egyik neki tetsző témához sem sikerült megfelelő szövegkönyvírót kerítenie. Végül annyira megtetszett neki a Beaumarchais Figaro házassága című darabja, hogy mindenáron ezt a vígjátékot akarta megzenésíteni."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Miért kapta Mozart a Wolfgang keresztnevet?",
+      "helyes_valasz": "a Wolfgang (Farkas) nevet anyai nagyapja után kapta.",
+      "evidence": [
+        "a Wolfgang (Farkas) nevet anyai nagyapja után kapta."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Sikerrel járt Mozart párizsi koncertkörútja, amire édesanyja kísérte el?",
+      "helyes_valasz": "A zeneszerző és édesanyja szeptember 23-án indult el Párizsba. Első megállóhelyük München volt, itt két hetet töltöttek. Azt remélték, hogy Wolfgangot majd alkalmazzák a fejedelmi udvarnál, de végül csalódniuk kellett. Pénztartalékaik szép lassan elapadtak, mivel hangversenyeket sem tudtak szervezni Mozart számára.",
+      "evidence": [
+        "A zeneszerző és édesanyja szeptember 23-án indult el Párizsba. Első megállóhelyük München volt, itt két hetet töltöttek. Azt remélték, hogy Wolfgangot majd alkalmazzák a fejedelmi udvarnál, de végül csalódniuk kellett. Pénztartalékaik szép lassan elapadtak, mivel hangversenyeket sem tudtak szervezni Mozart számára."
+      ],
+      "type": "open",
+      "kerdestipus": "Nem"
+    },
+    {
+      "id": null,
+      "kerdes": "Honnan származott Mozart édesanyjának családja?",
+      "helyes_valasz": "A Pertlt család javarészt Salzburg vidékéről származott, de egyik águk Krems-Steinben és Bécsben telepedett le.",
+      "evidence": [
+        "Ezekben az években ismerkedett meg Anna Maria Walburga Pertlttel, akit 1747. november 21-én vett feleségül. A Pertlt család javarészt Salzburg vidékéről származott, de egyik águk Krems-Steinben és Bécsben telepedett le."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Sikert aratott A Figaro házassága című opera az ősbemutatón?",
+      "helyes_valasz": "A közönségsiker nem maradt el, szinte minden áriát meg kellett ismételni, Salieri azonban mindezt figyelmen kívül hagyta, és nyolc előadás után levetette a darabot a műsorról.",
+      "evidence": [
+        "A közönségsiker nem maradt el, szinte minden áriát meg kellett ismételni, Salieri azonban mindezt figyelmen kívül hagyta, és nyolc előadás után levetette a darabot a műsorról."
+      ],
+      "type": "open",
+      "kerdestipus": "Igen"
+    },
+    {
+      "id": null,
+      "kerdes": "Mennyi idő alatt komponálta meg Mozart A Figaro házasságát?",
+      "helyes_valasz": "hat hét alatt",
+      "evidence": [
+        "A szövegkönyvíró szerint hat hét alatt készült el a teljes mű,"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mely városokban játszották Salieri operáit a XVIII. század végén?",
+      "helyes_valasz": "Bécsen kívül játszották Drezdában, Münchenben, Firenzében, Milánóban, Velencében, Rómában, Nápolyban, Párizsban, Prágában, Koppenhágában és Stockholmban is",
+      "evidence": [
+        "Csakhogy Salieri – ha félt is, hogy Mozart operaszerzőként komoly konkurenciát jelenthet számára Bécsben – a maga korában a legelismertebb operaszerzőnek számított: operáit Bécsen kívül játszották Drezdában, Münchenben, Firenzében, Milánóban, Velencében, Rómában, Nápolyban, Párizsban, Prágában, Koppenhágában és Stockholmban is."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

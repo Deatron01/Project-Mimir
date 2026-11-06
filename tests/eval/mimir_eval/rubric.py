@@ -22,8 +22,8 @@ RUBRIC_HU = {
                "vagy a dokumentum szerkezetére. 1 = zavaros; 3 = nehezen érthető; 5 = vizsgakész megfogalmazás.",
     "distractor_quality": "Disztraktorok: a rossz válaszok a forrás szerint egyértelműen rosszak, de egy felkészületlen "
                           "diák számára hihetők (azonos téma, hasonló hossz és forma). 1 = abszurd vagy szintén helyes; "
-                          "3 = részben hihető; 5 = mind hihető és rossz. Kifejtős kérdésnél hagyd üresen.",
+                          "3 = részben hihető; 5 = mind hihető és rossz. Kifejtős kérdésnél hagyja üresen.",
     "bloom_fit": "Szintillesztés: a kognitív szint megfelel a kért nehézségnek (könnyű: felidézés/megértés; közepes: "
                  "alkalmazás/megértés; nehéz: elemzés/értékelés). 1 = egyértelműen rossz szint; 3 = határeset; 5 = illik.",
-    "would_use": "Beraknád ezt a kérdést egy valódi dolgozatba legfeljebb apró javítással? (igen/nem)",
+    "would_use": "Betenné ezt a kérdést egy valódi dolgozatba legfeljebb apró javítással? (igen/nem)",
 }

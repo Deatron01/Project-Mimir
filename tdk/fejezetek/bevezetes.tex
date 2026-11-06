@@ -102,35 +102,37 @@ elfogadható megbízhatósággal egyeznek (Krippendorff-$\alpha\ge 0{,}667$).
 Dolgozatunk négy, egymásra épülő hozzájárulást tartalmaz.
 
 \begin{enumerate}[label=(\arabic*)]
-\item \textbf{A \Mimir{} generálási módszer} (\ref{ch:modszer}.~fejezet): ablakozott mondatbeágyazáson
-alapuló szemantikus darabolás, lefedettségvezérelt vizsgaterv a legnagyobb maradék elvén kiosztott
-Bloom-szintekkel, slotonkénti sűrű vagy hibrid visszakeresés, forrásrészletekre hivatkozó egyenkénti
-kérdésgenerálás, legolcsóbbtól a legdrágábbig rendezett ellenőrző lánc visszacsatolással és
-tartalékfogalmakkal, valamint egy munkamenet-hatókörű fogalomgráf (GraphRAG-lite). A módszert formálisan
-is megfogalmazzuk (\ref{ch:formalizmus}.~fejezet), és algoritmikusan leírjuk.
-\item \textbf{Adatvédelmet biztosító helyi architektúra} (\ref{ch:architektura}.~fejezet): lazán
-csatolt mikroszolgáltatások, PostgreSQL-alapú zárolásmentes feladatsor, zéró adatmegőrzés és
-ujjlenyomat-alapú audit, valamint a GPU-memóriaigény analitikus modellje, amelyet mérésekkel
-validálunk.
-\item \textbf{Kiértékelési módszertan és nyílt keretrendszer} (\ref{ch:kiertekeles}.~fejezet): tizenöt
-egytényezős kísérleti kar, kétnyelvű adatkészlet referenciakérdésekkel, formálisan definiált mutatók,
-modellcsaládon kívüli LLM-bíró, oktatói értékelési protokoll és dokumentumszintű statisztika.
-\item \textbf{Empirikus eredmények} (\ref{ch:eredmenyek}.~fejezet): egy pilot vizsgálat, amely két
-korábbi méréseket érvénytelenítő mérési hibát, a válaszszivárgást mint új hibamódot és a futásról futásra
-jelentkező zajt tárta fel, valamint egy 14 karos, kilenc dokumentumos fő vizsgálat, amely szerint a helyi
-7B modellel futó tervezett és ellenőrzött csővezeték a közös dokumentumokon a naiv RAG-ot ($0{,}64$) és a
-teljes dokumentumos promptot ($0{,}83$) is felülmúlta ($0{,}96$), és elérte a teljes dokumentumot kapó
-szervermodellt ($0{,}95$).
+\item \textbf{A \Mimir{} generálási módszere} (\ref{ch:modszer}.~fejezet): ablakozott mondatbeágyazáson
+alapuló szemantikus darabolás; lefedettségvezérelt vizsgaterv, amely a Bloom-szinteket a legnagyobb
+maradék elvén osztja ki; slotonkénti sűrű vagy hibrid keresés; forrásrészletekre hivatkozó, egyenkénti
+kérdésgenerálás; a legolcsóbbtól a legdrágábbig rendezett ellenőrző lánc visszacsatolással és
+tartalékfogalmakkal; valamint egy munkamenet-hatókörű fogalomgráf.
+\item \textbf{Adatvédelmet biztosító helyi architektúra} (\ref{ch:modszer}.~fejezet): lazán csatolt
+mikroszolgáltatások, zéró adatmegőrzés, ujjlenyomat-alapú audit, valamint a GPU-memóriaigény egyszerű
+becslése, amelyet két vizsgálatban mért értékekkel ellenőrzünk.
+\item \textbf{Kiértékelési módszertan és nyílt keretrendszer} (\ref{ch:kiertekeles}.~fejezet): tizennégy
+egytényezős kísérleti kar, kétnyelvű adatkészlet referenciakérdésekkel, forrásalapú mutatók, a
+generátoroktól eltérő modellcsaládba tartozó LLM-bíró, oktatói értékelési protokoll és dokumentumszintű
+statisztika.
+\item \textbf{Empirikus eredmények} (\ref{ch:eredmenyek}. és \ref{ch:diszkusszio}.~fejezet): egy pilot
+vizsgálat, amely három, a mérést felfelé torzító hibát -- köztük a válaszszivárgást mint új hibamódot -- és
+a futásról futásra jelentkező zajt tárta fel, valamint egy 14 karos, kilenc dokumentumos fő vizsgálat,
+amely szerint a helyi 7B modellel futó tervezett és ellenőrzött csővezeték a közös dokumentumokon a naiv
+RAG-ot ($0{,}64$) és a teljes dokumentumos promptot ($0{,}83$) is felülmúlta ($0{,}96$), elérte a teljes
+dokumentumot kapó szervermodellt ($0{,}95$), és mind a hat dokumentumon egyenletesen jól teljesített.
 \end{enumerate}
 
 \section{A dolgozat felépítése}
 
-\Az{\ref{ch:szakirodalom}}.~fejezet áttekinti az automatikus kérdésgenerálás, a visszakereséssel
-kiegészített generálás, az ellenőrzés és a nyelvimodell-alapú kiértékelés szakirodalmát, és
-azonosítja a kutatási rést. \Az{\ref{ch:formalizmus}}.~fejezet a feladatot formálisan definiálja,
-bevezeti a minőségi predikátumokat és a célfüggvényt. \Az{\ref{ch:architektura}}.~fejezet a rendszer
-architektúráját, adatvédelmi mechanizmusait és erőforrás-modelljét mutatja be. \Az{\ref{ch:modszer}}.~fejezet a generálási módszer algoritmusait és azok költségelemzését tárgyalja.
-\Az{\ref{ch:kiertekeles}}.~fejezet a kiértékelési módszertant, \az{\ref{ch:eredmenyek}}.~fejezet a pilot és a fő
-vizsgálat eredményeit ismerteti. \Az{\ref{ch:diszkusszio}}.~fejezet az eredmények értelmezését és az érvényességet
-veszélyeztető tényezőket, \az{\ref{ch:osszefoglalas}}.~fejezet az összefoglalást és a további munkát
-tartalmazza. A függelék a promptokat, a konfigurációkat és a reprodukálás lépéseit közli.
+A dolgozat a TDK-dolgozatok szokásos felépítését követi: a szakirodalmi áttekintés, a módszertan és az
+eredmények kiértékelése nagyjából azonos terjedelmű. \Az{\ref{ch:szakirodalom}}.~fejezet áttekinti a
+feleletválasztós kérdés tesztelméleti hátterét, az automatikus kérdésgenerálás fejlődését, a nagy nyelvi
+modelleket, a visszakereséssel kiegészített generálást, az ellenőrzést, a kis modelleket és a nyelvi
+modellel végzett kiértékelést, és azonosítja a kutatási rést. \Az{\ref{ch:modszer}}.~fejezet a rendszer
+architektúráját, adatvédelmi megoldásait és generálási módszerét, \az{\ref{ch:kiertekeles}}.~fejezet a
+kiértékelési módszertant -- a kísérleti karokat, a mutatókat, a bírót és a statisztikai elemzést --
+mutatja be. \Az{\ref{ch:eredmenyek}}.~fejezet a pilot és a fő vizsgálat eredményeit közli,
+\az{\ref{ch:diszkusszio}}.~fejezet ezeket a hipotézisek szempontjából értékeli, és tárgyalja az
+érvényességet veszélyeztető tényezőket. \Az{\ref{ch:osszefoglalas}}.~fejezet az összefoglalást és a
+további munkát tartalmazza. A függelék a promptokat, a rubrikát, a konfigurációkat és a reprodukálás
+lépéseit közli.

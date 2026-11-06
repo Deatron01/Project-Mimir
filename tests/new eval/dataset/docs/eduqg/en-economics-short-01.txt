@@ -1,0 +1,65 @@
+This is a transaction that needs to be recorded, as Printing Plus has received money, and the stockholders have invested in the firm.
+
+Printing Plus now has more cash. Cash is an asset, which in this case is increasing. Cash increases on the debit side.
+
+When the company issues stock, stockholders purchase common stock, yielding a higher common stock figure than before issuance. The common stock account is increasing and affects equity. Looking at the expanded accounting equation, we see that Common Stock increases on the credit side.
+
+Impact on the financial statements:  Both of these accounts are balance sheet accounts. You will see total assets increase and total stockholders’ equity will also increase, both by $20,000. With both totals increasing by $20,000, the accounting equation, and therefore our balance sheet, will be in balance. There is no effect on the income statement from this transaction as there were no revenues or expenses recorded.
+
+Transaction 2:  On January 5, 2019, purchases equipment on account for $3,500, payment due within the month.
+
+Analysis:
+
+In this case, equipment is an asset that is increasing. It increases because Printing Plus now has more equipment than it did before. Assets increase on the debit side; therefore, the Equipment account would show a $3,500 debit.
+
+The company did not pay for the equipment immediately. Lynn asked to be sent a bill for payment at a future date. This creates a liability for Printing Plus, who owes the supplier money for the equipment. Accounts Payable is used to recognize this liability. This liability is increasing, as the company now owes money to the supplier. A liability account increases on the credit side; therefore, Accounts Payable will increase on the credit side in the amount of $3,500.
+
+Impact on the financial statements:  Since both accounts in the entry are balance sheet accounts, you will see no effect on the income statement.
+
+Transaction 3:  On January 9, 2019, receives $4,000 cash in advance from a customer for services not yet rendered.
+
+Analysis:
+
+Cash was received, thus increasing the Cash account. Cash is an asset that increases on the debit side.
+
+Printing Plus has not yet provided the service, meaning it cannot recognize the revenue as earned. The company has a liability to the customer until it provides the service. The Unearned Revenue account would be used to recognize this liability. This is a liability the company did not have before, thus increasing this account. Liabilities increase on the credit side; thus, Unearned Revenue will recognize the $4,000 on the credit side.
+
+Impact on the financial statements:  Since both accounts in the entry are balance sheet accounts, you will see no effect on the income statement.
+
+Transaction 4:  On January 10, 2019, provides $5,500 in services to a customer who asks to be billed for the services.
+
+Analysis:
+
+The company provided service to the client; therefore, the company may recognize the revenue as earned (revenue recognition principle), which increases revenue. Service Revenue is a revenue account affecting equity. Revenue accounts increase on the credit side; thus, Service Revenue will show an increase of $5,500 on the credit side.
+
+The customer did not immediately pay for the services and owes Printing Plus payment. This money will be received in the future, increasing Accounts Receivable. Accounts Receivable is an asset account. Asset accounts increase on the debit side. Therefore, Accounts Receivable will increase for $5,500 on the debit side.
+
+Impact on the financial statements:  You have revenue of $5,500. Revenue is reported on your income statement. The more revenue you have, the more net income (earnings) you will have. The more earnings you have, the more retained earnings you will keep. Retained earnings is a stockholders’ equity account, so total equity will increase $5,500. Accounts receivable is going up so total assets will increase by $5,500. The accounting equation, and therefore the balance sheet, remain in balance.
+
+Transaction 5:  On January 12, 2019, pays a $300 utility bill with cash.
+
+Analysis:
+
+Cash was used to pay the utility bill, which means cash is decreasing. Cash is an asset that decreases on the credit side.
+
+Paying a utility bill creates an expense for the company. Utility Expense increases, and does so on the debit side of the accounting equation.
+
+Impact on the financial statements:  You have an expense of $300. Expenses are reported on your income statement. More expenses lead to a decrease in net income (earnings). The fewer earnings you have, the fewer retained earnings you will end up with. Retained earnings is a stockholders’ equity account, so total equity will decrease by $300. Cash is decreasing, so total assets will decrease by $300, impacting the balance sheet.
+
+Transaction 6:  On January 14, 2019, distributed $100 cash in dividends to stockholders.
+
+Analysis:
+
+Cash was used to pay the dividends, which means cash is decreasing. Cash is an asset that decreases on the credit side.
+
+Dividends distribution occurred, which increases the Dividends account. Dividends is a part of stockholder’s equity and is recorded on the debit side. This debit entry has the effect of reducing stockholder’s equity.
+
+Impact on the financial statements:  You have dividends of $100. An increase in dividends leads to a decrease in stockholders’ equity (retained earnings). Cash is decreasing, so total assets will decrease by $100, impacting the balance sheet.
+
+Transaction 7:  On January 17, 2019, receives $2,800 cash from a customer for services rendered.
+
+Analysis:
+
+The customer used cash as the payment method, thus increasing the amount in the Cash account. Cash is an asset that is increasing, and it does so on the debit side.
+
+Printing Plus provided the services, which means the company can recognize revenue as earned in the Service Revenue account. Service Revenue increases equity; therefore, Service Revenue increases on the credit side.

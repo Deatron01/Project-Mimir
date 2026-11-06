@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Hamburg",
+    "nehezseg": "hard",
+    "nyelv": "hu",
+    "forras": "Hungarian Wikipedia (full article, fetched 2026-09-23): Hamburg; gold questions from MILQA"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Mikor alapították a hamburgi tengerészeti főiskolát?",
+      "helyes_valasz": "1749-ben",
+      "evidence": [
+        "1749-ben megalapították a tengerészeti főiskolát,"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Miért hozták létre a hamburgi Hazafias Egyesületet?",
+      "helyes_valasz": "hogy a művészeket és a tudósokat támogassa",
+      "evidence": [
+        "1675-ben a város tehetős polgársága megalapította a napjainkig működő Hazafias Egyesületet, amelynek célja a művészek és tudósok támogatása."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Hányan laktak Hamburgban, amikor a franciák megszállták a várost?",
+      "helyes_valasz": "130 ezer fő",
+      "evidence": [
+        "A megszállás idején 130 ezer fő lakott Hamburgban, ami 1860-ra 300 ezerre emelkedett."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Miért van Hamburgban minden német közszolgálati tévének képviselete?",
+      "helyes_valasz": "mert Hamburg az egykori NSZK legnagyobb városa",
+      "evidence": [
+        "Hamburg az egykori NSZK legnagyobb városa, így minden német közszolgálati televízió képviseletet nyitott a városban."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor jött létre a Loge d'Hambourg?",
+      "helyes_valasz": "1737-ben",
+      "evidence": [
+        "1737-ben jött létre az első német szabadkőműves páholy, a Loge d'Hambourg."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik országgal hozott létre Hamburg kereskedelmi szerződést 1716-ban?",
+      "helyes_valasz": "Franciaországgal",
+      "evidence": [
+        "1716-ban Hamburg kereskedelmi szerződést írt alá Franciaországgal."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor lett Hamburgból szabad város?",
+      "helyes_valasz": "1815-ben",
+      "evidence": [
+        "1815-ben szabad várossá nyilvánították."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hamburg vagy a Ruhr-vidék ipari teljesítménye jobb?",
+      "helyes_valasz": "a Ruhr-vidéké",
+      "evidence": [
+        "Hamburg ipari teljesítménye a metropolisz nagysága ellenére elmarad a Ruhr-vidék és más német iparvárosok mögött."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Mióta hallgatják többen az NDR-t mint a Radio Hamburgot?",
+      "helyes_valasz": "2007 februárja óta",
+      "evidence": [
+        "A rádióadók között sokáig a magántulajdonban álló Radio Hamburg vezette a hallgatottsági listákat, ám 2007 februárja óta a közszolgálati NDR tört az élre."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mi az a Loge d'Hambourg?",
+      "helyes_valasz": "az első német szabadkőműves páholy",
+      "evidence": [
+        "1737-ben jött létre az első német szabadkőműves páholy, a Loge d'Hambourg."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

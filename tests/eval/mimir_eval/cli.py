@@ -83,7 +83,7 @@ def cmd_score(a) -> int:
 def cmd_rate_export(a) -> int:
     from .rating import export_sheets
     export_sheets(a.run_dirs, a.out, n_per_run=a.n_per_run, n_raters=a.raters,
-                  n_calibration=a.calibration, seed=a.seed)
+                  n_calibration=a.calibration, seed=a.seed, only_docs=a.docs, judged_only=a.judged_only)
     return 0
 
 
@@ -167,6 +167,9 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--raters", type=int, default=3)
     s.add_argument("--calibration", type=int, default=10)
     s.add_argument("--seed", type=int, default=7)
+    s.add_argument("--docs", nargs="+", help="sample only from these document ids (same documents for every arm)")
+    s.add_argument("--judged-only", action="store_true",
+                   help="sample only questions the LLM judge scored (needed for judge-teacher agreement)")
     s.set_defaults(fn=cmd_rate_export)
 
     s = sub.add_parser("rate-import", help="read filled rating sheets")

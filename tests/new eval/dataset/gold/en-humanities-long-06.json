@@ -1,0 +1,164 @@
+{
+  "teszt_metaadatok": {
+    "tema": "u.s. history ch. 11",
+    "nehezseg": "medium",
+    "nyelv": "en",
+    "forras": "EduQG / OpenStax u.s._history chapter 11"
+  },
+  "kerdesek": [
+    {
+      "id": "fs-idp21946928",
+      "kerdes": "What was the practice of allowing residents of territories to decide whether their land should be slave or free called?",
+      "helyes_valasz": "popular sovereignty",
+      "disztraktorok": [
+        "the democratic process",
+        "the Wilmot Proviso",
+        "the Free Soil solution"
+      ],
+      "evidence": [
+        "Popular sovereignty was the belief that citizens should be able to decide issues based on the principle of majority rule; in this case, residents of a territory should have the right to decide whether slavery would be allowed in it."
+      ]
+    },
+    {
+      "id": "fs-idm96073632",
+      "kerdes": "Who made a proposal to prohibit the importation of enslaved people to Missouri following its admission to the United States?",
+      "helyes_valasz": "James Tallmadge",
+      "disztraktorok": [
+        "John C. Calhoun",
+        "Henry Clay",
+        "John Quincy Adams"
+      ],
+      "evidence": [
+        "Tallmadge proposed that Missouri be admitted as a free state, that no more enslaved people be allowed to enter Missouri after it achieved statehood, and that all enslaved children born there after its admission be freed at age twenty-five."
+      ]
+    },
+    {
+      "id": "fs-idm177707360",
+      "kerdes": "During the war between the United States and Mexico, where did revolts against U.S. control break out in?",
+      "helyes_valasz": "New Mexico and California",
+      "disztraktorok": [
+        "Florida and Texas",
+        "California and Texas",
+        "Florida and California"
+      ],
+      "evidence": [
+        "Despite Kearny’ s assurances that New Mexicans need not fear for their lives or their property, the region’ s residents rose in revolt in January 1847 in an effort to drive the Americans away.",
+        "General Stephen Watts Kearny, commander of the Army of the West, accepted the surrender of Santa Fe, New Mexico, and moved on to take control of California, leaving Colonel Sterling Price in command.",
+        "S. military strategy had three main objectives: 1) Take control of northern Mexico, including New Mexico; 2) seize California; and 3) capture Mexico City.",
+        "Then, following a revolt in California that left it divided in two, Polk attempted to purchase Upper California and New Mexico as well."
+      ]
+    },
+    {
+      "id": "fs-idp287521568",
+      "kerdes": "To balance votes in the Senate, which state was admitted to the Union as a free state at the same time that Missouri was admitted as a slave state?",
+      "helyes_valasz": "Maine",
+      "disztraktorok": [
+        "Florida",
+        "New York",
+        "Arkansas"
+      ],
+      "evidence": [
+        "Congress finally came to an agreement, called the Missouri Compromise, in 1820.",
+        "Missouri and Maine (which had been part of Massachusetts) would enter the Union at the same time, Maine as a free state, Missouri as a slave state."
+      ]
+    },
+    {
+      "id": "fs-idm127724336",
+      "kerdes": "What is the Long Expedition established a short-lived republic in Texas known as?",
+      "helyes_valasz": "the Lone Star Republic",
+      "disztraktorok": [
+        "the Republic of Texas",
+        "Columbiana",
+        "the Republic of Fredonia"
+      ],
+      "evidence": [
+        "In September 1836, military hero Sam Houston was elected president of Texas, and, following the relentless logic of U.",
+        "S. expansion, Texans voted in favor of annexation to the United States.",
+        "This had been the dream of many settlers in Texas all along.",
+        "They wanted to expand the United States west and saw Texas as the next logical step.",
+        "Annexation would almost certainly mean war with Mexico, and the admission of a state with a large enslaved population, though permissible under the Missouri Compromise, would bring the issue of slavery once again to the fore.",
+        "Texas had no choice but to organize itself as the independent Lone Star Republic.",
+        "The citizens of Texas have long indulged the hope, that in the adjustment of the boundaries of the Spanish possessions in America, and of the territories of the United States, that they should be included within the limits of the latter.",
+        "Defining American The Long Expedition’ s Declaration of Independence The Long Expedition’ s short-lived Republic of Texas was announced with the drafting of a Declaration of Independence in 1819."
+      ]
+    },
+    {
+      "id": "fs-idm94828576",
+      "kerdes": "Which of the following was not a provision of the Compromise of 1850?",
+      "helyes_valasz": "Slavery was abolished in Washington, DC.",
+      "disztraktorok": [
+        "California was admitted as a free state.",
+        "A stronger fugitive slave law was passed.",
+        "Residents of New Mexico and Utah were to decide for themselves whether their territories would be slave or free."
+      ],
+      "evidence": [
+        "The border between Texas and New Mexico was established.",
+        "Under a new fugitive slave law, those who helped escaped enslaved individuals or refused to assist in their return would be fined and possibly imprisoned.",
+        "The slave trade was banned in the nation’ s capital.",
+        "Slavery, however, was allowed to remain.",
+        "Popular sovereignty was to determine the status of slavery in New Mexico and Utah, even though Utah and part of New Mexico were north of the Missouri Compromise line.",
+        "California, which was ready to enter the Union, was admitted as a free state in accordance with its state constitution.",
+        "Beginning in January 1850, Congress worked for eight months on a compromise that might quiet the growing sectional conflict.",
+        "Led by the aged Henry Clay, members finally agreed to the following:"
+      ]
+    },
+    {
+      "id": "fs-idp221147232",
+      "kerdes": "When did Texas win its independence from Mexico?",
+      "helyes_valasz": "1836",
+      "disztraktorok": [
+        "1821",
+        "1830",
+        "1845"
+      ],
+      "evidence": [
+        "The Consultation delegates met again in March 1836.",
+        "They declared their independence from Mexico and drafted a constitution calling for an American-style judicial system and an elected president and legislature.",
+        "Texans’ hopes for independence were quashed in 1834, however, when Santa Anna dismissed the Mexican Congress and abolished all state governments, including that of Coahuila y Texas."
+      ]
+    },
+    {
+      "id": "fs-idp6587600",
+      "kerdes": "Texans defeated the army of General Antonio Lopez de Santa Anna at which battle?",
+      "helyes_valasz": "San Jacinto",
+      "disztraktorok": [
+        "the Alamo",
+        "Nacogdoches",
+        "Austin"
+      ],
+      "evidence": [
+        "Coming upon Santa Anna’ s encampment on the banks of San Jacinto River on April 21, 1836, they waited as the Mexican troops settled for an afternoon nap.",
+        "Assured by Houston that “Victory is certain!” and told to “Trust in God and fear not!” the seven hundred men descended on a sleeping force nearly twice their number with cries of “Remember the Alamo!” Within fifteen minutes the Battle of San Jacinto was over.",
+        "Approximately half the Mexican troops were killed, and the survivors, including Santa Anna, taken prisoner."
+      ]
+    },
+    {
+      "id": "fs-idp51074592",
+      "kerdes": "According to treaties signed in 1818 and 1827, with which country did the United States jointly occupy Oregon?",
+      "helyes_valasz": "Great Britain",
+      "disztraktorok": [
+        "Spain",
+        "Mexico",
+        "France"
+      ],
+      "evidence": [
+        "President Polk — whose campaign slogan in 1844 had been “Fifty-four forty or fight!” — asserted the United States’ right to gain full control of what was known as Oregon Country, from its southern border at 42 ° latitude (the current boundary with California) to its northern border at 54 ° 40 ' latitude.",
+        "According to an 1818 agreement, Great Britain and the United States held joint ownership of this territory, but the 1827 Treaty of Joint Occupation opened the land to settlement by both countries."
+      ]
+    },
+    {
+      "id": "fs-idm228586640",
+      "kerdes": "As a result of the Adams-Onís Treaty, the United States gained which territory from Spain?",
+      "helyes_valasz": "Florida",
+      "disztraktorok": [
+        "New Mexico",
+        "California",
+        "Nevada"
+      ],
+      "evidence": [
+        "Realizing that conflict between the United States and the Creeks and Seminoles would continue, Spain opted to cede the Spanish colony to its northern neighbor.",
+        "The Adams-Onís Treaty, named for Adams and the Spanish ambassador, Luís de Onís, made the cession of Florida official while also setting the boundary between the United States and Mexico at the Sabine River (Figure 11.7)."
+      ]
+    }
+  ]
+}

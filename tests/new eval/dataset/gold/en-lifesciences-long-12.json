@@ -1,0 +1,87 @@
+{
+  "teszt_metaadatok": {
+    "tema": "microbiology ch. 16",
+    "nehezseg": "hard",
+    "nyelv": "en",
+    "forras": "EduQG / OpenStax microbiology chapter 16"
+  },
+  "kerdesek": [
+    {
+      "id": "fs-id1167661437761",
+      "kerdes": "A mosquito bites a person who subsequently develops a fever and abdominal rash. What type of transmission would this be?",
+      "helyes_valasz": "biological vector transmission",
+      "disztraktorok": [
+        "mechanical vector transmission",
+        "direct contact transmission",
+        "vehicle transmission"
+      ],
+      "evidence": [
+        "Biological transmission occurs when the pathogen reproduces within a biological vector that transmits the pathogen from one host to another (Figure 16.12).",
+        "Arthropods are the main vectors responsible for biological transmission (Figure 16.13).",
+        "Most arthropod vectors transmit the pathogen by biting the host, creating a wound that serves as a portal of entry."
+      ]
+    },
+    {
+      "id": "fs-id1167661568286",
+      "kerdes": "Which is the most common type of biological vector of human disease?",
+      "helyes_valasz": "arthropods",
+      "disztraktorok": [
+        "viruses",
+        "bacteria",
+        "mammals"
+      ],
+      "evidence": [
+        "Biological transmission occurs when the pathogen reproduces within a biological vector that transmits the pathogen from one host to another (Figure 16.12).",
+        "Arthropods are the main vectors responsible for biological transmission (Figure 16.13).",
+        "Diseases can also be transmitted by a mechanical or biological vector, an animal (typically an arthropod) that carries the disease from one host to another."
+      ]
+    },
+    {
+      "id": "fs-id1167661456393",
+      "kerdes": "A blanket from a child with chickenpox is likely to be contaminated with the virus that causes chickenpox (Varicella-zoster virus). What is the blanket called?",
+      "helyes_valasz": "fomite",
+      "disztraktorok": [
+        "host",
+        "pathogen",
+        "vector"
+      ],
+      "evidence": [
+        "Indirect contact transmission involves inanimate objects called fomites that become contaminated by pathogens from an infected individual or reservoir (Figure 16.10).",
+        "For example, an individual with the common cold may sneeze, causing droplets to land on a fomite such as a tablecloth or carpet, or the individual may wipe her nose and then transfer mucus to a fomite such as a doorknob or towel."
+      ]
+    },
+    {
+      "id": "fs-id1167662471757",
+      "kerdes": "Which of the following factors can lead to reemergence of a disease?",
+      "helyes_valasz": "A period of decline in vaccination rates",
+      "disztraktorok": [
+        "A mutation that allows it to infect humans",
+        "A change in disease reporting procedures",
+        "Better education on the signs and symptoms of the disease"
+      ],
+      "evidence": [
+        "A reemerging infectious disease is a disease that is increasing in frequency after a previous period of decline.",
+        "Its reemergence may be a result of changing conditions or old prevention regimes that are no longer working.",
+        "Examples of such diseases are drug-resistant forms of tuberculosis, bacterial pneumonia, and malaria.",
+        "Drug-resistant strains of the bacteria causing gonorrhea and syphilis are also becoming more widespread, raising concerns of untreatable infections."
+      ]
+    },
+    {
+      "id": "fs-id1167662464904",
+      "kerdes": "Why are emerging diseases with very few cases the focus of intense scrutiny?",
+      "helyes_valasz": "They are increasing and therefore not controlled",
+      "disztraktorok": [
+        "They tend to be more deadly",
+        "They naturally have higher transmission rates",
+        "They occur more in developed countries"
+      ],
+      "evidence": [
+        "Emerging diseases may change their frequency gradually over time, or they may experience sudden epidemic growth.",
+        "Its high transmission rate, coupled with cultural practices for treatment of the dead and perhaps its emergence in an urban setting, caused the disease to spread rapidly, and thousands of people died.",
+        "The international public health community responded with a large emergency effort to treat patients and contain the epidemic.",
+        "An emerging infectious disease is either new to the human population or has shown an increase in prevalence in the previous twenty years.",
+        "Whether the disease is new or conditions have changed to cause an increase in frequency, its status as emerging implies the need to apply resources to understand and control its growing impact."
+      ]
+    }
+  ]
+}

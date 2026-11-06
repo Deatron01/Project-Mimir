@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Seuso-kincs",
+    "nehezseg": "easy",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Seuso-kincs"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Hol élt egykor Pannónia területén Seuso?",
+      "helyes_valasz": "a mai Polgárdi szőlőhegyén",
+      "evidence": [
+        "A régészek és szakemberek egyik feltételezése szerint az akkor még nagyobb kiterjedésű, partjain ingoványos, Lacus Pelso (mai nevén Balaton) mentén élt a mai Polgárdi szőlőhegyén Seuso (SEVSO), aki gazdag római polgár, esetleg a római hadsereg magas rangú tisztje, helytartója lehetett."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki volt Seuso?",
+      "helyes_valasz": "A régészek és szakemberek egyik feltételezése szerint az akkor még nagyobb kiterjedésű, partjain ingoványos, Lacus Pelso (mai nevén Balaton) mentén élt a mai Polgárdi szőlőhegyén Seuso (SEVSO), aki gazdag római polgár, esetleg a római hadsereg magas rangú tisztje, helytartója lehetett.",
+      "evidence": [
+        "A régészek és szakemberek egyik feltételezése szerint az akkor még nagyobb kiterjedésű, partjain ingoványos, Lacus Pelso (mai nevén Balaton) mentén élt a mai Polgárdi szőlőhegyén Seuso (SEVSO), aki gazdag római polgár, esetleg a római hadsereg magas rangú tisztje, helytartója lehetett."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mi köze Zelnik Istvánnak a Seuso-kincshez?",
+      "helyes_valasz": "Eközben Zelnik István, az Aranymúzeumáról híres milliárdos műgyűjtő, aki a Szőcs Géza vezette kulturális államtitkársággal egyetértésben kezdett tárgyalásokat a birtokosokkal, bejelentette, hogy adásvételi szerződést kötött a legális műkincspiacon eladhatatlanná vált Seuso-kincs Magyarországra hozatala céljából. Azonban a magyar kormány később azt nyilatkozta, hogy mivel a híres késő római ezüstkincs jog szerint a magyar állam tulajdona, bármilyen vásárlási konstrukció az orgazdaság pártolását jelentené. Zelnik titkos tárgyalásokat folytatott és azokról rendszeresen tájékoztatta a magyar illetékeseket. 2012 szeptemberében azonban az Emberi Erőforrások Minisztériuma kultúráért felelős államtitkársága azt közölte a közvéleménnyel, hogy nincs dokumentálható nyoma annak, hogy bárki hivatalosan tárgyalt volna a kormány illetékeseivel a Seuso-kincs sorsáról.",
+      "evidence": [
+        "Eközben Zelnik István, az Aranymúzeumáról híres milliárdos műgyűjtő, aki a Szőcs Géza vezette kulturális államtitkársággal egyetértésben kezdett tárgyalásokat a birtokosokkal, bejelentette, hogy adásvételi szerződést kötött a legális műkincspiacon eladhatatlanná vált Seuso-kincs Magyarországra hozatala céljából. Azonban a magyar kormány később azt nyilatkozta, hogy mivel a híres késő római ezüstkincs jog szerint a magyar állam tulajdona, bármilyen vásárlási konstrukció az orgazdaság pártolását jelentené. Zelnik titkos tárgyalásokat folytatott és azokról rendszeresen tájékoztatta a magyar illetékeseket. 2012 szeptemberében azonban az Emberi Erőforrások Minisztériuma kultúráért felelős államtitkársága azt közölte a közvéleménnyel, hogy nincs dokumentálható nyoma annak, hogy bárki hivatalosan tárgyalt volna a kormány illetékeseivel a Seuso-kincs sorsáról."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen felirat olvasható a Seuso-kincs vadásztálján?",
+      "helyes_valasz": "H(a)ec Sevso tibi durent per saecula multa Posteris ut prosint vascula digna tuis",
+      "evidence": [
+        "cmA leletek közül a legtöbb fontos információt hordozó, a legjelentősebb, a nagyméretű, 70 centiméter átmérőjű, csaknem 9 kg súlyú vadásztál, amelyen körben a következő latin felirat olvasható: H(a)ec Sevso tibi durent per saecula multa Posteris ut prosint vascula digna tuis."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor bukkantak rá Vinkovce mellett a 36 kilós ókori ezüst étkészletre?",
+      "helyes_valasz": "2012-ben",
+      "evidence": [
+        "Ebből a korszakból származik az ókori Pannonia Valeria másik nagyobb városában Cibalaeban, a mai szlavóniai Vinkovce mellett 2012-ben talált 36 kilogramnyi luxus ezüst étkészlet is."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mi lett a következménye a Frigidus menti csatának?",
+      "helyes_valasz": "a korábban pogány Európa kereszténnyé vált",
+      "evidence": [
+        "A mai Szlovénia területén 394. szeptember 6-án lezajlott Frigidus menti csata eredményeként a korábban pogány Európa kereszténnyé vált."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "A Seuso-kincsek milyen anyagból vannak?",
+      "helyes_valasz": "ezüstből",
+      "evidence": [
+        "A kincs művészi és anyagi értékét tekintve is, a ma ismert és fennmaradt, ezüstből készített ötvösművészeti tárgyak között a legértékesebbnek számít a késő római császárkorból."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mi a latin Lacus Pelso magyar megfelelője?",
+      "helyes_valasz": "Balaton",
+      "evidence": [
+        "A régészek és szakemberek egyik feltételezése szerint az akkor még nagyobb kiterjedésű, partjain ingoványos, Lacus Pelso (mai nevén Balaton) mentén élt a mai Polgárdi szőlőhegyén Seuso (SEVSO), aki gazdag római polgár, esetleg a római hadsereg magas rangú tisztje, helytartója lehetett."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hol folyik a Frigidus folyó?",
+      "helyes_valasz": "A mai Szlovénia területén",
+      "evidence": [
+        "A mai Szlovénia területén 394. szeptember 6-án lezajlott Frigidus menti csata eredményeként a korábban pogány Európa kereszténnyé vált."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki találta meg 1974-ben az ókori Pannónia eddig ismert legnagyobb lakóépületét Szabadbattyán mellett?",
+      "helyes_valasz": "Pereczes Ferenc nyugdíjas asztalosmester",
+      "evidence": [
+        "Pereczes Ferenc nyugdíjas asztalosmester 1974 tavaszán felfedezte az ókori Pannonia eddig ismert legnagyobb, 110×120 méter alapterületű késő római kori lakóépületét Szabadbattyán és Úrhida határában a Sárvíz partján."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

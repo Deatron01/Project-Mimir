@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Lady Gaga",
+    "nehezseg": "medium",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Lady Gaga"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Lady Gaga egyetértett Donald Trump politikájával?",
+      "helyes_valasz": "2016 novemberében nyíltan ellenezte a frissen megválasztott amerikai elnök, Donald Trump politikáját.",
+      "evidence": [
+        "2016 novemberében nyíltan ellenezte a frissen megválasztott amerikai elnök, Donald Trump politikáját."
+      ],
+      "type": "open",
+      "kerdestipus": "Nem"
+    },
+    {
+      "id": null,
+      "kerdes": "Miért változtatta meg Lady Gaga John Lennon Imagine című dalának szövegét a 2009. október 11-i fellépésén?",
+      "helyes_valasz": "hogy megemlékezzen vele egy Matthew Shephard nevű főiskolás fiúról, akit homoszexualitása miatt öltek meg",
+      "evidence": [
+        "A gyűlésén előadta John Lennon Imagine című dalát, és előtte hozzátette: „Ma nem a saját számaim valamelyikét fogom [előadni], mert ez az este nem rólam szól, hanem rólatok.” A dal eredeti szövegét részben megváltoztatta, hogy megemlékezzen vele egy Matthew Shephard nevű főiskolás fiúról, akit homoszexualitása miatt öltek meg."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki fedezte fel Lady Gaga tehetségét a Sony/ATV Music Publishing-nél?",
+      "helyes_valasz": "Akon R&B",
+      "evidence": [
+        "Ott Akon R&B énekes felfigyelt hangi adottságaira, aki segített neki, hogy 2007-ben leszerződhessen az Interscope Records-hoz és saját kiadójához, a Kon Live Distributionhöz."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen zenei stílusirányzatok jellemzik Gaga The Fame Monster című albumát?",
+      "helyes_valasz": "a The Fame Monster albumon a 70-es évek glamje és az ABBA együttes diszkó hatása érzékelhető.",
+      "evidence": [
+        "a The Fame Monster albumon a 70-es évek glamje és az ABBA együttes diszkó hatása érzékelhető."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyek voltak Lady Gaga The Fame Monster című albumának legsikeresebb számai?",
+      "helyes_valasz": "Bad Romance",
+      "evidence": [
+        "2009-ben adták ki hasonlóan kitörő sikerrel The Fame Monster című középlemezét, rajta három újabb világszerte első helyezéseket elérő számmal, a Bad Romance-szel, a Telephone-nal és az Alejandróval."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz:multispan"
+    },
+    {
+      "id": null,
+      "kerdes": "Mivel foglakozik a Haus of Gaga?",
+      "helyes_valasz": "Gagának van egy saját kreatív produkciós csapata, a Haus of Gaga, amelyet ő maga irányít. A csapat készíti ruháinak jelentős részét, a színpadi kellékeket és Gaga hajkölteményeit is",
+      "evidence": [
+        "Gagának van egy saját kreatív produkciós csapata, a Haus of Gaga, amelyet ő maga irányít. A csapat készíti ruháinak jelentős részét, a színpadi kellékeket és Gaga hajkölteményeit is"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hogy hívták Akon saját kiadóját 2007-ben?",
+      "helyes_valasz": "Kon Live Distribution",
+      "evidence": [
+        "Ott Akon R&B énekes felfigyelt hangi adottságaira, aki segített neki, hogy 2007-ben leszerződhessen az Interscope Records-hoz és saját kiadójához, a Kon Live Distributionhöz."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Lady Gaga milyen vallású?",
+      "helyes_valasz": "keresztény",
+      "evidence": [
+        "Gaga kijelentette: „keresztény nő vagyok, és amit a kereszténységről tudok az az, hogy nem vagyunk előítéletesek, és mindenkit szeretettel várunk.”"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "A Bad Romance Lady Gaga melyik lemezén jelent meg?",
+      "helyes_valasz": "A Fame Monsteren.",
+      "evidence": [
+        "2009-ben adták ki hasonlóan kitörő sikerrel The Fame Monster című középlemezét, rajta három újabb világszerte első helyezéseket elérő számmal, a Bad Romance-szel, a Telephone-nal és az Alejandróval."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor hozta létre Lady Gaga a saját közösségi oldalát?",
+      "helyes_valasz": "2012 júliusában",
+      "evidence": [
+        "2012 júliusában Gaga létrehozta saját közösségi oldalát, a LittleMonsters.com-ot, ahol rajongói szabadon megoszthattak bármit gyűlölködés nélkül."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "teszt_metaadatok": {
+    "tema": "principles of accounting, volume 1: financial accounting ch. 5, 5.1 Describe and Prepare Closing Entries for a Business",
+    "nehezseg": "medium",
+    "nyelv": "en",
+    "forras": "EduQG / OpenStax principles_of_accounting,_volume_1:_financial_accounting chapter 5"
+  },
+  "kerdesek": [
+    {
+      "id": "fs-idm223682464",
+      "kerdes": "Which of these accounts is never closed?",
+      "helyes_valasz": "Prepaid Rent",
+      "disztraktorok": [
+        "Income Summary",
+        "Rent Revenue",
+        "Rent Expense"
+      ],
+      "evidence": [
+        "Revenue and expense accounts are closed to Income Summary, and Income Summary and Dividends are closed to the permanent account, Retained Earnings.",
+        "Revenue, expense, and dividend accounts affect retained earnings and are closed so they can accumulate new balances in the next period, which is an application of the time period assumption."
+      ]
+    },
+    {
+      "id": "fs-idm222764832",
+      "kerdes": "Which account would be credited when closing the account for rent expense for the year?",
+      "helyes_valasz": "Rent Expense",
+      "disztraktorok": [
+        "Prepaid Rent",
+        "Rent Revenue",
+        "Unearned Rent Revenue"
+      ],
+      "evidence": [
+        "You have also not incurred any expenses yet for rent, electricity, cable, internet, gas or food.",
+        "This means that the current balance of these accounts is zero, because they were closed on December 31, 2018, to complete the annual accounting period."
+      ]
+    },
+    {
+      "id": "fs-idm208499376",
+      "kerdes": "Which of these accounts would be present in the closing entries?",
+      "helyes_valasz": "Dividends",
+      "disztraktorok": [
+        "Accounts Receivable",
+        "Unearned Service Revenue",
+        "Sales Tax Payable"
+      ],
+      "evidence": [
+        "The fourth closing entry closes dividends to retained earnings.",
+        "Why was income summary not used in the dividends closing entry?",
+        "Dividends are not an income statement account."
+      ]
+    },
+    {
+      "id": "fs-idm461383760",
+      "kerdes": "Which of these accounts is never closed?",
+      "helyes_valasz": "Retained Earnings",
+      "disztraktorok": [
+        "Dividends",
+        "Service Fee Revenue",
+        "Income Summary"
+      ],
+      "evidence": [
+        "It is important to understand retained earnings is not closed out, it is only updated."
+      ]
+    },
+    {
+      "id": "fs-idm763804912",
+      "kerdes": "Which of the following accounts is considered a permanent or real account?",
+      "helyes_valasz": "Prepaid Insurance",
+      "disztraktorok": [
+        "Interest Revenue",
+        "Insurance Expense",
+        "Supplies Expense"
+      ],
+      "evidence": [
+        "Permanent (real) accounts are accounts that transfer balances to the next period and include balance sheet accounts, such as assets, liabilities, and stockholders’ equity.",
+        "These accounts will not be set back to zero at the beginning of the next period; they will keep their balances.",
+        "Permanent accounts are not part of the closing process."
+      ]
+    },
+    {
+      "id": "fs-idm208664176",
+      "kerdes": "If a journal entry includes a debit or credit to the Retained Earnings account, it is most likely which of the following?",
+      "helyes_valasz": "a closing entry",
+      "disztraktorok": [
+        "an adjusting entry",
+        "an ordinary transaction entry",
+        "outside of the accounting cycle"
+      ],
+      "evidence": [
+        "The statement of retained earnings shows the period-ending retained earnings after the closing entries have been posted.",
+        "Retained Earnings is the only account that appears in the closing entries that does not close.",
+        "If the balance in Income Summary before closing is a credit balance, you will debit Income Summary and credit Retained Earnings in the closing entry."
+      ]
+    },
+    {
+      "id": "fs-idm196838000",
+      "kerdes": "Which of the following accounts is considered a temporary or nominal account?",
+      "helyes_valasz": "Fees Earned Revenue",
+      "disztraktorok": [
+        "Prepaid Advertising",
+        "Unearned Service Revenue",
+        "Prepaid Insurance"
+      ],
+      "evidence": [
+        "Temporary (nominal) accounts are accounts that are closed at the end of each accounting period, and include income statement, dividends, and income summary accounts.",
+        "These accounts are temporary because they keep their balances during the current accounting period and are set back to zero when the period ends.",
+        "Revenue and expense accounts are closed to Income Summary, and Income Summary and Dividends are closed to the permanent account, Retained Earnings."
+      ]
+    },
+    {
+      "id": "fs-idm456953728",
+      "kerdes": "Which of these accounts would not be present in the closing entries?",
+      "helyes_valasz": "Dividends Payable",
+      "disztraktorok": [
+        "Utilities Expense",
+        "Fees Earned Revenue",
+        "Insurance Expense"
+      ],
+      "evidence": [
+        "Why was income summary not used in the dividends closing entry?",
+        "Dividends are not an income statement account."
+      ]
+    }
+  ]
+}

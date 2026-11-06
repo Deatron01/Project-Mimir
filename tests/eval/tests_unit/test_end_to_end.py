@@ -11,7 +11,7 @@ from mimir_eval import llm as llm_mod
 from mimir_eval import runner as runner_mod
 from mimir_eval.analysis import analyze
 from mimir_eval.embed import BowEmbedder
-from mimir_eval.rating import export_sheets, import_sheets
+from mimir_eval.rating import HU_COLS, export_sheets, import_sheets
 from mimir_eval.scoring import score_run
 from mimir_eval.util import norm_text, read_jsonl
 
@@ -127,10 +127,12 @@ def test_full_pipeline(workspace):
         wb = load_workbook(sheet)
         for ws_name in ("Kalibráció", "Értékelés"):
             ws = wb[ws_name]
+            hdr = [c.value for c in ws[1]]
+            score_cols = [hdr.index(h) for h in HU_COLS.values()]
             for row in ws.iter_rows(min_row=2):
-                for c in row[10:14]:
-                    c.value = rng.randint(2, 5)
-                row[14].value = rng.choice(["igen", "nem"])
+                for i in score_cols:
+                    row[i].value = rng.randint(2, 5)
+                row[hdr.index("Használnám (igen/nem)")].value = rng.choice(["igen", "nem"])
         wb.save(sheet)
     ratings = import_sheets([str(s) for s in sorted(rdir.glob("rater_*.xlsx"))],
                             str(rdir / "rating_key.csv"), str(rdir / "ratings.csv"))
@@ -214,10 +216,11 @@ monitor_vram: false
     rng = random.Random(5)
     for sheet in sorted(rdir.glob("rater_*.xlsx")):
         wb = load_workbook(sheet)
+        hdr = [c.value for c in wb["Értékelés"][1]]
         for row in wb["Értékelés"].iter_rows(min_row=2):
-            for c in row[10:14]:
-                c.value = rng.randint(1, 5)
-            row[14].value = rng.choice(["igen", "nem"])
+            for h in HU_COLS.values():
+                row[hdr.index(h)].value = rng.randint(1, 5)
+            row[hdr.index("Használnám (igen/nem)")].value = rng.choice(["igen", "nem"])
         wb.save(sheet)
     ratings = import_sheets([str(s) for s in sorted(rdir.glob("rater_*.xlsx"))],
                             str(rdir / "rating_key.csv"), str(rdir / "ratings.csv"))

@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Mátyás-templom",
+    "nehezseg": "easy",
+    "nyelv": "hu",
+    "forras": "Hungarian Wikipedia (full article, fetched 2026-09-23): Mátyás-templom; gold questions from MILQA"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Melyik Buda legnagyobb harangja?",
+      "helyes_valasz": "Ez jelenleg az 5. legnagyobb tömegű harang Magyarországon, és Budapest 2. legnagyobb harangja is. A templom két nagyharangja egyben a budai oldal két legnagyobb harangja is.",
+      "evidence": [
+        "Ez jelenleg az 5. legnagyobb tömegű harang Magyarországon, és Budapest 2. legnagyobb harangja is. A templom két nagyharangja egyben a budai oldal két legnagyobb harangja is."
+      ],
+      "type": "open",
+      "kerdestipus": "Aritmetika:Az alcím a válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Ki készítette a Máytás-templom Krisztus-harangjának domborműveit?",
+      "helyes_valasz": "Szőnyi Endre szobrászművész",
+      "evidence": [
+        "Három domborműve: Madonna a gyermek Jézussal, Keresztrefeszítés, Világbíró Krisztus. Fent töviskoszorú fut körbe, amelyet a mottó fölött golgotavirág-motívum fog össze. Lent Mária-monogramból eredő szőlőinda húzódik végig, amelyben a mottó alatt madarak bújnak meg. A szobrászati díszítés Szőnyi Endre szobrászművész munkája."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor szentelték fel a Mátyás-templom Krisztus-harangját?",
+      "helyes_valasz": "2010-ben",
+      "evidence": [
+        "Az üdvösség 2010. és XVI. Benedek pápa kormányzásának 6. évében a Budavári Főtemplom közössége Varjú Imre plébános vezetésével az Isteni Megváltó, az Úr Krisztus tiszteletének szentelt engem,"
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Ki festette a Szent Imre-kápolna oltárképét?",
+      "helyes_valasz": "Zichy Mihály",
+      "evidence": [
+        "Az oltárképeket Zichy Mihály (Szent Imre-kápolna) és Aggházy Gyula (Loretói kápolna) festették,"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki volt a Mátyás-templom plébánosa 2010-ben?",
+      "helyes_valasz": "Varjú Imre",
+      "evidence": [
+        "Ajánlás: Az üdvösség 2010. és XVI. Benedek pápa kormányzásának 6. évében a Budavári Főtemplom közössége Varjú Imre plébános vezetésével az Isteni Megváltó, az Úr Krisztus tiszteletének szentelt engem, hogy megfeleljek mindenkinek, aki reményének okáról kérdezi."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hol nyugszik Châtillon Anna?",
+      "helyes_valasz": "az északi oldalhajó kápolnájában",
+      "evidence": [
+        "1898-ban III. Béla és első felesége, Châtillon Anna hamvai addigi altemplomi őrzési helyükről felhozva az északi oldalhajó kápolnájában nyertek végső nyughelyet."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mátyás királyt a Mátyás-templomban koronázták?",
+      "helyes_valasz": "Két uralkodói párt koronáztak meg falai között: Ferenc Józsefet és Erzsébetet, valamint IV. Károlyt és Zitát. Mátyás király, uralkodása alatt kétszer is megnősült, esküvői a Mátyás-templomban zajlottak.",
+      "evidence": [
+        "Két uralkodói párt koronáztak meg falai között: Ferenc Józsefet és Erzsébetet, valamint IV. Károlyt és Zitát. Mátyás király, uralkodása alatt kétszer is megnősült, esküvői a Mátyás-templomban zajlottak."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz:Nem"
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik templomot hívjuk Koronázó Főtemplomnak?",
+      "helyes_valasz": "A Koronázó Főtemplom 1893-ra készült el;",
+      "evidence": [
+        "A Koronázó Főtemplom 1893-ra készült el;"
+      ],
+      "type": "open",
+      "kerdestipus": "A cím a válasz:Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Hány lépcső vezet a Mátyás-torony alsó koszorúerkélyére?",
+      "helyes_valasz": "197",
+      "evidence": [
+        "A Mátyás-torony teljes magassága a templom padozatától 78,16 méter, a járda szintjétől 76,57 méter. A látogatók számára a torony alsó koszorúerkélyét nyitották meg, amelynek magassága 46,73 méter, és amelyre 197 lépcsőn lehet feljutni.”"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "=5. Kit láthatunk a Mátyás-templom főkapuján?",
+      "helyes_valasz": "a Magyarok Nagyasszonyát",
+      "evidence": [
+        "Az oltárképeket Zichy Mihály (Szent Imre-kápolna) és Aggházy Gyula (Loretói kápolna) festették, a főkapu domborművét, amely a Magyarok Nagyasszonyát ábrázolja, Lontay Lajos mintázta."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

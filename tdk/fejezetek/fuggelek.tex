@@ -219,36 +219,37 @@ R5 & \code{report}: táblázatok, ábrák, tesztek & -- & 1--2 nap \\
 
 A terv végrehajtásának állapota a dolgozat lezárásakor: az R1 és R2 lépés a 2026. szeptember 27--28-i
 futásban karonként hat dokumentumon készült el (\ref{sec:fo-beallitasok}.~szakasz), az R3 pontozás és az
-R5 jelentés megtörtént (\code{tests/eval/report\_main/main}), az R4 oktatói értékelés folyamatban van.
+R5 jelentés megtörtént (\code{tests/eval/report\_main/main}), az R4 oktatói értékelés a dolgozat lezárásáig
+nem készült el.
 
 \section{A közölt számok forrásai}
 
 \begin{table}[H]
 \centering
-\caption{A dolgozat táblázatainak és ábráinak adatforrásai a tárolóban.}
+\caption{A dolgozat táblázatainak és ábráinak adatforrásai a tárolóban (a \code{tests/eval} könyvtárhoz
+viszonyítva).}
 \label{tab:forrasok}
 \footnotesize
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 Dolgozatbeli elem & Forrás \\
 \midrule
-\ref{tab:pilot-fo}.\ táblázat, \ref{fig:mutatok}.\ ábra & \code{results\_pilot/*/exam\_metrics.csv}, \code{questions.jsonl}; \code{report\_pilot/pilot} \\
-\ref{tab:verifier-biro}., \ref{tab:verifier-karok}.\ táblázat & \code{results\_pilot/\{E2,E2f,E2h,E3\}\_*/exams.jsonl} (\code{verified}) és \code{questions.jsonl} (\code{grounded}, \code{blind\_correct}, \code{judge\_would\_use}) \\
-\ref{tab:szivargas}.\ táblázat & \code{questions.jsonl}; \code{schema.key\_in\_stem}, \code{schema.stem\_is\_question} \\
-\ref{tab:rubrika-eredmeny}.\ táblázat & \code{questions.jsonl}, \code{judge\_*} mezők, 30 kérdés átlaga \\
-\ref{tab:hosszak}.\ táblázat & \code{questions.jsonl} (\code{text}, \code{options}), \code{exam\_metrics.csv} (\code{duplicate\_rate}, \code{gold\_max\_sim\_mean}) \\
-\ref{tab:koltseg}.\ táblázat & \code{exams.jsonl} (\code{llm.calls\_by\_stage}, \code{llm.tokens}), \code{exam\_metrics.csv} \\
-\ref{tab:vram-meres}.\ táblázat & \code{exams.jsonl} (\code{vram\_baseline\_mib}, \code{vram\_peak\_mib}), karonként az első vizsga \\
+\ref{tab:pilot-fo}.\ táblázat & \code{results\_pilot/*/exam\_metrics.csv}, \code{questions.jsonl}; \code{report\_pilot/pilot} \\
+\ref{tab:pilot-verifier}.\ táblázat & \code{results\_pilot/\{E2,E2f,E2h,E3\}\_*/exams.jsonl} (\code{verified}) és \code{questions.jsonl} (\code{grounded}) \\
+Pilot: szivárgás, zaj, GPU-memória & \code{results\_pilot/*/questions.jsonl} (\code{key\_in\_stem}, \code{stem\_is\_question}); \code{exams.jsonl} (\code{retrieved}, \code{vram\_baseline\_mib}, \code{vram\_peak\_mib}) \\
+Pilotpéldák & \code{results\_pilot/\{E0,E3\}\_*/questions.jsonl}, 1.\ mag \\
 \ref{tab:budget}.\ táblázat & publikált modellarchitektúrák és GGUF-fájlméretek; $M_0$ becslés \\
-\ref{tab:adatkeszlet}.\ táblázat & \code{tests/eval/dataset/manifest*.yaml} \\
-\ref{tab:peldak}.\ táblázat & \code{results\_pilot/\{E0,E1,E3,E4\}\_*/questions.jsonl}, 1.\ mag \\
-Futásról futásra zaj & \code{results\_pilot/\{E0,E5a\}\_*/exams.jsonl} (\code{retrieved}) \\
+\ref{tab:adatkeszlet}.\ táblázat & \code{dataset/manifest*.yaml} \\
 \ref{tab:fo-vizsgalat}.\ táblázat, \ref{fig:fo-minoseg-ido}.\ ábra & \code{report\_main/main/latex/tab\_main.tex}, \code{fig\_quality\_time.dat}, \code{paper\_numbers.json} \\
-\ref{tab:fo-dokumentumok}.\ táblázat & \code{report\_main/main/adatkeszlet.csv} (\code{kiertekelve}); \code{configs/e4*\_server\_*.yaml} (\code{documents}) \\
-\ref{tab:fo-szignifikancia}.\ táblázat & \code{report\_main/main/szignifikancia.csv}, \code{latex/tab\_significance.tex} \\
-\ref{tab:fo-verifier-biro}., \ref{tab:fo-verifier-karok}.\ táblázat & \code{report\_main/main/latex/tab\_verifier.tex}, \code{tab\_verifier\_arms.tex}; az \arm{E4b} nélküli 150/174: karonként pontosság $\times$ átengedett kérdések száma \\
+\ref{tab:fo-dokumentumok}.\ táblázat & \code{report\_main/main/adatkeszlet.csv}; \code{configs/e4*\_server\_*.yaml} (\code{documents}); darabszám: \code{exam\_metrics.csv} (\code{n\_chunks}) \\
+\ref{tab:fo-dok}.\ táblázat & \code{results/*/exam\_metrics.csv}: $Q$ vizsgánként a négy komponensből, majd dokumentumonként a magokra átlagolva \\
+\ref{tab:fo-szignifikancia}.\ táblázat & \code{report\_main/main/szignifikancia.csv} \\
+\ref{tab:fo-elutasitas}.\ táblázat & \code{results/*/exams.jsonl}, \code{blueprint.slot\_logs[].attempts[].problems}; az \arm{E2x} kihagyott ellenőrzései: \code{blueprint.verifier\_skipped}, \code{llm.errors} \\
+\ref{tab:fo-verifier-karok}.\ táblázat & \code{report\_main/main/latex/tab\_verifier.tex}, \code{tab\_verifier\_arms.tex} \\
 \ref{tab:fo-szivargas}.\ táblázat & \code{report\_main/main/latex/tab\_leakage.tex} \\
-\ref{fig:fo-rangsor}--\ref{fig:fo-nyelvek}.\ ábra, nyelvenkénti értékek & \code{report\_main/main/abra*.pdf}, \code{eredmenyek.md} (5.~táblázat) \\
+\ref{tab:fo-rubrika}.\ táblázat & \code{results/*/questions.jsonl} (\code{judge\_*}, \code{bloom}, \code{judge\_bloom\_level}, \code{text}, \code{options}) \\
+\ref{tab:fo-vram}.\ táblázat & \code{results/*/exams.jsonl} (\code{vram\_baseline\_mib}, \code{vram\_peak\_mib}); GPU: \code{run.json} (\code{hardware.gpus}) \\
+Nyelvenkénti értékek, rangsor & \code{report\_main/main/abra*.pdf}, \code{eredmenyek.md} (5.~táblázat) \\
 \ref{tab:fo-peldak}.\ táblázat & \code{report\_main/main/peldak.md}; karakterpozíciók: \code{dataset/docs/eduqg/en-law-long-03.txt} \\
 \bottomrule
 \end{tabularx}

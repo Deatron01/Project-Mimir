@@ -1,0 +1,95 @@
+{
+  "teszt_metaadatok": {
+    "tema": "american government ch. 11, 11.1 The Institutional Design of Congress",
+    "nehezseg": "easy",
+    "nyelv": "en",
+    "forras": "EduQG / OpenStax american_government chapter 11"
+  },
+  "kerdesek": [
+    {
+      "id": "fs-id1171472284811",
+      "kerdes": "What does stopping a filibuster require?",
+      "helyes_valasz": "the chamber votes for cloture",
+      "disztraktorok": [
+        "a majority of senators agree on the bill",
+        "the speaker steps away from the podium",
+        "the Speaker or majority leader intervenes"
+      ],
+      "evidence": [
+        "This flexibility about speaking in the Senate gave rise to a unique tactic, the filibuster.",
+        "In 1975, after the heightened partisanship of the civil rights era, the Senate further weakened the filibuster by reducing the number needed for cloture from two-thirds to three-fifths, or sixty votes, where it remains today (except for judicial nominations for which only fifty-five votes are needed to invoke cloture)."
+      ]
+    },
+    {
+      "id": "fs-id1171473150122",
+      "kerdes": "A select committee is different from a standing committee because of what?",
+      "helyes_valasz": "a select committee is convened for a specific and temporary purpose, while a standing committee is permanent",
+      "disztraktorok": [
+        "a select committee includes member of both chambers, while a standing committee includes only members of the House",
+        "a select committee is used for bill reconciliation, while a standing committee is used for prosecutions",
+        "a select committee must stay in session, while a standing committee goes to recess"
+      ],
+      "evidence": [
+        "The first is the standing, or permanent, committee.",
+        "Finally, ad hoc, special, or select committees are temporary committees set up to address specific topics."
+      ]
+    },
+    {
+      "id": "fs-id1171471032709",
+      "kerdes": "Why are House leaders more powerful than Senate leaders? ",
+      "helyes_valasz": "the constitutional position of the House",
+      "disztraktorok": [
+        "the majoritarian nature of the House—a majority can run it like a cartel",
+        "the larger size of the House",
+        "the State of the Union address being delivered in the House chamber"
+      ],
+      "evidence": [
+        "Instead, the Constitution allows for the Senate to choose a president pro tempore — usually the most senior senator of the majority party — who presides over the Senate.",
+        "Despite the power of the conferences, however, the most important leadership position in the House is actually elected by the entire body of representatives.",
+        "This position is called the Speaker of the House and is the only House officer mentioned in the Constitution."
+      ]
+    },
+    {
+      "id": "fs-id1171474226574",
+      "kerdes": "Saying a bill is being marked up is just another way to say it is being what?",
+      "helyes_valasz": "amended",
+      "disztraktorok": [
+        "tabled",
+        "neglected",
+        "vetoed"
+      ],
+      "evidence": [
+        "Once hearings have been completed, the bill enters the markup stage.",
+        "This is essentially an amending and voting process."
+      ]
+    },
+    {
+      "id": "fs-id1171472149155",
+      "kerdes": "What are now the key means of advancing modern legislation?",
+      "helyes_valasz": "the budget process",
+      "disztraktorok": [
+        "committees",
+        "the actions of the leadership",
+        "the filibuster"
+      ],
+      "evidence": [
+        "This and successive similar uses of the budget process convinced many in Congress of the utility of this strategy.",
+        "During the contentious and ideologically divided 1990s, the budget process became the common problem-solving mechanism in the legislature, thus laying the groundwork for the way legislation works today."
+      ]
+    },
+    {
+      "id": "fs-id1171471260028",
+      "kerdes": "What do senate races tend to inspire?",
+      "helyes_valasz": "broad discussion of policy issues",
+      "disztraktorok": [
+        "narrow discussion of specific policy issues",
+        "less money than House races",
+        "less media coverage than House races"
+      ],
+      "evidence": [
+        "Because the Senate is much smaller than the House, senators hold more committee assignments than House members.",
+        "House members historically defer to the decisions of committees, while senators tend to view committee decisions as recommendations, often seeking additional discussion that could lead to changes."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Gízai nagy piramis",
+    "nehezseg": "hard",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Gízai nagy piramis"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "A gízai nagy piramis bejárata a földtől milyen magasan nyílik?",
+      "helyes_valasz": "17 méterre",
+      "evidence": [
+        "A piramis eredeti bejárata az északi oldalon, 17 méterre a talajszint felett, és 7,3 méterre a középvonaltól keletre helyezkedik el."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen anyagból építették a gízai nagy piramis halotti templomát?",
+      "helyes_valasz": "Turai mészkőből épült, mint a piramis burkolata is, udvarán és szentélyében összesen 50 gránitoszloppal. Mára csak a bazalt padlóburkolat egy része maradt fenn.",
+      "evidence": [
+        "Turai mészkőből épült, mint a piramis burkolata is, udvarán és szentélyében összesen 50 gránitoszloppal. Mára csak a bazalt padlóburkolat egy része maradt fenn."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki fedezte fel a halotti templom romjait a gízai nagy piramis mellett?",
+      "helyes_valasz": "Abu Szeif",
+      "evidence": [
+        "A halotti templom romjait 1939-ben Abu Szeif fedezte és tárta fel."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "A gízai nagy piramis bejárata melyik égtáj felé nyílik?",
+      "helyes_valasz": "északra",
+      "evidence": [
+        "A piramis eredeti bejárata az északi oldalon, 17 méterre a talajszint felett, és 7,3 méterre a középvonaltól keletre helyezkedik el."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Hány centiméter egy egyiptomi könyök?",
+      "helyes_valasz": "100 egyiptomi könyök (52,5 méter) hosszú,",
+      "evidence": [
+        "100 egyiptomi könyök (52,5 méter) hosszú,"
+      ],
+      "type": "open",
+      "kerdestipus": "Aritmetika:Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Hány gránitoszlop állt a gízai nagy piramis halotti templomában?",
+      "helyes_valasz": "50",
+      "evidence": [
+        "Turai mészkőből épült, mint a piramis burkolata is, udvarán és szentélyében összesen 50 gránitoszloppal."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Kheopsz és Szóphisz ugyanannak a fáraónak a neve?",
+      "helyes_valasz": "Manethón ugyan azt írja, hogy nem Kheopsz, hanem Szóphisz volt a neve, de ez inkább névváltozatnak tűnik, mintsem más uralkodó feltevésének.",
+      "evidence": [
+        "Manethón ugyan azt írja, hogy nem Kheopsz, hanem Szóphisz volt a neve, de ez inkább névváltozatnak tűnik, mintsem más uralkodó feltevésének."
+      ],
+      "type": "open",
+      "kerdestipus": "Igen:Nem"
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen nehéz a gízai nagy piramis?",
+      "helyes_valasz": "a gigantikus építmény tömege meghaladja az 5 000 000 tonnát",
+      "evidence": [
+        "Így nem meglepő, hogy a gigantikus építmény tömege meghaladja az 5 000 000 tonnát."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik a világ legnagyobb piramisa?",
+      "helyes_valasz": "A gízai nagy piramis",
+      "evidence": [
+        "A gízai nagy piramis (más néven Hufu-piramis vagy Kheopsz-piramis, ókori nevén Ahet Hufu, „Hufu horizontja / fényhegye”) az egyiptomi óbirodalmi Hufu (Ḫwf.w, görögösen Kheopsz vagy Szúfisz, Χεοψ, Σουφις) fáraó által építtetett piramis. A legrégebbi, a legnagyobb és egyben az egyedüli fennmaradt csoda az ókori világ hét csodája közül. Az emberiség történetének egyik csúcsteljesítménye, a kínai nagy fal, a Hafré-piramis és a karnaki templom mellett a legnagyobb ókori építmény, a világ legnagyobb piramisa, amely 147 méteres magasságával négyezer évig a világ legmagasabb épülete is volt egyben."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen építési módszerrel növelték az ókori építőmesterek a gízai nagy piramis stabilitását?",
+      "helyes_valasz": "Az építés technológiája a Sznofru piramisainál már bevált módszerű, ennek lényege, hogy a téglatest alakú kvádereket nem a hagyományos módon, a legkisebb felületű oldalra állítva és döntött szögben helyezték el, hanem a legnagyobb felületű oldalra és vízszintesen. Emellett nem közel függőleges rétegeket építettek, mint korábban, hanem vízszinteseket, minden egyes követ átlapolva helyeztek el egy sík felületen, bár erre csak a külső rétegeknél ügyeltek. Ez jelentősen megnövelte a stabilitást.",
+      "evidence": [
+        "Az építés technológiája a Sznofru piramisainál már bevált módszerű, ennek lényege, hogy a téglatest alakú kvádereket nem a hagyományos módon, a legkisebb felületű oldalra állítva és döntött szögben helyezték el, hanem a legnagyobb felületű oldalra és vízszintesen. Emellett nem közel függőleges rétegeket építettek, mint korábban, hanem vízszinteseket, minden egyes követ átlapolva helyeztek el egy sík felületen, bár erre csak a külső rétegeknél ügyeltek. Ez jelentősen megnövelte a stabilitást."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

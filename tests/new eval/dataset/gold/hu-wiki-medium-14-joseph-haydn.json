@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Joseph Haydn",
+    "nehezseg": "medium",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Joseph Haydn"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "III. Károly spanyol király miért küldött arany tubákos szelencét Haydnnak?",
+      "helyes_valasz": "hogy kifejezze a művészete iránti csodálatát",
+      "evidence": [
+        "Két év múlva III. Károly spanyol király egy gyémántokkal kirakott, arany tubákos szelencét küldött ajándékba a zeneszerzőnek. A spanyol követség titkárát bízták meg, hogy Bécsből utazzon Eszterházára, adja át Haydnnak az ajándékot, és fejezze ki a spanyol király művészete iránt tanúsított csodálatát."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Haydn mivel helyettesítette vonósnégyeseiben a menüettet?",
+      "helyes_valasz": "scherzóval",
+      "evidence": [
+        "Vonósnégyeseiben a menüettet egy idő után scherzóval helyettesítette."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Karl Joseph Morizon gróf hol élt, amikor Haydnt zeneigazgatóként alkalmazta?",
+      "helyes_valasz": "Bécsben",
+      "evidence": [
+        "A telet szállásadójával Bécsben, a nyarat pedig Lukavicán töltötte."
+      ],
+      "type": "open",
+      "kerdestipus": "multispan"
+    },
+    {
+      "id": null,
+      "kerdes": "Kit csúfoltak Madridban \"Haydn feleségének\"?",
+      "helyes_valasz": "Luigi Boccherinit",
+      "evidence": [
+        "Luigi Boccherini ekkor Madridban működött, mint Don Louis infáns udvari komponistája. Művészetére olyan nagy hatást gyakorolt Haydn stílusa, hogy sokan csak „Haydn feleségének” csúfolták."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Hogyan lendítette előre Haydn karrierjét Joseph Felix von Kurz?",
+      "helyes_valasz": "Haydn az 1750-es évek elején került kapcsolatba Joseph Felix von Kurzcal, aki Kartnertortheater ismert komikusa és impresszáriója volt. Ő kérte fel, hogy komponáljon neki zenét a Der krumme Teufel című vígjátékhoz. A darabot az 1751–1752-es szezonban mutatták be, és a következő évadban nagy sikerrel újították fel. A zeneszerzőnek nagy előrelépést jelentett, hogy bemutatkozhatott a színház világában, és nyilván első színpadi műve sikere is hozzájárult ahhoz, hogy lassanként sikerült bejutnia a jómódú zenebarátok körébe.",
+      "evidence": [
+        "Haydn az 1750-es évek elején került kapcsolatba Joseph Felix von Kurzcal, aki Kartnertortheater ismert komikusa és impresszáriója volt. Ő kérte fel, hogy komponáljon neki zenét a Der krumme Teufel című vígjátékhoz. A darabot az 1751–1752-es szezonban mutatták be, és a következő évadban nagy sikerrel újították fel. A zeneszerzőnek nagy előrelépést jelentett, hogy bemutatkozhatott a színház világában, és nyilván első színpadi műve sikere is hozzájárult ahhoz, hogy lassanként sikerült bejutnia a jómódú zenebarátok körébe."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen viszonyban volt egymással Haydn és Mozart?",
+      "helyes_valasz": "1785 februárjában felvették a bécsi „Zur Wahrn Eintracht” szabadkőműves páholyba, amely eseményen Mozart is jelen volt.",
+      "evidence": [
+        "1785 februárjában felvették a bécsi „Zur Wahrn Eintracht” szabadkőműves páholyba, amely eseményen Mozart is jelen volt."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Kedvező fogadtatásra talált Haydn első színpadi műve az 1750-es évek elején?",
+      "helyes_valasz": "A zeneszerzőnek nagy előrelépést jelentett, hogy bemutatkozhatott a színház világában, és nyilván első színpadi műve sikere is hozzájárult ahhoz, hogy lassanként sikerült bejutnia a jómódú zenebarátok körébe.",
+      "evidence": [
+        "A zeneszerzőnek nagy előrelépést jelentett, hogy bemutatkozhatott a színház világában, és nyilván első színpadi műve sikere is hozzájárult ahhoz, hogy lassanként sikerült bejutnia a jómódú zenebarátok körébe."
+      ],
+      "type": "open",
+      "kerdestipus": "Igen"
+    },
+    {
+      "id": null,
+      "kerdes": "Mi bizonyítja, hogy Haydn művészetét nagyra becsülték a kortársai Spanyolországban?",
+      "helyes_valasz": "Miközben a külvilágtól sok tekintetben elzártan működött Eszterházán, Haydn egyre nagyobb nemzetközi hírnévnek örvendett. Külföldi ismertségének egyik első dokumentuma Don Zhomas de Yriarte 1779 írt La Musica (A zene) című költeménye, amelynek záró sorai arról beszélnek, hogy Madridban a zeneszerző műveit játsszák, és a dicsőség zöld koszorúját már elnyerte. Két év múlva III. Károly spanyol király egy gyémántokkal kirakott, arany tubákos szelencét küldött ajándékba a zeneszerzőnek. A spanyol követség titkárát bízták meg, hogy Bécsből utazzon Eszterházára, adja át Haydnnak az ajándékot, és fejezze ki a spanyol király művészete iránt tanúsított csodálatát.\nLuigi Boccherini ekkor Madridban működött, mint Don Louis infáns udvari komponistája. Művészetére olyan nagy hatást gyakorolt Haydn stílusa, hogy sokan csak „Haydn feleségének” csúfolták. Ez is bizonyítja, hogy a spanyol fővárosban mekkora hírneve volt a zeneszerzőnek. Egy spanyol templom rendelte meg tőle következő oratóriumát is, amely a Die sieben Worte des Erlösers am Kreuze (A megváltó hét szava a keresztfán) címet viseli.",
+      "evidence": [
+        "Miközben a külvilágtól sok tekintetben elzártan működött Eszterházán, Haydn egyre nagyobb nemzetközi hírnévnek örvendett. Külföldi ismertségének egyik első dokumentuma Don Zhomas de Yriarte 1779 írt La Musica (A zene) című költeménye, amelynek záró sorai arról beszélnek, hogy Madridban a zeneszerző műveit játsszák, és a dicsőség zöld koszorúját már elnyerte. Két év múlva III. Károly spanyol király egy gyémántokkal kirakott, arany tubákos szelencét küldött ajándékba a zeneszerzőnek. A spanyol követség titkárát bízták meg, hogy Bécsből utazzon Eszterházára, adja át Haydnnak az ajándékot, és fejezze ki a spanyol király művészete iránt tanúsított csodálatát.\nLuigi Boccherini ekkor Madridban működött, mint Don Louis infáns udvari komponistája. Művészetére olyan nagy hatást gyakorolt Haydn stílusa, hogy sokan csak „Haydn feleségének” csúfolták. Ez is bizonyítja, hogy a spanyol fővárosban mekkora hírneve volt a zeneszerzőnek. Egy spanyol templom rendelte meg tőle következő oratóriumát is, amely a Die sieben Worte des Erlösers am Kreuze (A megváltó hét szava a keresztfán) címet viseli."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Maria Christine Thun grófnő miért kezdett el érdeklődni Haydn iránt?",
+      "helyes_valasz": "Óradíjának megemelkedése mintha társadalmi tekintélyén is javított volna. Ezt jelzi, hogy miután átnézte néhány zongoradarabjának kottáját, Maria Christine Thun grófnő érdeklődni kezdett Haydn iránt. Személyesen is találkozni akart vele, majd miután ez megtörtént, felkérte, hogy adjon neki zongora- és énekórákat.",
+      "evidence": [
+        "Óradíjának megemelkedése mintha társadalmi tekintélyén is javított volna. Ezt jelzi, hogy miután átnézte néhány zongoradarabjának kottáját, Maria Christine Thun grófnő érdeklődni kezdett Haydn iránt. Személyesen is találkozni akart vele, majd miután ez megtörtént, felkérte, hogy adjon neki zongora- és énekórákat."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki írta az Ariadné Naxosban című kantátát?",
+      "helyes_valasz": "Szintén ebben az évben látta el Maria Anna Josepha („Peperl”) nevű lányát tanácsokkal az Ariadné Naxosban című kantátája előadását illetően.",
+      "evidence": [
+        "Szintén ebben az évben látta el Maria Anna Josepha („Peperl”) nevű lányát tanácsokkal az Ariadné Naxosban című kantátája előadását illetően."
+      ],
+      "type": "open",
+      "kerdestipus": "A cím a válasz"
+    }
+  ]
+}

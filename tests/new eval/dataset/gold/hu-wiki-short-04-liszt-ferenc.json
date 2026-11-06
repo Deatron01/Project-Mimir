@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Liszt Ferenc",
+    "nehezseg": "medium",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Liszt Ferenc"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Hány művet komponált Liszt Ferenc?",
+      "helyes_valasz": "kb. 1400 művet",
+      "evidence": [
+        "Összesen kb. 1400 művet komponált (beleszámolva eredeti műveit, átiratait stb.), amivel minden idők egyik legtermékenyebb zeneszerzője."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hány eredeti műve van Liszt Ferencnek?",
+      "helyes_valasz": "mintegy 400",
+      "evidence": [
+        "Alkotásainak viszonylagos ismeretlensége azzal magyarázható, hogy rengeteg darabot komponált: mintegy 400 eredeti művének zöme virtuóz zongoramű, szimfónia, szimfonikus költemény, mise."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Kik javítgattak bele Liszt Ferenc írásműveibe?",
+      "helyes_valasz": "Marie d'Agoult",
+      "evidence": [
+        "Ma már tudni, hogy fiatalkorában Marie d'Agoult, majd weimari évei során, de később is, Carolyne von Wittgenstein hercegnő csiszolgatta irodalmi alkotásait, nem egyszer önállóan, Liszt tudta nélkül is beleírtak a Liszt neve alatt megjelent írásművekbe."
+      ],
+      "type": "open",
+      "kerdestipus": "multispan"
+    },
+    {
+      "id": null,
+      "kerdes": "Hányszor lépett fel Liszt Ferenc 1823 májusában Pesten?",
+      "helyes_valasz": "Az első koncert a Hét Választó Fejedelemhez címzett fogadó termében volt. Liszt Ries zongoraversenyét és Ignaz Moscheles zongorára és zenekarra írt darabját játszotta. A koncert nagy sikert aratott, másnap több újság is elismerően írt a fiatal zongoristáról. A pesti utazás során hallott a gyermek Liszt először magyar verbunkost. Pesti tartózkodása alatt fellépett még a Királyi Városi Színház 1823. május 10-ei és 17-ei koncertjén, majd 19-én egy zenei rendezvényen vett részt. Végül 1823. május 24-én a fent említett színházban búcsúkoncertet adott, majd 1823 őszén apjával együtt elutaztak Párizsba.",
+      "evidence": [
+        "Az első koncert a Hét Választó Fejedelemhez címzett fogadó termében volt. Liszt Ries zongoraversenyét és Ignaz Moscheles zongorára és zenekarra írt darabját játszotta. A koncert nagy sikert aratott, másnap több újság is elismerően írt a fiatal zongoristáról. A pesti utazás során hallott a gyermek Liszt először magyar verbunkost. Pesti tartózkodása alatt fellépett még a Királyi Városi Színház 1823. május 10-ei és 17-ei koncertjén, majd 19-én egy zenei rendezvényen vett részt. Végül 1823. május 24-én a fent említett színházban búcsúkoncertet adott, majd 1823 őszén apjával együtt elutaztak Párizsba."
+      ],
+      "type": "open",
+      "kerdestipus": "Aritmetika:Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor írt tanulmányt Chopin-ről Liszt Ferenc?",
+      "helyes_valasz": "1852-ben",
+      "evidence": [
+        "Több írást jelentetett meg pályatársairól, melyek közül a Chopin-tanulmány (1852) a legjelentősebb."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Hogyan fogadta a pesti közönség Liszt Ferenc koncertjét 1823. május 1-jén?",
+      "helyes_valasz": "A koncert nagy sikert aratott",
+      "evidence": [
+        "A koncert nagy sikert aratott, másnap több újság is elismerően írt a fiatal zongoristáról."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Kik írtak bele Liszt Ferenc irodalmi műveibe?",
+      "helyes_valasz": "Ma már tudni, hogy fiatalkorában Marie d'Agoult, majd weimari évei során, de később is, Carolyne von Wittgenstein hercegnő csiszolgatta irodalmi alkotásait, nem egyszer önállóan, Liszt tudta nélkül is beleírtak a Liszt neve alatt megjelent írásművekbe.",
+      "evidence": [
+        "Ma már tudni, hogy fiatalkorában Marie d'Agoult, majd weimari évei során, de később is, Carolyne von Wittgenstein hercegnő csiszolgatta irodalmi alkotásait, nem egyszer önállóan, Liszt tudta nélkül is beleírtak a Liszt neve alatt megjelent írásművekbe."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik párizsi újság írt elsőként Liszt Ferencről?",
+      "helyes_valasz": "a L’Etoile",
+      "evidence": [
+        "Az első párizsi újságcikk az ifjú Lisztről 1823. december 22-én jelent meg a L’Etoile című lapban."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen hangszerre komponálta a leggyakrabban a műveit Liszt Ferenc?",
+      "helyes_valasz": "zongorára",
+      "evidence": [
+        "Műveinek nagy részét zongorára komponálta, ezek zömének eljátszásához rendkívüli technikai tudás szükséges."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor hallott először Liszt Ferenc magyar verbunkost?",
+      "helyes_valasz": "1823 áprilisa végén Liszt Ádám Pestre utazott, hogy fiát magyar honfitársainak is bemutassa. Az első, 1823. május 1-jei koncertre Liszt Ádám a következő plakátot nyomtatta:\nTiszteletreméltó közönség!\nMagyar vagyok és nem ismerek nagyobb boldogságot, mint azt, hogy neveltetésem és taníttatásom első gyümölcseit Franciaországba és Angliába utaztatásom előtt ragaszkodásom és hálám jeléül drága hazámnak bemutathassam.\nAz első koncert a Hét Választó Fejedelemhez címzett fogadó termében volt. Liszt Ries zongoraversenyét és Ignaz Moscheles zongorára és zenekarra írt darabját játszotta. A koncert nagy sikert aratott, másnap több újság is elismerően írt a fiatal zongoristáról. A pesti utazás során hallott a gyermek Liszt először magyar verbunkost.",
+      "evidence": [
+        "1823 áprilisa végén Liszt Ádám Pestre utazott, hogy fiát magyar honfitársainak is bemutassa. Az első, 1823. május 1-jei koncertre Liszt Ádám a következő plakátot nyomtatta:\nTiszteletreméltó közönség!\nMagyar vagyok és nem ismerek nagyobb boldogságot, mint azt, hogy neveltetésem és taníttatásom első gyümölcseit Franciaországba és Angliába utaztatásom előtt ragaszkodásom és hálám jeléül drága hazámnak bemutathassam.\nAz első koncert a Hét Választó Fejedelemhez címzett fogadó termében volt. Liszt Ries zongoraversenyét és Ignaz Moscheles zongorára és zenekarra írt darabját játszotta. A koncert nagy sikert aratott, másnap több újság is elismerően írt a fiatal zongoristáról. A pesti utazás során hallott a gyermek Liszt először magyar verbunkost."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

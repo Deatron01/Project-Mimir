@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Johann Sebastian Bach",
+    "nehezseg": "medium",
+    "nyelv": "hu",
+    "forras": "MILQA / Hungarian Wikipedia: Johann Sebastian Bach"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Melyik hamburgi templomban szerepelt 1720 novemberében Johann Sebastian Bach?",
+      "helyes_valasz": "a Katharinenkirchében",
+      "evidence": [
+        "1720 novemberében Bach ismét Hamburgban járt, ahol a Katharinenkirchében szerepelt"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Kit vett el feleségül Johann Sebastian Bach első felesége halála után?",
+      "helyes_valasz": "Anna Magdalena Wilkent",
+      "evidence": [
+        "Felesége halála után rövidesen ismét megnősült: Anna Magdalena Wilkent vette el."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "A kötheni herceg halála után Johann Sebastian Bach melyik templom kántori állását pályázta meg?",
+      "helyes_valasz": "a lipcsei Tamás-templom",
+      "evidence": [
+        "1723-ban, a zenerajongó kötheni herceg halála után Bach megpályázta és elnyerte a lipcsei Tamás-templom kántori állását."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Kinek a bizalmából tölthette be 1736-ban a lipcsei Tamás-iskolában az első diákprefektus tisztét Gottfried Theodor Krause?",
+      "helyes_valasz": "Bach",
+      "evidence": [
+        "1736-ban egy Gottfried Theodor Krause nevű, 22 éves végzős diák töltötte be Bach bizalmából az első prefektus tisztét."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Kinek a szolgálatába állt Johann Sebastian Bach 1717-ben?",
+      "helyes_valasz": "a kötheni herceg",
+      "evidence": [
+        "1717-ben elhagyta Weimart, és a kötheni herceg szolgálatába állt."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Sikerült a szemműtét, amelyet rohamosan gyengülő látása miatt végeztek el Johann Sebastian Bachon?",
+      "helyes_valasz": "Rohamosan gyengülő látása miatt halála előtt szemműtétet végeztek el rajta, amely nem sikerült, és megvakult.",
+      "evidence": [
+        "Rohamosan gyengülő látása miatt halála előtt szemműtétet végeztek el rajta, amely nem sikerült, és megvakult."
+      ],
+      "type": "open",
+      "kerdestipus": "Nem"
+    },
+    {
+      "id": null,
+      "kerdes": "Hányadik évfolyamos diák volt 1736-ban a lipcsei Tamás-iskolában Gottfried Theodor Krause?",
+      "helyes_valasz": "végzős",
+      "evidence": [
+        "1736-ban egy Gottfried Theodor Krause nevű, 22 éves végzős diák töltötte be Bach bizalmából az első prefektus tisztét"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor került kapcsolatba Johann Sebastian Bach egy orgonavizsgálat kapcsán az arnstadti polgármesterrel?",
+      "helyes_valasz": "1703. március 17-én",
+      "evidence": [
+        "1703. március 17-én került kapcsolatba egy orgonavizsgálat kapcsán az arnstadti polgármesterrel"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Ki került Matthias Gesner helyébe, amikor távozott a lipcsei Tamás-iskola rektori székéből?",
+      "helyes_valasz": "egy fiatal rektor",
+      "evidence": [
+        "Miután 1734-ben Gesner távozott, helyébe egy fiatal rektor került"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik nagy kortárs zeneszerző távozott pontosan aznap Halléból, amikor Johann Sebastian Bach oda érkezett?",
+      "helyes_valasz": "Georg Friedrich Händel",
+      "evidence": [
+        "1719 őszén Halléban járt, ahova pontosan Georg Friedrich Händel távozásának napján érkezett"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    }
+  ]
+}

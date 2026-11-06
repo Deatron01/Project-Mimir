@@ -1,92 +1,44 @@
 % ---------------------------------------------------------------------
-%  Tartalmi összefoglaló (magyar) és Abstract (angol)
+%  Tartalmi összefoglaló (absztrakt)
 % ---------------------------------------------------------------------
 \chapter*{Tartalmi összefoglaló}
 \addcontentsline{toc}{chapter}{Tartalmi összefoglaló}
 \thispagestyle{plain}
 
-A feleletválasztós vizsgakérdések írása lassú és hibalehetőségekkel teli szakmai munka: a kérdésnek
-egyértelműnek kell lennie, pontosan egy válaszlehetőségnek kell a tananyag szerint helyesnek lennie, a
-disztraktoroknak pedig hihetőnek, de igazolhatóan hibásnak. A nagy nyelvi modellek (LLM) megjelenésével
-a legelterjedtebb gyakorlat az lett, hogy az oktató feltölti a jegyzetét egy felhőben futó csevegő
-asszisztensbe, és „tíz feleletválasztós kérdést” kér. Ez kényelmes, de négy lényeges hiányossága van:
-(P1) semmi sem ellenőrzi, hogy a megjelölt helyes válasz valóban következik-e a dokumentumból;
-(P2) a kérdések száma, típusa és nehézsége csak kérés, a hosszú bemenetet a modellek egyenetlenül
-használják, így a kérdések néhány szakaszra tömörülnek; (P3) a tananyag egy harmadik félhez kerül;
-(P4) a módszer nagy, távoli modellekre és hosszú kontextusra támaszkodik.
+A vizsgakérdések írása lassú, hibalehetőségekkel teli szakmai munka: a kérdésnek egyértelműnek kell
+lennie, a megadott helyes válasznak a tananyagból kell következnie, feleletválasztós kérdésnél pedig a rossz
+válaszoknak (disztraktoroknak) hihetőnek, de igazolhatóan hibásnak kell lenniük. A nagy nyelvi modellek
+(LLM) megjelenésével a legelterjedtebb gyakorlat az lett, hogy az oktató feltölti a jegyzetét egy felhőben
+futó csevegő asszisztensbe, és „tíz vizsgakérdést” kér. Ez kényelmes, de négy lényeges
+hiányossága van: (P1) semmi sem ellenőrzi, hogy a megjelölt helyes válasz valóban következik-e a
+dokumentumból; (P2) a kérdések száma, típusa és nehézsége csak kérés, és a kérdések a tananyag néhány
+részére tömörülhetnek; (P3) a tananyag egy harmadik félhez kerül; (P4) a módszer nagy, távoli modellekre
+támaszkodik.
 
-Dolgozatunkban bemutatjuk a \Mimir{} rendszert, amely a fenti egyetlen promptot explicit, ellenőrizhető
-\emph{módszerrel} váltja fel, és egyetlen fogyasztói GPU-n futó, 7 milliárd paraméteres, 4 bitre kvantált
-nyelvi modellel működik. A módszer lépései: szemantikus darabolás ablakozott mondatbeágyazással;
-lefedettségvezérelt \emph{vizsgaterv} (blueprint), amely a fogalmakat, a kérdéstípusokat és a Bloom-szinteket
-a legnagyobb maradék elvén osztja ki a slotokra; slotonkénti visszakeresés (sűrű vagy BM25\,+\,sűrű,
-reciprok rangfúzióval); egyenként generált, forrásrészletekre hivatkozó kérdések; valamint a legolcsóbbtól
-a legdrágábbig rendezett ellenőrző lánc (forma, meta-hivatkozás, hivatkozás, alátámasztottság és
-disztraktorok, vak megoldhatóság, válaszszivárgás, duplikátum), amely hiba esetén visszacsatolással
-újrapróbálkozik. Egy fogalomgráf-alapú változat (GraphRAG-lite) a tervezőt, a disztraktorjavaslatokat
-és a kontextust gazdagítja. A rendszer mikroszolgáltatás-architektúrája zéró adatmegőrzést valósít meg:
-a feltöltött tartalom csak a feladat idejére létezik, a naplóban csak kriptográfiai ujjlenyomatok maradnak.
+Dolgozatunkban bemutatjuk a \Mimir{} rendszert, amely az egyetlen promptot explicit, ellenőrizhető
+\emph{módszerrel} váltja fel, és fogyasztói GPU-n futtatható
+nyelvi modellekkel működik. A rendszer feleletválasztós, igaz--hamis és kifejtős kérdéseket egyaránt előállít.
+A módszer lépései: a dokumentum szemantikus darabolása; egy vizsgaterv, amely a kérdésekhez előre kiosztja
+a típusokat, a témákat és a kognitív (Bloom-) szinteket; kérdésenkénti keresés a
+dokumentumban; egyenként generált, a forrásrészletekre hivatkozó kérdések; valamint egy ellenőrző lánc
+(formai és szivárgási szabályok, a válasz forrással való alátámasztottsága, a disztraktorok hamissága, „vak”
+megoldási próba), amely hiba esetén visszajelzéssel újrapróbálkozik. A rendszer a feltöltött tartalmat csak
+a feladat idejére tárolja.
 
-Második hozzájárulásunk egy reprodukálható, nyílt kiértékelési \emph{módszertan}: tizenöt, egyszerre
-egy tényezőt változtató kísérleti kar; 39 magyar és angol dokumentumból, 326 referenciakérdésből álló
-adatkészlet; a generátoroktól eltérő modellcsaládba tartozó LLM-bíró; formálisan definiált mutatók
-(formai megfelelés, alátámasztottság, vak megoldhatóság, disztraktor-validitás, lefedettség, szivárgás);
-valamint dokumentumszintű statisztika (bootstrap konfidenciaintervallum, páros Wilcoxon-próba
-Holm-korrekcióval, rangbiszeriális hatásméret, Krippendorff-$\alpha$).
-
-Egy magyar dokumentumon végzett pilot (tíz kar, három ismétlés, 300 kérdés) szerint a helyi modell a
-GPU-memóriából 5,4--5,9\,GB-ot foglal, tehát 8\,GB-os kártyán is fut. A pilot két, korábbi méréseket
-érvénytelenítő mérési hibát és egy új hibamódot is feltárt: az ellenőrző visszacsatolási hurka a helyes
-választ a kérdés szövegébe szivárogtatta, amit a bíró sem büntetett. A javított csővezetékkel végzett fő
-vizsgálat (14 kar, kilenc magyar és angol dokumentum, karonként hat, 1\,670 kérdés) szerint a helyi 7B
-modellel futó, tervezett és ellenőrzött csővezeték érte el a legmagasabb minőségi indexet (0,96; 95\,\%-os
-CI: 0,93--0,98), szemben a naiv RAG (0,64), a teljes dokumentumot egy promptban kapó helyi modell (0,83) és
-a teljes dokumentumot kapó nagy szervermodell (0,95) értékével. A tervezés 0,24-dal, az ellenőrzés -- a
-pilottal ellentétben -- mind a hat dokumentumon 0,08-dal javított; a más modellcsaládba tartozó ellenőrző és
-a fogalomgráf nem javított; a szivárgási szabályok a szivárgást 0--3\,\%-ra csökkentették; ugyanaz a
-csővezeték a szervermodellel 0,99-et ért el. Az ellenőrző ítélete a bíróéval csak gyengén egyezik
-(Cohen-$\kappa\le0{,}22$), a naiv RAG minőségét pedig a darabolás apró részletei is meghatározták. Hat
-dokumentumon a különbségek a Holm-korrekció után nem szignifikánsak; a teljes, 39 dokumentumos futás és a
-bíró oktatói validálása a következő lépés.
+A módszert egy nyílt kiértékelő keretrendszerrel vizsgáltuk: tizennégy, egyszerre egy tényezőt változtató
+kísérleti kar, 39 magyar és angol dokumentumból álló adatkészlet, a generátoroktól eltérő modellcsaládba
+tartozó nyelvi modell mint bíró, és dokumentumszintű statisztika. Egy egydokumentumos pilot három, a mérést
+felfelé torzító hibát tárt fel, köztük egy új hibamódot: az ellenőrző visszacsatolása a helyes választ a
+kérdés szövegébe szivárogtatta. A javított rendszerrel, feleletválasztós kérdéseken végzett fő vizsgálatban
+(14 kar, kilenc dokumentum, 1\,670 kérdés) a helyi modellel futó, tervezett és ellenőrzött csővezeték érte el a legmagasabb minőségi
+indexet (0,96), szemben a naiv visszakereséses megoldás (0,64), a teljes dokumentumot egy promptban kapó helyi
+modell (0,83) és a teljes dokumentumot kapó nagy szervermodell (0,95) értékével, és mind a hat dokumentumon
+legalább 0,89-et ért el. A tervezés 0,24-dal, az ellenőrzés mind a hat dokumentumon 0,08-dal javított; a
+modell 5--5,6\,GB GPU-memóriát foglalt, így 8\,GB-os kártyán is fut. Az ellenőrző kérdésenkénti ítélete a
+bíróéval csak gyengén egyezett, a kis modell a kért kognitív szintet csak a kérdések harmadánál valósította
+meg, a kis minta miatt pedig a különbségek statisztikailag nem szignifikánsak. A teljes adatkészleten
+végzett futás és a bíró oktatói validálása a következő lépés.
 
 \medskip
 \noindent\textbf{Kulcsszavak:} automatikus kérdésgenerálás, visszakereséssel kiegészített generálás (RAG),
-kis nyelvi modellek, verifikáció, LLM-bíró, adatvédelem, oktatástechnológia, magyar nyelv
-
-% ---------------------------------------------------------------------
-\chapter*{Abstract}
-\addcontentsline{toc}{chapter}{Abstract}
-\thispagestyle{plain}
-
-\begin{otherlanguage}{english}
-The most common way to obtain an exam from teaching material today is to upload the document to a
-hosted chat-based large language model (LLM) and ask for a test. This offers no evidence that the keyed
-answers are supported by the document, no control over which parts of the material are covered, and it
-discloses the material to a third party. We present \Mimir{}, an open system that generates
-multiple-choice exams from a teacher's own documents with a 4-bit, 7-billion-parameter model running on a
-single consumer GPU. \Mimir{} replaces the single prompt by an explicit method: semantic chunking with
-windowed sentence encoding, a coverage-driven exam \emph{blueprint} that allocates concepts, question
-types and Bloom levels to slots by the largest-remainder rule, per-slot dense or hybrid (BM25 + dense,
-reciprocal rank fusion) retrieval, per-question generation with chunk citations, and a cheapest-first
-verifier chain with feedback-driven retries, optionally enriched by a session-scoped concept graph. The
-microservice architecture retains no uploaded content beyond the lifetime of a job.
-
-We also contribute an evaluation methodology and open harness: fifteen single-factor experiment arms, a
-39-document Hungarian--English dataset with 326 reference questions, a cross-family LLM judge, formally
-defined measures and document-level statistics. A pilot on one Hungarian document (ten arms, three seeds,
-300 questions) showed that the local model occupies 5.4--5.9\,GB of GPU memory, exposed two measurement
-defects, and revealed an answer-leakage failure mode that inflates both automatic and LLM-judge scores. In
-the main study with the corrected pipeline (14 arms, nine Hungarian and English documents, six per arm,
-1,670 questions), the planned and verified pipeline on the local 7B model reached the highest quality index
-(0.96, 95\,\% CI 0.93--0.98), against 0.64 for naive RAG, 0.83 for the whole document in one prompt to the
-same model and 0.95 for the whole document to a large server model. Planning added 0.24; verification,
-unlike in the pilot, added 0.08 on all six documents; a verifier from another model family and the concept
-graph did not help; leakage rules cut leakage to 0--3\,\%; and the same pipeline on the server model reached
-0.99. The verifier agrees only weakly with the judge (Cohen's $\kappa\le0.22$), and naive RAG proved fragile
-to chunking details. With six documents no difference survives Holm correction; the full 39-document run and
-the teachers' validation of the judge are the next step.
-
-\medskip
-\noindent\textbf{Keywords:} automatic question generation, retrieval-augmented generation, small language
-models, verification, LLM-as-a-judge, privacy, educational technology, Hungarian
-\end{otherlanguage}
+kis nyelvi modellek, ellenőrzés, nyelvi modell mint bíró, adatvédelem, oktatástechnológia, magyar nyelv

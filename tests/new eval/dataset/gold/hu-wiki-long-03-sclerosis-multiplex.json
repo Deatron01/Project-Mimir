@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Sclerosis multiplex",
+    "nehezseg": "easy",
+    "nyelv": "hu",
+    "forras": "Hungarian Wikipedia (full article, fetched 2026-09-23): Sclerosis multiplex; gold questions from MILQA"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Mi az a velőshüvely?",
+      "helyes_valasz": "az agy és a gerincvelő idegsejtjeinek védőburka",
+      "evidence": [
+        "A sclerosis multiplex (röviden: SM, átírással szklerózis multiplex), velőshüvely-szétesés, vagy encephalomyelitis disseminata a központi idegrendszert érintő gyulladásos autoimmun betegség, amelynek során az agy és a gerincvelő idegsejtjeinek védőburka, az úgynevezett velőshüvely vagy más néven mielinhüvely megbomlik."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen gyógynövényeket érdemes alkalmazni szklerózis multiplex esetén?",
+      "helyes_valasz": "többek között az orvosi marihuánát",
+      "evidence": [
+        "A betegek beszámolói szerint a leggyakrabban kipróbált alternatív gyógymódok a különböző relaxációs technikák (pl. jóga), étrend-kiegészítők, a D-vitamin, gyógynövények (köztük az orvosi marihuána), a túlnyomásos oxigén terápia a homeopátia és az akupunktúra."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Hány évig él általában egy szklerózis multiplexben szenvedő beteg a diagnózis kimondása után?",
+      "helyes_valasz": "nagyjából 30 évig",
+      "evidence": [
+        "A diagnózistól számított várható átlagos túlélés nagyjából 30 év, ez 5-10 évvel elmarad az egészséges egyének várható élettartamától."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Mit javasolt nagyobb mennyiségben fogyasztani szklerózis multiplexben szenvedő betegeknek?",
+      "helyes_valasz": "tengeri halak",
+      "evidence": [
+        "A betegség kialakulásakor kifejezetten javasolt a gyulladáscsökkentő omega-3 zsírsavtartalmú élelmiszerek, például a tengeri halak fogyasztása. A magyarországi édesvízi halak kisebb arányban tartalmazzák ezt, de ezek közül kiemelkedik a busa és a kecsege. A leggazdagabb növényi omega-3 forrás a lenmag."
+      ],
+      "type": "open",
+      "kerdestipus": "multispan"
+    },
+    {
+      "id": null,
+      "kerdes": "Miben hal meg a legtöbb SM beteg?",
+      "helyes_valasz": "A halálozások kétharmada közvetlenül a betegség következményeiként lép fel (pl. fertőzések), de az SM betegek körében nagyobb arányú az öngyilkosság is.",
+      "evidence": [
+        "A halálozások kétharmada közvetlenül a betegség következményeiként lép fel (pl. fertőzések), de az SM betegek körében nagyobb arányú az öngyilkosság is."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "A betegek hány százaléka válik járásképtelenné a a diagnózist követő 10 éven belül?",
+      "helyes_valasz": "Noha a betegek többsége az életük végére járásképtelenné válik, a diagnózist követően tíz évvel 90 százalékuk, 15 évvel pedig 75 százalékuk képes önállóan járni.",
+      "evidence": [
+        "Noha a betegek többsége az életük végére járásképtelenné válik, a diagnózist követően tíz évvel 90 százalékuk, 15 évvel pedig 75 százalékuk képes önállóan járni."
+      ],
+      "type": "open",
+      "kerdestipus": "Aritmetika:Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Mikor írták le először a szklerózis multiplex négy fő típusát?",
+      "helyes_valasz": "1996-ban",
+      "evidence": [
+        "1996-ban az Amerikai Egyesült Államok Nemzeti Sclerosis Multiplex Társasága jellemezte ezeket és négy fő csoportot különített el."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen alternatív gyógymódok léteznek a szklerózis multiplex kezelésére?",
+      "helyes_valasz": "A betegek beszámolói szerint a leggyakrabban kipróbált alternatív gyógymódok a különböző relaxációs technikák (pl. jóga), étrend-kiegészítők, a D-vitamin, gyógynövények (köztük az orvosi marihuána), a túlnyomásos oxigén terápia a homeopátia és az akupunktúra.",
+      "evidence": [
+        "A betegek beszámolói szerint a leggyakrabban kipróbált alternatív gyógymódok a különböző relaxációs technikák (pl. jóga), étrend-kiegészítők, a D-vitamin, gyógynövények (köztük az orvosi marihuána), a túlnyomásos oxigén terápia a homeopátia és az akupunktúra."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mi a különbség a szklerózis multiplex két típusa között?",
+      "helyes_valasz": "Az SM többféle formában is megmutatkozhat, amikor is az új tünetek elszigetelt rohamok formájában (visszaeső típus) jelentkeznek, vagy folyamatosan fejlődnek ki az idő teltével (progresszív típus).",
+      "evidence": [
+        "Az SM többféle formában is megmutatkozhat, amikor is az új tünetek elszigetelt rohamok formájában (visszaeső típus) jelentkeznek, vagy folyamatosan fejlődnek ki az idő teltével (progresszív típus)."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Szklerózis multiplex betegségben a nők vagy a férfiak prognózisa kedvezőbb?",
+      "helyes_valasz": "a nőké",
+      "evidence": [
+        "A női nem, a relapszáló-remittáló kórforma, a látóidegfő gyulladásával vagy érzészavarral, illetve a fiatalkorban kezdődő betegség, valamint kevés akut rosszullét jelentkezése a diagnózist követő néhány évben – mind kedvezőbb prognózist valószínűsítenek."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    }
+  ]
+}

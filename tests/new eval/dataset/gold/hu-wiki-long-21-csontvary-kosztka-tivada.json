@@ -1,0 +1,110 @@
+{
+  "teszt_metaadatok": {
+    "tema": "Csontváry Kosztka Tivadar",
+    "nehezseg": "easy",
+    "nyelv": "hu",
+    "forras": "Hungarian Wikipedia (full article, fetched 2026-09-23): Csontváry Kosztka Tivadar; gold questions from MILQA"
+  },
+  "kerdesek": [
+    {
+      "id": null,
+      "kerdes": "Ki mondta először Csontváryról, hogy festőnek született?",
+      "helyes_valasz": "„az idős, jólelkű” patikavezető",
+      "evidence": [
+        "A rajz láttán pedig „az idős, jólelkű” patikavezető így kiáltott fel: „Hisz maga festőnek született!”."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mire hasonlított Csontváry technikája?",
+      "helyes_valasz": "a freskófestés technikájához",
+      "evidence": [
+        "A Csontváry által alkalmazott technika a freskófestés technikájához hasonlíthatott, ecsettel vagy festőkéssel vihette fel a keveréket a vászon felületére."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Melyik kiadó jelentette meg Csontváry önéletrajzi írásait?",
+      "helyes_valasz": "a Megvető Kiadó",
+      "evidence": [
+        "Életéről és gondolatairól irodalmi igényességgel (s néhol rendkívüli tömörséggel és világossággal, máshol homályossággal) megírt, furcsa, önéletrajzi írásaiból értesülhetünk, amelyek egy része 1982-ben a Magvető Kiadónál is megjelent."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz"
+    },
+    {
+      "id": null,
+      "kerdes": "Milyen színezéket használt Csontváry?",
+      "helyes_valasz": "leginkább anilin alapú színezéket",
+      "evidence": [
+        "hogy Csontváry műveinek megalkotásához leginkább anilin alapú színezéket használt."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Mit terveztek örökösei Csontváry képeivel?",
+      "helyes_valasz": "anyagárban kocsiponyvaként szándékoztak elárverezni fuvarosoknak",
+      "evidence": [
+        "Képei az utókor számára minden bizonnyal elvesztek volna, mert örökösei a rendkívül jó minőségű belga vásznakat anyagárban kocsiponyvaként szándékoztak elárverezni fuvarosoknak."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hogyan talált rá Gerlóczy Csontváry műveire?",
+      "helyes_valasz": "belebotlott az összetekert festményekbe",
+      "evidence": [
+        "A képek megmentője Gerlóczy Gedeon fiatal építész volt, aki az utolsó pillanatban, 1919 őszén felvásárolta őket. Véletlenül talált rájuk amikor műtermet keresett, és a Fehérvári út 34‐36. (ma Bartók Béla út 36‐38.) szám alatt véletlenül – szó szerint – belebotlott az összetekert festményekbe."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Van-e olaj a temperában?",
+      "helyes_valasz": "nem tartalmaz olajat",
+      "evidence": [
+        "Megállapításként arra a következtetésre jutottak, hogy Csontváry pasztellesen csillogó napútszínei valamilyen tempera alapanyag lehet, vagyis olyan festék, amely nem tartalmaz olajat."
+      ],
+      "type": "open",
+      "kerdestipus": "Más a pontos válasz:Nem"
+    },
+    {
+      "id": null,
+      "kerdes": "Mivel foglalkozott Csontváry apja Szerednyén?",
+      "helyes_valasz": "földműveléssel és vadászattal",
+      "evidence": [
+        "Az apa a forradalomban vállalt császárpárti szerepe miatt családjával együtt, 1865-ben Kisszeben elhagyására kényszerült. Felesége rokonaihoz, Szerednyére költöztek, ahol a családfő földműveléssel és vadászattal kezdett foglalkozni."
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Miért költözött el a Kosztka család Kisszebenből?",
+      "helyes_valasz": "Az apa a forradalomban vállalt császárpárti szerepe miatt",
+      "evidence": [
+        "Az apa a forradalomban vállalt császárpárti szerepe miatt családjával együtt, 1865-ben Kisszeben elhagyására kényszerült. Felesége rokonaihoz, Szerednyére költöztek,"
+      ],
+      "type": "open",
+      "kerdestipus": null
+    },
+    {
+      "id": null,
+      "kerdes": "Hogyan írt Csontváry?",
+      "helyes_valasz": "irodalmi igényességgel",
+      "evidence": [
+        "Életéről és gondolatairól irodalmi igényességgel (s néhol rendkívüli tömörséggel és világossággal, máshol homályossággal) megírt, furcsa, önéletrajzi írásaiból értesülhetünk, amelyek egy része 1982-ben a Magvető Kiadónál is megjelent."
+      ],
+      "type": "open",
+      "kerdestipus": "multispan"
+    }
+  ]
+}

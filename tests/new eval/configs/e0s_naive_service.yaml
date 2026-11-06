@@ -1,0 +1,9 @@
+# E0s - end-to-end smoke test through Bifrost /generate. Bifrost picks the model itself
+# (GenAI list, then local qwen2.5:14b, then a hard-coded error exam), so this arm is NOT
+# reproducible and should not be in the paper tables. Use it to check the whole stack.
+name: E0s
+description: "Production chain through Bifrost /generate (uncontrolled model choice)"
+seeds: [1]
+exam: {n_questions: 10, types: [mcq]}
+pipeline: {kind: naive_service, retrieval_k: 3}
+chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}

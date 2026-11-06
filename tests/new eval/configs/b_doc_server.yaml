@@ -1,0 +1,10 @@
+# B-doc-S - the whole document in one prompt on the university GPU server (a large model with a long
+# context): the closest stand-in for uploading the document to a hosted chat assistant.
+# Data leaves the machine: only use documents whose licence allows it (all eval-v1 documents do).
+name: B-doc-S
+description: "Whole document in one prompt, large server model"
+seeds: [1, 2, 3]
+exam: {n_questions: 10, types: [mcq]}
+pipeline: {kind: full_document, max_doc_chars: 80000}
+chunking: {mode: service, method: percentile, threshold: 85, target_size: 1000}
+generator: {provider: genai, model: "qwen38udq8xl", temperature: 0.2}
