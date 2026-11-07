@@ -1,0 +1,459 @@
+% =====================================================================
+%  Függelékek
+% =====================================================================
+
+\chapter{Promptok}
+\label{app-prompt}
+
+\begin{sloppypar}
+Ez a függelék a generálási folyamatok promptjainak lényegi sorait közli; a kihagyásokat […] jelöli, a
+kapcsos zárójelben álló részek helyére a program illeszti be az aktuális értéket. A belső lépések
+(tervező, gráf, ellenőrző) promptjai angol nyelvűek, mert a kis helyi modellek ezeket megbízhatóbban
+követik; a generátor promptja magyar, és megismétli az éles prompt szabályait, így az \arm{E0} és az
+\arm{E1}--\arm{E3} konfigurációk szerkezetben, nem szabályokban különböznek. A teljes szövegek a
+\code{services/bifrost/prompts.py} és a \code{tests/eval/mimir\_eval/blueprint/prompts.py} fájlban
+találhatók.
+\end{sloppypar}
+
+\section{A naiv RAG (\arm{E0}) és a teljes dokumentumos prompt (\arm{B-doc})}
+\begin{kodblokk}
+Te egy kiemelkedő tudású oktatásmódszertani szakértő és professzionális vizsgakészítő vagy.
+KÖTELEZŐ SZABÁLYOK, AMIKET SZIGORÚAN BE KELL TARTANOD:
+1. ZÉRÓ HALLUCINÁCIÓ: KIZÁRÓLAG a megadott KONTEXTUS alapján dolgozz! […]
+2. FELHASZNÁLÓI UTASÍTÁS KÖVETÉSE: […] Pontosan a kért mennyiséget és típust generáld le!
+3. DISZTRAKTOROK: Feleletválasztós (mcq) kérdés esetén 1 helyes és 3 hihető, de helytelen válasz.
+4. NO LATEX: Szigorúan TILOS LaTeX formázást vagy dollárjeleket ($) használni!
+5. META-REFERENCIA TILALOM: Szigorúan TILOS a dokumentum szerkezetére kérdezni. […]
+KONTEXTUS:
+{context_text}            (E0: a 3 legközelebbi darab; B-doc: a teljes dokumentum)
+FELADAT (A felhasználó pontos kérése):
+"Készíts pontosan 10 darab vizsgakérdést, típus: feleletválasztós (mcq). Nehézségi szint: …"
+KIMENETI FORMÁTUM: […] kizárólag egy érvényes JSON objektum:
+{"title": "Mimir AI Vizsga", "format": "pdf", "questions": [
+  {"type": "mcq", "text": "...?", "answers": [{"text": "...", "is_correct": true}, …]}]}
+\end{kodblokk}
+
+\section{A tervező}
+\begin{kodblokk}
+[planner] You design exam blueprints. Reply with one valid JSON object only.
+Below is a document split into numbered chunks (C0, C1, ...). Some chunks are shortened.
+{overview}                (darabonként az eleje, összesen legfeljebb 12 000 karakter)
+List the {n+3} most important, clearly distinct concepts, facts or ideas a student should be
+tested on. Cover the whole document: every major part should have at least one concept. Prefer
+central ideas over trivia. […]
+JSON shape: {"concepts": [{"concept": "short name", "description": "one sentence: what exactly
+  should be tested", "chunk_ids": ["C0"], "importance": 3}]}
+importance: 3 = central, 2 = important, 1 = detail.
+\end{kodblokk}
+
+\section{A generátor}
+\begin{kodblokk}
+[generator] Te egy kiemelkedő tudású oktatásmódszertani szakértő és professzionális vizsgakészítő
+vagy. Kizárólag érvényes JSON formátumban válaszolj, markdown formázás nélkül!
+Készíts PONTOSAN EGY vizsgakérdést az alábbi terv szerint.
+TERV:
+- Fogalom: {concept}       - Mit kérdezzen: {description}
+- Kérdéstípus: feleletválasztós ("mcq"): pontosan 4 válasz, ebből pontosan 1 helyes és 3 hihető,
+  de a kontextus szerint egyértelműen helytelen disztraktor; […] hossza és formája legyen hasonló.
+- Bloom-szint: {pl. Megértés (magyarázat, összehasonlítás, saját szavakkal)}
+- Vizsga nehézsége: {difficulty}    - Nyelv: […] {magyar} nyelven írd.
+KÖTELEZŐ SZABÁLYOK:
+1. ZÉRÓ HALLUCINÁCIÓ: KIZÁRÓLAG a KONTEXTUS alapján dolgozz. […]
+2. HIVATKOZÁS: a "citations" mezőbe írd azoknak a részleteknek az azonosítóját (pl. "C3"),
+   amelyek igazolják a helyes választ.
+3. NO LATEX. […]  4. META-REFERENCIA TILALOM: […]
+5. NE ISMÉTELD a már elkészült kérdéseket: {existing}
+[DISZTRAKTOR-ÖTLETEK (rokon fogalmak a dokumentumból) …]          (csak E3)
+[AZ ELŐZŐ PRÓBÁLKOZÁS HIBÁS VOLT, JAVÍTSD: {feedback}]             (csak újrapróbálkozáskor)
+KONTEXTUS:
+[C3] …
+[C1] …
+KIMENETI FORMÁTUM (csak ez a JSON objektum):
+{"type": "mcq", "text": "A kérdés szövege?", "answers": […], "citations": ["C0"],
+ "bloom": "understand", "explanation": "egy mondat: miért ez a helyes válasz"}
+\end{kodblokk}
+
+\section{A javító hívás}
+\begin{kodblokk}
+[repair] Te egy gondos vizsgakészítő vagy, aki hibás formájú kérdéseket javít. […]
+Az alábbi feleletválasztós kérdés formája hibás. Javítsd ki úgy, hogy PONTOSAN 4 válasz legyen,
+ebből PONTOSAN 1 helyes; a hiányzó rossz válaszokat a kontextus alapján egyértelműen hibás, de
+hihető állításokkal pótold. A kérdés tartalmán és a helyes válaszon ne változtass […]. A kérdés ne
+tartalmazza a helyes választ, és kérdőjellel végződjön.
+KÉRDÉS: {text}   VÁLASZOK: {options}   KONTEXTUS: {chunks}   KIMENETI FORMÁTUM: […]
+\end{kodblokk}
+
+\section{Az ellenőrző}
+\begin{kodblokk}
+[verifier] You check exam questions against source text. Reply with one valid JSON object only.
+--- alátámasztottság és disztraktorok ---
+SOURCE: """{a hivatkozott darabok}"""
+QUESTION (mcq): {text}
+A. …   <-- marked correct
+B. …  […]
+Check strictly against the SOURCE only:
+1. key_supported: is the marked-correct answer clearly supported by the SOURCE?
+2. For every option NOT marked correct: is it clearly wrong according to the SOURCE? […]
+3. ambiguous: could a careful reader argue that more than one option is correct?
+4. problems: one short sentence describing any problem ("" if none).
+JSON shape: {"key_supported": true, "options_wrong": [true, true, true], "ambiguous": false,
+             "problems": ""}
+--- vak megoldás ---
+SOURCE: """{a hivatkozott darabok}"""
+Answer the question using only the SOURCE. Exactly one option is correct.
+{text}
+A. …  B. …  C. …  D. …        (véletlen permutáció)
+JSON shape: {"answer": "A"}
+\end{kodblokk}
+
+\section{A fogalomgráf (\arm{E3})}
+\begin{kodblokk}
+[graph] You extract knowledge graphs from teaching material. Reply with one valid JSON object only.
+Extract the knowledge in these chunks as a small concept graph. Chunk ids are in brackets.
+{chunks_block}            (legfeljebb 3 000 karakteres köteg)
+Rules:
+- concepts: the key terms, entities, processes or ideas (max 8 per chunk). "parent" is the broader
+  category the concept belongs to (e.g. "T-sejt" -> "limfocita"), or "" if none. […]
+- facts: short atomic statements from the text (max 6 per chunk), […]
+- relations: typed links between concepts: is_a, part_of, causes, contrasts_with, used_for,
+  related_to. […]
+JSON shape: {"concepts": […], "facts": […], "relations": […]}
+\end{kodblokk}
+
+\chapter{A bíró és az oktatók rubrikája}
+\label{app-rubrika}
+
+A rubrika szövege a bíró és az oktatói értékelőlap számára azonos (a bíró az angol, az oktatók a magyar
+változatot kapják).
+
+\begin{description}[style=nextline,leftmargin=0.6cm]
+\item[Helyesség] A megjelölt válasz a forrás szerint helyes, és más opció nem helyes.
+1 = hibás kulcs vagy két helyes opció; 3 = helyes, de pontatlan; 5 = teljesen helyes, egyértelmű.
+\item[Érthetőség] A kérdés önmagában érthető, nyelvtanilag helyes, egyértelmű, nem hivatkozik „a
+szövegre” vagy a dokumentum szerkezetére. 1 = zavaros; 3 = nehezen érthető; 5 = vizsgakész
+megfogalmazás.
+\item[Disztraktorok] A rossz válaszok a forrás szerint egyértelműen rosszak, de egy felkészületlen
+diák számára hihetők (azonos téma, hasonló hossz és forma). 1 = abszurd vagy szintén helyes;
+3 = részben hihető; 5 = mind hihető és rossz. Kifejtős kérdésnél üresen marad.
+\item[Szintillesztés] A kognitív szint megfelel a kért nehézségnek (könnyű: felidézés/megértés;
+közepes: alkalmazás/megértés; nehéz: elemzés/értékelés). 1 = egyértelműen rossz szint;
+3 = határeset; 5 = illik.
+\item[Felhasználnám] Beraknád ezt a kérdést egy valódi dolgozatba legfeljebb apró javítással?
+(igen/nem)
+\end{description}
+
+A bíró áttekintő hívása ezen felül kéri a kulcsot igazoló mondat szó szerinti idézését
+(\code{key\_evidence} mező), disztraktoronként az \code{is\_wrong} és az \code{on\_topic} ítéletet, a
+kérdés Bloom-szintjét és egy-két mondatos indoklást.
+
+\chapter{Paraméterek és reprodukálás}
+\label{app-reprodukcio}
+
+\section{A generálási folyamat paraméterei}
+
+\begin{table}[H]
+\centering
+\caption{A generálási folyamat paraméterei és alapértékei az előzetes és a fő vizsgálatban.}
+\label{tab:parameterek}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+Paraméter & Alapérték & Megjegyzés \\
+\midrule
+darabolás & percentilis, 85 & célméret 1\,000 karakter, puha korlát; \arm{E5b}: átlag $+\,1{,}5$ szórás; \arm{E5c}: rögzített 800 karakter \\
+visszakeresett darabok ($k$) & 3 & \arm{E0}: a teljes vizsgához; tervezett folyamat: kérdéshelyenként \\
+keresés módja & sűrű & \arm{E2h}: BM25 + sűrű, RRF ($c=60$), 6 karakteres előtagtövesítés \\
+áttekintés kerete & 12\,000 karakter & a tervező ennyit lát; darabonként legalább 120 karakter \\
+fogalmak száma & $n+3$ & 3 tartalékfogalom \\
+kérdéshely-kontextus kerete & 6\,000 karakter & + 2 darab, ha a kulcs nem igazolt \\
+újrapróbálkozás ($r$) & 1 & pilot: 2; utána 1 tartalékfogalom \\
+ellenőrző lánc & \arm{E1}: ki; \arm{E2}, \arm{E3}: be & vak megoldás: be (\arm{E2f}: ki) \\
+szivárgási szabályok, javító hívás & be & a pilot után bevezetve \\
+duplikátumküszöb & 0,9 & koszinusz-hasonlóság (E5-beágyazás) \\
+fogalomgráf (\arm{E3}) & 3\,000 karakteres köteg & összevonás 0,92 hasonlóság felett \\
+teljes dokumentum (\arm{B-doc}) & 30\,000 / 80\,000 karakter & helyi / szerver; helyben 16\,384 tokenes kontextus \\
+generátor & Q4\_K\_M, $T=0{,}2$ & 8\,192 tokenes kontextus; \code{num\_predict} 4\,096 (fő vizsgálat) \\
+bíró & gpt-oss-120b, $T=0$ & „low” gondolkodás; forrás legfeljebb 24\,000 karakter \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Minden konfiguráció egy YAML-fájl a \code{tests/eval/configs} könyvtárban, amely csak az alapértékektől
+(\code{mimir\_eval/config.py}) eltérő kulcsokat adja meg. Az egytényezős terv a fájlok szintjén is
+látható: az \arm{E2} és az \arm{E3} konfiguráció például egyetlen kulcsban (\code{graph}) különbözik.
+
+\begin{kodblokk}
+# E2 - E1 + verifier chain: schema, meta-reference, citations, grounding + distractor check,
+# blind answer test; max 1 retry per slot with feedback, then 1 replacement.
+name: E2
+seeds: [1]
+exam:
+  n_questions: 10
+  types: [mcq]
+pipeline:
+  kind: blueprint        # retrieval: dense, retrieval_k: 3
+  verifier: true
+  blind_test: true
+  max_retries: 1
+  graph: false           # E3: true
+chunking:
+  method: percentile     # threshold: 85, target_size: 1000
+generator:
+  provider: ollama
+  model: "hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M"
+  temperature: 0.2
+  num_ctx: 8192
+\end{kodblokk}
+
+\section{A reprodukálás lépései}
+
+\begin{sloppypar}
+A keretrendszernek a tárolóban két változata van. A fő vizsgálatot a \code{tests/new~eval} könyvtárban lévő
+változat futtatta. Ebben a generátor válaszának hossza \code{num\_predict: 4096} tokenre korlátozott (e nélkül
+egy JSON-módú válasz az időkorlátig is futhat), és egy sikertelen vizsgát (hibás JSON, tartalékvizsga vagy
+szolgáltatáshiba) a folytatott futás (\code{--resume}) újra lefuttat, de két sikertelen kísérlet után nem
+próbálja újra (\code{--max-attempts}, alapértéke 2), és az utolsó sikertelen rekordot tartja meg. A
+\code{tests/eval} könyvtár a keretrendszer jelenlegi fejlesztői változata; a fő vizsgálat pontos
+megismétléséhez az alábbi lépéseket a \code{tests/new~eval} könyvtárban kell futtatni.
+\end{sloppypar}
+
+\begin{sloppypar}
+A nyers eredmények a tárolóban vannak. A pilot a \code{tests/eval/results\_pilot} könyvtárban
+található; a fő vizsgálat a \code{tests/eval/results\_fo\_2026-10.zip}, az előzetes vizsgálat a
+\code{tests/new~eval/results.zip} archívumban, amelyeket a \code{tests/eval/results}, illetve a
+\code{tests/eval/results\_qwen\_2026-09} könyvtárba kell kibontani. Konfigurációnként egy-egy
+futáskönyvtár tartozik hozzájuk \code{run.json}, \code{exams.jsonl}, \code{questions.jsonl} és
+\code{exam\_metrics.csv} fájlokkal. A dolgozat minden száma egyetlen szkriptből származik: a
+\code{python tdk/elemzes/elemzes.py} parancs a három futáskészletből a \code{tdk/elemzes/szamok.md}
+(olvasható) és a \code{szamok.json} (gépi) fájlt állítja elő.
+\end{sloppypar}
+
+\begin{kodblokk}
+# 1. Szolgáltatások és helyi modellek
+docker-compose up -d --build
+ollama pull hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF:Q4_K_M
+ollama pull gemma3:12b
+ollama pull llama3.1:8b                      # az E2x ellenőrzője
+
+# 2. Kiértékelő környezet és ellenőrzés
+cd tests/eval            # fejlesztői változat; a fő vizsgálathoz: cd "tests/new eval"
+pip install -r requirements.txt
+python -m pytest tests_unit -q               # a keretrendszer saját tesztjei
+python -m mimir_eval check configs/e0_naive_local.yaml --judge-model gpt-oss:120b
+
+# 3. Egy konfiguráció: futtatás, pontozás
+python -m mimir_eval run   configs/e2_blueprint_verifier.yaml
+python -m mimir_eval score results/E2_<időbélyeg> --judge-model gpt-oss:120b
+
+# 4. A teljes mátrix (Windows PowerShell); megszakítás után folytatható
+./run_all.ps1                                # PULI-LlumiX 8B (alapértelmezett generátor)
+./run_all.ps1 -Model gemma3:12b              # a helyi konfigurációk a második generátorral
+
+# 5. A dolgozat számai (a tároló gyökeréből)
+python tdk/elemzes/elemzes.py                # -> tdk/elemzes/szamok.md, szamok.json
+\end{kodblokk}
+
+A \code{-Model} kapcsoló a helyi konfigurációkat egy másik Ollama-modellel futtatja új néven (például
+\arm{E2} $\to$ \code{E2-gemma3-12b}), így a két generátor eredményei egymás mellett maradnak; a
+szerverkonfigurációkat (\arm{B-doc-S}, \arm{E4}, \arm{E4b}) ilyenkor kihagyja. Az előzetes vizsgálat
+ugyanígy, \code{-Model qwen2.5:7b} kapcsolóval ismételhető meg. A bíró a GenAI-szerver kulcsát a
+tároló \code{.env} fájljából (\code{OE\_GENAI\_API\_KEY}) olvassa; válaszai a futáskönyvtár
+\code{judge\_cache.jsonl} fájljába kerülnek, így az újrapontozás nem igényel új bírói hívást.
+
+% =====================================================================
+%  A 38. OTDK Informatikatudományi Szekció kötelező elemei (1. számú melléklet)
+% =====================================================================
+
+\chapter{Rezümé}
+\label{app-rezume}
+
+\noindent{\small\itshape A 38.~OTDK Informatikatudományi Szekció 1.~számú melléklete szerinti rezümé.}
+
+\medskip
+A feleletválasztós vizsgakérdések írása az oktatói munka egyik legidőigényesebb része. A felhőben futó nyelvi
+modellek gyors segítséget adnak, de nem ellenőrzik, hogy a helyes választ a tananyag alátámasztja-e, nem
+szabályozzák a vizsga szerkezetét, és a tananyagot harmadik félhez juttatják. Helyben futó kis modellekkel az
+adatvédelmi probléma megszűnik, de nem ismert, melyik generálási megoldás ad velük megbízható vizsgát. A
+fejlesztés alatt álló \Mimir{} rendszerhez ezt mérésekkel kellett eldönteni.
+
+Saját, nyílt kiértékelő keretrendszert építettünk. Ennek 14 konfigurációja egyszerre egy tényezőben tér el:
+vizsgaterv, kérdésenkénti keresés és forráshivatkozás, ellenőrző lánc, fogalomgráf, hibrid keresés és
+darabolás. A kérdéseket forrásalapú mutatókkal és egy független, bíróként pontozó nyelvi modellel értékeltük,
+a konfigurációkat dokumentumszintű páros próbákkal hasonlítottuk össze. Három vizsgálatban, legfeljebb 30
+magyar és angol dokumentumon, három fogyasztói GPU-n futó, 4 bites modellel mértünk.
+
+Saját eredményünk a \Mimir{} tervezett generálási módszere, a kiértékelő keretrendszer, a vizsgálatok
+elvégzése és elemzése, valamint a belőlük hozott döntés. Kimutattuk, hogy a naiv visszakeresés konkrét okból
+törékeny: a feladatleírást használja lekérdezésként, és rövid, tartalom nélküli darabokat talál meg. A
+lépésekre bontás gyenge modellnél nélkülözhetetlen ($0{,}28\to0{,}67$), a Qwen2.5-7B vele a szervermodell
+teljes dokumentumos promptjának minőségét érte el, az erős Gemma 3 12B-nél pedig a rögzített darabolás
+önmagában is elég volt. \tbd{[A témavezető hozzájárulása egy mondatban.]}
+
+Fogyasztói GPU-n a vizsgakérdések minőségét elsősorban a választott modell és a visszakeresés lekérdezése
+határozza meg; a lépésekre bontás gyenge modellnél a minőséget, erős modellnél az ellenőrizhetőséget adja. A
+rendszerbe ezért a kérdésenkénti forráshivatkozás, a szabályalapú ellenőrzés és a rögzített darabolás kerül.
+Módszertani tanulság, hogy az ellenőrző és a bíró ítélete véletlenszerűen egyezett, és több csendes hiba,
+köztük a válaszszivárgás, a valósnál jobbnak mutatta volna az eredményt.
+
+\medskip
+\noindent\textbf{Kulcsszavak:} feleletválasztós teszt, kvantálás, adatvédelem, oktatástechnológia, magyar
+nyelvtechnológia
+
+% ---------------------------------------------------------------------
+\chapter{Nyilatkozat a mesterséges intelligencia alapú eszközök használatáról}
+\label{app-mi-nyilatkozat}
+\chaptermark{MI-használati nyilatkozat}
+% ---------------------------------------------------------------------
+
+A 38.~OTDK Informatikatudományi Szekció 1.~számú melléklete szerint nyilatkozunk a mesterséges intelligencia
+(MI) alapú eszközök használatáról. Az alábbiakat a tároló verziótörténete alapján rögzítettük; a pirossal
+jelölt részeket a szerzők pontosítják.
+
+\section{A kutatás tárgyát képező modellek}
+
+A dolgozatban vizsgált nyelvi modellek (Qwen2.5-7B, PULI-LlumiX 8B, Gemma 3 12B, az \arm{E2x} ellenőrzőjeként a
+Llama-3.1-8B, valamint a szervermodell) és a bíró (gpt-oss-120b) a kutatás tárgyai, illetve mérőeszközei, nem a
+dolgozat elkészítésének segédeszközei; szerepüket \az{\ref{ch:modszer}}. és \az{\ref{ch:kiertekeles}}.~fejezet
+írja le. Az általuk generált kérdések a vizsgálatok nyers adatai, a dolgozat szövegébe csak idézett példaként
+kerültek.
+
+\section{A dolgozat elkészítéséhez használt eszközök}
+
+\begin{sloppypar}
+\begin{description}[style=nextline,leftmargin=0.6cm]
+\item[Eszköz] A Claude (Anthropic) kódolási asszisztens (Claude Code). A tároló commitjainak
+\code{Co-Authored-By} sora szerint a Claude Opus 5.5 modell. \tbd{[Ha más modellváltozat vagy felület (például
+webes csevegőfelület) is szerepet kapott, itt kell feltüntetni.]}
+\item[Szoftverfejlesztés] A kiértékelő keretrendszer (\code{tests/eval}, \code{tests/new~eval}) és az elemző
+szkriptek (\code{tdk/elemzes}) fejlesztésében: kódírás, hibakeresés, egységtesztek. A verziótörténet szerint az
+asszisztens a webes felület, egyes háttérszolgáltatások és az adatvédelmi dokumentáció egyes vázlatainak
+(például adatfeldolgozói szerződés, érdekmérlegelési teszt) elkészítésében is közreműködött. \tbd{[A szerzők
+pontosítják, mely részeket írták saját kezűleg, és hogyan ellenőrizték a generált kódot (kódátnézés, tesztek,
+kézi futtatás).]}
+\item[A dolgozat szövege] A dolgozat szövegének megírásában és átdolgozásában: a fejezetek megfogalmazása és
+szerkesztése, a LaTeX-forrás, a diagramforrások és az ábrákat előállító szkriptek elkészítése. \tbd{[A szerzők
+pontosítják, mely fejezeteket és szakaszokat írták saját kezűleg, melyeket fogalmazott meg az asszisztens az
+ő irányításukkal, és milyen ellenőrzésen ment át a szöveg.]}
+\item[Mérték] \tbd{[A használat mértéke fejezetenként vagy összesítve, a szerzők becslése szerint.]}
+\item[Más eszközök] \tbd{[Más MI-alapú eszközök, ha voltak (például fordító, helyesírás-ellenőrző,
+képgenerálás a felület illusztrációihoz, más csevegő asszisztens), és felhasználásuk módja.]}
+\end{description}
+\end{sloppypar}
+
+\section{Ellenőrzés és felelősség}
+
+A dolgozat minden számát egyetlen szkript (\code{tdk/elemzes/elemzes.py}) állítja elő a vizsgálatok nyers
+kimeneteiből; a szövegbe a számok ennek kimenetéből (\code{tdk/elemzes/szamok.md}) kerültek, nem nyelvi modell
+által írt szövegből. Csak az irodalomjegyzékben felvett forrásokra hivatkozunk. \tbd{[A szerzők
+megerősítik, hogy a hivatkozott forrásokat és az MI-vel írt részeket ellenőrizték.]} A dolgozat tartalmáért és
+következtetéseiért a szerzők felelnek. \tbd{[Hely, dátum, a szerzők aláírása.]}
+
+% ---------------------------------------------------------------------
+\chapter{Eredménynyilatkozat}
+\label{app-eredmeny}
+% ---------------------------------------------------------------------
+
+A 38.~OTDK Informatikatudományi Szekció 1.~számú melléklete szerint az alábbiakban elhatároljuk a szerzők
+saját eredményeit a témavezető és a tágabb kutatócsoport eredményeitől. A szerzők közötti munkamegosztást és a
+témavezető szerepét a pirossal jelölt helyeken a szerzők töltik ki.
+
+\section{A szerzők saját eredményei}
+
+\paragraph{A rendszer.} A \Mimir{} architektúrájának megtervezése és megvalósítása: a dokumentumfeldolgozást, a
+darabolást, a generálást és az auditot végző mikroszolgáltatások, a forráshivatkozást megjelenítő webes
+szerkesztő, az export, az adatvédelmi intézkedések és a GPU-memóriaigény becslése
+(\ref{ch:modszer}.~fejezet). \tbd{[Munkamegosztás a szerzők között.]}
+
+\paragraph{A generálási módszer.} A vizsgaterv, a kérdéshelyenkénti keresés, a forrásrészletekre hivatkozó
+egyenkénti generálás, az ellenőrző lánc és a szivárgás elleni szabályok megtervezése és megvalósítása
+(\ref{ch:modszer}.~fejezet). \tbd{[Munkamegosztás a szerzők között.]}
+
+\paragraph{A kiértékelő keretrendszer.} Az egytényezős konfigurációk, a forrásalapú mutatók (szivárgás,
+lefedettség, vak megoldhatóság), a bíró bekötése, az oktatói értékelési protokoll és a dokumentumszintű
+statisztikai elemzés, valamint a 30 dokumentumos adatkészlet összeállítása a két nyílt adatkészletből és a saját
+szövegekből (\ref{ch:kiertekeles}.~fejezet). \tbd{[Munkamegosztás a szerzők között.]}
+
+\paragraph{A vizsgálatok és az elemzés.} A pilot, az előzetes és a fő vizsgálat megtervezése és futtatása, a
+nyers kimenetek kézi átolvasása, a mérési hibák (válaszszivárgás, csendes tartalékágak, hiányzó bírói
+ítéletek) feltárása, valamint az eredmények elemzése és a dolgozat összes számát a nyers kimenetekből
+előállító elemző szkript (\ref{ch:eredmenyek}. és \ref{ch:modellek}.~fejezet). \tbd{[Munkamegosztás a szerzők
+között.]}
+
+\paragraph{A döntés.} A mérések alapján hozott döntés arról, mely komponensek kerülnek a rendszerbe, és melyek
+maradnak ki, GPU-szintenként (\ref{ch:diszkusszio}.~fejezet).
+
+\section{A témavezető és a tágabb kutatócsoport hozzájárulása}
+
+\tbd{[A témavezető szerepe (például a téma kijelölése, konzultációk, a dolgozat átnézése, az egyetemi
+GenAI-szerver hozzáférésének biztosítása).]} \tbd{[A tágabb kutatócsoport vagy más hallgatók hozzájárulása,
+ha volt; ha nem volt, ennek kimondása.]} \tbd{[Az oktatói értékelésben részt vevő oktatók szerepe
+(\ref{sec:oktatoi}.~szakasz).]}
+
+\section{Átvett, nem saját eredmények}
+
+Nem saját eredmény a vizsgált nyelvi modellek (Qwen2.5-7B, PULI-LlumiX 8B, Gemma 3 12B, Llama-3.1-8B,
+gpt-oss-120b, a szervermodell) és a beágyazó modell (multilingual-e5-base); az EduQG és a MILQA adatkészlet,
+amelyből a 27 nyílt dokumentum és a referenciakérdések származnak; a felhasznált nyílt forrású szoftverek
+(például az Ollama, a \texttt{llama.cpp} és a Qdrant); valamint az egyetemi GenAI-szerver, amelyen a
+szervermodell és a bíró futott. A kódolási asszisztens használatát \az{\ref{app-mi-nyilatkozat}}.~függelék írja
+le.
+
+% ---------------------------------------------------------------------
+\chapter{Az adatok forrása és nyilvánossága}
+\label{app-adatok}
+% ---------------------------------------------------------------------
+
+Ez a függelék a vizsgálatokban használt dokumentumok, modellek és eredmények forrását, licencét és
+nyilvánosságát foglalja össze; az adatkészlet összetételét \az{\ref{sec:adatkeszlet}}.~szakasz írja le. A
+dokumentumok licencét az adatkészlet leírófájljai (\code{tests/eval/dataset/manifest*.yaml}) is rögzítik.
+
+\begin{table}[htbp]
+\centering
+\caption[Az adatok forrása, licence és nyilvánossága.]{Az adatok forrása, licence és nyilvánossága. A
+dokumentumok a fő vizsgálat 30 dokumentuma; az előzetes vizsgálat hat dokumentuma ezek közül való.}
+\label{tab:adatforrasok}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{3.5cm}@{}}
+\toprule
+Adat & Forrás & Licenc & Nyilvánosság \\
+\midrule
+3 saját magyar szöveg & a szerzők saját szövegei (\code{tests/TestDocs}) & saját & a tárolóban nyilvános \\
+3 angol tankönyvi szöveg & OpenStax-tankönyvek az EduQG adatkészletből~\cite{hadifar2023eduqg} & CC BY 4.0 & nyilvános, a forrás megjelölésével \\
+24 magyar szöveg & magyar Wikipédia-cikkek a MILQA adatkészletből~\cite{novak2023milqa} & CC BY-SA 4.0 & nyilvános, a forrás megjelölésével \\
+referenciakérdések & EduQG és MILQA; a saját szövegekhez saját & a forrás licence & a tárolóban \\
+nyers eredmények (vizsgák, mutatók, bírói ítéletek) & saját futások (\ref{app-reprodukcio}.~függelék) & \tbd{[a tároló MIT-licence alá tartoznak-e]} & a tárolóban \\
+oktatói értékelések & részt vevő oktatók & -- & \tbd{[nyilvánosság; az értékelők adatai nélkül]} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption[A vizsgálatokban használt modellek.]{A vizsgálatokban használt modellek. A helyi modellek 4 bites
+(Q4\_K\_M) kvantálással futottak az Ollamán; a licenceket a modellkártyák alapján még ellenőrizni kell.}
+\label{tab:modellek-licenc}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.1cm}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.2cm}@{}}
+\toprule
+Modell & Szerep & Forrás & Licenc \\
+\midrule
+Qwen2.5-7B & generátor (pilot, előzetes vizsgálat) & \cite{qwen25}; \code{qwen2.5:7b} & \tbd{[várhatóan Apache 2.0]} \\
+PULI-LlumiX 8B & generátor (fő vizsgálat) & \cite{pulillumix}; \nolinkurl{hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF} & \tbd{[várhatóan Llama 3.1 Community License]} \\
+Gemma 3 12B & generátor (fő vizsgálat) & \cite{gemma3}; \code{gemma3:12b} & \tbd{[várhatóan Gemma Terms of Use]} \\
+Llama-3.1-8B & az \arm{E2x} ellenőrzője & \cite{grattafiori2024llama3}; \code{llama3.1:8b} & \tbd{[várhatóan Llama 3.1 Community License]} \\
+gpt-oss-120b & bíró & \cite{gptoss2025}; egyetemi GenAI-szerver & \tbd{[várhatóan Apache 2.0]} \\
+szervermodell & \arm{B-doc-S}, \arm{E4}, \arm{E4b} & egyetemi GenAI-szerver (\code{qwen38udq8xl}) & \tbd{[a pontos modell és licence]} \\
+multilingual-e5-base & beágyazás (darabolás, keresés, duplikátumszűrés) & \cite{wang2024me5}; \nolinkurl{intfloat/multilingual-e5-base} & \tbd{[várhatóan MIT]} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Az egyetemi GenAI-szerver.} A szervermodell és a bíró az egyetem saját infrastruktúráján futott,
+amely nem nyilvános; a hozzáférés egyetemi kulccsal történik. A kiértékelés során így a dokumentumok nem
+kerültek külső szolgáltatóhoz, a két modell pontos változata viszont kívülről nem reprodukálható. A bírói
+válaszok a futáskönyvtárak \code{judge\_cache.jsonl} fájljaiban megmaradtak, ezért az újrapontozás és az
+elemzés a szerver nélkül is megismételhető.
+
+\paragraph{Kód és eredmények.} A \Mimir{}, a kiértékelő keretrendszer és az elemző szkriptek MIT-licenc alatt
+érhetők el \tbd{[a nyilvános tároló címe]}. A nyers eredmények helyét és a reprodukálás lépéseit
+\az{\ref{app-reprodukcio}}.~függelék adja meg.

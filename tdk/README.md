@@ -7,7 +7,10 @@ Fordítás (TeX Live / BasicTeX / MiKTeX vagy Overleaf, pdfLaTeX + Biber):
 
 Szükséges csomagok: babel-hungarian, biblatex + biber, algorithm2e, pgfplots, makecell, float.
 
-## Felépítés (főszöveg kb. 57 oldal; az írási terv: `elemzes/TERV.md`)
+## Felépítés (főszöveg 47 oldal, teljes PDF 71 oldal; az írási terv: `elemzes/TERV.md`, 3. változat)
+
+A TDK-változat csak a tudományos részt tartalmazza. A rendszerállapotot, a megfelelési megvalósítást és
+a fejlesztési döntést is tartalmazó teljes változat a repó gyökerében, a `publikacio/` mappában van.
 
 | Fejezet | Fájl | Tartalom |
 | --- | --- | --- |
@@ -15,13 +18,13 @@ Szükséges csomagok: babel-hungarian, biblatex + biber, algorithm2e, pgfplots, 
 | Rövidítések és fogalmak | `fejezetek/jelolesek.tex` | egy oldal |
 | 1. Bevezetés | `fejezetek/bevezetes.tex` | fejlesztési fázis és cél, P1–P4, RQ1–3, H1–H5, hozzájárulások |
 | 2. Szakirodalmi áttekintés | `fejezetek/szakirodalom.tex` | MCQ és Bloom, kérdésgenerálás, LLM-alapok, RAG, felbontás és ellenőrzés, kis modellek, bíró és mérés, magyar nyelv és hazai előzmények, jogi keret (GDPR, MI-rendelet), kutatási rés |
-| 3. A rendszer jelenlegi állapota | `fejezetek/modszertan.tex` | célok, architektúra a mai kód szerint, zéró megőrzés, megfelelés (GDPR, MI-rendelet), VRAM, generálási módszer |
-| 4. Kiértékelési módszertan | `fejezetek/kiertekeles.tex` | keretrendszer, konfigurációk, a három vizsgálat, két összevetési szabály, mutatók, bíró, statisztika |
-| 5. A módszerek kiértékelése | `fejezetek/eredmenyek.tex` | komponensek, darabolás és robusztusság, ellenőrző, költség (relatív szorzók), a mérés megbízhatósága |
-| 6. A modellek kiértékelése | `fejezetek/modellek.tex` | azonos dokumentumokon, szervermodell, a PULI kudarca, erőforrás és GPU-szintek |
-| 7. Értékelés és döntés | `fejezetek/diszkusszio.tex` | hipotézisek, irodalmi összevetés, döntési táblázat, mi kerül be / mi marad ki, ütemterv, érvényesség |
+| 3. A javasolt generálási módszer | `fejezetek/modszertan.tex` | tervezési elvek, helyi futtatás, memóriamodell, a generálási módszer lépései |
+| 4. Kísérleti módszertan | `fejezetek/kiertekeles.tex` | keretrendszer, konfigurációk, a három vizsgálat, két összevetési szabály, mutatók, bíró, statisztika |
+| 5. Eredmények: a módszer komponensei | `fejezetek/eredmenyek.tex` | komponensek, darabolás és robusztusság, ellenőrző, költség (relatív szorzók), a mérés megbízhatósága |
+| 6. Eredmények: a generátormodellek | `fejezetek/modellek.tex` | azonos dokumentumokon, szervermodell, a PULI kudarca, erőforrás és GPU-szintek |
+| 7. Az eredmények értékelése | `fejezetek/diszkusszio.tex` | hipotézisek, irodalmi összevetés, mikor éri meg, gyakorlati következmények, érvényesség |
 | 8. Összefoglalás | `fejezetek/osszefoglalas.tex` | RQ-válaszok, további munka |
-| Függelék | `fejezetek/fuggelek_modszer.tex`, `fuggelek_eredmeny.tex`, `fuggelek.tex` | a módszer és az eredmények részletei, promptok, rubrika, reprodukálás, OTDK-elemek (rezümé, MI-nyilatkozat, eredménynyilatkozat, adatforrások) |
+| Függelék | `fejezetek/fuggelek_modszer.tex`, `fuggelek_eredmeny.tex`, `fuggelek.tex` | a módszer és az eredmények részletei, a generátor promptja, rubrika, paraméterek (az OTDK kötelező függelékei: `publikacio/otdk_fuggelekek.tex`) |
 
 ## Számok, ábrák, diagramok
 

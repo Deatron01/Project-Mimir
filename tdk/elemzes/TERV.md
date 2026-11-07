@@ -1,4 +1,51 @@
-# A TDK dolgozat felépítése – írási terv (2026. november, 2. változat)
+# A TDK dolgozat felépítése – írási terv (2026. november, 3. változat)
+
+## 3. változat: csak a tudományos rész (ez az érvényes, felülírja a lenti 2. változatot ott, ahol eltér)
+
+A 2. változat teljes, 97 oldalas szövege (rendszerállapot, megfelelési megvalósítás, fejlesztési
+döntés és ütemterv) a repó gyökerében, a `publikacio/` mappában megmaradt. A TDK-változat **kutatási
+dolgozat**, nem fejlesztési napló: a módszer, a kísérletek, az eredmények és azok tudományos
+értékelése. **Cél: kb. 42–45 oldal főszöveg** (az előlap, az irodalomjegyzék és a függelék ezen
+felül; a teljes PDF kb. 65 oldal alatt).
+
+**Ami kimarad a TDK-ból** (megvan a `publikacio/` változatban): a szolgáltatások architektúrája és
+nevei (Wellspring, RuneCarver, Bifrost, Heimdall, The Forge, Skald), az nginx, a feladatsor, a
+`BackgroundTasks`, a frontend (legacy/v1 mód, ál-backend), a „fejlesztési fázis / éles útvonal”
+keretezés, az adatfajták életciklusa táblázat, a megfelelési táblázat (`tab:megfeleles`), a
+szerkesztő képernyőképe, az architektúra-ábra, a fejlesztési ütemterv, a „mit építünk be a
+Bifrostba” jellegű mérnöki teendők, a docker-alapú telepítési lépések.
+
+**Ami marad:** a probléma és a kutatási kérdések; a szakirodalom (a jogi keret tömörítve, kb. 1,5
+oldal, mert a P3 problémát és a helyi futtatás indokát adja); a javasolt **generálási módszer** mint
+kutatási hozzájárulás (darabolás, vizsgaterv és Bloom-kiosztás, kérdéshelyenkénti keresés,
+forráshoz kötött generálás, ellenőrző lánc, fogalomgráf), a helyi futtatás memóriamodellje
+(röviden), és egy rövid bekezdés a tervezési elvekről (helyi futtatás, adatmegőrzés nélküli
+feldolgozás, kötelező oktatói jóváhagyás – elvként, nem megvalósítási részletként); a kísérleti
+módszertan; az eredmények; a tudományos értékelés (hipotézisek, irodalmi összevetés, mikor éri meg a
+módszer, mérési tanulságok, érvényesség) és **rövid gyakorlati következmények** (melyik konfiguráció
+ajánlott GPU-szintenként – ez mérési eredmény, nem fejlesztési terv).
+
+A módszert „kutatási prototípusként, a nyílt kiértékelő keretrendszerben megvalósítva” említjük; a
+„fejlesztési fázis”, „éles útvonal”, „beépítés” kifejezéseket kerüljük.
+
+| Fejezet | Fájl | Cél oldal | Felelős |
+|---|---|---|---|
+| Összefoglaló, rövidítések | `osszefoglalo.tex`, `jelolesek.tex` | 1 + 1 | Keret |
+| 1. Bevezetés | `bevezetes.tex` | 3 | Keret |
+| 2. Szakirodalom | `szakirodalom.tex` | 12 | Irodalom |
+| 3. A javasolt generálási módszer | `modszertan.tex` | 7 | Rendszer |
+| 4. Kísérleti módszertan | `kiertekeles.tex` | 5,5 | Rendszer |
+| 5. Eredmények: a módszer komponensei | `eredmenyek.tex` | 8,5 | Eredmények |
+| 6. Eredmények: a generátormodellek | `modellek.tex` | 4 | Eredmények |
+| 7. Az eredmények értékelése | `diszkusszio.tex` | 5 | Döntés |
+| 8. Összefoglalás | `osszefoglalas.tex` | 1,5 | Keret |
+| Függelék | `fuggelek_modszer.tex` (Rendszer), `fuggelek_eredmeny.tex` (Eredmények), `fuggelek.tex` (Keret) | – | |
+
+**Megszűnő címkék** (senki ne hivatkozzon rájuk): `sec:megvalositas`, `sec:megfeleles`,
+`tab:megfeleles`, `tab:eletciklus`, `app-eletciklus`, `fig:architektura`, `fig:szerkeszto`,
+`tab:celok`. **Megmaradó, de rövid** szakaszok (a címke marad): `sec:architektura` (tervezési elvek),
+`sec:zero` (helyi futtatás és adatkezelés, 1 bekezdés), `sec:vram`, `sec:felugyelet` (emberi
+felügyelet mint elv), `sec:dontes` és `tab:dontes` (a 7. fejezetben „Gyakorlati következmények”).
 
 Ez a fájl a fejezetek íróinak (embernek és agentnek) közös útmutatója. Minden szám forrása
 `tdk/elemzes/szamok.md` / `szamok.json` (generálja: `tdk/elemzes/elemzes.py`). Számot csak onnan

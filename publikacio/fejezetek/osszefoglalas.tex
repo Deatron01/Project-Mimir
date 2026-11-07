@@ -1,0 +1,80 @@
+% =====================================================================
+\chapter{Összefoglalás és további munka}
+\label{ch:osszefoglalas}
+% =====================================================================
+
+Ez a fejezet a kutatási kérdésekre adott válaszokat és a belőlük hozott döntést foglalja össze, majd kijelöli
+a további munkát.
+
+\section{Összefoglalás}
+
+Dolgozatunkban a vizsgakérdés-generálás négy gyakorlati problémájából indultunk ki: a kulcsok helyessége nincs
+ellenőrizve (P1), a vizsga szerkezete és lefedettsége nincs kontrollálva (P2), a tananyag egy harmadik félhez
+kerül (P3), és a módszer nagy, távoli modellekre támaszkodik (P4). A fejlesztési fázisban lévő \Mimir{}
+rendszerben ma a naiv RAG fut; a feladatot ellenőrizhető lépésekre bontó tervezett folyamatot egy saját, nyílt
+kiértékelő keretrendszerben valósítottuk meg, és 14 konfigurációval, három vizsgálatban, legfeljebb 30
+dokumentumon és három helyi modellen mértük, hogy eldöntsük, mi kerüljön a rendszerbe.
+
+\paragraph{RQ1.} A vizsgaterv a szemantikus darabolású naiv RAG-hoz (\arm{E0}) képest a fő vizsgálat mindkét
+modelljénél szignifikánsan javított ($+0{,}26$ és $+0{,}23$, Holm-korrekció után is), és a lefedettséget is
+növelte (\ref{sec:fo-vizsgalat}.~szakasz). A rögzített méretű darabolású naiv RAG (\arm{E5c}) azonban az
+erős Gemma 3 12B-nél önmagában is elég volt ($0{,}97$), a gyenge PULI-LlumiX 8B-nél nem
+(\ref{sec:fo-robusztus}.~szakasz). A teljes dokumentumos prompttal szemben az előny a PULI-nál nagy
+($0{,}41\to0{,}67$), a Qwen2.5-7B-nél a hat dokumentumon leíró jellegű ($0{,}83\to0{,}96$), a Gemmánál nincs
+($0{,}96$ és $0{,}95$); a teljes dokumentumos prompt lefedettsége sem volt alacsonyabb, így \az{\ref{h:lefed}}.~hipotézis nem teljesült.
+
+\paragraph{RQ2.} A legnagyobb hatású tényező a visszakeresés lekérdezése: a vizsgaterv kérdéshelyenként a
+tervezett fogalommal, vagyis tartalmi lekérdezéssel keres, a naiv RAG minőségét pedig a darabolás apró
+részletei is drámaian befolyásolták. Az ellenőrző lánc a gyengébb modelleknél javított a minőségi indexen
+($+0{,}08$ és $+0{,}13$, ez utóbbi Holm után nem szignifikáns), az erősnél nem; az alátámasztottság a fő
+vizsgálatban mindkét modellnél csökkent, így \az{\ref{h:verif}}.~hipotézis ott nem támogatott. Az ellenőrző
+kérdésenkénti ítélete a bíróéval a véletlen szintjén egyezik ($\kappa\approx0$). A fogalomgráf és a hibrid
+keresés egyik modellnél sem javított érdemben, a teljes ellenőrzött folyamat pedig ugyanazon a GPU-n a naiv RAG futásidejének
+nagyjából 8,5-szeresét igényli (Gemma 3 12B; \ref{sec:fo-eroforras}.~szakasz).
+
+\paragraph{RQ3.} A 8\,GB-os kártyán futó Qwen2.5-7B a módszerrel a szervermodell teljes dokumentumos
+promptjának minőségét érte el ($0{,}96$, illetve $0{,}95$, hat dokumentumon); a saját módszerünkkel futó
+szervermodell ($0{,}99$) ennél is jobb volt, így az egyezés csak a teljes dokumentumos szerveres promptra igaz.
+A 12\,GB-os szinten a Gemma 3 12B minden tervezett konfigurációval és a rögzített darabolású naiv RAG-gal is
+hasonlóan jó eredményt adott. A vizsgált magyarra továbbtanított PULI-LlumiX 8B viszont az utasítás- és
+formátumkövetésen bukott el (\ref{ch:modellek}.~fejezet), így a magyar dokumentumokon is a többnyelvű modellek
+voltak jobbak; ezt a következtetést erre a modellre szűkítjük.
+
+\paragraph{Mérési tanulságok.} A vizsgálatok feltárták a válaszszivárgást (\ref{sec:szivargas}.~szakasz), a
+csendes tartalékágakat (például a független ellenőrző kihagyott hívásait) és a forrásfüggően hiányzó bírói
+ítéleteket (\ref{sec:fo-meres}.~szakasz), amelyek a mérést torzították volna. A tanulság általános: egy nyelvi
+modellekre épülő rendszer kiértékelésében minden tartalékágat láthatóvá kell tenni, és a nyers kimeneteket
+kézzel is át kell olvasni.
+
+\paragraph{A döntés.} A mérések alapján (\ref{ch:diszkusszio}.~fejezet) a rendszerbe a kérdésenkénti
+forráshivatkozás, a szabályalapú ellenőrzés és a rögzített vagy minimális méretű darabolás kerül, a nyelvi
+modellel végzett ellenőrzés a modell erősségéhez igazodva, adaptívan fut, a fogalomgráf és a hibrid keresés
+pedig kimarad.
+
+\section{További munka}
+
+\begin{itemize}
+\item \textbf{A bíró validálása.} Az oktatói értékelés befejezése és elemzése (\ref{sec:oktatoi}.~szakasz), amely
+eldönti \az{\ref{h:meres}}.~hipotézist.
+\item \textbf{A hiányzó mérések pótlása.} A sikertelen bírói hívások újrapontozása, a független ellenőrző
+(\arm{E2x}) újramérése úgy, hogy a keretrendszer a kihagyott ellenőrzést hibaként jelezze, és a szervermodell
+futtatása a fő vizsgálat 30 dokumentumán.
+\item \textbf{A darabolás hatása a tervezett folyamatra.} A darabolási változatokat (\arm{E5a}--\arm{E5c}) csak a
+naiv RAG-gal mértük; azt, hogy a tervezett folyamat a darabolástól kevésbé függ, egyelőre csak elvárásként
+fogalmazhatjuk meg, ezért a rögzített darabolást a tervezett folyamattal is mérni kell.
+\item \textbf{Integráció az éles rendszerbe.} A döntés szerinti komponensek beépítése a háttérszolgáltatásba és
+a forráshivatkozást megjelenítő szerkesztőbe \az{\ref{ch:diszkusszio}}.~fejezet ütemterve szerint, valamint a
+megfelelési táblázat még tervezett elemeinek megvalósítása (\ref{ch:modszer}.~fejezet).
+\item \textbf{Adaptív folyamat.} Mivel az ellenőrzés haszna a modelltől függ, a rendszer a modell első
+kísérleteinek sikerarányából eldöntheti, szükség van-e nyelvi modellel végzett ellenőrzésre; erős modellnél így
+a futási idő a töredékére csökkenthető.
+\item \textbf{Megbízhatóbb ellenőrző és Bloom-szint.} Természetes nyelvi következtetésre tanított
+osztályozó~\cite{laban2022summac} a kérdésenkénti jelzéshez, és egy szintosztályozó lépés, mert a kis modellek a
+kért magasabb rendű szintet ritkán valósították meg.
+\item \textbf{Tanórai kipróbálás.} Az igaz--hamis és a kifejtős kérdések kiértékelése, valamint a generált vizsgák
+tételelemzése (nehézség, megkülönböztető erő, nem működő disztraktorok~\cite{tarrant2009distractors}) valós
+hallgatói válaszokon.
+\end{itemize}
+
+A \Mimir{} nyílt forráskódú (MIT-licenc): a kód, a konfigurációk, az adatkészlet-leírások és a vizsgálatok
+nyers kimenetei a reprodukáláshoz rendelkezésre állnak (\ref{app-reprodukcio}. és \ref{app-adatok}.~függelék).

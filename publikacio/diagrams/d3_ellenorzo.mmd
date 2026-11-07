@@ -1,0 +1,15 @@
+flowchart LR
+  g["<b>Generátor</b><br/>egy kérdés a<br/>kérdéshely<br/>kontextusával"] --> r["<b>Szabályalapú ellenőrzés</b><br/><small>nincs LLM-hívás</small><br/>forma (4 válasz, 1 helyes)<br/>meta-hivatkozás<br/>szivárgás, kérdésforma<br/>forráshivatkozás"]
+  r --> m["<b>Modellalapú ellenőrzés</b><br/><small>a hivatkozott darabokkal</small><br/>alátámasztottság és<br/>disztraktorok (1 hívás)<br/>vak megoldás (1 hívás)"]
+  m --> d["<b>Duplikátum</b><br/><small>koszinusz ≥ 0,9</small>"] --> ok(["Elfogadva:<br/><b>ellenőrzött</b>"])
+  r -. "hiba" .-> fb
+  m -. "hiba" .-> fb
+  d -. "hiba" .-> fb
+  fb["<b>Visszajelzés</b> a következő<br/>próbálkozás promptjába<br/><small>legfeljebb r újrapróbálás</small>"] --> g
+  fb -. "minden próbálkozás<br/>elbukott" .-> sp["Tartalékfogalom, végül<br/>a legjobb kísérlet<br/><b>nem ellenőrzöttként</b><br/>megjelölve"]
+  classDef rule fill:#eef3fb,stroke:#35507a;
+  classDef llm fill:#fdf1e3,stroke:#b26a00;
+  classDef good fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+  class r,d rule;
+  class m llm;
+  class ok good;

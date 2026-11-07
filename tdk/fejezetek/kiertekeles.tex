@@ -1,5 +1,5 @@
 % =====================================================================
-\chapter{Kiértékelési módszertan}
+\chapter{Kísérleti módszertan}
 \label{ch:kiertekeles}
 % =====================================================================
 
@@ -9,13 +9,12 @@ a három vizsgálat eredményei. A kérdésgenerálás kiértékelése az irodal
 nem vak emberi értékelésre támaszkodik, és ritkán ellenőrzi a kulcs helyességét
 (\ref{ch:szakirodalom}.~fejezet). A mérés eszköze ezért egy saját fejlesztésű, nyílt forráskódú kiértékelő
 keretrendszer (\code{tests/eval}; a fő vizsgálat kódja \code{tests/new eval}), amely a dolgozat önálló
-hozzájárulása. Hat tulajdonságot egyesít: (i) \emph{egytényezős konfigurációk}, amelyek egy-egy
-konfigurációs fájlban, egyetlen tényezőben térnek el, így a komponensek hatása szétválasztható;
-(ii) \emph{forrásalapú mutatók}, amelyek a kulcs helyességét a forrásszöveghez, nem referenciakérdéshez
-mérik; (iii) a kérdéseket pontozó, a generátoroktól független nyelvi modell (a \emph{bíró}), amelynek
-megbízhatóságát külön is ellenőrizzük; (iv) \emph{dokumentumszintű statisztika}; (v) \emph{folytatható
-futás}, amely egy megszakított, több napig tartó vizsgálatot a hiányzó vizsgáktól folytat; és
-(vi) \emph{bírói gyorsítótár}, amellyel az újrapontozás determinisztikus, és nem igényel új bírói hívást.
+hozzájárulása. Hat tulajdonságot egyesít: \emph{egytényezős konfigurációk}, amelyekkel a komponensek
+hatása szétválasztható; \emph{forrásalapú mutatók}, amelyek a kulcs helyességét a forrásszöveghez mérik;
+a kérdéseket pontozó, a generátoroktól független nyelvi modell, a \emph{bíró}, amelynek megbízhatóságát
+külön is ellenőrizzük; \emph{dokumentumszintű statisztika}; \emph{folytatható futás} a több napig tartó
+vizsgálatokhoz; és \emph{bírói gyorsítótár}, amellyel az újrapontozás determinisztikus, és nem igényel új
+bírói hívást.
 A mutatók és az eljárások részletes definícióit \az{\ref{app-modszer}}.~függelék tartalmazza.
 
 % ---------------------------------------------------------------------
@@ -26,9 +25,8 @@ A mutatók és az eljárások részletes definícióit \az{\ref{app-modszer}}.~f
 A kiértékelés alapegysége a \emph{teszt}: egy \emph{konfiguráció} (a generálási folyamat egy rögzített
 beállítása, rövid jele például \arm{E0} vagy \arm{E2}) egy dokumentumon, egy véletlenmaggal egy
 tízkérdéses feleletválasztós vizsgát állít elő, amelyet automatikus mutatókkal és a bíróval pontozunk
-(\ref{fig:kiertekeles}.~ábra). Az előkészítés (kinyerés, darabolás, indexelés) a futó szolgáltatások
-végpontjain át, az éles rendszerrel azonos módon történik; a generálás a keretrendszer kódjában fut, így a
-még nem élesített tervezett folyamat is mérhető. Minden modellhívás szakaszát, tokenszámát és idejét
+(\ref{fig:kiertekeles}.~ábra). Az előkészítés (kinyerés, darabolás, indexelés) a futó szolgáltatásokon
+történik, a generálás a keretrendszer kódjában. Minden modellhívás szakaszát, tokenszámát és idejét
 rögzítjük, a GPU-memóriát egy háttérszál mintavételezi.
 
 \begin{figure}[htbp]
@@ -40,12 +38,10 @@ automatikus mutatók, bírói pontozás és összesítés.}
 \end{figure}
 
 A reprodukálhatóságot négy mechanizmus biztosítja: (1) minden futás rögzíti a teljes konfigurációt, a kód
-és az adatkészlet verzióját és a hardvert; (2) a bíró válaszai lemezre, gyorsítótárba kerülnek, a bírómodell,
-a promptverzió, a gondolkodási szint és a teljes prompt kivonatával mint kulccsal, így újrapontozáskor
-ugyanarra a kérdésre ugyanaz az ítélet jön, és egy mutató utólagos módosítása nem igényel bírói hívást;
-(3) a \code{-{}-resume} kapcsoló csak a hiányzó vagy sikertelen vizsgákat futtatja újra; (4) a
-keretrendszert 43 automatikus teszt fedi le, köztük ál-szolgáltatásokkal és ál-nyelvi modellel a teljes
-folyamat.
+és az adatkészlet verzióját és a hardvert; (2) a bírói gyorsítótár kulcsa a bírómodell, a promptverzió, a
+gondolkodási szint és a teljes prompt kivonata, így újrapontozáskor ugyanarra a kérdésre ugyanaz az ítélet
+jön; (3) a \code{-{}-resume} kapcsoló csak a hiányzó vagy sikertelen vizsgákat futtatja újra; (4) 43
+automatikus teszt fedi le a keretrendszert, köztük ál-nyelvi modellel a teljes folyamatot.
 
 % ---------------------------------------------------------------------
 \section{Adatkészlet}
@@ -109,18 +105,17 @@ Jel & Mit változtat & Ref. & Magok & Vizsg. \\
 
 Az \emph{alapvonalak} azt modellezik, amit egy oktató a \Mimir{} nélkül tenne: a \arm{B-doc-S} a mai
 gyakorlat (a jegyzet feltöltése egy csevegő asszisztensbe), a \arm{B-doc-L} ugyanez a helyi modellel,
-16\,384 tokenes kontextussal, az \arm{E0} a rendszer mai működése. Az \arm{E1}--\arm{E0} különbség a
+16\,384 tokenes kontextussal, az \arm{E0} a \Mimir{} kiinduló, naiv változata. Az \arm{E1}--\arm{E0} különbség a
 tervezés (\ref{h:terv}.~és \ref{h:lefed}.~hipotézis), az \arm{E2}--\arm{E1} az ellenőrzés
 (\ref{h:verif}.~hipotézis), az \arm{E3}--\arm{E2} a fogalomgráf hatása; az \arm{E2}-ben az ellenőrzést a
 kérdést író modell végzi. Az \arm{E2x} ellenőrzője a PULI-LlumiX esetében a generátor alapmodellje, tehát
 nem független család; az \arm{E4} és az \arm{E4b} a \ref{h:helyi}.~hipotézist, az \arm{E5a}--\arm{E5c} a
 darabolás hatását vizsgálja (régi kódoló: \ref{sec:csonkolt}.~szakasz; rögzített
-darabolás~\cite{qu2024chunking}). A konfigurációk egytényezős fáját
-\az{\ref{fig:kiserleti-terv}}.~ábra (\ref{app-karok}.~függelék) mutatja.
+darabolás~\cite{qu2024chunking}).
 
 A tervezett konfigurációk egy maggal futnak, mert egy vizsga perceket igényel, és a variancia fő forrása
 a dokumentum; az olcsó egyhívásos konfigurációk zaját három mag csökkenti. A tervben szereplő \arm{E0s}
-(az \arm{E0} az éles végponton át) egyik vizsgálatban sem futott. Előre rögzített, a többszörös
+kontrollkonfiguráció egyik vizsgálatban sem futott. Előre rögzített, a többszörös
 összehasonlítás korrekciójába tartozó páros összehasonlítás hat van: \arm{E1}--\arm{E0}
 (tervezés), \arm{E2}--\arm{E1} (ellenőrzés), \arm{E2}--\arm{E0} (teljes módszer), \arm{E2}--\arm{B-doc-L}
 (módszer vs.\ teljes dokumentumos prompt), \arm{E2x}--\arm{E2} (ellenőrző modell) és \arm{E3}--\arm{E2}
@@ -162,9 +157,9 @@ GPU & RTX 3070 Ti (8\,GiB), asztali PC & RTX A4500 (20\,GiB), egyetemi munkaáll
 
 Az előzetes vizsgálatban az \arm{E4} és az \arm{E4b} hat angol dokumentumon futott (ebből három közös), a
 többi konfiguráció a közös hat dokumentumon. A PULI-LlumiX-nél azért kevesebb a pontozott kérdés, mert
-gyakran tíznél kevesebb kérdést adott vissza. A 20\,GiB-os munkaállomás-kártyán a modell, a kvantálás és a
-kontextus ugyanaz, mint egy fogyasztói kártyán, így ez a minőséget nem befolyásolja, a memóriamérés pedig a
-modell saját foglalását adja.
+gyakran tíznél kevesebb kérdést adott vissza. A 20\,GiB-os kártyán a modell, a kvantálás és a kontextus
+ugyanaz, mint egy fogyasztói kártyán, így ez a minőséget nem befolyásolja, a memóriamérés pedig a modell
+saját foglalását adja.
 
 \paragraph{Két összevetési szabály.} A vizsgálatok eltérő dokumentumokon, generátorokkal és részben eltérő
 implementációval futottak, ezért az eredményeket két szabály szerint vetjük össze.
@@ -177,8 +172,8 @@ a fő vizsgálat három OpenStax-részlete), amelyen az előzetes vizsgálat Qwe
 modellje egyaránt futott; ilyenkor ezt mindig jelezzük. A pilot az akkori, javítás előtti folyamatot méri,
 ezért vele számszerű összevetést nem végzünk.
 \item \emph{A futásidő relatív szorzó.} A futásidőt azzal mérjük, hogy ugyanazon a GPU-n egy konfiguráció
-hányszor lassabb a referenciánál (például az \arm{E2} az \arm{E0}-nál). Mivel a döntéshez a módszerek
-egymáshoz mért aránya kell, a GPU típusa ezt érdemben nem befolyásolja; az abszolút perceket csak
+hányszor lassabb a referenciánál (például az \arm{E2} az \arm{E0}-nál). Mivel a módszerek egymáshoz mért
+aránya a lényeg, a GPU típusa ezt érdemben nem befolyásolja; az abszolút perceket csak
 mellékesen közöljük. A pilot RTX 3070 Ti-n, az előzetes és a fő vizsgálat RTX A4500-on futott, ezért a
 szorzókat is mindig egy vizsgálaton belül számoljuk (\ref{sec:fo-koltseg}.~szakasz).
 \end{enumerate}
@@ -268,9 +263,9 @@ előjeles rangpróbával~\cite{wilcoxon1945} vetünk össze, amely a dokumentumo
 dolgozik, és nem feltételez normális eloszlást (ez a plafonhoz közeli rátáknál lényeges); a hatás nagysága
 a rangbiszeriális korreláció~\cite{kerby2014} (\ref{eq:rrb}.~egyenlet, \ref{app-statisztika}.~függelék),
 amely $+1$, ha az új konfiguráció minden dokumentumon jobb, és $-1$, ha mindenütt rosszabb. A hat előre
-rögzített összehasonlítás $p$-értékeit Holm módszerével~\cite{holm1979} korrigáljuk: növekvő sorrendben a
-legkisebbet 6-tal, a következőt 5-tel stb.\ szorozzuk, és egy összevetés csak akkor szignifikáns, ha
-korrigált értéke (és minden nála kisebbé) $0{,}05$ alatt van. A Wilcoxon-próba legkisebb elérhető
+rögzített összehasonlítás $p$-értékeit Holm módszerével~\cite{holm1979} korrigáljuk (a legkisebbet 6-tal,
+a következőt 5-tel stb.\ szorozva; szignifikáns, ami korrekció után $0{,}05$ alatt marad, és minden nála
+kisebb is). A Wilcoxon-próba legkisebb elérhető
 $p$-értéke hat dokumentumnál $0{,}031$, korrekció után $0{,}19$ (levezetés: \ref{app-statisztika}.~függelék):
 a pilot ezért csak leíró, az előzetes vizsgálatban egyetlen összevetés sem lehet korrekció után
 szignifikáns, a fő vizsgálat 30 dokumentumán viszont a szignifikancia elérhető.
@@ -284,9 +279,9 @@ alátámasztottsági ítéletét referenciának tekintve pontosságot és felid�
 $\kappa\approx0$ esetén a jelzése az oktatónak nem hordoz információt.
 
 \bigskip
-\noindent\textbf{A fejezet tanulsága.} A kiértékelés nem egy szám, hanem egy mérési lánc: egytényezős
-konfigurációk, a forráshoz mért mutatók, egy független, de maga is ellenőrzött bíró és a dokumentumot
-egységnek tekintő statisztika együtt teszik lehetővé, hogy egy különbséget egyetlen tényezőnek
-tulajdonítsunk, és lássuk, mikor nem szignifikáns. A két összevetési szabály a vizsgálatok eltérő
-dokumentumaiból és hardveréből adódó torzítást zárja ki. A következő két fejezet ezzel a lánccal értékeli
-előbb a módszer lépéseit (\ref{ch:eredmenyek}.~fejezet), majd a modelleket (\ref{ch:modellek}.~fejezet).
+\noindent\textbf{A fejezet tanulsága.} Az egytényezős konfigurációk, a forráshoz mért mutatók, a
+független, de maga is ellenőrzött bíró és a dokumentumot egységnek tekintő statisztika együtt teszik
+lehetővé, hogy egy különbséget egyetlen tényezőnek tulajdonítsunk, és lássuk, mikor nem szignifikáns; a
+két összevetési szabály a vizsgálatok eltérő dokumentumaiból és hardveréből adódó torzítást zárja ki. A
+következő két fejezet ezzel értékeli a módszer lépéseit (\ref{ch:eredmenyek}.~fejezet) és a modelleket
+(\ref{ch:modellek}.~fejezet).

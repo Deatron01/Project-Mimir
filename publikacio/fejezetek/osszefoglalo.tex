@@ -1,0 +1,39 @@
+% ---------------------------------------------------------------------
+%  Tartalmi összefoglaló (absztrakt)
+% ---------------------------------------------------------------------
+\chapter*{Tartalmi összefoglaló}
+\addcontentsline{toc}{chapter}{Tartalmi összefoglaló}
+\thispagestyle{plain}
+
+A vizsgakérdések írása lassú, hibalehetőségekkel teli munka: a megadott helyes válasznak a tananyagból kell
+következnie, a rossz válaszoknak (disztraktoroknak) pedig hihetőnek, de igazolhatóan hibásnak kell lenniük.
+A felhőben futó csevegő asszisztensek ezt nem ellenőrzik, a vizsga szerkezetét nem szabályozzák, és a
+tananyagot egy harmadik félnek adják át.
+
+A \Mimir{} helyben, fogyasztói GPU-n is futtatható vizsgagenerátor, amely jelenleg fejlesztési fázisban van: éles
+útvonala ma naiv visszakereséses generálást (naiv RAG) használ, a tervezett folyamat -- vizsgaterv a kérdések
+témájáról és Bloom-szintjéről, kérdésenkénti keresés, forráshivatkozás és ellenőrző lánc -- a saját
+kiértékelő keretrendszerünkben készült el. A dolgozat célja mérésen alapuló döntés arról, melyik megoldás
+kerüljön a rendszerbe. Ehhez egy nyílt keretrendszert építettünk: 14, egyszerre egy tényezőt változtató
+konfiguráció, független, bíróként pontozó nyelvi modell és dokumentumszintű statisztika. Három vizsgálatban,
+legfeljebb 30 dokumentumon és három 4 bites helyi modellen (Qwen2.5-7B, PULI-LlumiX 8B, Gemma 3 12B) mértünk.
+
+Eredményeink szerint a minőséget elsősorban a választott modell és a visszakeresés lekérdezése határozza meg.
+A naiv RAG konkrét okból törékeny: a feladatleírást használja lekérdezésként, és a szemantikus darabolás
+rövid, tartalom nélküli darabjait találja meg. Rögzített méretű darabolással ugyanez a megoldás a Gemma 3
+12B-nél $0{,}72$-ről $0{,}97$-re javult a minőségi indexen, vagyis az erős modellnél önmagában is elég volt. A
+vizsgaterv a szemantikus darabolású naiv RAG-hoz képest mindkét modellnél szignifikánsan javított a fő
+vizsgálatban. A lépésekre bontás haszna a modelltől függ: a gyenge PULI-LlumiX 8B-nél nélkülözhetetlen
+($0{,}28\to0{,}67$), a 8\,GB-os kártyán futó Qwen2.5-7B a módszerrel a szervermodell teljes dokumentumos
+promptjának minőségét érte el ($0{,}96$, illetve $0{,}95$), az erős Gemma 3 12B-nél pedig a teljes
+dokumentumos prompt is hasonlóan jó; itt a módszer értéke a kérdésenkénti ellenőrizhetőség. A mérés maga is
+eredmény: feltártuk a válaszszivárgást, a csendes tartalékágakat, az ellenőrző és a bíró ítéletének
+véletlenszerű egyezését és a forrásfüggően hiányzó bírói ítéleteket.
+
+A mérések alapján a rendszerbe a vizsgaterv, a kérdésenkénti forráshivatkozás, a szabályalapú ellenőrzés és a
+rögzített vagy minimális méretű darabolás kerül, a nyelvi modellel végzett ellenőrzés pedig a modell erősségéhez
+igazodva; a fogalomgráf és a hibrid keresés kimarad. A bíró oktatói validálása folyamatban van.
+
+\medskip
+\noindent\textbf{Kulcsszavak:} automatikus kérdésgenerálás, visszakereséssel kiegészített generálás (RAG),
+kis nyelvi modellek, ellenőrzés, nyelvi modell mint bíró, adatvédelem, oktatástechnológia, magyar nyelv

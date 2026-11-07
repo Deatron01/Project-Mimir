@@ -3,8 +3,8 @@
 \label{ch:bevezetes}
 % =====================================================================
 
-Ez a fejezet a problémát, a \Mimir{} jelenlegi állapotát, a kutatási kérdéseket, a hipotéziseket és a
-hozzájárulásokat mutatja be.
+Ez a fejezet a problémát, a kutatás célját és a javasolt megközelítést, a kutatási kérdéseket, a
+hipotéziseket és a hozzájárulásokat mutatja be.
 
 \section{Motiváció}
 
@@ -41,20 +41,22 @@ megoldaná az adatvédelmi problémát, de a kis modellek éppen a hosszú, egyl
 Kiinduló gondolatunk ezért az, hogy rövid, egyenként ellenőrizhető lépésekre bontva egy fogyasztói grafikus
 kártyán (GPU) futó kis modell is megbízható vizsgát állíthat elő.
 
-\section{A rendszer állapota és a dolgozat célja}
+\section{A kutatás célja és megközelítése}
 
-A \Mimir{} fejlesztési fázisban lévő rendszer. Éles szolgáltatásai ma a naiv visszakereséses megoldást
-(\emph{naiv RAG}, \arm{E0}) futtatják: a modell a feladatleírással visszakeresett három dokumentumrészletet
-(darabot) kapja egy promptban. A lépésekre bontott tervezett folyamat a saját kiértékelő keretrendszerünkben
-készült el, ahol minden lépése külön mérhető. A dolgozat célja \emph{mérésen alapuló döntés} arról, melyik
-megoldás kerüljön a rendszerbe -- a legjobb, a leggyorsabb és a legrobusztusabb, külön a 8 és a 12\,GB-os
+A dolgozat ezt a gondolatot vizsgálja. Javaslunk egy lépésekre bontott generálási módszert (\Mimir{}:
+vizsgaterv, kérdéshelyenkénti keresés, forráshoz kötött generálás és ellenőrző lánc), amelyet kutatási
+prototípusként, egy saját, nyílt kiértékelő keretrendszerben valósítottunk meg. A keretrendszerben a módszer
+minden lépése külön be- és kikapcsolható, így a lépések hatása egyenként mérhető, és összevethető két
+alapvonallal: a naiv visszakereséses generálással (\emph{naiv RAG}, \arm{E0}), amelyben a modell a
+feladatleírással visszakeresett három dokumentumrészletet (darabot) kapja egy promptban, és a teljes
+dokumentumos prompttal. A kísérletekből azt is levezetjük, melyik konfiguráció ajánlott a 8 és a 12\,GB-os
 GPU-szinten. A mérések a kiinduló gondolatot pontosították; a dolgozat fő állítása:
 
 \begin{quote}
 \itshape Fogyasztói GPU-n futó kis modellekkel a vizsgakérdések minőségét elsősorban a választott modell és a
 visszakeresés lekérdezése határozza meg; a feladat lépésekre bontása gyenge modellnél nélkülözhetetlen, erős
 modellnél pedig az ellenőrizhetőséget adja. Ezt egy saját, nyílt kiértékelő keretrendszerrel, 30 dokumentumon
-és három modellen mértük, és ebből döntöttük el, mi kerül a rendszerbe.
+és három modellen mértük, és ebből vezettük le a mérések alapján ajánlott konfigurációt.
 \end{quote}
 
 \section{Kutatási kérdések és hipotézisek}
@@ -101,29 +103,23 @@ legalább elfogadható megbízhatósággal egyeznek (Krippendorff-$\alpha\ge0{,}
 \section{Hozzájárulások}
 
 \begin{enumerate}[label=(\arabic*),itemsep=0pt]
-\item \textbf{Generálási módszer:} vizsgaterv, kérdéshelyenkénti keresés, forráshivatkozás, ellenőrző lánc
-(\ref{ch:modszer}.~fejezet).
-\item \textbf{Helyi architektúra és megfelelés:} helyi modell, törlődő vektortár, GDPR és MI-rendelet
-(\ref{ch:modszer}.~fejezet).
-\item \textbf{Saját, nyílt kiértékelő keretrendszer:} 14 egytényezős konfiguráció, független bíró, statisztika
-(\ref{ch:kiertekeles}.~fejezet).
-\item \textbf{A módszerek kiértékelése:} a naiv RAG törékenységének oka és a komponensek hatása
-(\ref{ch:eredmenyek}.~fejezet).
-\item \textbf{A modellek kiértékelése:} három helyi modell azonos dokumentumokon, két GPU-szint
-(\ref{ch:modellek}.~fejezet).
-\item \textbf{Mérési tanulságok:} szivárgás, csendes tartalékágak, $\kappa\approx0$, hiányzó bírói ítéletek
-(\ref{ch:eredmenyek}.~fejezet).
-\item \textbf{Gyakorlati eredmény:} a döntés arról, mi kerül a rendszerbe, GPU-szintenként
-(\ref{ch:diszkusszio}.~fejezet).
+\item \textbf{Generálási módszer:} vizsgaterv Bloom-szintekkel, kérdéshelyenkénti keresés, forráshoz kötött
+generálás és szivárgásszűrő ellenőrző lánc (\ref{ch:modszer}.~fejezet).
+\item \textbf{Nyílt kiértékelő keretrendszer:} 14 egytényezős konfiguráció, forrásalapú mutatók, független bíró
+és dokumentumszintű statisztika (\ref{ch:kiertekeles}.~fejezet).
+\item \textbf{Empirikus eredmények:} a naiv RAG törékenységének oka, a komponensek hatása és a módszer
+haszna három helyi modellen (\ref{ch:eredmenyek}. és \ref{ch:modellek}.~fejezet).
+\item \textbf{Mérési tanulságok:} válaszszivárgás, csendes tartalékágak, az ellenőrző és a bíró
+véletlenszerű egyezése, forrásfüggően hiányzó bírói ítéletek (\ref{ch:eredmenyek}.~fejezet).
 \end{enumerate}
 
 \section{A dolgozat felépítése}
 
 \Az{\ref{ch:szakirodalom}}.~fejezet a hazai és nemzetközi irodalmat és a jogi keretet tekinti át, és
-megfogalmazza a kutatási rést. \Az{\ref{ch:modszer}}.~fejezet a rendszert, a tervezett módszert és a megfelelés
-helyzetét, \az{\ref{ch:kiertekeles}}.~fejezet a kiértékelési módszertant mutatja be. \Az{\ref{ch:eredmenyek}}.~fejezet
-a módszer lépéseinek hatását, \az{\ref{ch:modellek}}.~fejezet a modelleket értékeli;
-\az{\ref{ch:diszkusszio}}.~fejezet az eredményeket az irodalommal összeveti, és meghozza a döntést,
-\az{\ref{ch:osszefoglalas}}.~fejezet pedig összefoglal. A függelék a módszer és az eredmények részleteit
-(\ref{app-modszer}. és \ref{app-eredmeny-reszletek}.~függelék), a promptokat, a rubrikát, a reprodukálás
-lépéseit és az OTDK kötelező elemeit tartalmazza.
+megfogalmazza a kutatási rést. \Az{\ref{ch:modszer}}.~fejezet a javasolt generálási módszert,
+\az{\ref{ch:kiertekeles}}.~fejezet a kísérleti módszertant mutatja be. \Az{\ref{ch:eredmenyek}}.~fejezet a
+módszer komponenseinek hatását, \az{\ref{ch:modellek}}.~fejezet a generátormodelleket értékeli.
+\Az{\ref{ch:diszkusszio}}.~fejezet az eredményeket a hipotézisek és az irodalom fényében értékeli, és levezeti a
+gyakorlati következményeket; \az{\ref{ch:osszefoglalas}}.~fejezet összefoglal. A függelék a módszer és az
+eredmények részleteit (\ref{app-modszer}. és \ref{app-eredmeny-reszletek}.~függelék), a generátor
+promptját, a rubrikát és a generálási folyamat paramétereit tartalmazza.

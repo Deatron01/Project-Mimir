@@ -1,0 +1,37 @@
+flowchart TB
+  oktato(["Oktató (böngésző)"]) --> fe["Webes felület<br/><small>React, TypeScript</small>"] --> gw["API-átjáró<br/><small>Nginx; hitelesítés: tervezett</small>"]
+  gw -- "1 kinyerés" --> well
+  gw -- "2 darabolás" --> rune
+  gw -- "3 indexelés, 4 generálás" --> bif
+  gw -- "export, mentés" --> skald
+
+  subgraph job["Feladat-hatókörű tartalom – a feladat végén törlődik (zéró megőrzés)"]
+    direction LR
+    well["<b>Wellspring</b><br/>szövegkinyerés<br/><small>PDF, DOCX, TXT, OCR</small>"]
+    rune["<b>RuneCarver</b><br/>beágyazás,<br/>darabolás"]
+    bif["<b>Bifrost</b><br/>naiv RAG: indexelés,<br/>keresés, prompt<br/><small>háttérfeladat, vázlat 60 percig</small>"]
+    qd[("Qdrant<br/><small>memóriában, közös gyűjtemény</small>")]
+    heim["<b>Heimdall</b><br/>koherencia-pontszám<br/><small>az audithoz, nem szűr</small>"]
+    bif <--> qd
+    bif --> heim
+  end
+
+  bif -- "audit" --> forge["<b>The Forge</b><br/>audit napló (PostgreSQL)<br/><small>csak ujjlenyomatok, 30 nap</small>"]
+  subgraph llm["Nyelvi modell"]
+    direction LR
+    genai["Egyetemi GenAI-szerver<br/><small>1. alapértelmezett;<br/>csak kikapcsolt LOCAL_ONLY mellett</small>"]
+    oll["<b>Ollama</b><br/>helyi nyelvi modell<br/><small>2. tartalék; LOCAL_ONLY: csak ez<br/>egy fogyasztói GPU</small>"]
+  end
+  bif -- "modellhívás" --> llm
+  skald["<b>Skald</b><br/>export: JSON, Moodle XML, PDF<br/><small>mentés csak kérésre: SQLite + PDF</small>"]
+
+  eval["<b>Kiértékelő keretrendszer</b><br/>tervezett folyamat: terv,<br/>ellenőrzés, forráshivatkozás<br/><small>előkészítés a szolgáltatásokon</small>"]
+  eval -.-> bif
+  eval -. "generálás" .-> llm
+
+  classDef gpu fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+  classDef ext fill:#fdf1e3,stroke:#b26a00,stroke-dasharray:4 3;
+  classDef plan fill:#f4f6f8,stroke:#6b7a90,stroke-dasharray:4 3;
+  class oll gpu;
+  class genai ext;
+  class eval plan;

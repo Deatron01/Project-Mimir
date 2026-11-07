@@ -1,0 +1,168 @@
+% Az OTDK-ra (38. OTDK Informatikatudományi Szekció) beküldendő kötelező függelékek.
+% A kari TDK-változatból kikerültek; az OTDK-változatban a fuggelek.tex után kell beilleszteni.
+
+% =====================================================================
+%  A 38. OTDK Informatikatudományi Szekció kötelező elemei (1. számú melléklet)
+% =====================================================================
+
+\chapter{Rezümé}
+\label{app-rezume}
+
+\noindent{\small\itshape A 38.~OTDK Informatikatudományi Szekció 1.~számú melléklete szerinti rezümé.}
+
+\medskip
+A feleletválasztós vizsgakérdések írása az oktatói munka egyik legidőigényesebb része. A felhőben futó nyelvi
+modellek gyors segítséget adnak, de nem ellenőrzik, hogy a helyes választ a tananyag alátámasztja-e, nem
+szabályozzák a vizsga szerkezetét, és a tananyagot harmadik félhez juttatják. Helyben futó kis modellekkel az
+adatvédelmi probléma megszűnik, de nem ismert, melyik generálási megoldás ad velük megbízható vizsgát.
+Kutatási kérdésünk, hogy a feladat ellenőrizhető lépésekre bontása lehetővé teszi-e ezt, és mitől függ az
+eredmény.
+
+Lépésekre bontott generálási módszert javasoltunk (\Mimir{}), és kutatási prototípusként egy saját, nyílt
+kiértékelő keretrendszerben valósítottuk meg. A keretrendszer 14 konfigurációja egyszerre egy tényezőben tér
+el: vizsgaterv, kérdésenkénti keresés és forráshivatkozás, ellenőrző lánc, fogalomgráf, hibrid keresés és
+darabolás. A kérdéseket forrásalapú mutatókkal és egy független, bíróként pontozó nyelvi modellel értékeltük,
+a konfigurációkat dokumentumszintű páros próbákkal hasonlítottuk össze. Három vizsgálatban, legfeljebb 30
+magyar és angol dokumentumon, három fogyasztói GPU-n futó, 4 bites modellel mértünk.
+
+Saját eredményünk a \Mimir{} generálási módszere, a kiértékelő keretrendszer, a vizsgálatok elvégzése és
+elemzése, valamint a belőlük levont következtetések. Kimutattuk, hogy a naiv visszakeresés konkrét okból
+törékeny: a feladatleírást használja lekérdezésként, és rövid, tartalom nélküli darabokat talál meg. A
+lépésekre bontás gyenge modellnél nélkülözhetetlen ($0{,}28\to0{,}67$), a Qwen2.5-7B vele a szervermodell
+teljes dokumentumos promptjának minőségét érte el, az erős Gemma 3 12B-nél pedig a rögzített darabolás
+önmagában is elég volt. \tbd{[A témavezető hozzájárulása egy mondatban.]}
+
+Fogyasztói GPU-n a vizsgakérdések minőségét elsősorban a választott modell és a visszakeresés lekérdezése
+határozza meg; a lépésekre bontás gyenge modellnél a minőséget, erős modellnél az ellenőrizhetőséget adja. A
+mérések alapján ezért a vizsgaterv kérdésenkénti forráshivatkozással, szabályalapú ellenőrzéssel és rögzített
+darabolással ajánlott. Módszertani tanulság, hogy az ellenőrző és a bíró ítélete véletlenszerűen egyezett, és
+több csendes hiba, köztük a válaszszivárgás, a valósnál jobbnak mutatta volna az eredményt.
+
+\medskip
+\noindent\textbf{Kulcsszavak:} feleletválasztós teszt, kvantálás, adatvédelem, oktatástechnológia, magyar
+nyelvtechnológia
+
+% ---------------------------------------------------------------------
+\chapter{Nyilatkozat a mesterséges intelligencia alapú eszközök használatáról}
+\label{app-mi-nyilatkozat}
+\chaptermark{MI-használati nyilatkozat}
+% ---------------------------------------------------------------------
+
+A 38.~OTDK Informatikatudományi Szekció 1.~számú melléklete szerint nyilatkozunk a mesterséges intelligencia
+(MI) alapú eszközök használatáról, a tároló verziótörténete alapján; a pirossal jelölt részeket a szerzők
+pontosítják. A vizsgált nyelvi modellek és a bíró a kutatás tárgyai, illetve mérőeszközei
+(\ref{ch:kiertekeles}.~fejezet), nem a dolgozat elkészítésének segédeszközei; az általuk írt kérdések csak
+idézett példaként szerepelnek a szövegben.
+
+\begin{sloppypar}
+\begin{description}[style=nextline,leftmargin=0.6cm]
+\item[Eszköz] A Claude (Anthropic) kódolási asszisztens (Claude Code); a commitok \code{Co-Authored-By} sora
+szerint a Claude Opus 5.5 modell. \tbd{[Ha más modellváltozat vagy felület (például webes csevegőfelület) is
+szerepet kapott, itt kell feltüntetni.]}
+\item[Szoftverfejlesztés] A kiértékelő keretrendszer (\code{tests/eval}, \code{tests/new~eval}) és az elemző
+szkriptek (\code{tdk/elemzes}) fejlesztése: kódírás, hibakeresés, egységtesztek; a tároló dolgozaton kívüli
+részeinél is. \tbd{[A szerzők pontosítják, mely részeket írták saját kezűleg, és hogyan ellenőrizték a
+generált kódot (kódátnézés, tesztek, kézi futtatás).]}
+\item[A dolgozat szövege] A fejezetek megfogalmazása és átdolgozása, a LaTeX-forrás, a diagramforrások és az
+ábrákat előállító szkriptek. \tbd{[A szerzők pontosítják, mely fejezeteket és szakaszokat írták saját
+kezűleg, melyeket fogalmazott meg az asszisztens az ő irányításukkal, és milyen ellenőrzésen ment át a
+szöveg.]}
+\item[Mérték] \tbd{[A használat mértéke fejezetenként vagy összesítve, a szerzők becslése szerint.]}
+\item[Más eszközök] \tbd{[Más MI-alapú eszközök, ha voltak (például fordító, helyesírás-ellenőrző,
+képgenerálás, más csevegő asszisztens), és felhasználásuk módja.]}
+\item[Ellenőrzés] A dolgozat számai a nyers kimenetekből egyetlen szkripttel (\code{tdk/elemzes/elemzes.py})
+készültek, nem nyelvi modell által írt szövegből; csak az irodalomjegyzékben felvett forrásokra hivatkozunk.
+\tbd{[A szerzők megerősítik, hogy a hivatkozott forrásokat és az MI-vel írt részeket ellenőrizték.]} A
+tartalomért és a következtetésekért a szerzők felelnek. \tbd{[Hely, dátum, a szerzők aláírása.]}
+\end{description}
+\end{sloppypar}
+
+% ---------------------------------------------------------------------
+\chapter{Eredménynyilatkozat}
+\label{app-eredmeny}
+% ---------------------------------------------------------------------
+
+A 38.~OTDK Informatikatudományi Szekció 1.~számú melléklete szerint az alábbiakban elhatároljuk a szerzők
+saját eredményeit a témavezető és a tágabb kutatócsoport eredményeitől. A szerzők közötti munkamegosztást és a
+témavezető szerepét a pirossal jelölt helyeken a szerzők töltik ki.
+
+\section{A szerzők saját eredményei}
+
+\paragraph{A generálási módszer.} A \Mimir{} módszer megtervezése és kutatási prototípusként való
+megvalósítása: a darabolás, a vizsgaterv és a Bloom-szintek kiosztása, a kérdéshelyenkénti keresés, a
+forrásrészletekre hivatkozó egyenkénti generálás, az ellenőrző lánc, a szivárgás elleni szabályok és a
+fogalomgráf, valamint a helyi futtatás GPU-memóriaigényének modellje és mérése (\ref{ch:modszer}.~fejezet).
+\tbd{[Munkamegosztás a szerzők között.]}
+
+\paragraph{A kiértékelő keretrendszer.} Az egytényezős konfigurációk, a forrásalapú mutatók (szivárgás,
+lefedettség, vak megoldhatóság), a bíró bekötése, az oktatói értékelési protokoll és a dokumentumszintű
+statisztikai elemzés, valamint a 30 dokumentumos adatkészlet összeállítása a két nyílt adatkészletből és a saját
+szövegekből (\ref{ch:kiertekeles}.~fejezet). \tbd{[Munkamegosztás a szerzők között.]}
+
+\paragraph{A vizsgálatok és az elemzés.} A pilot, az előzetes és a fő vizsgálat megtervezése és futtatása, a
+nyers kimenetek kézi átolvasása, a mérési hibák (válaszszivárgás, csendes tartalékágak, hiányzó bírói
+ítéletek) feltárása, valamint az eredmények elemzése és a dolgozat összes számát a nyers kimenetekből
+előállító elemző szkript (\ref{ch:eredmenyek}. és \ref{ch:modellek}.~fejezet). \tbd{[Munkamegosztás a szerzők
+között.]}
+
+\paragraph{Az értékelés.} A hipotézisek értékelése, az eredmények összevetése az irodalommal, az érvényesség
+korlátainak elemzése és a mérések alapján ajánlott konfiguráció GPU-szintenként (\ref{ch:diszkusszio}.~fejezet).
+
+\section{A témavezető és a tágabb kutatócsoport hozzájárulása}
+
+\tbd{[A témavezető szerepe (például a téma kijelölése, konzultációk, a dolgozat átnézése, az egyetemi
+GenAI-szerver hozzáférésének biztosítása).]} \tbd{[A tágabb kutatócsoport vagy más hallgatók hozzájárulása,
+ha volt; ha nem volt, ennek kimondása.]} \tbd{[Az oktatói értékelésben részt vevő oktatók szerepe
+(\ref{sec:oktatoi}.~szakasz).]}
+
+\section{Átvett, nem saját eredmények}
+
+Nem saját eredmény a vizsgált nyelvi modellek (Qwen2.5-7B, PULI-LlumiX 8B, Gemma 3 12B, Llama-3.1-8B,
+gpt-oss-120b, a szervermodell) és a beágyazó modell (multilingual-e5-base); az EduQG és a MILQA adatkészlet,
+amelyből a 27 nyílt dokumentum és a referenciakérdések származnak; a felhasznált nyílt forrású szoftverek
+(például az Ollama, a \texttt{llama.cpp} és a Qdrant); valamint az egyetemi GenAI-szerver, amelyen a
+szervermodell és a bíró futott. A kódolási asszisztens használatát \az{\ref{app-mi-nyilatkozat}}.~függelék írja
+le.
+
+% ---------------------------------------------------------------------
+\chapter{Az adatok forrása és nyilvánossága}
+\label{app-adatok}
+% ---------------------------------------------------------------------
+
+Az adatkészlet összetételét \az{\ref{sec:adatkeszlet}}.~szakasz írja le; a dokumentumok licencét az
+adatkészlet leírófájljai (\code{dataset/manifest*.yaml}) is rögzítik.
+
+\begin{table}[htbp]
+\centering
+\caption[Az adatok és a modellek forrása, licence és nyilvánossága.]{Az adatok és a modellek forrása, licence
+és nyilvánossága. A dokumentumok a fő vizsgálat 30 dokumentuma; az előzetes vizsgálat hat dokumentuma ezek
+közül való. A helyi modellek 4 bites (Q4\_K\_M) kvantálással futottak az Ollamán; a modellek licencét a
+modellkártyák alapján még ellenőrizni kell.}
+\label{tab:adatforrasok}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.6cm}@{}}
+\toprule
+Adat vagy modell & Forrás & Licenc, nyilvánosság \\
+\midrule
+3 saját magyar szöveg & a szerzők saját szövegei (\code{tests/TestDocs}) & saját; a tárolóban nyilvános \\
+3 angol tankönyvi szöveg & OpenStax-tankönyvek az EduQG adatkészletből~\cite{hadifar2023eduqg} & CC BY 4.0 \\
+24 magyar szöveg & magyar Wikipédia-cikkek a MILQA adatkészletből~\cite{novak2023milqa} & CC BY-SA 4.0 \\
+referenciakérdések & EduQG és MILQA; a saját szövegekhez saját & a forrás licence; a tárolóban \\
+nyers eredmények & saját futások (\ref{app-reprodukcio}.~függelék) & \tbd{[MIT-licenc alá tartoznak-e]}; a tárolóban \\
+oktatói értékelések & részt vevő oktatók & \tbd{[nyilvánosság; az értékelők adatai nélkül]} \\
+\midrule
+Qwen2.5-7B & generátor (pilot, előzetes)~\cite{qwen25}; \code{qwen2.5:7b} & \tbd{[várhatóan Apache 2.0]} \\
+PULI-LlumiX 8B & generátor (fő)~\cite{pulillumix}; \nolinkurl{hf.co/mradermacher/PULI-LlumiX-Llama-3.1-GGUF} & \tbd{[várhatóan Llama 3.1 Community License]} \\
+Gemma 3 12B & generátor (fő)~\cite{gemma3}; \code{gemma3:12b} & \tbd{[várhatóan Gemma Terms of Use]} \\
+Llama-3.1-8B & az \arm{E2x} ellenőrzője~\cite{grattafiori2024llama3}; \code{llama3.1:8b} & \tbd{[várhatóan Llama 3.1 Community License]} \\
+gpt-oss-120b & bíró~\cite{gptoss2025}; egyetemi GenAI-szerver & \tbd{[várhatóan Apache 2.0]} \\
+szervermodell & \arm{B-doc-S}, \arm{E4}, \arm{E4b}; egyetemi GenAI-szerver (\code{qwen38udq8xl}) & \tbd{[a pontos modell és licence]} \\
+multilingual-e5-base & beágyazás~\cite{wang2024me5}; \nolinkurl{intfloat/multilingual-e5-base} & \tbd{[várhatóan MIT]} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+A szervermodell és a bíró az egyetem saját, nem nyilvános infrastruktúráján futott, így a dokumentumok nem
+kerültek külső szolgáltatóhoz, a két modell pontos változata viszont kívülről nem reprodukálható; a bírói
+válaszok a \code{judge\_cache.jsonl} fájlokban megmaradtak, ezért az újrapontozás és az elemzés a szerver
+nélkül is megismételhető. A kód MIT-licenc alatt érhető el \tbd{[a nyilvános tároló címe]}.
