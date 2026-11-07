@@ -15,9 +15,13 @@
 \usepackage[T1]{fontenc}
 \def\magyarOptions{defaults=hu-min,postdescription=unchanged}
 \usepackage[english,magyar]{babel}
-\usepackage{mathptmx}                 % Times jellegű szövegtörzs
-\usepackage[scaled=0.92]{helvet}
-\usepackage{courier}
+% Times, Helvetica és Courier jellegű betűk valódi ő/ű jelekkel (TeX Gyre), hogy a PDF szövegrétege
+% (másolás, keresés, plágiumszűrés) is helyes legyen; a régi mathptmx/helvet/courier az ő-t és az ű-t
+% „o + ˝” darabokból rakta össze.
+\usepackage{newtxtext}                % Times jellegű törzs, Helvetica jellegű sans (TeX Gyre Heros)
+\usepackage{tgcursor}                 % Courier jellegű írógépbetű (a newtxmath lent, az amsmath után)
+\input{glyphtounicode}
+\pdfgentounicode=1
 \usepackage{microtype}
 
 % ---------------------------------------------------------------------
@@ -34,7 +38,8 @@
 % ---------------------------------------------------------------------
 %  Matematika, ábrák, táblázatok, algoritmusok
 % ---------------------------------------------------------------------
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amsmath,amsthm}
+\usepackage{newtxmath}                % a matematikai jelek is Times jellegűek (az amssymb helyett)
 \usepackage{bm}
 \usepackage{graphicx}
 \usepackage{booktabs}
