@@ -50,6 +50,9 @@
 \usepackage{longtable}
 \usepackage{float}
 \usepackage[table]{xcolor}
+\usepackage{colortbl}
+\definecolor{bestcell}{HTML}{E6F4EA}
+\definecolor{warnbg}{HTML}{FCE8E6}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{siunitx}
@@ -77,20 +80,23 @@
 \usepackage[hidelinks,unicode,bookmarksnumbered]{hyperref}
 \usepackage{xurl}
 \hypersetup{pdftitle={Vizsgakérdés-generálás helyben futtatható nyelvi modellekkel},
+            pdfauthor={Nagy István Bence, Hindulák Bálint, Szegedi Achilles Károly},
             pdfsubject={TDK dolgozat, Óbudai Egyetem, 2026},
             pdfkeywords={kérdésgenerálás, RAG, kis nyelvi modellek, ellenőrzés, nyelvi modell mint bíró}}
 
 % ---------------------------------------------------------------------
-%  Címlap adatai – KITÖLTENDŐ
+%  Címlap adatai
 % ---------------------------------------------------------------------
-\newcommand{\Kar}{[Kar neve, pl. Neumann János Informatikai Kar]}
-\newcommand{\Intezet}{[Intézet neve]}
-\newcommand{\SzerzoA}{[Szerző 1 neve]}
-\newcommand{\SzerzoAszak}{[szak, évfolyam]}
-\newcommand{\SzerzoB}{[Szerző 2 neve]}
-\newcommand{\SzerzoBszak}{[szak, évfolyam]}
-\newcommand{\Konzulens}{[Konzulens neve]}
-\newcommand{\KonzulensBeosztas}{[beosztás, intézet]}
+\newcommand{\Kar}{Neumann János Informatikai Kar}
+\newcommand{\Intezet}{}
+\newcommand{\SzerzoA}{Nagy István Bence}
+\newcommand{\SzerzoAszak}{BSc III. évfolyam}
+\newcommand{\SzerzoB}{Hindulák Bálint}
+\newcommand{\SzerzoBszak}{BSc III. évfolyam}
+\newcommand{\SzerzoC}{Szegedi Achilles Károly}
+\newcommand{\SzerzoCszak}{BSc I. évfolyam}
+\newcommand{\Konzulens}{Hartveg Ádám}
+\newcommand{\KonzulensBeosztas}{doktorandusz}
 \newcommand{\Ev}{2026}
 
 \newcommand{\DolgozatCim}{Vizsgakérdés-generálás helyben futtatható nyelvi modellekkel}
@@ -102,7 +108,9 @@
 \newcommand{\Mimir}{\textsc{Mimir}}
 \newcommand{\tbd}[1]{\textcolor{red}{#1}}                   % csak a fő vizsgálat adatai
 \newcommand{\code}[1]{\texttt{\small #1}}
-\newcommand{\arm}[1]{\textsf{#1}}
+\newcommand{\arm}[1]{\protect\hyperref[tab:karok]{\textsf{\textbf{#1}}}}
+\newcommand{\prob}[1]{\protect\hyperref[prob:#1]{\textsf{\textbf{#1}}}}
+\pdfstringdefDisableCommands{\def\arm#1{#1}\def\prob#1{#1}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\1}{\mathbb{1}}
@@ -145,8 +153,8 @@
   \def\@makechapterhead##1{{\vspace*{-12pt}\normalfont\Large\bfseries
     \ifnum\c@secnumdepth>\m@ne\thechapter.\hspace{0.6em}\fi ##1\par\nobreak\vspace{16pt}}}%
   \def\@makeschapterhead##1{{\vspace*{-12pt}\normalfont\Large\bfseries ##1\par\nobreak\vspace{16pt}}}}
-\addto\extrasmagyar{\MimirChapterHeads}
-\AtBeginDocument{\MimirChapterHeads}
+\addto\extrasmagyar{\MimirChapterHeads\setcounter{tocdepth}{2}}
+\AtBeginDocument{\MimirChapterHeads\setcounter{tocdepth}{2}}
 \makeatother
 \titleformat{\section}{\normalfont\large\bfseries}{\thesection.}{0.5em}{}
 \titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection.}{0.5em}{}
@@ -179,15 +187,16 @@
 
 % =====================================================================
 \begin{document}
+\setcounter{tocdepth}{2}
 
 % ------------------------------- CÍMLAP ------------------------------
+\pagenumbering{roman}
 \begin{titlepage}
 \begin{center}
 \begin{singlespace}
 {\Large\bfseries ÓBUDAI EGYETEM\par}
 \vspace{2mm}
 {\large \Kar\par}
-{\normalsize \Intezet\par}
 \vspace{2mm}
 \rule{\textwidth}{0.6pt}\par
 \vspace{2.8cm}
@@ -202,7 +211,9 @@
 \SzerzoA & \Konzulens\\
 \small\SzerzoAszak & \small\KonzulensBeosztas\\[3mm]
 \SzerzoB & \\
-\small\SzerzoBszak & \\
+\small\SzerzoBszak & \\[3mm]
+\SzerzoC & \\
+\small\SzerzoCszak & \\
 \end{tabular}
 \vspace{2.4cm}
 
@@ -214,7 +225,6 @@
 \end{titlepage}
 
 % ------------------------- ELŐLAPOK (római számozás) -----------------
-\pagenumbering{roman}
 \setcounter{page}{2}
 \input{fejezetek/osszefoglalo}
 

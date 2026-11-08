@@ -7,7 +7,7 @@ Ez a fejezet a kutatási kérdésekre adott válaszokat foglalja össze, és kij
 
 \section{Összefoglalás}
 
-A vizsgakérdés-generálás négy problémájából indultunk ki (P1--P4), és azt vizsgáltuk, hogy a feladat
+A vizsgakérdés-generálás négy problémájából indultunk ki (\prob{P1}--\prob{P4}), és azt vizsgáltuk, hogy a feladat
 ellenőrizhető lépésekre bontása lehetővé teszi-e megbízható vizsga előállítását fogyasztói GPU-n futó kis
 modellekkel. A javasolt \Mimir{} módszert kutatási prototípusként, saját, nyílt kiértékelő keretrendszerben
 valósítottuk meg, és 14 konfigurációval, három vizsgálatban, legfeljebb 30 dokumentumon és három helyi modellen
@@ -19,44 +19,61 @@ növelte (\ref{sec:fo-vizsgalat}.~szakasz). A rögzített méretű darabolású 
 erős Gemma 3 12B-nél önmagában is elég volt ($0{,}97$), a gyenge PULI-LlumiX 8B-nél nem
 (\ref{sec:fo-robusztus}.~szakasz). A teljes dokumentumos prompttal szemben az előny a PULI-nál nagy
 ($0{,}41\to0{,}67$), a Qwen2.5-7B-nél a hat dokumentumon leíró jellegű ($0{,}83\to0{,}96$), a Gemmánál nincs
-($0{,}96$ és $0{,}95$); a teljes dokumentumos prompt lefedettsége sem volt alacsonyabb, így
-\az{\ref{h:lefed}}.~hipotézis nem teljesült.
+($0{,}96$ és $0{,}95$), és a teljes dokumentumos prompt lefedettsége is azonos szintű volt (Gemma: 43\,\% vs.\
+43\,\%, Qwen: 45\,\% vs.\ 44\,\%). \textbf{Összességében a tervezett folyamat a szemantikus darabolású naiv
+RAG-hoz képest bizonyítottan javítja a minőséget és a lefedettséget (\ref{h:terv}.~hipotézis: támogatott), a
+teljes dokumentumos prompt lefedettsége azonban erős modellnél nem marad el tőle (\ref{h:lefed}.~hipotézis: nem
+támogatott).}
 
 \paragraph{RQ2.} A legnagyobb hatású tényező a visszakeresés lekérdezése: a vizsgaterv kérdéshelyenként tartalmi
-lekérdezéssel keres, a naiv RAG minőségét pedig a darabolás részletei is erősen befolyásolták. Az ellenőrző lánc
-a gyengébb modelleknél javított a minőségi indexen ($+0{,}08$ és $+0{,}13$, ez utóbbi Holm után nem
-szignifikáns), az erősnél nem; az alátámasztottság a fő vizsgálatban mindkét modellnél csökkent, így
-\az{\ref{h:verif}}.~hipotézis ott nem támogatott, és az ellenőrző ítélete a bíróéval a véletlen szintjén egyezik
-($\kappa\approx0$). A fogalomgráf és a hibrid keresés egyik modellnél sem javított érdemben, a teljes ellenőrzött
-folyamat pedig ugyanazon a GPU-n a naiv RAG futásidejének nagyjából 8,5-szeresét igényli (Gemma 3 12B,
-\ref{ch:eredmenyek}.~fejezet).
+lekérdezéssel keres, míg a naiv RAG minőségét a darabolás részletei erősen befolyásolták. Az ellenőrző lánc a
+gyengébb modelleknél javított a minőségi indexen ($+0{,}08$ és $+0{,}13$, ez utóbbi Holm-korrekció után nem
+szignifikáns), az erősnél nem; az alátámasztottság a fő vizsgálatban mindkét modellnél kissé csökkent, az
+ellenőrző modellalapú ítélete pedig a bíróéval csak a véletlen szintjén egyezik ($\kappa=0{,}00$--$0{,}08$), így
+a lánc hasznának nagy részét a determinisztikus szabályok adják. A fogalomgráf és a hibrid keresés egyik
+modellnél sem javított érdemben, a teljes ellenőrzött folyamat pedig ugyanazon a GPU-n a naiv RAG futásidejének
+nagyjából 8,5-szeresét igényli (Gemma 3 12B, \ref{ch:eredmenyek}.~fejezet). \textbf{Összességében a komponensek
+közül a vizsgaterv, a kérdésenkénti forráshivatkozás, a szabályalapú szűrés és a rögzített darabolás vált be, míg
+a fogalomgráf, a hibrid keresés és az önmagában álló modellalapú ellenőrzés nem érte meg a többletköltséget
+(\ref{h:verif}.~hipotézis: a fő vizsgálatban nem támogatott).}
 
-\paragraph{RQ3.} A 8\,GB-os kártyán futó Qwen2.5-7B a módszerrel a szervermodell teljes dokumentumos
-promptjának minőségét érte el ($0{,}96$, illetve $0{,}95$, hat dokumentumon); a módszerrel futó szervermodell
-($0{,}99$) ennél is jobb volt, így az egyezés csak a teljes dokumentumos szerveres promptra igaz. A 12\,GB-os
-szinten a Gemma 3 12B a tervezett konfigurációkkal és a rögzített darabolású naiv RAG-gal is hasonlóan jó volt.
-A vizsgált magyarra továbbtanított PULI-LlumiX 8B az utasítás- és formátumkövetésen bukott el
-(\ref{ch:modellek}.~fejezet); ezt a következtetést erre a modellre szűkítjük.
+\paragraph{RQ3.} A 8\,GB-os kártyán futó Qwen2.5-7B a módszerrel a hat közös dokumentumon a szervermodell teljes
+dokumentumos promptjának minőségét ($0{,}96$ vs.\ $0{,}95$), a három közös angol dokumentumon pedig a szerveres
+naiv RAG-ét ($0{,}95$ vs.\ $0{,}94$) érte el; a módszerrel futó szervermodell ($0{,}99$) ennél is jobb volt, így
+az egyezés a szerveres alapvonalakra vonatkozik. A 12\,GB-os szinten a Gemma 3 12B a tervezett konfigurációkkal
+és a rögzített darabolású naiv RAG-gal is hasonlóan magas minőséget adott ($0{,}95$--$0{,}97$). Ezzel szemben a
+vizsgált, magyarra továbbtanított, de utólagos utasításhangolás nélküli PULI-LlumiX 8B az utasítás- és
+formátumkövetésen bukott el (\ref{ch:modellek}.~fejezet). \textbf{Összességében egy jól megválasztott,
+8--12\,GB-os fogyasztói GPU-n futó helyi modell a javasolt módszerrel eléri a szervermodell teljes dokumentumos
+alapvonalának minőségét (\ref{h:helyi}.~hipotézis: támogatott), de a modellválasztás kritikus, mert az
+utasításkövetés fontosabb a nyelvi specializációnál.}
 
 \paragraph{Mérési tanulságok és következmények.} A vizsgálatok feltárták a válaszszivárgást
 (\ref{sec:szivargas}.~szakasz), a csendes tartalékágakat és a forrásfüggően hiányzó bírói ítéleteket
 (\ref{sec:fo-meres}.~szakasz): egy nyelvi modellekre épülő rendszer kiértékelésében minden tartalékágat
-láthatóvá kell tenni, és a nyers kimeneteket kézzel is át kell olvasni. A mérések alapján ajánlott konfiguráció
-(\ref{ch:diszkusszio}.~fejezet) a vizsgaterv kérdésenkénti forráshivatkozással, szabályalapú ellenőrzéssel és
-rögzített vagy minimális méretű darabolással; a nyelvi modellel végzett ellenőrzés a modell erősségéhez
-igazítható.
+láthatóvá kell tenni, és a nyers kimeneteket kézzel is át kell olvasni. Öt oktató 60 kérdésen végzett vak
+értékelése (\ref{sec:oktatoi-eredmeny}.~szakasz) szerint a bíró a kérdéseket és a konfigurációkat az oktatókhoz
+hasonló sorrendbe állítja (helyességen $\rho=0{,}65$, a hat konfiguráción $\rho=0{,}77$), de engedékenyebb
+náluk, és a Krippendorff-$\alpha\ge0{,}667$ küszöböt egyik szempont sem éri el (helyességen $\alpha=0{,}62$). A
+mérések alapján ajánlott konfiguráció (\ref{ch:diszkusszio}.~fejezet) a vizsgaterv kérdésenkénti
+forráshivatkozással, szabályalapú ellenőrzéssel és rögzített vagy minimális méretű darabolással; a nyelvi
+modellel végzett ellenőrzés a modell erősségéhez igazítható. \textbf{Összességében a független nyelvi modell
+(bíró) az oktatói értékelések sorrendjét megbízhatóan reprodukálja ($\rho=0{,}77$), de szisztematikusan
+engedékenyebb az oktatóknál, így a szigorú egyezési küszöböt nem éri el (\ref{h:meres}.~hipotézis: nem
+támogatott; a bíró relatív rangsorolásra alkalmas).}
 
 \section{További munka}
 
 \begin{itemize}
-\item \textbf{A bíró validálása:} az oktatói értékelés befejezése és elemzése (\ref{sec:oktatoi}.~szakasz), amely
-eldönti \az{\ref{h:meres}}.~hipotézist.
+\item \textbf{A bíró kalibrálása:} nagyobb oktatói mintán (konfigurációnként több kérdéssel) a bíró
+engedékenységének korrigálása, és pontosabb rubrika a szintillesztéshez, amelyben az oktatók egymással is
+alig egyeztek.
 \item \textbf{A hiányzó mérések pótlása:} a sikertelen bírói hívások újrapontozása, a független ellenőrző
 (\arm{E2x}) újramérése, és a szervermodell futtatása a fő vizsgálat 30 dokumentumán.
 \item \textbf{A darabolás hatása a tervezett folyamatra:} a darabolási változatokat (\arm{E5a}--\arm{E5c})
 csak a naiv RAG-gal mértük, ezért a tervezett folyamat darabolásfüggését még mérni kell.
-\item \textbf{Adaptív és jobb ellenőrzés:} az ellenőrzés az első kísérletek sikerarányától függően, és
-természetes nyelvi következtetésre tanított osztályozó~\cite{laban2022summac} a kérdésenkénti jelzéshez.
+\item \textbf{Adaptív és jobb ellenőrzés:} a modellalapú ellenőrző lépések adaptív futtatása az első kísérletek sikerarányától függően, valamint
+természetes nyelvi következtetésre tanított osztályozó~\cite{laban2022summac} alkalmazása a kérdésenkénti jelzéshez.
 \item \textbf{Tanórai kipróbálás:} a generált vizsgák tételelemzése (nehézség, megkülönböztető erő, nem működő
 disztraktorok~\cite{tarrant2009distractors}) valós hallgatói válaszokon.
 \end{itemize}

@@ -5,36 +5,28 @@
 \addcontentsline{toc}{chapter}{Tartalmi összefoglaló}
 \thispagestyle{plain}
 
-A vizsgakérdések írása lassú, hibalehetőségekkel teli munka: a megadott helyes válasznak a tananyagból kell
-következnie, a rossz válaszoknak (disztraktoroknak) pedig hihetőnek, de igazolhatóan hibásnak kell lenniük.
-A felhőben futó csevegő asszisztensek ezt nem ellenőrzik, a vizsga szerkezetét nem szabályozzák, és a
-tananyagot egy harmadik félnek adják át. Kutatási kérdésünk az, hogy egy helyben, fogyasztói GPU-n is
-futtatható kis nyelvi modell képes-e megbízható feleletválasztós vizsgát írni, ha a feladatot ellenőrizhető
-lépésekre bontjuk, és mitől függ az eredmény.
+A TDK dolgozat fő témája a vizsgakérdések nagy nyelvi modellekre (LLM) épülő, automatikus előállítása és
+ellenőrzése. A jelenlegi gyakorlatban az oktatók a tananyagot felhőalapú csevegőasszisztensekbe töltik fel, ez
+a megoldás azonban nem védi ki a modell hallucinációit, nem szabályozza a vizsga szerkezetét, a tananyagot
+pedig egy harmadik félnek szolgáltatja ki. A dolgozat részletesen ismerteti a \Mimir{} rendszert, amely az
+egyetlen kérést visszakereséssel kiegészített generálásra (RAG) épülő, ellenőrizhető lépésekre bontott
+módszerrel váltja fel, és fogyasztói GPU-n helyben futtatható, kvantált kis nyelvi modellekkel működik.
 
-A javasolt \Mimir{} módszer vizsgatervet készít a kérdések témájáról és Bloom-szintjéről, kérdéshelyenként keres
-a dokumentumban, forráshivatkozással ellátott kérdéseket ír, és ellenőrző lánccal vizsgálja őket. A módszert
-kutatási prototípusként, egy saját, nyílt kiértékelő keretrendszerben valósítottuk meg: 14, egyszerre egy
-tényezőt változtató konfiguráció, független, bíróként pontozó nyelvi modell és dokumentumszintű statisztika.
-Három vizsgálatban, legfeljebb 30 dokumentumon és három 4 bites helyi modellen (Qwen2.5-7B, PULI-LlumiX 8B,
-Gemma 3 12B) mértünk.
+A mikroszolgáltatás-alapú rendszer feleletválasztós, igaz--hamis és kifejtős kérdéseket egyaránt előállít, a
+feltöltött tartalmat a GDPR adatminimalizálási elvének megfelelően csak a feladat idejére tárolja, a végső
+döntést pedig az oktatóra bízza (\emph{human-in-the-loop}). A kidolgozott algoritmus szemantikus darabolás után
+vizsgatervet készít a kérdések típusáról, témájáról és kognitív (Bloom-féle) szintjéről, majd kérdésenként vektoros
+vagy hibrid keresést végez, forráshivatkozással ellátott kérdéseket generál, végül egy ellenőrző lánccal
+vizsgálja, hogy a forrás alátámasztja-e a helyes választ, és hogy a helytelen válaszlehetőségek (disztraktorok)
+valóban hibásak-e.
 
-Eredményeink szerint a minőséget elsősorban a választott modell és a visszakeresés lekérdezése határozza meg.
-A naiv visszakereséses generálás (naiv RAG) konkrét okból törékeny: a feladatleírást használja lekérdezésként,
-és a szemantikus darabolás rövid, tartalom nélküli darabjait találja meg. Rögzített méretű darabolással
-ugyanez a megoldás a Gemma 3 12B-nél $0{,}72$-ről $0{,}97$-re javult a minőségi indexen, vagyis az erős
-modellnél önmagában is elég volt. A vizsgaterv a szemantikus darabolású naiv RAG-hoz képest mindkét modellnél
-szignifikánsan javított a fő vizsgálatban. A lépésekre bontás haszna a modelltől függ: a gyenge PULI-LlumiX
-8B-nél nélkülözhetetlen ($0{,}28\to0{,}67$), a 8\,GB-os kártyán futó Qwen2.5-7B a módszerrel a szervermodell
-teljes dokumentumos promptjának minőségét érte el ($0{,}96$, illetve $0{,}95$), az erős Gemma 3 12B-nél pedig
-a teljes dokumentumos prompt is hasonlóan jó; itt a módszer értéke a kérdésenkénti ellenőrizhetőség. A mérés
-maga is eredmény: feltártuk a válaszszivárgást, a csendes tartalékágakat, az ellenőrző és a bíró ítéletének
-véletlenszerű egyezését és a forrásfüggően hiányzó bírói ítéleteket.
-
-A mérések alapján ajánlott konfiguráció a vizsgaterv kérdésenkénti forráshivatkozással, szabályalapú
-ellenőrzéssel és rögzített vagy minimális méretű darabolással; a nyelvi modellel végzett ellenőrzés a modell
-erősségéhez igazítható, a fogalomgráf és a hibrid keresés pedig nem javított. A bíró oktatói validálása
-folyamatban van.
+A dolgozat bemutatja a kiértékelési módszertant is, amely kísérleti konfigurációkat hasonlít össze magyar és
+angol nyelvű dokumentumokon, egy független, bíróként működő nyelvi modell (\emph{LLM-as-a-judge}) és
+dokumentumszintű statisztika segítségével. A kísérleti kiértékelés számszerűsíti a vizsgatervezés és a
+többlépcsős ellenőrzés hatását a kérdések forráshűségére és szerkezeti megfelelőségére, összevetve az
+eredményeket a naiv RAG-megközelítéssel és nagy, szerveroldali referenciamodellekkel. A befejező rész összegzi
+és értékeli az eredményeket, feltárja a mérés korlátait, valamint kijelöli a további kutatási és fejlesztési
+irányokat.
 
 \medskip
 \noindent\textbf{Kulcsszavak:} automatikus kérdésgenerálás, visszakereséssel kiegészített generálás (RAG),

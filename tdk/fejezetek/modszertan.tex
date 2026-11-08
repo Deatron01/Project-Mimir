@@ -9,7 +9,7 @@ Ebből a fejezetből az olvasó megtudja, milyen elvekből indul ki a javasolt m
 (\ref{sec:vram}.~szakasz), és lépésenként hogyan készül el egy vizsga: a darabolástól a vizsgaterven, a
 kérdéshelyenkénti keresésen és a forráshoz kötött generáláson át az ellenőrző láncig
 (\ref{sec:attekintes}.~szakasz). A módszert kutatási prototípusként, a nyílt kiértékelő keretrendszerben
-megvalósítva írjuk le (\code{tests/new eval/mimir\_eval/blueprint}); a részleteket
+megvalósítva írjuk le; a részleteket
 \az{\ref{app-modszer}}.~függelék, a paraméterek alapértékeit \az{\ref{app-reprodukcio}}.~függelék
 tartalmazza.
 
@@ -18,17 +18,17 @@ tartalmazza.
 \label{sec:architektura}
 % ---------------------------------------------------------------------
 
-A bevezetés P1--P4 problémáiból és az MI-rendelet emberi felügyeletre vonatkozó elvárásából~\cite{aiact2024}
+A bevezetés \prob{P1}--\prob{P4} problémáiból és az MI-rendelet emberi felügyeletre vonatkozó elvárásából~\cite{aiact2024}
 öt elv következik.
 \begin{enumerate}[label=(\arabic*),leftmargin=*,itemsep=1pt]
-\item \emph{Ellenőrizhetőség} (P1): minden kérdés a kulcsot igazoló forrásrészletekre hivatkozik, és a
+\item \emph{Ellenőrizhetőség} (\prob{P1}): minden kérdés a kulcsot igazoló forrásrészletekre hivatkozik, és a
 kulcs alátámasztottságát, valamint a kérdés egyértelműségét a módszer maga is ellenőrzi; ami az
 ellenőrzésen nem jut át, megjelölve kerül az oktató elé.
-\item \emph{Kontrollált szerkezet} (P2): a darabszámot, a típusokat és a Bloom-szinteket egy explicit
+\item \emph{Kontrollált szerkezet} (\prob{P2}): a darabszámot, a típusokat és a Bloom-szinteket egy explicit
 vizsgaterv rögzíti, a fogalmak kiválasztása a dokumentum lefedését követi.
-\item \emph{Helyi futtatás és adatvédelem} (P3): a generátor helyben fut, a feldolgozott tartalom nem
+\item \emph{Helyi futtatás és adatvédelem} (\prob{P3}): a generátor helyben fut, a feldolgozott tartalom nem
 őrződik meg.
-\item \emph{Megvalósíthatóság fogyasztói hardveren} (P4): rövid, 8\,192 tokenes kontextusba férő hívások,
+\item \emph{Megvalósíthatóság fogyasztói hardveren} (\prob{P4}): rövid, 8\,192 tokenes kontextusba férő hívások,
 4 bitre kvantált modell 8--12\,GiB-os GPU-n.
 \item \emph{Emberi felügyelet}: a kérdések csak oktatói jóváhagyás után használhatók.
 \end{enumerate}
@@ -38,7 +38,7 @@ vizsgaterv rögzíti, a fogalmak kiválasztása a dokumentum lefedését követi
 \label{sec:zero}
 % ---------------------------------------------------------------------
 
-A (3) elv az adattakarékosság és a korlátozott tárolhatóság GDPR-elvén~\cite{gdpr2016} alapul, a (5) az
+A (3) elv az adattakarékosság és a korlátozott tárolhatóság GDPR-elvén~\cite{gdpr2016} alapul, az (5) pedig az
 MI-rendelet emberi felügyeletre és átláthatóságra vonatkozó követelményein~\cite{aiact2024} (a jogi
 hátteret \az{\ref{sec:irod-jog}}.~szakasz foglalja össze). A módszer ezért minden nyelvimodell-hívást
 helyben, fogyasztói GPU-n futó modellel végez (a kiértékelés bírója és a szerveres összehasonlító
@@ -54,19 +54,35 @@ kívül, ahová a diákválaszok automatikus pontozása már tartozna.
 \label{sec:vram}
 % ---------------------------------------------------------------------
 
-A (4) elv kvantitatív kérdés: elfér-e a generátor egy fogyasztói videokártyán az asztali környezet
-mellett? A memóriát bináris egységekben adjuk meg ($1\ \text{GiB}=2^{30}$ bájt); a kereskedelemben
-„8 GB-os” és „12 GB-os” kártyák memóriája 8, illetve 12\,GiB. Az igény a kvantált súlyok, a kontextussal
-arányos KV-gyorsítótár és a futtatókörnyezet többletének összege (\ref{eq:vram}.~egyenlet,
-\ref{tab:budget}.~táblázat, \ref{app-vram}.~függelék). A Q4\_K\_M kvantálás kb.\ 4,8 bit/súllyal a
-súlyokat a 16 bites méret nagyjából harmadára csökkenti. 8\,192 tokenes kontextusnál a Qwen2.5-7B
-becsült igénye kb.\ 5,4\,GiB, a Llama-3.1-8B-vel azonos architektúrájú PULI-LlumiX 8B-é kb.\ 6,1\,GiB, a
-Gemma 3 12B mért foglalása kb.\ 7,8\,GiB (rétegeinek többsége csak egy rövid ablakra figyel, ezért a
-képlet nála túlbecsül). A következtetés két fogyasztói szint: a 7--8B modellek 4 bites kvantálással
-elférnek egy 8\,GiB-os kártyán, a 12B modell az asztali környezettel együtt 12\,GiB-os kártyát igényel. A
-kontextus növelése nem ingyenes (32\,768 tokennél a Qwen2.5-7B gyorsítótára önmagában 1,75\,GiB), ezért a
-helyi teljes dokumentumos alapvonal 16\,384 tokennel és 30\,000 karakterre csonkolt dokumentummal fut, a
-javasolt módszer hívásai viszont rövidek. A mért értékeket \az{\ref{sec:fo-eroforras}}.~szakasz közli.
+A negyedik tervezési elv gyakorlati megvalósíthatósága azon múlik, hogy a generátormodell az asztali
+operációs rendszer mellett is elfér-e egy fogyasztói videokártya memóriájában. A memóriaméretet a
+továbbiakban bináris egységekben adjuk meg ($1\ \text{GiB}=2^{30}$ bájt); a kereskedelmi forgalomban
+„8\,GB-os” és „12\,GB-os” jelöléssel árusított kártyák ténylegesen 8, illetve 12\,GiB memóriával
+rendelkeznek. A futtatás teljes memóriaigénye három összetevőből tevődik össze: a kvantált modellsúlyok
+méretéből, a kontextushosszal arányosan növekvő KV-gyorsítótárból, valamint a futtatókörnyezet fix
+többletfoglalásából (a pontos összefüggést \az{\ref{eq:vram}}.~egyenlet és \az{\ref{tab:budget}}.~táblázat
+részletezi \az{\ref{app-vram}}.~függelékben). Az általunk alkalmazott Q4\_K\_M kvantálás súlyonként
+átlagosan 4,8 bitet használ, amivel a súlyok tárigényét a 16 bites lebegőpontos ábrázolás nagyjából
+harmadára szorítja le.
+
+A javasolt módszerben használt 8\,192 tokenes kontextusablak mellett a három vizsgált helyi generátormodell
+memóriaigénye a következőképpen alakul:
+\begin{itemize}[leftmargin=*,itemsep=2pt,topsep=3pt]
+\item \textbf{Qwen2.5-7B:} a modell becsült teljes memóriaigénye kb.\ 5,4\,GiB;
+\item \textbf{PULI-LlumiX 8B:} a Llama-3.1-8B architektúráját öröklő modell becsült igénye kb.\ 6,1\,GiB;
+\item \textbf{Gemma 3 12B:} a ténylegesen mért foglalás kb.\ 7,8\,GiB (mivel a modell rétegeinek többsége
+csak egy rövid csúszóablakra figyel, az általános képlet ennél az architektúránál túlbecsüli a gyorsítótár
+méretét).
+\end{itemize}
+
+Mindebből két jól elkülönülő fogyasztói hardverszint adódik: a 7--8 milliárd paraméteres modellek 4 bites
+kvantálással biztonságosan elférnek egy 8\,GiB-os kártyán, míg a 12 milliárd paraméteres modell az asztali
+környezet memóriafoglalásával együtt már 12\,GiB-os GPU-t igényel. A kontextusablak növelése szintén
+jelentős többletköltséggel jár, hiszen 32\,768 tokennél már a Qwen2.5-7B KV-gyorsítótára is önmagában
+1,75\,GiB-ot foglalna le. A helyi teljes dokumentumos alapvonal (\arm{B-doc-L}) ezért legfeljebb 16\,384
+tokenes kontextussal és 30\,000 karakterre csonkolt bemenettel fut, míg a javasolt tervezésvezérelt módszer
+modellhívásai a teljes folyamat során rövidek maradnak. A kísérletek során ténylegesen mért memóriafoglalási
+adatokat \az{\ref{sec:fo-eroforras}}.~szakasz ismerteti.
 
 % ---------------------------------------------------------------------
 \section{A generálási módszer áttekintése}
@@ -97,8 +113,7 @@ egy konfigurációs kulccsal cserélhető. A vizsgálatokban a Qwen2.5-7B~\cite{
 vizsgálat), valamint a NYTK magyarra továbbtanított, Llama-3.1 alapú PULI-LlumiX 8B~\cite{pulillumix} és
 a Gemma 3 12B~\cite{gemma3} (fő vizsgálat) volt a generátor. Mindhárom 4 bites (Q4\_K\_M, kb.\ 4,8
 bit/súly) kvantálással fut az Ollamán~\cite{ollama2024}, $T=0{,}2$ hőmérséklettel és 8\,192 tokenes
-kontextussal (a \arm{B-doc-L} 16\,384 tokennel); a fő vizsgálatban a válasz legfeljebb 4\,096 token
-(\code{num\_predict}).
+kontextussal (a \arm{B-doc-L} 16\,384 tokennel); a fő vizsgálatban a válasz legfeljebb 4\,096 token.
 
 % ---------------------------------------------------------------------
 \subsection{Szemantikus darabolás}
@@ -106,10 +121,10 @@ kontextussal (a \arm{B-doc-L} 16\,384 tokennel); a fő vizsgálatban a válasz l
 % ---------------------------------------------------------------------
 
 A szöveget mondatokra bontjuk, és minden mondathoz 768 dimenziós vektort rendelünk
-a multilingual\-/E5-base~\cite{wang2024me5} kódolóval (a mondat tokenjei vektorainak átlagát, hosszabb
-szövegablakban, így a szomszédos mondatok jelentése is benne van), és ott vágunk, ahol két szomszédos
-mondat koszinusz-távolsága meghaladja a vágási küszöböt: alapértelmezésben a távolságok
-85.~percentilisét, vagyis a legnagyobb 15\,\% távolságnál. A célméret (1\,000 karakter) túllépése után a
+a multilingual\-/E5-base~\cite{wang2024me5} kódolóval: a mondat tokenvektorainak átlagát vesszük hosszabb
+szövegablakban, így a reprezentáció a szomszédos mondatok jelentését is figyelembe veszi. A szöveget ott vágjuk el, ahol két szomszédos
+mondat koszinusz-távolsága meghaladja a vágási küszöböt (alapértelmezésben a távolságok
+85.~percentilisét, vagyis a legnagyobb 15\,\%-ba eső értékeknél vágunk). A célméret (1\,000 karakter) túllépése után a
 küszöb arányosan csökken; ez a \emph{puha korlát} mondat közepén soha nem vág (a képlet:
 \ref{app-darabolas}.~függelék).
 
@@ -122,6 +137,7 @@ hatása mérhető legyen.
 
 % ---------------------------------------------------------------------
 \subsection{Indexelés és az alapvonalak}
+\label{sec:alapvonalak}
 % ---------------------------------------------------------------------
 
 A darabokat ugyanazzal az E5 kódolóval beágyazzuk, és memóriában futó Qdrant~\cite{qdrant2024}
@@ -142,7 +158,7 @@ rész arányát rögzítjük).
 darab azonosítóját ($C_0, C_1,\dots$) és elejét, összesen legfeljebb 12\,000 karakterben (darabonként
 legalább 120 karaktert). A modell így folytonos szöveg helyett azonosítókkal tagolt felsorolást lát, ami a
 „lost in the middle” jelenség~\cite{liu2024lost} ellen hat. A tervező $n+3$ fogalmat ad vissza ($n$ a
-kért kérdésszám), mindegyikhez egy mondatos leírást (mit kell kérdezni), az alátámasztó darabok
+kért kérdésszám), mindegyikhez egymondatos leírást (mit kell kérdezni), az alátámasztó darabok
 azonosítóit és egy fontossági értéket (1: részlet, 2: fontos, 3: központi). Értelmezhetetlen válasznál
 darabonként egy álfogalom lép a helyükre, így a terv mindig létrejön.
 
@@ -173,11 +189,14 @@ rangfúzióval (\ref{app-hibrid}.~függelék).
 \label{sec:generalas}
 % ---------------------------------------------------------------------
 
-A generátor egyetlen kérdést ír a kérdéshely terve szerint. A prompt (\ref{app-prompt}.~függelék)
-megadja a fogalmat, a kérdezendő tartalmat, a típusszabályt (négy válasz, egy helyes), a Bloom-szint
-magyar leírását, a nehézséget és a nyelvet; megismétli a naiv prompt szabályait; felsorolja a már
-elfogadott kérdéseket; és megköveteli a \code{citations} mezőt, amelyben a modell megnevezi a kulcsot
-igazoló darabok azonosítóit. Így minden kérdés saját, ellenőrizhető forrásrészlethez kötődik.
+A generátor egyetlen kérdést ír a kérdéshely terve szerint. A prompt (\ref{app-prompt}.~függelék) négy fő elemből épül fel:
+\begin{itemize}[leftmargin=*,itemsep=1pt,topsep=2pt]
+\item megadja a fogalmat, a kérdezendő tartalmat, a típusszabályt (négy válasz, egy helyes), a Bloom-szint magyar leírását, a nehézséget és a nyelvet;
+\item megismétli a naiv prompt szabályait (zéró hallucináció, meta-hivatkozás tilalma);
+\item felsorolja a már elfogadott kérdéseket az ismétlődés elkerülésére;
+\item megköveteli a forráshivatkozást, amelyben a modell megnevezi a kulcsot igazoló darabok azonosítóit.
+\end{itemize}
+Így minden kérdés saját, ellenőrizhető forrásrészlethez kötődik.
 
 % ---------------------------------------------------------------------
 \subsection{Az ellenőrző lánc}
@@ -186,8 +205,8 @@ igazoló darabok azonosítóit. Így minden kérdés saját, ellenőrizhető for
 
 Az ellenőrzések a legolcsóbbtól a legdrágábbig futnak (\ref{tab:checks}.~táblázat; a visszacsatolás
 algoritmusa: \ref{app-slot}.~függelék): ha egy szabályalapú ellenőrzés
-hibát talál, a nyelvi modellt igénylő ellenőrzések el sem indulnak. A modellalapú ellenőrzések forrása a
-kérdés által hivatkozott darabok.
+hibát talál, a nyelvi modellt igénylő ellenőrzések el sem indulnak. A modellalapú ellenőrzések forrását a
+kérdésben megjelölt darabok adják.
 
 \begin{table}[htbp]
 \centering
@@ -224,9 +243,9 @@ kísérlet \emph{nem ellenőrzöttként} megjelölve marad meg, hogy az oktató 
 \ref{app-slot}.~függelék). Az \arm{E1} csak a formát, a meta-hivatkozást és a duplikátumot vizsgálja. A
 technikai hiba miatt elmaradt ellenőrzés a kérdést nem tartja fel, de naplózzuk.
 
-\paragraph{Költség.} Az egyhívásos konfigurációk (\arm{E0}, \arm{E5a}--\arm{E5c}, \arm{B-doc}) egy
-hívással dolgoznak, az \arm{E1} legalább $1+n$ (tervezés és kérdésenként egy generálás), az \arm{E2}
-legalább $1+3n$ hívással (kérdésenként generálás, alátámasztottsági ellenőrzés és vak megoldás). Tíz
+\paragraph{Költség.} Az egyhívásos konfigurációk (\arm{E0}, \arm{E5a}--\arm{E5c}, \arm{B-doc}) egyetlen
+hívással dolgoznak; ezzel szemben az \arm{E1} legalább $1+n$ (tervezés és kérdésenként egy generálás), az \arm{E2} pedig
+legalább $1+3n$ hívást igényel (kérdésenként generálás, alátámasztottsági ellenőrzés és vak megoldás). Tíz
 kérdésnél ez 11, illetve 31 hívás, ha minden kérdés elsőre átmegy; minden elutasítás további két-három
 hívással jár.
 

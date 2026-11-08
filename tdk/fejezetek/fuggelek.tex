@@ -11,9 +11,8 @@ zárójelben álló részek helyére a program illeszti be az aktuális értéke
 RAG-prompt szabályait, így az \arm{E0} és az \arm{E1}--\arm{E3} konfigurációk szerkezetben, nem szabályokban
 különböznek. A naiv RAG (\arm{E0}) és a teljes dokumentumos prompt (\arm{B-doc}) ugyanezeket a szabályokat
 egyetlen hívásban kapja: a kontextus a három legközelebbi darab, illetve a teljes dokumentum, a feladat pedig
-„Készíts pontosan 10 darab vizsgakérdést […]”. A naiv RAG promptja a tároló \code{services} könyvtárában, a
-tervező, a javító hívás, az ellenőrző és a fogalomgráf (angol nyelvű) promptja a
-\code{tests/eval/mimir\_eval/blueprint/prompts.py} fájlban található.
+„Készíts pontosan 10 darab vizsgakérdést […]”. A tervező, a javító hívás, az ellenőrző és a fogalomgráf
+promptja angol nyelvű.
 \end{sloppypar}
 
 \begin{kodblokk}
@@ -57,8 +56,8 @@ közepes: alkalmazás/megértés; nehéz: elemzés/értékelés). 1 = egyértelm
 (igen/nem)
 \end{description}
 
-A bíró áttekintő hívása ezen felül kéri a kulcsot igazoló mondat szó szerinti idézését
-(\code{key\_evidence} mező), disztraktoronként az \code{is\_wrong} és az \code{on\_topic} ítéletet, a
+A bíró áttekintő hívása ezen felül kéri a kulcsot igazoló mondat szó szerinti idézését,
+disztraktoronként azt, hogy a forrás szerint rossz-e, és a témához tartozik-e, a
 kérdés Bloom-szintjét és egy-két mondatos indoklást.
 
 \chapter{A generálási folyamat paraméterei}
@@ -85,7 +84,7 @@ szivárgási szabályok, javító hívás & be & a pilot után bevezetve \\
 duplikátumküszöb & 0,9 & koszinusz-hasonlóság (E5-beágyazás) \\
 fogalomgráf (\arm{E3}) & 3\,000 karakteres köteg & összevonás 0,92 hasonlóság felett \\
 teljes dokumentum (\arm{B-doc}) & 30\,000 / 80\,000 karakter & helyi / szerver; helyben 16\,384 tokenes kontextus \\
-generátor & Q4\_K\_M, $T=0{,}2$ & 8\,192 tokenes kontextus; \code{num\_predict} 4\,096 (fő vizsgálat) \\
+generátor & Q4\_K\_M, $T=0{,}2$ & 8\,192 tokenes kontextus; legfeljebb 4\,096 tokenes válasz (fő vizsgálat) \\
 bíró & gpt-oss-120b, $T=0$ & „low” gondolkodás; forrás legfeljebb 24\,000 karakter \\
 \bottomrule
 \end{tabularx}

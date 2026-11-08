@@ -5,8 +5,7 @@
 \chapter{Kiegészítő eredmények}
 \label{app-eredmeny-reszletek}
 
-Ez a függelék \az{\ref{ch:eredmenyek}}.~fejezet részletes táblázatait és számait tartalmazza. A számok
-a mérések nyers kimeneteiből, egyetlen elemző szkripttel készültek.
+Ez a függelék \az{\ref{ch:eredmenyek}}.~fejezet részletes táblázatait és számait tartalmazza.
 
 % ---------------------------------------------------------------------
 \section{A pilot részletei}
@@ -19,7 +18,7 @@ néha csak két-három válasza volt, ami a vizsga $Q$-ját $0{,}25$-tel csökke
 is figyeli, egy javító hívás pótolja a disztraktorokat); sikertelen hívásoknál egy egykérdéses tartalékvizsga
 került a kimenetbe, a kódoló pedig a hosszabb szövegeket a tartalomtól függetlenül vágta
 (\ref{sec:csonkolt}.~szakasz). Szivárgásra példa az \arm{E3} egy „kérdése”, amely szó szerint egy forrásmondat
-volt („…Európába pedig a 17.~században jutott el a velencei kereskedők révén.”), kulcsa ugyanez, disztraktorai a
+volt („…Európába pedig a 17.~században jutott el a velencei kereskedők révén.”), kulcsa ugyanez volt, disztraktorai pedig ugyanezt a mondatot ismételték a
 16., 18. és 15.~századdal; az \arm{E3} kérdéseinek 20\,\%-a szivárgott, 47\,\%-uk nem volt kérdés, a bíró mégis
 többnyire 5-ös helyességet adott. Az azonos kontextust kapó \arm{E0} és \arm{E5a} $0{,}83$, illetve $0{,}90$
 minőségi indexet ért el, ezért egy dokumentumon a $0{,}07$-nél kisebb különbségek zajnak tekintendők.
@@ -31,39 +30,45 @@ minőségi indexet ért el, ezért egy dokumentumon a $0{,}07$-nél kisebb kül�
 
 \begin{table}[htbp]
 \centering
-\caption[Az előzetes vizsgálat helyi konfigurációi (Qwen2.5-7B, hat dokumentum).]{Az előzetes vizsgálat
-helyi konfigurációi (Qwen2.5-7B, hat dokumentum; az egyhívásos konfigurációk három, a tervezettek egy
-maggal). $Q$: minőségi index 95\,\%-os bootstrap-intervallummal; F, G, A, V: formai megfelelés,
-alátámasztottság, vak megoldhatóság, disztraktor-validitás (\%); Lef.: lefedettség (\%); Min.: a
-leggyengébb dokumentum $Q$-ja. A futási időket \az{\ref{tab:koltseg}}.~táblázat, a szerveres konfigurációkat
-\az{\ref{sec:modellek-szerver}}.~szakasz adja.}
+\caption{Az előzetes vizsgálat helyi konfigurációinak eredményei (Qwen2.5-7B, 6 dokumentum).}
 \label{tab:elozetes}
 \small
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}lcccccccc@{}}
 \toprule
-Konfiguráció & $Q$ & 95\,\% CI & F & G & A & V & Lef. & Min. \\
+Konfiguráció & $Q$ & 95\,\% KI & $F$ & $G$ & $A$ & $V$ & Lef. & Min. \\
 \midrule
-\arm{B-doc-L} (teljes dok.)        & 0,83 & 0,76--0,90 & 83  & 79 & 86 & 85 & 45 & 0,71 \\
-\arm{E0} (naiv RAG)                & 0,64 & 0,46--0,81 & 100 & 43 & 62 & 52 & 25 & 0,34 \\
+\multicolumn{9}{@{}l}{\emph{Alapvonalak}} \\
+\arm{B-doc-L} (teljes dok.)        & 0,83 & 0,76--0,90 & 83           & 79          & 86          & 85          & 45          & 0,71 \\
+\arm{E0} (naiv RAG)                & 0,64 & 0,46--0,81 & \textbf{100} & 43          & 62          & 52          & 25          & 0,34 \\
 \midrule
-\arm{E1} (tervezés)                & 0,88 & 0,82--0,94 & 100 & 80 & 80 & 91 & 46 & 0,76 \\
-\arm{E2} (tervezés + ellenőrzés)   & \textbf{0,96} & 0,93--0,98 & 100 & 90 & 97 & 96 & 44 & \textbf{0,89} \\
-\arm{E3} (+ fogalomgráf)           & 0,88 & 0,79--0,95 & 100 & 83 & 87 & 83 & 40 & 0,68 \\
+\multicolumn{9}{@{}l}{\emph{A javasolt módszer lépései}} \\
+\arm{E1} (tervezés)                & 0,88 & 0,82--0,94 & \textbf{100} & 80          & 80          & 91          & 46          & 0,76 \\
+\arm{E2} (tervezés + ellenőrzés)   & \cellcolor[HTML]{E6F4EA}\textbf{0,96} & 0,93--0,98 & \textbf{100} & \textbf{90} & \textbf{97} & \textbf{96} & 44          & \cellcolor[HTML]{E6F4EA}\textbf{0,89} \\
+\arm{E3} (+ fogalomgráf)           & 0,88 & 0,79--0,95 & \textbf{100} & 83          & 87          & 83          & 40          & 0,68 \\
 \midrule
-\arm{E2f} (vak próba nélkül)       & 0,90 & 0,84--0,95 & 100 & 78 & 88 & 92 & 44 & 0,81 \\
-\arm{E2h} (hibrid keresés)         & 0,92 & 0,90--0,94 & 100 & 82 & 92 & 94 & 42 & 0,88 \\
-\arm{E2x} (csak szabályok)$^\ast$  & 0,89 & 0,83--0,95 & 100 & 78 & 83 & 95 & 42 & 0,77 \\
+\multicolumn{9}{@{}l}{\emph{Kiegészítő ablációk}} \\
+\arm{E2f} (vak próba nélkül)       & 0,90 & 0,84--0,95 & \textbf{100} & 78          & 88          & 92          & 44          & 0,81 \\
+\arm{E2h} (hibrid keresés)         & 0,92 & 0,90--0,94 & \textbf{100} & 82          & 92          & 94          & 42          & 0,88 \\
+\arm{E2x} (csak szabályok)$^\ast$  & 0,89 & 0,83--0,95 & \textbf{100} & 78          & 83          & 95          & 42          & 0,77 \\
 \midrule
-\arm{E5a} (régi kódoló)            & 0,87 & 0,81--0,92 & 100 & 74 & 84 & 90 & 36 & 0,76 \\
-\arm{E5b} (magasabb küszöb)        & 0,70 & 0,54--0,86 & 100 & 39 & 78 & 63 & 35 & 0,45 \\
-\arm{E5c} (rögzített darabolás)    & 0,86 & 0,70--0,97 & 100 & 82 & 82 & 81 & 51 & 0,50 \\
+\multicolumn{9}{@{}l}{\emph{Darabolási változatok}} \\
+\arm{E5a} (régi kódoló)            & 0,87 & 0,81--0,92 & \textbf{100} & 74          & 84          & 90          & 36          & 0,76 \\
+\arm{E5b} (magasabb küszöb)        & 0,70 & 0,54--0,86 & \textbf{100} & 39          & 78          & 63          & 35          & 0,45 \\
+\arm{E5c} (rögzített darabolás)    & 0,86 & 0,70--0,97 & \textbf{100} & 82          & 82          & 81          & \textbf{51} & 0,50 \\
 \bottomrule
 \end{tabular}
 
-\smallskip
-{\footnotesize $^\ast$ A második modell ellenőrző hívásai hibával tértek vissza
-(\ref{sec:fo-komponensek}.~szakasz).\par}
+\vspace{4pt}
+\begin{minipage}{\textwidth}
+\footnotesize\noindent\textbf{Jelmagyarázat:}
+Az egyhívásos konfigurációk három, a tervezettek egy véletlen maggal futottak (a futási időket \az{\ref{tab:koltseg}}.~táblázat, a szerveres konfigurációkat \az{\ref{sec:modellek-szerver}}.~szakasz közli).
+$Q$: minőségi index; \textbf{95\,\% KI}: 95\,\%-os bootstrap-konfidenciaintervallum;
+$F$, $G$, $A$, $V$: formai megfelelés, forrás-alátámasztottság, vak megoldhatóság és disztraktor-validitás (\%);
+\textbf{Lef.}: dokumentum-lefedettség (\%); \textbf{Min.}: a leggyengébb dokumentum $Q$-ja.
+A \textbf{félkövér} értékek oszloponként a legjobb eredményt, a \setlength{\fboxsep}{1.5pt}\colorbox[HTML]{E6F4EA}{\textbf{zöld kiemelés}} a legmagasabb átlagos és dokumentumszintű minimum $Q$-t jelöli.
+$^\ast$Az \arm{E2x}-ben a második modell ellenőrző hívásai hibával tértek vissza (\ref{sec:fo-komponensek}.~szakasz).
+\end{minipage}
 \end{table}
 
 Az \arm{E2} a legrobusztusabb (leggyengébb dokumentuma is $0{,}89$), az ellenőrzés az \arm{E1}-hez képest öt
@@ -79,15 +84,11 @@ egyik sem szignifikáns (a legkisebb elérhető korrigált érték $0{,}19$).
 
 \begin{table}[htbp]
 \centering
-\caption[Az \arm{E2} ellenőrző láncának működése modellenként.]{Az \arm{E2} ellenőrző láncának működése
-modellenként. $n$: bírói ítélettel rendelkező kérdések (\ref{sec:fo-meres}.~szakasz); Első kísérlet: az első
-próbálkozásra elfogadott kérdéshelyek aránya; Átengedett: az ellenőrzöttként elfogadott kérdések aránya;
-pontosság, felidézés és Cohen-$\kappa$ a bíró alátámasztottsági ítéletéhez képest
-(\ref{sec:statisztika}.~szakasz). Az elutasítási okok az összes kísérletre vonatkoznak.}
+\caption{Az \arm{E2} ellenőrző láncának működése modellenként.}
 \label{tab:ellenorzo}
 \small
 \setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\textwidth}{@{}lcccccccX@{}}
+\begin{tabularx}{\textwidth}{@{}lccccccc>{\raggedright\arraybackslash}X@{}}
 \toprule
 Modell & $n$ & \makecell{Első\\kísérlet} & \makecell{Kísérlet/\\kérdéshely} & \makecell{Átenge-\\dett} & \makecell{Pontos-\\ság} & \makecell{Felidé-\\zés} & $\kappa$ & Leggyakoribb elutasítási okok \\
 \midrule
@@ -96,6 +97,15 @@ PULI-LlumiX 8B & 85  & 5\,\%  & 2,0 & 19\,\% & 0,56 & 0,21 & $0{,}05$ & dupliká
 Gemma 3 12B    & 157 & 70\,\% & 1,3 & 95\,\% & 0,88 & 0,95 & $0{,}00$ & duplikátum, vak eltérés \\
 \bottomrule
 \end{tabularx}
+
+\vspace{4pt}
+\begin{minipage}{\textwidth}
+\footnotesize\noindent\textbf{Jelmagyarázat:}
+$n$: bírói ítélettel rendelkező kérdések száma (\ref{sec:fo-meres}.~szakasz);
+\textbf{Első kísérlet}: az első próbálkozásra elfogadott kérdéshelyek aránya;
+\textbf{Átengedett}: a végső vizsgában ellenőrzöttként elfogadott kérdések aránya;
+\textbf{Pontosság}, \textbf{Felidézés}, $\kappa$: az ellenőrző mint bináris osztályozó mutatói és Cohen-$\kappa$-ja a bíró alátámasztottsági ítéletéhez képest (\ref{sec:statisztika}.~szakasz). Az elutasítási okok az összes kísérletre vonatkoznak.
+\end{minipage}
 \end{table}
 
 A Qwen ellenőrzője pontos, de szigorú (a jó kérdések közel felét is megjelöli), a Gemmáé szinte mindent átenged;
@@ -108,11 +118,13 @@ $0{,}22$ (Qwen \arm{E2h}).
 % ---------------------------------------------------------------------
 
 \begin{sloppypar}
-A \emph{lefedettség} \arm{E0}$\to$\arm{E2} a Qwennél 25\,\%$\to$44\,\%, a PULI-nál 10\,\%$\to$21\,\%, a Gemmánál
-24\,\%$\to$43\,\%; a teljes dokumentumos promptnál a Gemmánál 43\,\%, a Qwennél 45\,\% (felső korlátja tíz
-kérdésnél $10/K$). A vizsgaterv a kérdések 43--45\,\%-át (fő vizsgálat), illetve 27\,\%-át (előzetes vizsgálat)
-tervezte \emph{magasabb rendű Bloom-szintre}; a bíró szerint ebből a Gemmánál 7--11\,\%, a Qwennél 5--13\,\%, a
-PULI-nál 0--2\,\% valósult meg, a tervezett és megvalósult szint pedig a Gemmánál 12--20\,\%-ban, a PULI-nál
+A \emph{lefedettség} az \arm{E0}-ról az \arm{E2}-re a Qwennél 25\,\%$\to$44\,\%, a PULI-nál 10\,\%$\to$21\,\%, a
+Gemmánál 24\,\%$\to$43\,\%. A teljes dokumentumos promptnál a lefedettség a Gemmánál 43\,\%, a Qwennél 45\,\%
+(tíz kérdésnél a felső korlát $10/K$).
+
+A vizsgaterv a kérdések 43--45\,\%-át a fő vizsgálatban, illetve 27\,\%-át az előzetes vizsgálatban tervezte
+\emph{magasabb rendű Bloom-szintre}. A bíró szerint ebből a Gemmánál 7--11\,\%, a Qwennél 5--13\,\%, a PULI-nál
+0--2\,\% valósult meg, a tervezett és a megvalósult szint pedig a Gemmánál 12--20\,\%-ban, a PULI-nál
 6--10\,\%-ban, a Qwennél 33--45\,\%-ban egyezett.
 \end{sloppypar}
 
@@ -146,12 +158,15 @@ PULI \arm{E2}  & 9/30 (30\,\%)   & 5/30 (17\,\%)   & 71/238 (30\,\%)  & 85/298 (
 
 Az áttekintő ítélet a fő vizsgálat tervezett konfigurációinál a kérdések 44--52\,\%-ánál (Gemma), illetve
 29--48\,\%-ánál (PULI), az egyhívásosaknál 47--65\,\%-ánál, illetve 70--100\,\%-ánál van meg (az előzetes
-vizsgálatban mindenütt 100\,\%); konfigurációnként 85 (PULI \arm{E2}) és 574 (Gemma \arm{E0}), a tervezetteknél
+vizsgálatban mindenütt 100\,\%); konfigurációnként 85 (PULI \arm{E2}) és 574 (Gemma \arm{E0}) közötti, a tervezetteknél pedig
 85--138 (PULI), illetve 132--157 (Gemma) kérdés kapott ítéletet. Hossz szerint nincs érdemi különbség (Gemma
-\arm{E2}, Wikipédia- és angol dokumentumok: rövid 46/90, közepes 42/90, hosszú 43/90). Következmények: a
-Wikipédia-dokumentumok $G$, $A$, $V$ értéke kevesebb kérdésen alapul; tartalomfüggő elutasítás esetén e mutatók a
-bírált részhalmazra érvényesek; ha egy vizsga minden bírói hívása sikertelen, a $Q$ csak a formára (és a vak
-próbára) támaszkodik, amit az érzékenységvizsgálat ellenőriz (\ref{sec:fo-meres}.~szakasz). A teljes dokumentumos
+\arm{E2}, Wikipédia- és angol dokumentumok: rövid 46/90, közepes 42/90, hosszú 43/90). Ennek három következménye van:
+\begin{enumerate}[label=(\arabic*),leftmargin=*,itemsep=1pt,topsep=2pt]
+\item a Wikipédia-dokumentumok $G$, $A$, $V$ értéke kevesebb kérdésen alapul;
+\item tartalomfüggő elutasítás esetén e mutatók a bírált részhalmazra érvényesek;
+\item ha egy vizsga minden bírói hívása sikertelen, a $Q$ csak a formára (és a vak próbára) támaszkodik, amit az érzékenységvizsgálat ellenőriz (\ref{sec:fo-meres}.~szakasz).
+\end{enumerate}
+A teljes dokumentumos
 konfigurációknál a bíró a dokumentum első 24\,000 karakterét látja (\ref{sec:biro}.~szakasz): a 68\,000 karakteres
 jogi szövegen ezért a szervermodell egy helyes kérdését („What is the access economy?”) alá nem támasztottnak
 ítélte, mert a fogalom a 38\,603.~karakternél áll.

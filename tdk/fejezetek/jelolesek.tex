@@ -13,6 +13,7 @@ GDPR & \emph{General Data Protection Regulation}, általános adatvédelmi rende
 GGUF, Q4\_K\_M & a \texttt{llama.cpp} kvantált modellformátuma, illetve annak kb.\ 4,8 bit/súly változata\\
 GPU & grafikus feldolgozóegység\\
 Infotv. & az információs önrendelkezési jogról és az információszabadságról szóló 2011.~évi CXII.\ törvény\\
+KI & konfidenciaintervallum (a táblázatokban: 95\,\% KI)\\
 KV-gyorsítótár & a szövegelőállítás közben tárolt kulcs- és értékvektorok\\
 LLM & \emph{Large Language Model}, nagy nyelvi modell\\
 MCQ & \emph{Multiple-Choice Question}, feleletválasztós kérdés\\
@@ -32,9 +33,36 @@ naiv RAG & alapvonal (\arm{E0}): a feladatleírással visszakeresett három dara
 szivárgás & a kulcs szinte szó szerint szerepel a kérdés törzsében\\
 teljes dokumentumos prompt & a teljes dokumentum és a kérés egy promptban (\arm{B-doc-L} helyben, \arm{B-doc-S} a szervermodellel)\\
 vizsgaterv & a vizsga előre rögzített szerkezete kérdéshelyenként\\[3pt]
+\prob{P1}--\prob{P4} & a közvetlen kérdésgenerálás négy alapvető problémája (\ref{sec:problemaf}.~szakasz): \prob{P1} a kulcs és a disztraktorok ellenőrizetlensége, \prob{P2} a szerkezet és a lefedettség kontrollálatlansága, \prob{P3} az adatvédelmi kockázat, \prob{P4} a nagy, távoli modellektől való függés\\[3pt]
 $F,G,A,V$ & formai megfelelés, alátámasztottság, vak megoldhatóság, disztraktor-validitás\\
 $Q$ & minőségi index, $(F+G+A+V)/4$\\
 $\kappa$, $\alpha$ & Cohen-féle egyezési, illetve Krippendorff-féle megbízhatósági együttható\\
 $r_{rb}$, $\tilde p$ & rangbiszeriális hatásméret, illetve Holm-korrigált $p$-érték\\
+\end{longtable}
+
+\section*{Kísérleti konfigurációk (tesztesetek)}
+
+\noindent Az alábbi áttekintés a dolgozatban vizsgált 14 kísérleti konfigurációt (tesztesetet) foglalja össze. A konfigurációk jelölésére kattintva közvetlenül az összefoglaló táblázatra ugorhatunk.
+
+\begin{longtable}{@{}p{2.0cm}p{8.4cm}p{4.4cm}@{}}
+\toprule
+\textbf{Konfig.} & \textbf{A teszteset jelentése és beállítása} & \textbf{Részletes leírás} \\
+\midrule
+\endhead
+\arm{B-doc-L} & Teljes dokumentumos alapvonal helyi modellel ($\le$\,30\,000 karakter, 16\,384 tokenes kontextus) & \ref{tab:karok}.~táblázat, \ref{sec:alapvonalak}.~szakasz \\
+\arm{B-doc-S} & Teljes dokumentumos alapvonal a szervermodellel ($\le$\,80\,000 karakter) & \ref{tab:karok}.~táblázat, \ref{sec:alapvonalak}.~szakasz \\
+\arm{E0}      & Naiv RAG alapvonal: szemantikus darabolás, a kéréshez legközelebbi 3 darab, a teljes vizsga egyetlen hívásban & \ref{tab:karok}.~táblázat, \ref{sec:alapvonalak}.~szakasz \\
+\arm{E1}      & Tervezésvezérelt generálás: explicit vizsgaterv, kérdéshelyenkénti keresés és forráshoz kötött generálás, ellenőrzés nélkül & \ref{tab:karok}.~táblázat, \ref{sec:blueprint}--\ref{sec:generalas}.~szakasz \\
+\arm{E2}      & A teljes \Mimir{} módszer: \arm{E1} + többlépcsős ellenőrző lánc visszacsatolással & \ref{tab:karok}.~táblázat, \ref{sec:verifier}.~szakasz \\
+\arm{E2f}     & Abláció vak próba nélkül: \arm{E2} a vak megoldási ellenőrző lépés elhagyásával & \ref{tab:karok}.~táblázat, \ref{sec:verifier}.~szakasz \\
+\arm{E2h}     & Hibrid kereséses abláció: \arm{E2} BM25 és sűrű vektoros keresés RRF-rangfúziójával & \ref{tab:karok}.~táblázat, \ref{sec:visszakereses}.~szakasz \\
+\arm{E2x}     & Keresztellenőrzéses abláció: \arm{E2}, amelyben az ellenőrzést egy másik helyi modell (Llama-3.1-8B) végzi & \ref{tab:karok}.~táblázat, \ref{sec:verifier}.~szakasz \\
+\arm{E3}      & Fogalomgráfos változat: \arm{E2} + munkamenet-hatókörű fogalomgráf a tervezéshez és a disztraktorokhoz & \ref{tab:karok}.~táblázat, \ref{sec:graf}.~szakasz \\
+\arm{E4}      & Szerveroldali naiv RAG: az \arm{E0} konfiguráció a nagy szervermodellel futtatva & \ref{tab:karok}.~táblázat, \ref{sec:karok}.~szakasz \\
+\arm{E4b}     & Szerveroldali teljes módszer: az \arm{E2} konfiguráció a nagy szervermodellel futtatva & \ref{tab:karok}.~táblázat, \ref{sec:karok}.~szakasz \\
+\arm{E5a}     & Darabolási abláció (régi kódoló): \arm{E0} az 512 tokenre csonkolt kódolóval & \ref{tab:karok}.~táblázat, \ref{sec:darabolas}.~szakasz \\
+\arm{E5b}     & Darabolási abláció (magasabb küszöb): \arm{E0} átlag $+\,1{,}5$ szórásos szemantikus vágási küszöbbel & \ref{tab:karok}.~táblázat, \ref{sec:darabolas}.~szakasz \\
+\arm{E5c}     & Darabolási abláció (rögzített ablak): \arm{E0} rögzített, 800 karakteres darabokkal & \ref{tab:karok}.~táblázat, \ref{sec:darabolas}.~szakasz \\
+\bottomrule
 \end{longtable}
 \end{singlespace}

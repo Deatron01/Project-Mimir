@@ -54,8 +54,9 @@ gyökeréből egyszer ki kell bontani őket, mielőtt az `elemzes.py`-t futtatod
 
 ## Nyitott pontok
 
-- **Oktatói értékelés:** folyamatban. Ha elkészül (`rate-import`), az 5.10. szakasz piros helyőrzőjét,
-  a H5 sorát a hipotézistáblában és az összefoglalót frissíteni kell.
+- **Oktatói értékelés:** kész (5 oktató, 60 + 12 kérdés; `Completed_tests/`). A lapok a
+  `tests/eval/ratings/ratings_v3/rater_{A,B,C,C2,C3}.xlsx` néven vannak, a `rate-import` kimenete
+  `ratings.csv`; a számok: `python tdk/elemzes/oktatoi.py` → `elemzes/oktatoi.md` és `oktatoi.json`.
 - **Bírói hibák:** a fő vizsgálatban a bíró hívásainak egy része HTTP 400-zal tért vissza; a sikertelenek
   újrapontozhatók a futtató gépen `python -m mimir_eval score <run>` paranccsal (a sikeres ítéletek a
   bírói gyorsítótárból jönnek, csak a hiányzók futnak újra; a `--skip-scored` kapcsoló ezt kihagyná),

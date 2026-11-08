@@ -64,7 +64,7 @@ rendezzük.
 
 \begin{table}[htbp]
 \centering
-\caption{A nehézségi szintekhez rendelt Bloom-eloszlások és egy 10 kérdéses vizsga kiosztása.}
+\caption{A nehézségi szintekhez rendelt Bloom-eloszlások és egy tízkérdéses vizsga kiosztása.}
 \label{tab:bloom}
 \small
 \begin{tabular}{@{}lccccc@{\qquad}c@{}}
@@ -148,26 +148,34 @@ Wikipédia, MILQA & magyar & 24 & 8/8/8 & 240 & 24 & 8/8/8 & CC BY-SA 4.0 \\
 \end{tabular}
 \end{table}
 
-\paragraph{Oktatói értékelés.}\label{app-oktatoi} Konfigurációnként 30 kérdést mintavételezünk (előbb
-minden dokumentumból egyet), 3 értékelővel és 10 közös kalibrációs kérdéssel. A lapok vakok: a
-konfiguráció neve nem szerepel, a sorrend értékelőnként véletlen, a forrásrészlet és a rubrika a bíróéval
-azonos. Az oktatók egymás közötti és a bíróval való egyezését Krippendorff-$\alpha$-val~\cite{krippendorff2004}
-és Spearman-korrelációval, a bíró „alátámasztott” ítéletének és az oktatói helyesség $\ge 4$
-ítéletnek az egyezését Cohen-$\kappa$-val mérjük.
+\paragraph{Oktatói értékelés.}\label{app-oktatoi} A hat közös dokumentumon (3 magyar, 3 angol) futott hat
+konfigurációból (Qwen2.5-7B, PULI-LlumiX 8B és Gemma 3 12B; \arm{B-doc-L} és \arm{E2}) futásonként 10
+értékelendő és 2 kalibrációs kérdést mintavételezünk (előbb minden dokumentumból egyet, rögzített maggal, csak
+a bíró által pontozott kérdések közül). A 72 kérdés minden értékelőnél azonos; több, eltérő kérdéssorrendű lapváltozat
+készült, amelyeket összesen öt oktató töltött ki. A lapok vakok: a
+konfiguráció neve nem szerepel, az értékelendő kérdések sorrendje lapváltozatonként véletlen, a forrásrészlet
+és a rubrika a bíróéval azonos. Az oktatók egymás közötti egyezését Krippendorff-$\alpha$-val~\cite{krippendorff2004}
+mérjük (a hiányzó értékeléseket az $\alpha$ kezeli). A bíró és az oktatók egyezését a bíró pontszáma és az
+oktatói átlag Spearman-korrelációjával, a bíró pontszáma és a kerekített oktatói medián $\alpha$-jával, a bíró
+„alátámasztott” ítéletének és az oktatói többség helyesség $\ge 4$ ítéletének, valamint a két felhasználnám
+ítéletnek az egyezését Cohen-$\kappa$-val mérjük. A 95\,\%-os intervallumok a kérdésekre vett bootstrapből
+(2\,000 minta) származnak.
 
 \paragraph{Mutatók.}\label{app-mutatok} A \emph{lefedettség}
 \begin{equation}
 \mathrm{Lef}=\frac{\text{a kérdésekhez (törzs és kulcs) legközelebbi különböző darabok száma}}{K},
 \label{eq:cov}
 \end{equation}
-ahol $K$ a dokumentum darabjainak száma; tíz kérdésnél legfeljebb $10/K$. \emph{Szivárgás}, ha a
-legalább háromszavas kulcs szavainak legalább 80\,\%-a a törzsben is szerepel; \emph{nem kérdés} a törzs,
-ha sem kérdőjelre, sem kettőspontra nem végződik. A \emph{duplikátumráta} a 0,9-nél nagyobb
-koszinusz-hasonlóságú kérdéspárok aránya, a \emph{meta-hivatkozás} az „a szöveg szerint” jellegű
-fordulatoké; a \emph{recall@3} azt méri, hogy a referenciakérdéssel futtatott keresés első három
-találata között van-e az igazoló mondatot tartalmazó darab, a \emph{tematikus hasonlóság} pedig azt,
-hogy a referenciakérdések mekkora részéhez van közeli generált kérdés. Költségmutató a szakaszonkénti
-futási idő, a hívások és tokenek száma és a GPU-memória alapszintje és csúcsa.
+ahol $K$ a dokumentum darabjainak száma; tíz kérdésnél legfeljebb $10/K$. A további mutatók definíciója:
+\begin{itemize}[leftmargin=*,itemsep=1pt,topsep=2pt]
+\item \emph{Szivárgás:} a legalább háromszavas kulcs szavainak legalább 80\,\%-a a törzsben is szerepel.
+\item \emph{Nem kérdés:} a törzs sem kérdőjelre, sem kettőspontra nem végződik.
+\item \emph{Duplikátumráta:} a 0,9-nél nagyobb koszinusz-hasonlóságú kérdéspárok aránya.
+\item \emph{Meta-hivatkozás:} az „a szöveg szerint” jellegű fordulatok aránya.
+\item \emph{Recall@3:} a referenciakérdéssel futtatott keresés első három találata között szerepel-e az igazoló mondatot tartalmazó darab.
+\item \emph{Tematikus hasonlóság:} a referenciakérdések mekkora részéhez van közeli generált kérdés.
+\item \emph{Költségmutatók:} a szakaszonkénti futási idő, a hívások és tokenek száma, valamint a GPU-memória alapszintje és csúcsa.
+\end{itemize}
 
 \paragraph{Statisztika.}\label{app-statisztika} A hatásnagyság a rangbiszeriális
 korreláció~\cite{kerby2014}

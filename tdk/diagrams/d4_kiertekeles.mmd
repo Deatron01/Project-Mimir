@@ -1,5 +1,5 @@
 flowchart LR
-  a["<b>1. Előkészítés</b><br/>dokumentum betöltése,<br/>kinyerés és darabolás<br/>az éles szolgáltatásokkal"] --> b["<b>2. Generálás</b><br/>a konfiguráció szerinti<br/>folyamat: 10 kérdéses vizsga<br/><small>hívások, tokenek, idő, VRAM naplózva</small>"]
+  a["<b>1. Előkészítés</b><br/>dokumentum betöltése,<br/>kinyerés, darabolás<br/>és vektoros indexelés"] --> b["<b>2. Generálás</b><br/>a konfiguráció szerinti<br/>folyamat: 10 kérdéses vizsga<br/><small>hívások, tokenek, idő, VRAM naplózva</small>"]
   b --> c["<b>3. Automatikus pontozás</b><br/>forma, lefedettség,<br/>szivárgás, duplikátumok,<br/>keresési találati arány"]
   c --> d["<b>4. Bírói pontozás</b><br/>gpt-oss-120b, kérdésenként<br/>2 hívás: áttekintés a kulccsal<br/>+ vak megoldás"]
   d --> e["<b>5. Jelentés</b><br/>dokumentumonkénti átlag,<br/>bootstrap, Wilcoxon, Holm,<br/>táblázatok és ábrák"]

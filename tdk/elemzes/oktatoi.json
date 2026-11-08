@@ -1,0 +1,573 @@
+{
+ "raters": [
+  "rater_A",
+  "rater_B",
+  "rater_C",
+  "rater_C2",
+  "rater_C3"
+ ],
+ "n_ratings_by_rater": {
+  "rater_A": 72,
+  "rater_B": 72,
+  "rater_C": 72,
+  "rater_C2": 72,
+  "rater_C3": 34
+ },
+ "n_ratings_by_rater_sheet": {
+  "rater_A/Kalibráció": 12,
+  "rater_A/Értékelés": 60,
+  "rater_B/Kalibráció": 12,
+  "rater_B/Értékelés": 60,
+  "rater_C/Kalibráció": 12,
+  "rater_C/Értékelés": 60,
+  "rater_C2/Kalibráció": 12,
+  "rater_C2/Értékelés": 60,
+  "rater_C3/Kalibráció": 5,
+  "rater_C3/Értékelés": 29
+ },
+ "alpha_teachers_rated60": {
+  "correctness": {
+   "alpha": 0.693,
+   "ci": [
+    0.581,
+    0.786
+   ]
+  },
+  "clarity": {
+   "alpha": 0.589,
+   "ci": [
+    0.444,
+    0.703
+   ]
+  },
+  "distractor_quality": {
+   "alpha": 0.472,
+   "ci": [
+    0.325,
+    0.585
+   ]
+  },
+  "bloom_fit": {
+   "alpha": 0.39,
+   "ci": [
+    0.249,
+    0.515
+   ]
+  },
+  "would_use": {
+   "alpha": 0.454,
+   "ci": [
+    0.314,
+    0.579
+   ]
+  }
+ },
+ "alpha_teachers_all72": {
+  "correctness": {
+   "alpha": 0.679
+  },
+  "clarity": {
+   "alpha": 0.567
+  },
+  "distractor_quality": {
+   "alpha": 0.466
+  },
+  "bloom_fit": {
+   "alpha": 0.38
+  },
+  "would_use": {
+   "alpha": 0.459
+  }
+ },
+ "alpha_teachers_calib12": {
+  "correctness": {
+   "alpha": 0.578
+  },
+  "clarity": {
+   "alpha": 0.413
+  },
+  "distractor_quality": {
+   "alpha": 0.366
+  },
+  "bloom_fit": {
+   "alpha": 0.322
+  },
+  "would_use": {
+   "alpha": 0.485
+  }
+ },
+ "alpha_pairwise": {
+  "correctness": {
+   "rater_A-rater_B": 0.938,
+   "rater_A-rater_C": 0.883,
+   "rater_A-rater_C2": 0.56,
+   "rater_A-rater_C3": 0.46,
+   "rater_B-rater_C": 0.949,
+   "rater_B-rater_C2": 0.629,
+   "rater_B-rater_C3": 0.527,
+   "rater_C-rater_C2": 0.639,
+   "rater_C-rater_C3": 0.511,
+   "rater_C2-rater_C3": 0.274
+  },
+  "clarity": {
+   "rater_A-rater_B": 0.925,
+   "rater_A-rater_C": 0.841,
+   "rater_A-rater_C2": 0.142,
+   "rater_A-rater_C3": 0.293,
+   "rater_B-rater_C": 0.951,
+   "rater_B-rater_C2": 0.297,
+   "rater_B-rater_C3": 0.495,
+   "rater_C-rater_C2": 0.341,
+   "rater_C-rater_C3": 0.573,
+   "rater_C2-rater_C3": 0.527
+  },
+  "distractor_quality": {
+   "rater_A-rater_B": 0.844,
+   "rater_A-rater_C": 0.556,
+   "rater_A-rater_C2": 0.298,
+   "rater_A-rater_C3": 0.213,
+   "rater_B-rater_C": 0.78,
+   "rater_B-rater_C2": 0.332,
+   "rater_B-rater_C3": 0.306,
+   "rater_C-rater_C2": 0.384,
+   "rater_C-rater_C3": 0.313,
+   "rater_C2-rater_C3": 0.025
+  },
+  "bloom_fit": {
+   "rater_A-rater_B": 0.869,
+   "rater_A-rater_C": 0.477,
+   "rater_A-rater_C2": 0.142,
+   "rater_A-rater_C3": -0.23,
+   "rater_B-rater_C": 0.697,
+   "rater_B-rater_C2": 0.326,
+   "rater_B-rater_C3": -0.032,
+   "rater_C-rater_C2": 0.381,
+   "rater_C-rater_C3": 0.12,
+   "rater_C2-rater_C3": 0.044
+  },
+  "would_use": {
+   "rater_A-rater_B": 0.533,
+   "rater_A-rater_C": 0.32,
+   "rater_A-rater_C2": 0.192,
+   "rater_A-rater_C3": -0.1,
+   "rater_B-rater_C": 0.768,
+   "rater_B-rater_C2": 0.501,
+   "rater_B-rater_C3": 0.321,
+   "rater_C-rater_C2": 0.518,
+   "rater_C-rater_C3": 0.387,
+   "rater_C2-rater_C3": 0.581
+  }
+ },
+ "alpha_leave_one_out": {
+  "rater_A": {
+   "correctness": 0.643,
+   "clarity": 0.561,
+   "distractor_quality": 0.403,
+   "bloom_fit": 0.344,
+   "would_use": 0.554
+  },
+  "rater_B": {
+   "correctness": 0.607,
+   "clarity": 0.481,
+   "distractor_quality": 0.356,
+   "bloom_fit": 0.259,
+   "would_use": 0.359
+  },
+  "rater_C": {
+   "correctness": 0.624,
+   "clarity": 0.486,
+   "distractor_quality": 0.41,
+   "bloom_fit": 0.321,
+   "would_use": 0.394
+  },
+  "rater_C2": {
+   "correctness": 0.81,
+   "clarity": 0.77,
+   "distractor_quality": 0.607,
+   "bloom_fit": 0.483,
+   "would_use": 0.463
+  },
+  "rater_C3": {
+   "correctness": 0.769,
+   "clarity": 0.616,
+   "distractor_quality": 0.551,
+   "bloom_fit": 0.503,
+   "would_use": 0.485
+  }
+ },
+ "rater_means": {
+  "rater_A": {
+   "correctness": 3.45,
+   "clarity": 3.05,
+   "distractor_quality": 2.733,
+   "bloom_fit": 2.767,
+   "would_use": 0.25,
+   "n": 60
+  },
+  "rater_B": {
+   "correctness": 3.633,
+   "clarity": 3.383,
+   "distractor_quality": 3.233,
+   "bloom_fit": 3.25,
+   "would_use": 0.467,
+   "n": 60
+  },
+  "rater_C": {
+   "correctness": 3.8,
+   "clarity": 3.567,
+   "distractor_quality": 3.733,
+   "bloom_fit": 3.967,
+   "would_use": 0.583,
+   "n": 60
+  },
+  "rater_C2": {
+   "correctness": 3.8,
+   "clarity": 4.45,
+   "distractor_quality": 3.367,
+   "bloom_fit": 3.95,
+   "would_use": 0.617,
+   "n": 60
+  },
+  "rater_C3": {
+   "correctness": 3.931,
+   "clarity": 3.759,
+   "distractor_quality": 3.31,
+   "bloom_fit": 4.241,
+   "would_use": 0.621,
+   "n": 29
+  }
+ },
+ "n_items_with_judge": 60,
+ "judge_vs_teachers": {
+  "correctness": {
+   "rho": 0.655,
+   "p": 0.0,
+   "n": 60,
+   "judge_mean": 4.1,
+   "teacher_mean": 3.711,
+   "alpha_judge_vs_median": 0.621,
+   "alpha_judge_vs_median_ci": [
+    0.384,
+    0.796
+   ],
+   "alpha_with_judge": 0.646,
+   "alpha_judge_teacher_pairs_mean": 0.528,
+   "alpha_judge_teacher_pairs": {
+    "rater_A": 0.546,
+    "rater_B": 0.605,
+    "rater_C": 0.651,
+    "rater_C2": 0.53,
+    "rater_C3": 0.307
+   },
+   "alpha_teacher_pairs_mean": 0.637
+  },
+  "clarity": {
+   "rho": 0.436,
+   "p": 0.0,
+   "n": 60,
+   "judge_mean": 4.65,
+   "teacher_mean": 3.688,
+   "alpha_judge_vs_median": 0.164,
+   "alpha_judge_vs_median_ci": [
+    -0.081,
+    0.407
+   ],
+   "alpha_with_judge": 0.479,
+   "alpha_judge_teacher_pairs_mean": 0.22,
+   "alpha_judge_teacher_pairs": {
+    "rater_A": 0.009,
+    "rater_B": 0.127,
+    "rater_C": 0.194,
+    "rater_C2": 0.416,
+    "rater_C3": 0.353
+   },
+   "alpha_teacher_pairs_mean": 0.539
+  },
+  "distractor_quality": {
+   "rho": 0.408,
+   "p": 0.001,
+   "n": 60,
+   "judge_mean": 3.9,
+   "teacher_mean": 3.29,
+   "alpha_judge_vs_median": 0.366,
+   "alpha_judge_vs_median_ci": [
+    0.132,
+    0.544
+   ],
+   "alpha_with_judge": 0.397,
+   "alpha_judge_teacher_pairs_mean": 0.216,
+   "alpha_judge_teacher_pairs": {
+    "rater_A": 0.147,
+    "rater_B": 0.343,
+    "rater_C": 0.412,
+    "rater_C2": 0.138,
+    "rater_C3": 0.041
+   },
+   "alpha_teacher_pairs_mean": 0.405
+  },
+  "bloom_fit": {
+   "rho": 0.283,
+   "p": 0.028,
+   "n": 60,
+   "judge_mean": 4.45,
+   "teacher_mean": 3.584,
+   "alpha_judge_vs_median": 0.105,
+   "alpha_judge_vs_median_ci": [
+    -0.162,
+    0.352
+   ],
+   "alpha_with_judge": 0.277,
+   "alpha_judge_teacher_pairs_mean": 0.07,
+   "alpha_judge_teacher_pairs": {
+    "rater_A": -0.11,
+    "rater_B": 0.016,
+    "rater_C": 0.088,
+    "rater_C2": -0.04,
+    "rater_C3": 0.395
+   },
+   "alpha_teacher_pairs_mean": 0.279
+  },
+  "mean": {
+   "rho": 0.635,
+   "p": 0.0,
+   "n": 60,
+   "judge_mean": 4.275,
+   "teacher_mean": 3.568
+  }
+ },
+ "kappa": {
+  "grounded_vs_teacher_correct": 0.486,
+  "would_use_judge_vs_teachers": 0.455,
+  "judge_would_use_rate": 0.7,
+  "teacher_majority_would_use_rate": 0.45,
+  "judge_grounded_rate": 0.833,
+  "teacher_majority_correct_rate": 0.667,
+  "confusion_would_use": {
+   "judge_True_teacher_True": 26,
+   "judge_True_teacher_False": 16,
+   "judge_False_teacher_True": 1,
+   "judge_False_teacher_False": 17
+  },
+  "confusion_correct": {
+   "judge_True_teacher_True": 39,
+   "judge_True_teacher_False": 11,
+   "judge_False_teacher_True": 1,
+   "judge_False_teacher_False": 9
+  },
+  "would_use_teacher_pairs_mean": 0.447
+ },
+ "by_config": {
+  "Gemma B-doc-L": {
+   "n": 10,
+   "teacher_mean": [
+    4.178,
+    3.77,
+    4.514
+   ],
+   "teacher_would_use": 0.72,
+   "t_correctness": 4.465,
+   "t_clarity": 4.35,
+   "t_distractor_quality": 3.74,
+   "t_bloom_fit": 4.155,
+   "judge_mean": 4.55,
+   "judge_would_use": 0.8,
+   "judge_grounded": 0.9
+  },
+  "Gemma E2": {
+   "n": 10,
+   "teacher_mean": [
+    4.259,
+    3.815,
+    4.64
+   ],
+   "teacher_would_use": 0.78,
+   "t_correctness": 4.52,
+   "t_clarity": 4.42,
+   "t_distractor_quality": 3.905,
+   "t_bloom_fit": 4.19,
+   "judge_mean": 4.675,
+   "judge_would_use": 0.9,
+   "judge_grounded": 1.0
+  },
+  "PULI B-doc-L": {
+   "n": 10,
+   "teacher_mean": [
+    2.425,
+    1.898,
+    3.028
+   ],
+   "teacher_would_use": 0.2,
+   "t_correctness": 2.275,
+   "t_clarity": 2.65,
+   "t_distractor_quality": 2.415,
+   "t_bloom_fit": 2.36,
+   "judge_mean": 3.825,
+   "judge_would_use": 0.6,
+   "judge_grounded": 0.7
+  },
+  "PULI E2": {
+   "n": 10,
+   "teacher_mean": [
+    2.666,
+    2.062,
+    3.263
+   ],
+   "teacher_would_use": 0.165,
+   "t_correctness": 2.455,
+   "t_clarity": 2.98,
+   "t_distractor_quality": 2.605,
+   "t_bloom_fit": 2.625,
+   "judge_mean": 3.725,
+   "judge_would_use": 0.4,
+   "judge_grounded": 0.6
+  },
+  "Qwen B-doc-L": {
+   "n": 10,
+   "teacher_mean": [
+    3.815,
+    3.39,
+    4.239
+   ],
+   "teacher_would_use": 0.535,
+   "t_correctness": 3.99,
+   "t_clarity": 3.93,
+   "t_distractor_quality": 3.375,
+   "t_bloom_fit": 3.965,
+   "judge_mean": 4.15,
+   "judge_would_use": 0.6,
+   "judge_grounded": 0.8
+  },
+  "Qwen E2": {
+   "n": 10,
+   "teacher_mean": [
+    4.066,
+    3.596,
+    4.508
+   ],
+   "teacher_would_use": 0.625,
+   "t_correctness": 4.56,
+   "t_clarity": 3.795,
+   "t_distractor_quality": 3.7,
+   "t_bloom_fit": 4.21,
+   "judge_mean": 4.725,
+   "judge_would_use": 0.9,
+   "judge_grounded": 1.0
+  }
+ },
+ "by_arm": {
+  "B-doc-L": {
+   "n": 30,
+   "teacher_mean": [
+    3.472,
+    3.088,
+    3.848
+   ],
+   "teacher_would_use": 0.485,
+   "judge_mean": 4.175
+  },
+  "E2": {
+   "n": 30,
+   "teacher_mean": [
+    3.664,
+    3.262,
+    4.061
+   ],
+   "teacher_would_use": 0.523,
+   "judge_mean": 4.375
+  }
+ },
+ "by_generator": {
+  "Gemma": {
+   "n": 20,
+   "teacher_mean": [
+    4.218,
+    3.923,
+    4.482
+   ],
+   "teacher_would_use": 0.75,
+   "judge_mean": 4.612
+  },
+  "PULI": {
+   "n": 20,
+   "teacher_mean": [
+    2.546,
+    2.131,
+    2.977
+   ],
+   "teacher_would_use": 0.183,
+   "judge_mean": 3.775
+  },
+  "Qwen": {
+   "n": 20,
+   "teacher_mean": [
+    3.941,
+    3.615,
+    4.249
+   ],
+   "teacher_would_use": 0.58,
+   "judge_mean": 4.438
+  }
+ },
+ "by_language": {
+  "en": {
+   "n": 31,
+   "teacher_mean": 3.804,
+   "teacher_would_use": 0.589,
+   "judge_mean": 4.411,
+   "rho_mean": 0.592
+  },
+  "hu": {
+   "n": 29,
+   "teacher_mean": 3.316,
+   "teacher_would_use": 0.414,
+   "judge_mean": 4.129,
+   "rho_mean": 0.62
+  }
+ },
+ "E2_vs_Bdoc": {
+  "all": {
+   "E2": 3.664,
+   "B-doc-L": 3.472,
+   "n": [
+    30,
+    30
+   ],
+   "p": 0.473
+  },
+  "Gemma": {
+   "E2": 4.259,
+   "B-doc-L": 4.178,
+   "n": [
+    10,
+    10
+   ],
+   "p": 0.82
+  },
+  "PULI": {
+   "E2": 2.666,
+   "B-doc-L": 2.425,
+   "n": [
+    10,
+    10
+   ],
+   "p": 0.623
+  },
+  "Qwen": {
+   "E2": 4.066,
+   "B-doc-L": 3.815,
+   "n": [
+    10,
+    10
+   ],
+   "p": 0.496
+  }
+ },
+ "config_rank_rho": 0.771,
+ "items_low_correctness_any": 24,
+ "items_low_correctness_majority": 20,
+ "judge_on_teacher_wrong": {
+  "n": 20,
+  "judge_grounded": 11,
+  "judge_would_use": 6
+ }
+}
