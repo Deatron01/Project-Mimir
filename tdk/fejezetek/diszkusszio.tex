@@ -50,10 +50,10 @@ A kérdések egyetlen szakaszra tömörülése a naiv RAG sajátja (10--25\,\%).
 {\footnotesize (leíró szinten, a szerveres alapvonalhoz mérve)} \\
 \addlinespace[4pt]
 \ref{h:meres}.\ Mérés &
-\emph{Oktatói egyezés (5 oktató, 60 kérdés):} bíró--oktatói medián $\alpha=0{,}62$ (helyesség, KI: $0{,}38$--$0{,}80$; az oktatók egymás közt $0{,}69$), a többi szempont $0{,}11$--$0{,}37$; a bíró minden szempontban engedékenyebb.\newline
-\emph{Rangsor-korreláció:} $\rho=0{,}65$ (helyesség), $\rho=0{,}77$ (6 konfiguráció). &
-\cellcolor[HTML]{FCE8E6}\textbf{Nem támogatott}\newline
-{\footnotesize (a küszöb nem teljesül, de a rangsor egyezik)} \\
+\emph{Oktatói egyezés (9 oktató, 60 kérdés):} bíró--oktatói medián $\alpha=0{,}68$ (helyesség, KI: $0{,}46$--$0{,}84$; az oktatók egymás közt $0{,}47$), a többi szempont $0{,}16$--$0{,}38$; a bíró minden szempontban engedékenyebb.\newline
+\emph{Rangsor-korreláció:} $\rho=0{,}62$ (helyesség), $\rho=0{,}71$ (6 konfiguráció). &
+\cellcolor[HTML]{FEF7E0}\textbf{Részben támogatott}\newline
+{\footnotesize (a helyességen a pontbecslés eléri a küszöböt, a többi szempontnál nem; a rangsor egyezik)} \\
 \bottomrule
 \end{tabularx}
 
@@ -74,13 +74,16 @@ dokumentumokon a felső korlát minden konfigurációt egyformán korlátoz.
 \item \textbf{\ref{h:helyi}.\ hip.:} A hipotézis a
 szervermodell \emph{naiv} változatához mér; a „helyi modell elérte a szervermodellt” állítás csak a szerveres
 teljes dokumentumos promptra igaz, a saját módszerünkkel futó szervermodellre nem.
-\item \textbf{\ref{h:meres}.\ hip.:} A $0{,}667$-es küszöböt egyik szempont sem éri el; a helyességen a pontbecslés közel van hozzá, és az
-intervallum tartalmazza, ezért ott a hipotézist nem cáfoltnak, hanem nem igazoltnak tekintjük. Az eltérés
-nagy része egyirányú (a bíró engedékenyebb), a sorrend viszont egyezik, ezért a bíró ítéleteit -- ahogy eddig
-is -- relatív, a konfigurációk összevetésére szolgáló mérésként kezeljük, az abszolút arányokat
-(alátámasztottság, felhasználnám) felső becslésnek. A rangsort az oktatók is megerősítik: Gemma $>$ Qwen $>$
-PULI, és az \arm{E2} mindhárom generátornál a \arm{B-doc-L} fölött van, bár tíz-tíz kérdésen nem
-szignifikánsan (\ref{sec:oktatoi-eredmeny}.~szakasz).
+\item \textbf{\ref{h:meres}.\ hip.:} A $0{,}667$-es küszöböt csak a helyesség éri el, és ott is csak a
+pontbecslés: az intervallum alsó határa ($0{,}46$) jóval alatta van, ezért a hipotézist a helyességre is csak
+részben, a többi szempontra nem tekintjük igazoltnak. Az értelmezéshez fontos, hogy a kilenc oktató egymás
+közt sem éri el a küszöböt (helyességen $0{,}47$), és a bíró egyetlen oktatóval a helyességen annyira egyezik,
+mint két oktató egymással. Az eltérés nagy része egyirányú (a bíró engedékenyebb), a sorrend viszont egyezik,
+ezért a bíró ítéleteit -- ahogy eddig is -- relatív, a konfigurációk összevetésére szolgáló mérésként kezeljük,
+az abszolút arányokat (alátámasztottság, felhasználnám) felső becslésnek. A rangsort az oktatók is
+megerősítik: Gemma $>$ Qwen $>$ PULI, és az \arm{E2} a Qwennél és a PULI-nál a \arm{B-doc-L} fölött van, a
+Gemmánál vele azonos, bár tíz-tíz kérdésen egyik különbség sem szignifikáns
+(\ref{sec:oktatoi-eredmeny}.~szakasz).
 \end{itemize}
 
 % ---------------------------------------------------------------------
@@ -146,9 +149,10 @@ utasítással kapott hasonló egyezést. Ezek páros preferenciákra és más fe
 vihetők át a mi forrásalapú rubrikánkra, és vizsgálataink több bírói vakfoltot is feltártak
 (\ref{sec:meres-tanulsag}.~szakasz). A más modellcsaládba tartozó bíró az önpreferenciát
 csökkenti~\cite{panickssery2024selfpref}. Az oktatói értékelés részben megerősíti ezeket az eredményeket: a
-felhasználnám ítéletben a bíró annyira egyezik az oktatói többséggel ($\kappa=0{,}46$), mint két oktató
-egymással ($0{,}45$), a rubrikapontokban viszont gyengébben, és szisztematikusan engedékenyebb
-(\ref{sec:oktatoi-eredmeny}.~szakasz).
+felhasználnám ítéletben a bíró jobban egyezik az oktatói többséggel ($\kappa=0{,}48$), mint két oktató
+egymással ($0{,}33$), a helyességen egyetlen oktatóval annyira, mint két oktató egymással ($\alpha$: $0{,}45$
+és $0{,}44$), az érthetőségben és a szintillesztésben viszont gyengébben, és szisztematikusan
+engedékenyebb (\ref{sec:oktatoi-eredmeny}.~szakasz).
 
 % ---------------------------------------------------------------------
 \section{Mikor éri meg a módszer?}
@@ -168,8 +172,10 @@ A szintenkénti számokat \az{\ref{tab:dontes}}.~táblázat adja.
 \label{sec:dontes}
 % ---------------------------------------------------------------------
 
-\Az{\ref{tab:dontes}}.~táblázat GPU-szintenként a legjobb minőségű, a leggyorsabb és a legrobusztusabb
-(a leggyengébb dokumentumon is legjobb) konfigurációt, valamint a mérésekből következő ajánlást mutatja.
+A gyakorlatban az oktató a rendelkezésre álló kártyához választ konfigurációt, ezért az ajánlást
+GPU-szintenként adjuk meg. \Az{\ref{tab:dontes}}.~táblázat szintenként a legjobb minőségű, a leggyorsabb és a
+legrobusztusabb (a leggyengébb dokumentumon is legjobb) konfigurációt, valamint a mérésekből következő
+ajánlást mutatja.
 
 \begin{table}[htbp]
 \centering
@@ -207,7 +213,9 @@ ha forrás és terv nem kell, \arm{E5c} \\
 \end{table}
 
 A 8\,GB-os szinten a tervezett és ellenőrzött folyamat egyszerre a legjobb és a legrobusztusabb; a
-12\,GB-os szinten a győztesek minősége a konfidenciaintervallumokon belül azonos.
+12\,GB-os szinten a győztesek minősége a konfidenciaintervallumokon belül azonos. Ott ezért nem a minőség,
+hanem az dönt, hogy az oktatónak szüksége van-e a kérdésenkénti forrásra és a vizsgatervre: ha igen, a
+tervezett folyamat, ha nem, a gyorsabb, rögzített darabolású naiv RAG (\arm{E5c}) ajánlott.
 
 \paragraph{A komponensekről.} A mérések alapján az egyes építőelemek mérlege a következő:
 \begin{itemize}[leftmargin=*,itemsep=1pt,topsep=2pt]
@@ -255,9 +263,10 @@ zaj is van. A vizsgálatok közötti összevetés minden esetben azonos dokument
 dokumentumon történt. Az \arm{E2x} a tervezettől eltérő konfigurációt mért (csak a szabályok futottak).
 \paragraph{Konstrukciós.} A formai megfelelés vizsgaszintű, ezért minden komponenst külön is közlünk. A
 tartalmi mutatók egyetlen bíróra épülnek, amely csak a kérdés saját forrását látja, ítéletei forrásfüggően
-hiányoznak (\ref{sec:fo-meres}.~szakasz), és az oktatókkal csak sorrendben egyezik, abszolút szintben nem
-(\ref{sec:oktatoi-eredmeny}.~szakasz). Az oktatói referencia is korlátos (60 kérdés és öt oktató), ráadásul a
-helyességen kívül az oktatók egymás közötti egyezése is csak közepes vagy gyenge.
+hiányoznak (\ref{sec:fo-meres}.~szakasz), és az oktatókkal sorrendben és a helyességen egyezik, a többi
+szempont abszolút szintjében nem (\ref{sec:oktatoi-eredmeny}.~szakasz). Az oktatói referencia is korlátos
+(60 kérdés, kilenc oktató, kérdésenként 6--9 értékelés), ráadásul az oktatók egymás közötti egyezése is csak
+közepes vagy gyenge.
 \paragraph{Külső.} A 30 dokumentumból 24 magyar Wikipédia-cikk, az angol részhalmaz három dokumentum; a
 szervermodell csak a hat dokumentumon futott; csak feleletválasztós kérdéseket értékeltünk; a nyílt
 dokumentumok a tanítóadatban is szerepelhettek~\cite{sainz2023contamination}. A futási időt ugyanazon a GPU-n
@@ -270,12 +279,24 @@ ellenőrzés hatására a Gemmánál) nem; a hat dokumentumos vizsgálat követk
 % ---------------------------------------------------------------------
 
 Az ajánlott konfigurációk fogyasztói GPU-n, helyben futnak, így a tananyag nem kerül külső szolgáltatóhoz
-(\ref{sec:zero}.~szakasz). A módszer kérdést generál, és nem értékeli a hallgatókat; minden kérdés oktatói
-jóváhagyást igényel, amit a kérdésenkénti forráshivatkozás ellenőrizhetővé tesz -- ez megfelel az emberi
-felügyelet követelményének (\ref{sec:irod-jog}.~szakasz)~\cite{aiact2024}.
+(\ref{sec:zero}.~szakasz). A mesterséges intelligencia oktatási használata érzékeny kérdés, ezért fontos
+rögzíteni, mit \emph{nem} tesz a módszer: a nyelvi modell az oktató nélkül semmilyen döntést nem hoz, és
+semmi nem jut el a hallgatókhoz. A folyamatot az oktató indítja a saját tananyagával, ő adja meg a kérdések
+számát, típusát és nehézségét, az eredmény pedig nem kész vizsga, hanem vázlat
+(\ref{sec:felugyelet}.~szakasz). A vázlat minden kérdését a kulcsot igazoló forrásrészlet mellett látja,
+szerkesztheti, cserélheti vagy törölheti, és a vizsga csak az ő kifejezett jóváhagyásával használható. A
+módszer nem értékeli és nem pontozza a hallgatókat, hallgatói adatot nem kezel, és a tananyagot a vizsga
+elkészülte után törli. Az ellenőrző lánc jelzései sem döntések: az ellenőrzésen át nem jutott kérdés
+megjelölve kerül az oktató elé, az átjutott kérdés pedig ugyanúgy átnézést igényel, mert az automatikus
+jelzésekben való túlzott bizalom (\emph{automatizálási torzítás}~\cite{parasuraman2010complacency}) éppen az
+emberi felügyeletet gyengítené. Ezt a mérések is indokolják: az oktatói értékelésben a 60 kérdésből 19-et az
+oktatók többsége nem tartott helyesnek, és ezek több mint felét a független bíró alátámasztottnak ítélte
+(\ref{sec:oktatoi-eredmeny}.~szakasz). A felelősség tehát végig az oktatónál marad, a kérdésenkénti
+forráshivatkozás pedig az ő ellenőrzését gyorsítja -- ez megfelel az MI-rendelet emberi felügyeletre vonatkozó
+követelményének (\ref{sec:irod-jog}.~szakasz)~\cite{aiact2024}.
 
 \paragraph{Tanulság.} A vizsgaterv minden vizsgált modellnél javított a szemantikus darabolású naiv RAG-hoz
 képest, az ellenőrző lánc haszna és a teljes dokumentumos prompt versenyképessége viszont a modelltől függ.
 Erős modellnél a módszer értéke az ellenőrizhetőség és a kontroll, nem az átlagos minőség. Az oktatók a
 modellek és a konfigurációk sorrendjét megerősítették, de a bírónál szigorúbbak: a Gemma 3 12B kérdéseinek
-72--78\,\%-át használnák fel, a PULI-LlumiX 8B-éinek 17--20\,\%-át.
+72--77\,\%-át használnák fel, a PULI-LlumiX 8B-éinek 27--29\,\%-át.

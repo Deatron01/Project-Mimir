@@ -4,7 +4,10 @@
 % =====================================================================
 
 Ez a fejezet a problémát, a kutatás célját és a javasolt megközelítést, a kutatási kérdéseket, a
-hipotéziseket és a hozzájárulásokat mutatja be.
+hipotéziseket és a hozzájárulásokat mutatja be. Előbb azt írjuk le, hogyan készülnek ma nyelvi modellel
+vizsgakérdések, és ennek a gyakorlatnak milyen gyengeségei vannak; ezekből vezetjük le a kutatás célját, a
+megválaszolandó kérdéseket és az előzetesen rögzített, mérhető hipotéziseket. A fejezetet a dolgozat
+hozzájárulásainak és felépítésének áttekintése zárja.
 
 \section{Motiváció}
 
@@ -44,7 +47,9 @@ kártyán (GPU) futó kis modell is megbízható vizsgát állíthat elő.
 
 \section{A kutatás célja és megközelítése}
 
-A dolgozat ezt a gondolatot vizsgálja. Javaslunk egy lépésekre bontott generálási módszert (\Mimir{}:
+A dolgozat az előző szakasz végén megfogalmazott kiinduló gondolatot vizsgálja, vagyis azt, hogy a
+feladat rövid, egyenként ellenőrizhető lépésekre bontásával egy fogyasztói GPU-n futó kis modell is
+megbízható vizsgát állíthat-e elő. Javaslunk egy lépésekre bontott generálási módszert (\Mimir{}:
 vizsgaterv, kérdéshelyenkénti keresés, forráshoz kötött generálás és ellenőrző lánc), amelyet kutatási
 prototípusként, egy saját, nyílt kiértékelő keretrendszerben valósítottunk meg. A keretrendszerben a módszer
 minden lépése külön be- és kikapcsolható, így a lépések hatása egyenként mérhető, és összevethető két
@@ -72,8 +77,10 @@ hibrid keresés, darabolás), és mennyibe kerülnek futási időben és modellh
 szerveren futó modell teljesítményét, és hogyan függ az eredmény a választott helyi modelltől?
 \end{description}
 
-A hipotéziseket \az{\ref{sec:hipotezis-ertekeles}}.~szakasz értékeli; a konfigurációk (\arm{E0}, \arm{E1},
-\dots) a kísérlet egy-egy beállítását jelölik (\ref{sec:karok}.~szakasz).
+A kutatási kérdésekhez az alábbi öt hipotézist a mérések előtt rögzítettük, és mindegyikhez megadtuk,
+melyik két konfiguráció összevetése dönti el. A konfigurációk (\arm{E0}, \arm{E1}, \dots) a kísérlet egy-egy
+beállítását jelölik (\ref{sec:karok}.~szakasz); a hipotéziseket \az{\ref{sec:hipotezis-ertekeles}}.~szakasz
+értékeli.
 
 \begin{hipotezis}[Tervezés]\label{h:terv}
 Azonos generátormodell mellett a vizsgaterv (\arm{E1}) a naiv visszakereséses alapvonalhoz (\arm{E0}:

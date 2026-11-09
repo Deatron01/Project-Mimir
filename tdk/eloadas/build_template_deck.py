@@ -339,7 +339,7 @@ measure = [
     ('Minőségi index (Q, 0–1):', 'négy arány átlaga – hibátlan formájú-e a vizsga (F), igazolja-e a forrás a '
                                  'helyes választ (G), eltalálja-e a bíró a választ a kulcs ismerete nélkül (A), és '
                                  'valóban rosszak-e a rossz válaszok (V).'),
-    ('Bíró:', 'egy független, más modellcsaládba tartozó nagy nyelvi modell pontozza a kérdéseket; öt oktató '
+    ('Bíró:', 'egy független, más modellcsaládba tartozó nagy nyelvi modell pontozza a kérdéseket; kilenc oktató '
               'vakon ellenőrizte.'),
     ('Statisztika:', 'a konfigurációkat dokumentumonként, párosan vetjük össze (Wilcoxon-próba). Sok összevetésnél '
                      'a véletlen is adhat „szignifikáns” eredményt, ezért a p-értékeket Holm-korrekcióval '
@@ -362,7 +362,7 @@ notes(s, '2. ELŐADÓ (kb. 1,5 perc). Saját, nyílt kiértékelő keretrendszer
          'mint 11 100 pontozott kérdés. Hogyan mérünk: a minőségi index négy arány átlaga – formailag hibátlan-e a '
          'vizsga, a forrás igazolja-e a helyes választ, kitalálható-e a helyes válasz a kulcs nélkül, és valóban '
          'rosszak-e a rossz válaszok. A pontozást egy független, más modellcsaládba tartozó nyelvi modell, a bíró '
-         'végzi; ezt öt oktató vak értékelésével ellenőriztük. A konfigurációkat dokumentumonként, párosan '
+         'végzi; ezt kilenc oktató vak értékelésével ellenőriztük. A konfigurációkat dokumentumonként, párosan '
          'hasonlítjuk össze; mivel sok összevetést végzünk, a p-értékeket Holm-korrekcióval szigorítjuk, hogy a '
          'véletlen ne tűnjön hatásnak. Az egyezést κ-val és α-val mérjük: 0 a véletlen, 1 a teljes egyezés. Öt '
          'hipotézist vizsgáltunk.')
@@ -460,25 +460,26 @@ notes(s, '3. ELŐADÓ (kb. 1,5 perc). Ugyanazon a hat dokumentumon a sorrend min
 # ======================================================================== 10b. eredmények V – oktatói értékelés
 s = new_slide('Főbb kutatási eredmények V.: a bíró és az oktatók', 3)
 bar_chart(s, X0, 1.4, 6.0, 5.45, ['Gemma 3 12B', 'Qwen2.5-7B', 'PULI-LlumiX 8B'],
-          [('Oktatók (5 fő)', [4.22, 3.94, 2.55]), ('Bíró (gpt-oss-120b)', [4.61, 4.44, 3.78])],
+          [('Oktatók (9 fő)', [4.30, 4.02, 2.88]), ('Bíró (gpt-oss-120b)', [4.61, 4.44, 3.78])],
           [NAVY, LGRAY], 'Átlagpontszám (1–5), 60 vakon értékelt kérdés', vmax=500, unit=100)
-box(s, 9.55, 1.5, 3.3, 0.5, [[('5 oktató · 60 kérdés · vak értékelés', {'font': HEAD, 'size': 15})]], margin=0)
-for i, (n, d) in enumerate([('ρ = 0,77', 'a hat konfiguráció sorrendje egyezik a bíró és az oktatók szerint'),
-                            ('α = 0,62', 'bíró–oktatók egyezése a helyességen (küszöb: 0,667)'),
-                            ('70 % vs. 45 %', 'felhasználható kérdés a bíró, illetve az oktatói többség szerint')]):
+box(s, 9.55, 1.5, 3.3, 0.5, [[('9 oktató · 60 kérdés · vak értékelés', {'font': HEAD, 'size': 15})]], margin=0)
+for i, (n, d) in enumerate([('ρ = 0,71', 'a hat konfiguráció sorrendje egyezik a bíró és az oktatók szerint'),
+                            ('α = 0,68', 'bíró–oktatói medián egyezése a helyességen (küszöb: 0,667; az oktatók egymás közt 0,47)'),
+                            ('70 % vs. 55 %', 'felhasználható kérdés a bíró, illetve az oktatói többség szerint')]):
     box(s, 9.55, 2.1 + i * 1.3, 3.3, 0.55, [[(n, {'font': HEAD, 'size': 24, 'color': ORANGE if i else BLUE})]], margin=0)
     box(s, 9.55, 2.65 + i * 1.3, 3.3, 0.65, [[(d, {'size': 12, 'color': GRAY})]], margin=0)
 box(s, 9.55, 6.0, 3.3, 0.8, [[('A bíró rangsorolásra jó, abszolút szintre engedékeny – leginkább a gyenge modellnél.',
                               {'size': 12})]], fill=TINT, shape=MSO_SHAPE.ROUNDED_RECTANGLE, margin=0.12,
     anchor=MSO_ANCHOR.MIDDLE)
 source(s)
-notes(s, '3. ELŐADÓ (kb. 1 perc). A bírót öt oktató vak értékelésével ellenőriztük: hat konfigurációból 60 kérdést '
-         'pontoztak ugyanazzal a rubrikával. A sorrend egyezik: az oktatók szerint is a Gemma a legjobb és a PULI a '
-         'leggyengébb, a hat konfiguráció rangsora ρ = 0,77-tel egyezik. Az abszolút pontszámok viszont nem: a bíró '
-         'minden szempontban engedékenyebb, a helyességen α = 0,62, a küszöb 0,667 alatt; a kérdések 70 %-át '
-         'használná fel, az oktatók 45 %-át. A legnagyobb a különbség a PULI-nál, több mint egy pont. Ezért a bíró '
-         'számait összevetésre használjuk, abszolút minőségként felső becslésnek tekintjük. Az oktatók egymás közt '
-         'is csak a helyességen egyeztek erősen (α = 0,69).')
+notes(s, '3. ELŐADÓ (kb. 1 perc). A bírót kilenc oktató vak értékelésével ellenőriztük: hat konfigurációból 60 '
+         'kérdést pontoztak ugyanazzal a rubrikával. A sorrend egyezik: az oktatók szerint is a Gemma a legjobb és a '
+         'PULI a leggyengébb, a hat konfiguráció rangsora ρ = 0,71-gyel egyezik. A helyességen a bíró és az oktatói '
+         'medián egyezése α = 0,68, ez éppen eléri a 0,667-es küszöböt, de a bizonytalansági sáv széles; a többi '
+         'szempontban az egyezés gyenge. Fontos, hogy az oktatók egymás közt is csak közepesen egyeztek (helyességen '
+         'α = 0,47): a bíró egyetlen oktatóval annyira egyezik, mint két oktató egymással. A bíró viszont minden '
+         'szempontban engedékenyebb: a kérdések 70 %-át használná fel, az oktatók 55 %-át, és a PULI-nál közel egy '
+         'ponttal többet ad. Ezért a bíró számait összevetésre használjuk, abszolút minőségként felső becslésnek tekintjük.')
 
 # ======================================================================== 11. hipotézisvizsgálat
 s = new_slide('A hipotézisvizsgálat eredményei', 3)
@@ -495,9 +496,9 @@ hyp = [('Hipotézis', 'Eredmény', 'Mit találtunk?'),
        ('H4 – helyi vs. szerver', 'Igazolást nyert',
         'A 8 GB-os kártyán futó Qwen a módszerrel elérte a szervermodell egyszerű változatait (Q 0,96 vs. 0,95); '
         'a gyenge PULI-val nem.'),
-       ('H5 – bíró vs. oktatók', 'Nem igazolódott',
-        'A bíró ugyanúgy rangsorol, mint az oktatók (ρ = 0,77), de engedékenyebb: a helyességen α = 0,62, az '
-        'elvárt 0,667 alatt.')]
+       ('H5 – bíró vs. oktatók', 'Részben igazolódott',
+        'A bíró ugyanúgy rangsorol, mint az oktatók (ρ = 0,71), és a helyességen eléri a küszöböt (α = 0,68 ≥ '
+        '0,667), a többi szempontban nem; minden szempontban engedékenyebb.')]
 tbl = s.shapes.add_table(len(hyp), 3, Inches(X0), Inches(1.5), Inches(X1 - X0), Inches(5.2)).table
 for j, wdt in enumerate([2.2, 1.75, 5.6]):
     tbl.columns[j].width = Inches(wdt)
@@ -518,8 +519,9 @@ notes(s, '3. ELŐADÓ (kb. 1 perc). A H1 igazolást nyert: a vizsgaterv mindkét
          'több forrással igazolt kérdés, és az ellenőrző ítélete csak véletlenszerűen egyezik a bíróéval. A H3 sem: '
          'a teljes dokumentumot kapó modell nem tömöríti a kérdéseit a dokumentum egy részére. A H4 leíró szinten '
          'igen: a Qwen a módszerrel eléri a szervermodell teljes dokumentumos promptjának és naiv RAG-jának '
-         'szintjét, de ez a modellen múlik, a PULI-val nem teljesül. A H5 nem: a bíró ugyanúgy rangsorol, mint az '
-         'oktatók, de magasabb pontot ad, így az egyezése az elvárt szint alatt marad.')
+         'szintjét, de ez a modellen múlik, a PULI-val nem teljesül. A H5 részben: a bíró ugyanúgy rangsorol, mint az '
+         'oktatók, és a helyességen eléri az elvárt egyezést, a többi szempontban viszont magasabb pontot ad, így ott '
+         'az egyezése az elvárt szint alatt marad.')
 
 # ======================================================================== 12. új eredmények
 s = new_slide('A tudományos munka új és újszerű eredményei', 4)

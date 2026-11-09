@@ -105,7 +105,7 @@ $^\ast$Az \arm{E2x}-ben a második modell ellenőrző hívásai hibával tértek
 \end{minipage}
 \end{table}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/f1_rangsor}
 \caption[A minőségi index konfigurációnként és generátormodellenként.]{A minőségi index konfigurációnként
@@ -142,8 +142,10 @@ annál nagyobb a módszer haszna.}
 \label{sec:fo-komponensek}
 % =====================================================================
 
-\Az{\ref{tab:szignifikancia}}.~táblázat az előre rögzített hat páros összehasonlítást mutatja a fő vizsgálat két
-modelljére; a Qwen2.5-7B (hat dokumentum) értékeit a szövegben közöljük.
+Egy komponens hatását úgy mérjük, hogy két, csak ebben a komponensben eltérő konfigurációt ugyanazokon a
+dokumentumokon, párosan vetünk össze (\ref{sec:karok}.~szakasz). \Az{\ref{tab:szignifikancia}}.~táblázat
+az előre rögzített hat páros összehasonlítást mutatja a fő vizsgálat két modelljére; a Qwen2.5-7B (hat
+dokumentum) értékeit a szövegben közöljük.
 
 \begin{table}[htbp]
 \centering
@@ -420,16 +422,16 @@ becslés (példa: \ref{app-er-biro}.~függelékszakasz).
 \label{sec:oktatoi-eredmeny}
 % =====================================================================
 
-Öt oktató értékelte vakon ugyanazt a 72 kérdést (12 kalibrációs és 60 értékelendő;
+Kilenc oktató értékelte vakon ugyanazt a 72 kérdést (12 kalibrációs és 60 értékelendő;
 \ref{sec:oktatoi}.~szakasz): a hat közös dokumentumon (3 magyar, 3 angol) a három generátor teljes
-dokumentumos (\arm{B-doc-L}) és teljes folyamatú (\arm{E2}) konfigurációjából 10--10 kérdést. Négy oktató
-mind a 72 kérdést kitöltötte, egy 34-et, így a 60 értékelendő kérdésre 269 értékelés jutott (kérdésenként
-4--5). Az elemzés a 60 értékelendő kérdésen történt; a kalibrációs kérdésekkel együtt az $\alpha$-értékek
-legfeljebb $0{,}02$-es értékkel térnek el.
+dokumentumos (\arm{B-doc-L}) és teljes folyamatú (\arm{E2}) konfigurációjából 10--10 kérdést. Hat oktató
+71--72 kérdést töltött ki, egy csak a 60 értékelendőt, kettő pedig 34--35-öt, így a 60 értékelendő kérdésre
+477 értékelés jutott (kérdésenként 6--9). Az elemzés a 60 értékelendő kérdésen történt; a kalibrációs
+kérdésekkel együtt az $\alpha$-értékek legfeljebb $0{,}03$-mal térnek el.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
-\caption{Az oktatók egymás közötti és a bíróval való egyezése (60 kérdés, 5 oktató).}
+\caption{Az oktatók egymás közötti és a bíróval való egyezése (60 kérdés, 9 oktató).}
 \label{tab:oktatoi}
 \small
 \setlength{\tabcolsep}{3.8pt}
@@ -439,13 +441,13 @@ legfeljebb $0{,}02$-es értékkel térnek el.
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(l){6-7}
 Szempont & $\alpha_{\mathrm{okt}}$ & 95\,\% KI & $\rho$ & $\alpha_{\mathrm{b}}$ / $\kappa$ & Oktatói átlag & Bírói átlag \\
 \midrule
-Helyesség       & \cellcolor[HTML]{E6F4EA}$\mathbf{0{,}69}$ & $0{,}58$--$0{,}79$ & $\mathbf{0{,}65}$ & $\mathbf{0{,}62}$ & $3{,}71$ & $4{,}10$ \\
-Érthetőség      & $0{,}59$ & $0{,}44$--$0{,}70$ & $0{,}44$ & $0{,}16$ & $3{,}69$ & $4{,}65$ \\
-Disztraktorok   & $0{,}47$ & $0{,}33$--$0{,}59$ & $0{,}41$ & $0{,}37$ & $3{,}29$ & $3{,}90$ \\
-Szintillesztés  & $0{,}39$ & $0{,}25$--$0{,}52$ & $0{,}28$ & $0{,}11$ & $3{,}58$ & $4{,}45$ \\
+Helyesség       & $\mathbf{0{,}47}$ & $0{,}36$--$0{,}56$ & $\mathbf{0{,}62}$ & \cellcolor[HTML]{E6F4EA}$\mathbf{0{,}68}$ & $3{,}86$ & $4{,}10$ \\
+Érthetőség      & $0{,}40$ & $0{,}28$--$0{,}50$ & $0{,}50$ & $0{,}33$ & $3{,}80$ & $4{,}65$ \\
+Disztraktorok   & $0{,}31$ & $0{,}19$--$0{,}41$ & $0{,}38$ & $0{,}38$ & $3{,}52$ & $3{,}90$ \\
+Szintillesztés  & $0{,}27$ & $0{,}17$--$0{,}36$ & $0{,}31$ & $0{,}16$ & $3{,}74$ & $4{,}45$ \\
 \midrule
-\emph{A négy szempont átlaga} & -- & --        & $0{,}63$ & --       & $3{,}57$ & $4{,}28$ \\
-Felhasználnám   & $0{,}45$ & $0{,}31$--$0{,}58$ & --       & $\kappa=0{,}46$ & 45\,\% & 70\,\% \\
+\emph{A négy szempont átlaga} & -- & --        & $0{,}60$ & --       & $3{,}73$ & $4{,}28$ \\
+Felhasználnám   & $0{,}34$ & $0{,}23$--$0{,}44$ & --       & $\kappa=0{,}48$ & 55\,\% & 70\,\% \\
 \bottomrule
 \end{tabular}
 
@@ -454,7 +456,7 @@ Felhasználnám   & $0{,}45$ & $0{,}31$--$0{,}58$ & --       & $\kappa=0{,}46$ &
 \footnotesize\noindent\textbf{Jelmagyarázat:}
 $\alpha_{\mathrm{okt}}$: az oktatók egymás közötti Krippendorff-$\alpha$ együtthatója (az 1--5 skálás szempontoknál ordinális, a „Felhasználnám” sorban nominális);
 \textbf{95\,\% KI}: 95\,\%-os bootstrap-konfidenciaintervallum;
-$\rho$: a bíró pontszámának és az oktatói átlagnak a Spearman-korrelációja (minden szempontnál $p < 0{,}03$);
+$\rho$: a bíró pontszámának és az oktatói átlagnak a Spearman-korrelációja (minden szempontnál $p < 0{,}02$);
 $\alpha_{\mathrm{b}}$: a bíró és a kerekített oktatói medián Krippendorff-$\alpha$-ja;
 $\kappa$: a „Felhasználnám” sorban a bíró és az oktatói többség Cohen-$\kappa$-ja.
 Az átlagok az 1--5 skálán értendők, a „Felhasználnám” sorban pedig az „igen” válaszok arányát (oktatóknál a többségi ítéletet) jelzik.
@@ -462,27 +464,33 @@ A \setlength{\fboxsep}{1.5pt}\colorbox[HTML]{E6F4EA}{\textbf{zöld kiemelés}} a
 \end{minipage}
 \end{table}
 
-\paragraph{Az oktatók egymás között.} Krippendorff határát ($\alpha\ge0{,}667$) csak a helyesség éri el
-($0{,}69$; \ref{tab:oktatoi}.~táblázat); az érthetőség és a disztraktorok egyezése közepes, a
-szintillesztésé gyenge. A helyesség tehát a forrásrészlet alapján egyértelműen eldönthető, a többi
-szempont azonban az oktatók számára is részben szubjektív; a legkevésbé egyértelműnek a kért nehézség és a Bloom-szint megfeleltetése
-bizonyult. Az egyezés értékelőpáronként erősen szór (helyességen $0{,}27$--$0{,}95$): három
-oktató egymással nagyon erősen egyezik ($0{,}88$--$0{,}95$), a másik kettő velük és egymással is gyengébben
-($0{,}27$--$0{,}64$). Az oktatók szigora is eltér: a 60 kérdés 25--62\,\%-át használnák fel.
+\paragraph{Az oktatók egymás között.} Krippendorff határát ($\alpha\ge0{,}667$) az oktatók egymás közötti
+egyezése egyik szempontban sem éri el (\ref{tab:oktatoi}.~táblázat): a helyességen és az érthetőségen
+közepes ($0{,}47$ és $0{,}40$), a disztraktorokon és a szintillesztésen gyenge ($0{,}31$ és $0{,}27$). A
+helyesség tehát a forrásrészlet mellett is csak részben dönthető el egyértelműen, a többi szempont pedig az
+oktatók számára is nagyrészt szubjektív; a legkevésbé egyértelműnek a kért nehézség és a Bloom-szint
+megfeleltetése bizonyult. Az egyezés értékelőpáronként erősen szór (helyességen $0{,}11$--$0{,}95$): négy
+oktató egymással erősen egyezik ($0{,}78$--$0{,}95$), a többiek velük és egymással gyengébben
+($0{,}11$--$0{,}73$). Az oktatók szigora is eltér: a 60 kérdés 25--66\,\%-át használnák fel. Egy, csak
+félig kitöltött lap minden kérdésre a legmagasabb szintillesztési pontot adta; nélküle az $\alpha$-értékek
+legfeljebb $0{,}07$-tel magasabbak (helyességen $0{,}51$), a következtetések nem változnak.
 
 \paragraph{A bíró és az oktatók.} A bíró a kérdéseket az oktatókhoz hasonló \emph{sorrendbe} állítja
-(helyességen $\rho=0{,}65$, a négy szempont átlagán $0{,}63$, $p<0{,}001$), de a pontszámai abszolút
-értékben nem egyeznek: a bíró és az oktatói medián $\alpha$-ja a helyességen $0{,}62$ (95\,\% KI:
-$0{,}38$--$0{,}80$), a többi szempontnál $0{,}11$--$0{,}37$. A bíró egyetlen oktatóval átlagosan
-gyengébben egyezik, mint két oktató egymással (helyességen $0{,}53$ és $0{,}64$, érthetőségen $0{,}22$ és
-$0{,}54$). Az eltérés oka főként a \emph{bíró engedékenysége}: minden szempontban magasabbra pontoz
-($+0{,}4$--$1{,}0$ pont), és a hiba egyirányú. A bíró a kérdések 83\,\%-át ítélte alátámasztottnak, az
-oktatók többsége 67\,\%-ukat helyesnek ($\ge4$; $\kappa=0{,}49$); az oktatók szerint nem helyes 20 kérdésből a
-bíró 11-et alátámasztottnak tartott, fordítva csak egy eset fordult elő. A felhasználnám ítéletnél a bíró
-és az oktatói többség $\kappa$-ja ($0{,}46$) megegyezik két oktató átlagos $\kappa$-jával ($0{,}45$), de a bíró a
-kérdések 70\,\%-át használná fel, az oktatók 45\,\%-ukat: 16 kérdést csak a bíró, egyet pedig csak az oktatók fogadnának el.
-A két nyelven a bíró hasonlóan teljesít (a négy szempont átlagán $\rho=0{,}62$ a magyar és $0{,}59$ az angol
-kérdéseknél), az oktatók a magyar kérdéseket gyengébbnek látták ($3{,}32$ és $3{,}80$).
+(helyességen $\rho=0{,}62$, a négy szempont átlagán $0{,}60$, $p<0{,}001$). A helyességen a bíró és a
+kerekített oktatói medián $\alpha$-ja $0{,}68$ (95\,\% KI: $0{,}46$--$0{,}84$): a pontbecslés eléri a
+megbízhatósági határt, az intervallum azonban ennél jóval alacsonyabb értékeket is tartalmaz; a többi
+szempontnál az egyezés $0{,}16$--$0{,}38$. A bíró egyetlen oktatóval a helyességen és a disztraktorokon
+átlagosan ugyanannyira egyezik, mint két oktató egymással ($0{,}45$ és $0{,}44$, illetve $0{,}19$ és
+$0{,}22$), az érthetőségen és a szintillesztésen viszont gyengébben ($0{,}23$ és $0{,}35$, illetve $0{,}07$ és
+$0{,}13$). Az eltérés oka főként a \emph{bíró engedékenysége}: minden szempontban magasabbra pontoz
+($+0{,}2$--$0{,}9$ pont), és a hiba egyirányú. A bíró a kérdések 83\,\%-át ítélte alátámasztottnak, az
+oktatók többsége 68\,\%-ukat helyesnek ($\ge4$; $\kappa=0{,}52$); az oktatók szerint nem helyes 19 kérdésből a
+bíró 10-et alátámasztottnak tartott, fordítva csak egy eset fordult elő. A felhasználnám ítéletnél a bíró az
+oktatói többséggel jobban egyezik ($\kappa=0{,}48$), mint két oktató átlagosan egymással ($0{,}33$) -- igaz, a
+többségi ítélet kevésbé zajos, mint egyetlen oktatóé --, de a bíró a kérdések 70\,\%-át használná fel, az
+oktatók 55\,\%-ukat: 12 kérdést csak a bíró, hármat pedig csak az oktatók fogadnának el. A két nyelven a bíró
+hasonlóan teljesít (a négy szempont átlagán $\rho=0{,}66$ a magyar és $0{,}53$ az angol kérdéseknél), az
+oktatók a magyar kérdéseket gyengébbnek látták ($3{,}58$ és $3{,}88$).
 
 \begin{table}[htbp]
 \centering
@@ -496,14 +504,14 @@ kérdéseknél), az oktatók a magyar kérdéseket gyengébbnek látták ($3{,}3
 \cmidrule(lr){3-5}\cmidrule(l){6-7}
 Generátor & Konfiguráció & Átlag & 95\,\% KI & Felh. & Átlag & Felh. \\
 \midrule
-Gemma 3 12B      & \arm{E2}      & \cellcolor[HTML]{E6F4EA}$\mathbf{4{,}26}$ & $3{,}79$--$4{,}63$ & \cellcolor[HTML]{E6F4EA}\textbf{78\,\%} & $4{,}68$ & \cellcolor[HTML]{E6F4EA}\textbf{90\,\%} \\
-                 & \arm{B-doc-L} & $4{,}18$ & $3{,}77$--$4{,}53$ & 72\,\% & $4{,}55$ & 80\,\% \\
+Gemma 3 12B      & \arm{E2}      & \cellcolor[HTML]{E6F4EA}$\mathbf{4{,}30}$ & $3{,}97$--$4{,}56$ & \cellcolor[HTML]{E6F4EA}\textbf{77\,\%} & $\mathbf{4{,}68}$ & \cellcolor[HTML]{E6F4EA}\textbf{90\,\%} \\
+                 & \arm{B-doc-L} & \cellcolor[HTML]{E6F4EA}$\mathbf{4{,}30}$ & $3{,}93$--$4{,}61$ & 72\,\% & $4{,}55$ & 80\,\% \\
 \midrule
-Qwen2.5-7B       & \arm{E2}      & $\mathbf{4{,}07}$ & $3{,}59$--$4{,}51$ & \textbf{63\,\%} & \cellcolor[HTML]{E6F4EA}$\mathbf{4{,}73}$ & \cellcolor[HTML]{E6F4EA}\textbf{90\,\%} \\
-                 & \arm{B-doc-L} & $3{,}82$ & $3{,}38$--$4{,}23$ & 54\,\% & $4{,}15$ & 60\,\% \\
+Qwen2.5-7B       & \arm{E2}      & $\mathbf{4{,}13}$ & $3{,}82$--$4{,}43$ & \textbf{60\,\%} & \cellcolor[HTML]{E6F4EA}$\mathbf{4{,}73}$ & \cellcolor[HTML]{E6F4EA}\textbf{90\,\%} \\
+                 & \arm{B-doc-L} & $3{,}92$ & $3{,}60$--$4{,}22$ & 54\,\% & $4{,}15$ & 60\,\% \\
 \midrule
-PULI-LlumiX 8B   & \arm{E2}      & $\mathbf{2{,}67}$ & $2{,}06$--$3{,}28$ & 17\,\% & $3{,}73$ & 40\,\% \\
-                 & \arm{B-doc-L} & $2{,}43$ & $1{,}85$--$3{,}06$ & \textbf{20\,\%} & $\mathbf{3{,}83}$ & \textbf{60\,\%} \\
+PULI-LlumiX 8B   & \arm{E2}      & $\mathbf{3{,}02}$ & $2{,}50$--$3{,}56$ & \textbf{29\,\%} & $3{,}73$ & 40\,\% \\
+                 & \arm{B-doc-L} & $2{,}73$ & $2{,}18$--$3{,}33$ & 27\,\% & $\mathbf{3{,}83}$ & \textbf{60\,\%} \\
 \bottomrule
 \end{tabular}
 
@@ -514,21 +522,25 @@ PULI-LlumiX 8B   & \arm{E2}      & $\mathbf{2{,}67}$ & $2{,}06$--$3{,}28$ & 17\,
 \textbf{Átlag}: a négy rubrikaszempont átlaga (1--5 skála);
 \textbf{95\,\% KI}: a kérdésekre vett 95\,\%-os bootstrap-konfidenciaintervallum;
 \textbf{Felh.}: a „Felhasználnám” kérdésre adott „igen” válaszok aránya (az oktatóknál a kérdésenkénti arányok átlaga).
-A \textbf{félkövér} értékek generátormodellenként a jobb konfigurációt, a \setlength{\fboxsep}{1.5pt}\colorbox[HTML]{E6F4EA}{\textbf{zöld kiemelés}} a teljes összevetés legjobb eredményét jelöli.
+A \textbf{félkövér} értékek generátormodellenként a jobb konfigurációt (holtversenyben mindkettőt), a \setlength{\fboxsep}{1.5pt}\colorbox[HTML]{E6F4EA}{\textbf{zöld kiemelés}} a teljes összevetés legjobb eredményét jelöli.
 \end{minipage}
 \end{table}
 
 \paragraph{Minőség konfigurációnként.} Az oktatók szerint is a Gemma a legjobb és a PULI messze a
 leggyengébb generátor (\ref{tab:oktatoi-konf}.~táblázat); a hat konfiguráció sorrendje a bíróéval
-$\rho=0{,}77$-tel egyezik. A bíró engedékenysége a gyenge modellnél a legnagyobb: a PULI kérdéseire
-1,1--1,4 ponttal ad többet, mint az oktatók, a Gemmánál 0,4 ponttal. A teljes folyamat (\arm{E2}) az oktatói
-átlagon mindhárom generátornál a teljes dokumentumos prompt fölött van ($+0{,}08$, $+0{,}25$, $+0{,}24$), ami
-iránya szerint megfelel a bírói mérésnek, de konfigurációnként tíz kérdésen egyik különbség sem szignifikáns
-(Mann--Whitney-próba, $p\ge0{,}47$), és a PULI felhasználhatósági aránya \arm{E2}-vel sem nőtt.
+$\rho=0{,}71$-gyel egyezik. A bíró engedékenysége a gyenge modellnél a legnagyobb: a PULI kérdéseire
+0,7--1,1 ponttal ad többet, mint az oktatók, a Gemmánál 0,2--0,4 ponttal. A teljes folyamat (\arm{E2}) az
+oktatói átlagon a Qwennél és a PULI-nál a teljes dokumentumos prompt fölött van ($+0{,}21$ és $+0{,}29$), a
+Gemmánál a kettő azonos ($4{,}30$ és $4{,}30$). Ez iránya szerint megfelel a bírói mérésnek, de
+konfigurációnként tíz kérdésen egyik különbség sem szignifikáns (Mann--Whitney-próba, $p\ge0{,}35$), és a
+PULI felhasználhatósági aránya \arm{E2}-vel is alacsony marad (29\,\%, illetve 27\,\%).
 
 \paragraph{Következmény a mérésre.} A bíró a konfigurációk és a modellek \emph{rangsorolására}
-használható, abszolút minőségi szintként nem: a bírón alapuló arányok (alátámasztottság, felhasználnám)
-felső becslések, és a gyenge modelleknél a legkevésbé pontosak. \Az{\ref{h:meres}}.~hipotézis értékelését
+használható, és a helyességen az oktatói mediánnal elfogadható szinten egyezik; a többi szempontban és
+abszolút minőségi szintként azonban nem megbízható: a bírón alapuló arányok (alátámasztottság,
+felhasználnám) felső becslések, és a gyenge modelleknél a legkevésbé pontosak. A kilenc oktató egymás közti
+közepes egyezése azt is mutatja, hogy egyetlen oktató ítélete sem tökéletes referencia: a bíró
+megbízhatóságát több oktató összevont ítéletéhez érdemes mérni. \Az{\ref{h:meres}}.~hipotézis értékelését
 \az{\ref{sec:hipotezis-ertekeles}}.~szakasz adja.
 
 % =====================================================================
@@ -541,5 +553,5 @@ felső becslések, és a gyenge modelleknél a legkevésbé pontosak. \Az{\ref{h
 \item A \emph{naiv RAG törékenységét} a feladatleírás mint lekérdezés és a rövid szerkezeti darabok okozzák; rögzített darabolással (\arm{E5c}) a Gemma naiv RAG-ja a legjobb és leggyorsabb konfiguráció.
 \item Az \emph{ellenőrző lánc} a gyenge modelleknél ad hozzá, Holm-korrekció után egyiknél sem szignifikánsan; a fogalomgráf és a hibrid keresés nem érte meg a többletköltséget, a tervezett folyamat pedig ugyanazon a kártyán 5--17-szer annyi ideig fut, mint a naiv RAG.
 \item A \emph{hiányzó bírói ítéletek} forrásfüggők, de a fő következtetéseket nem változtatják meg.
-\item Az \emph{oktatói értékelés} a bíró rangsorát megerősíti ($\rho=0{,}77$ a konfigurációk között), pontszámait azonban nem: a bíró engedékenyebb az oktatóknál, leginkább a gyenge modellnél.
+\item Az \emph{oktatói értékelés} (kilenc oktató) a bíró rangsorát megerősíti ($\rho=0{,}71$ a konfigurációk között), és a helyességen a bíró az oktatói mediánnal elfogadhatóan egyezik ($\alpha=0{,}68$), a többi szempont pontszámait azonban nem: a bíró engedékenyebb az oktatóknál, leginkább a gyenge modellnél.
 \end{itemize}

@@ -361,8 +361,10 @@ huBERT-et, a 6,7 milliárd paraméteres GPT-3 típusú modellel pedig a szerzők
 szövegeken folytatott további előtanításával készült~\cite{pulillumix}. A csoport 2025-ben Llama~3.1 és
 Qwen2.5 alapú, magyar utasításadatokon finomhangolt csevegő változatokat (ChatPULI) is leírt, amelyek
 mérésük szerint jobbak a korábbi PULI-modelleknél~\cite{yang2025chatpuli}. Mi az utólagos
-utasítás-hangolás nélküli változatot mértük, így a PULI-ra vonatkozó következtetésünk erre a változatra
-szól (\ref{ch:modellek}.~fejezet).
+utasítás-hangolás nélküli változatot mértük, mert a \Mimir{} fejlesztésének kezdetétől ez volt a rendszer
+alapértelmezett helyi modellje: nyilvános, 4 bitre kvantált (GGUF) változata Ollamával közvetlenül futtatható,
+és elfér egy 8\,GB-os kártyán. A PULI-ra vonatkozó következtetésünk ezért erre a változatra szól, a csevegésre
+hangolt ChatPULI-modellekre nem (\ref{ch:modellek}.~fejezet).
 
 \paragraph{Magyar benchmarkok és kérdés--válasz rendszerek.} A magyar nyelvértési feladatok egységes
 mérésére a HuLU benchmark~\cite{ligetinagy2024hulu} szolgál. A MILQA~\cite{novak2023milqa,novak2023milqahu}
@@ -390,8 +392,10 @@ adatvédelmi szempontból vállalható eszköz kell.
 \label{sec:irod-jog}
 % ---------------------------------------------------------------------
 
-A \prob{P3} jogi hátterét két közvetlenül alkalmazandó uniós rendelet adja; az alábbi áttekintés mérnöki
-olvasat, nem jogi tanácsadás.
+A \prob{P3} jogi hátterét két közvetlenül alkalmazandó uniós rendelet adja: az általános adatvédelmi
+rendelet a tananyagban szereplő személyes adatok kezelését, az MI-rendelet pedig magát a mesterséges
+intelligencián alapuló rendszer oktatási felhasználását szabályozza. Az alábbi áttekintés mérnöki olvasat,
+nem jogi tanácsadás.
 
 \paragraph{Adatvédelem.} Az általános adatvédelmi rendelet (GDPR)~\cite{gdpr2016} 5.~cikke szerint
 személyes adat csak meghatározott célra, a cél eléréséhez szükséges mértékben (\emph{adattakarékosság}) és
@@ -447,7 +451,8 @@ elvár; a tervezési elveket \az{\ref{sec:architektura}}.~szakasz foglalja össz
 csevegő modell egyik problémát sem kezeli; a naiv RAG forráshoz köti a generálást, de a feladatleírásból
 készült lekérdezéssel a dokumentum kis részét látja; az önjavító, a hivatkozó és a gráfalapú módszerek
 egy-egy problémát részben kezelnek, de nagy modellt feltételeznek. A javasolt módszer sorában a helyesség
-mérése csak részben teljesül: a bíró az oktatói értékeléssel csak sorrendben egyezik, és az ellenőrző kérdésenkénti
+mérése csak részben teljesül: a bíró az oktatói értékeléssel sorrendben és a helyességen egyezik, a többi
+szempontban nem, és az ellenőrző kérdésenkénti
 megbízhatósága korlátozottnak bizonyult (\ref{ch:eredmenyek}.~fejezet).
 
 \begin{table}[!htbp]
