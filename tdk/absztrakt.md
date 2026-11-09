@@ -1,6 +1,6 @@
 # Vizsgakérdés-generálás helyben futtatható nyelvi modellekkel
 
-**Szerzők:** Nagy István Bence (BSc III. évfolyam), Hindulák Bálint (BSc III. évfolyam), Szegedi Achilles Károly (BSc I. évfolyam)  
+**Szerzők:** Nagy István Bence (BSc III. évfolyam), Hindulák Bálint (BSc III. évfolyam), Szegedi Achilles Károly (BSc III. évfolyam)  
 **Intézmény:** Óbudai Egyetem, Neumann János Informatikai Kar  
 **Konzulens:** Hartveg Ádám, doktorandusz
 
