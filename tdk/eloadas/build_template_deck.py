@@ -6,6 +6,7 @@ A sablon diáiból másoljuk a bal oldali navigációs sávot és a címdobozt, 
 """
 import copy
 import os
+import re
 
 from pptx import Presentation
 from pptx.chart.data import CategoryChartData
@@ -13,6 +14,7 @@ from pptx.dml.color import RGBColor
 from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION, XL_LABEL_POSITION
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
+from pptx.oxml.ns import qn
 from pptx.util import Inches, Pt, Emu
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -188,10 +190,6 @@ def bar_chart(slide, x, y, w, h, categories, series, colors, title, scale=100, f
     return gf
 
 
-def notes(slide, text):
-    slide.notes_slide.notes_text_frame.text = text
-
-
 def flow_row(slide, y, label, color, steps, fill):
     box(slide, X0, y - 0.45, 9, 0.35, [[(label, {'font': HEAD, 'size': 14, 'color': color})]], margin=0)
     gap = 0.28
@@ -217,8 +215,8 @@ for sh in s1.shapes:
         sh.height = Inches(1.35)
     elif sh.name == 'Téglalap 14':
         tf = sh.text_frame
-        lines = ['[Hallgató 1 neve] · [Neptun kód]', '[Hallgató 2 neve] · [Neptun kód]',
-                 '[Hallgató 3 neve] · [Neptun kód]', '', 'Konzulens: [konzulens neve, beosztása]']
+        lines = ['Nagy István Bence · BSc III. évfolyam', 'Hindulák Bálint · BSc III. évfolyam',
+                 'Szegedi Achilles Károly · BSc III. évfolyam', '', 'Konzulens: Hartveg Ádám, doktorandusz']
         first = tf.paragraphs[0]
         fmt_run = copy.deepcopy(first.runs[0]._r) if first.runs else None
         for p in tf.paragraphs[1:]:
@@ -238,9 +236,6 @@ for sh in list(s1.shapes):                 # white KGK logo of the template: inv
         sh._element.getparent().remove(sh._element)
 box(s1, 1.34, 3.6, 10.5, 0.6, [[('A Mimir tervezésvezérelt, forráshivatkozásos RAG-módszere és kísérleti kiértékelése',
                                   {'size': 18, 'color': BLUE})]], margin=0)
-notes(s1, '1. ELŐADÓ (kb. 30 mp). Köszöntjük a Bizottságot. Bemutatkozás: a három előadó és a konzulens. '
-          'A dolgozat azt vizsgálja, hogyan lehet fogyasztói GPU-n, helyben futó kis nyelvi modellel megbízható '
-          'feleletválasztós vizsgát generálni, és mitől függ az eredmény.')
 
 # ======================================================================== 2. felépítés (sablon 2. dia)
 s2 = T[1]
@@ -249,15 +244,13 @@ for sh in list(s2.shapes):
         sh._element.getparent().remove(sh._element)
     elif sh.name == 'Téglalap 9':
         sh._element.getparent().remove(sh._element)
-who = {'Célkitűzések': '[1. előadó]', 'Elméleti háttér': '[1. előadó]', 'Anyag és módszer': '[1–2. előadó]',
-       'Elemzés és eredmények': '[2–3. előadó]', 'Következtetések, javaslatok': '[3. előadó]'}
+who = {'Célkitűzések': 'Hindulák Bálint', 'Elméleti háttér': 'Hindulák Bálint',
+       'Anyag és módszer': 'Hindulák Bálint, Nagy István Bence', 'Elemzés és eredmények': 'Nagy István Bence, Szegedi Achilles Károly',
+       'Következtetések, javaslatok': 'Szegedi Achilles Károly'}
 for sh in s2.shapes:
     if sh.has_text_frame and sh.text_frame.text.strip() in who:
-        box(s2, 8.1, sh.top / 914400, 3.5, sh.height / 914400,
+        box(s2, 8.1, sh.top / 914400, 4.8, sh.height / 914400,
             [[(who[sh.text_frame.text.strip()], {'size': 15, 'color': GRAY})]], anchor=MSO_ANCHOR.MIDDLE)
-notes(s2, '1. ELŐADÓ (kb. 15 mp). Az előadás a dolgozat szerkezetét követi: célkitűzések és elméleti háttér, '
-          'a módszer, az eredmények, végül a következtetések és javaslatok. Hárman adjuk elő, a jobb oldalon '
-          'látható beosztásban.')
 
 # ======================================================================== 3. problémafelvetés, célkitűzések
 s = new_slide('Problémafelvetés, célkitűzések', 0)
@@ -277,10 +270,6 @@ bullets(s, X0, 4.95, X1 - X0, 2.0, [
     ('RQ1:', 'Jobb-e a lépésekre bontott, forráshoz kötött és ellenőrzött generálás, mint egyetlen prompt?'),
     ('RQ2:', 'Mennyit ér és mennyibe kerül az egyes komponens (terv, ellenőrző, gráf, keresés, darabolás)?'),
     ('RQ3:', 'Mennyire közelíti meg egy 8–12 GB-os kártyán futó, 4 bites modell a nagy szervermodellt?')], size=15)
-notes(s, '1. ELŐADÓ (kb. 1 perc). A kiinduló gyakorlat egyszerű, de négy ponton gyenge: P1 a kulcs helyessége, '
-         'P2 a szerkezet és lefedettség, P3 az adatvédelem, P4 a nagy modell igénye. A P3 és a P4 egymást erősíti: '
-         'helyi futtatással megoldódna az adatvédelem, de a kis modellek éppen az ilyen hosszú, egylépéses '
-         'feladatban gyengék. Három kutatási kérdést tettünk fel (RQ1–RQ3).')
 
 # ======================================================================== 4. elméleti háttér
 s = new_slide('Elméleti háttér rövid bemutatása', 1)
@@ -301,10 +290,6 @@ box(s, 9.65, 1.5, 3.2, 5.3, [
     [('Tudomásunk szerint nincs nyílt rendszer, amely terv, kérdésenkénti forrás és ellenőrzés mellett fogyasztói '
       'GPU-n generál vizsgát, és a magyar nyelvű kiértékelés is feltáratlan.', {'size': 13, 'color': GRAY})]],
     fill=TINT, shape=MSO_SHAPE.ROUNDED_RECTANGLE, margin=0.2)
-notes(s, '1. ELŐADÓ (kb. 1 perc). A szakirodalmat öt területen dolgoztuk fel, 101 forrással, hazai és nemzetközi '
-         'munkák alapján. A legfontosabb tanulságok: a nagy modellek kérdései között is van hibás kulcsú; a RAG '
-         'minőségét a lekérdezés és a darabolás erősen befolyásolja; az önellenőrzés külső információ nélkül keveset '
-         'ér. A kutatási rés: nincs olyan nyílt rendszer, amely mindezt fogyasztói GPU-n, ellenőrizhetően végezné.')
 
 # ======================================================================== 5. anyag és módszer I – a módszer
 s = new_slide('Anyag és módszer: a javasolt generálási módszer', 2)
@@ -321,12 +306,6 @@ box(s, X0, 5.3, X1 - X0, 1.4, [
     [('A szerkezetről determinisztikus program dönt; a modell egyszerre egy rövid kérdést ír a saját kontextusából.',
       {'size': 14, 'color': GRAY, 'italic': True})]],
     line=LGRAY, shape=MSO_SHAPE.ROUNDED_RECTANGLE, margin=0.18, anchor=MSO_ANCHOR.MIDDLE)
-notes(s, '1. ELŐADÓ (kb. 1,5 perc). Fent az alapvonal: a lekérdezés maga a feladatleírás, a három legközelebbi '
-         'darabból egyetlen hívás írja a vizsgát. Lent a javasolt módszer: a vizsgaterv rögzíti, melyik fogalomból, '
-         'milyen típusú és Bloom-szintű kérdés készül; minden kérdéshelyre külön keresünk a tervezett fogalommal; a '
-         'modell egy kérdést ír, és megnevezi a forrásdarabot; az ellenőrző lánc előbb olcsó szabályokat, majd nyelvi '
-         'modellt futtat, hiba esetén visszajelzéssel újrapróbál. A végső döntés az oktatóé. '
-         'ÁTADÁS a 2. előadónak: a kísérleti tervről és az eredményekről ő beszél.')
 
 # ======================================================================== 6. anyag és módszer II – kísérleti terv
 s = new_slide('Anyag és módszer II.: kísérleti terv és hipotézisek', 2)
@@ -357,15 +336,6 @@ bullets(s, hx, 3.9, X1 - hx, 2.95, [
     ('H3:', 'A teljes dokumentumot kapó alapvonal lefedettsége alacsonyabb.'),
     ('H4:', 'A helyi kis modell megközelíti a szervermodell naiv változatát (Q-különbség < 0,1).'),
     ('H5:', 'A bíró megbízhatóan egyezik az oktatókkal (α ≥ 0,667).')], size=13)
-notes(s, '2. ELŐADÓ (kb. 1,5 perc). Saját, nyílt kiértékelő keretrendszert építettünk: 30 dokumentum, 14 '
-         'konfiguráció, amelyek mindegyike egyetlen tényezőben tér el a referenciájától, három helyi modell, több '
-         'mint 11 100 pontozott kérdés. Hogyan mérünk: a minőségi index négy arány átlaga – formailag hibátlan-e a '
-         'vizsga, a forrás igazolja-e a helyes választ, kitalálható-e a helyes válasz a kulcs nélkül, és valóban '
-         'rosszak-e a rossz válaszok. A pontozást egy független, más modellcsaládba tartozó nyelvi modell, a bíró '
-         'végzi; ezt kilenc oktató vak értékelésével ellenőriztük. A konfigurációkat dokumentumonként, párosan '
-         'hasonlítjuk össze; mivel sok összevetést végzünk, a p-értékeket Holm-korrekcióval szigorítjuk, hogy a '
-         'véletlen ne tűnjön hatásnak. Az egyezést κ-val és α-val mérjük: 0 a véletlen, 1 a teljes egyezés. Öt '
-         'hipotézist vizsgáltunk.')
 
 # ======================================================================== 7. eredmények I – fő eredmény
 s = new_slide('Főbb kutatási eredmények I.: a vizsgaterv hatása', 3)
@@ -379,10 +349,6 @@ box(s, 9.95, 5.7, 2.9, 1.1, [[('Qwen2.5-7B (6 dokumentum): ', {'font': HEAD, 'si
                               ('0,64 → 0,88 → 0,96; teljes dok. 0,83', {'size': 13})]], fill=TINT,
     shape=MSO_SHAPE.ROUNDED_RECTANGLE, margin=0.12, anchor=MSO_ANCHOR.MIDDLE)
 source(s)
-notes(s, '2. ELŐADÓ (kb. 1,5 perc). A dolgozat legerősebb eredménye: a vizsgaterv mindkét modellnél nagyot javít a '
-         'naiv RAG-hoz képest, a PULI-nál +0,26, a Gemmánál +0,23, Holm-korrekció után is szignifikánsan; a Qwennél '
-         'az előzetes vizsgálatban ugyanez az irány. A haszon modellfüggő: a gyenge PULI-nál a teljes módszer 0,67, a '
-         'teljes dokumentumos prompt csak 0,41; az erős Gemmánál a teljes dokumentumos prompt is 0,96.')
 
 # ======================================================================== 8. eredmények II – darabolás
 s = new_slide('Főbb kutatási eredmények II.: a naiv RAG törékenysége', 3)
@@ -398,10 +364,6 @@ box(s, 9.15, 5.0, 3.7, 1.75, [[('Példa (Gemma): ', {'font': HEAD, 'size': 13, '
                               [('Rögzített darabolással a 0,70 alatti dokumentumok száma 16-ról 0-ra csökkent.', {'size': 13})]],
     line=ORANGE, shape=MSO_SHAPE.ROUNDED_RECTANGLE, margin=0.14)
 source(s)
-notes(s, '2. ELŐADÓ (kb. 1 perc). A naiv RAG gyengesége nem a keresés: a referenciakérdésekkel a jó darab az esetek '
-         '86 %-ában az első három találat között volt. A hiba a lekérdezés: feladatleírás, és a szemantikus darabolás '
-         'rövid, tartalom nélküli darabjaihoz áll a legközelebb. Rögzített darabolással ugyanez a naiv RAG a Gemmánál '
-         '0,72-ről 0,97-re javul. A gyenge PULI-nál ez sem segít: ott a formátumkövetés a szűk keresztmetszet.')
 
 # ======================================================================== 9. eredmények III – komponensek
 s = new_slide('Főbb kutatási eredmények III.: a komponensek hatása', 3)
@@ -431,10 +393,6 @@ for i, r in enumerate(rows):
         c.vertical_anchor = MSO_ANCHOR.MIDDLE
 box(s, X0, 6.05, X1 - X0, 0.8, [[('Δ: a minőségi index változása; p̃: Holm-korrigált p-érték (páros Wilcoxon-próba, 30 dokumentum). '
                                   'A hibrid keresés (E2h) sem javított szignifikánsan.', {'size': 12, 'color': GRAY})]], margin=0)
-notes(s, '2. ELŐADÓ (kb. 1 perc). A tervezett összehasonlítások: a tervezés és a teljes módszer mindkét modellnél '
-         'szignifikáns. Az ellenőrzés a PULI-nál +0,13, de Holm után nem szignifikáns, a Gemmánál nulla; a csak '
-         'szabályalapú változat ugyanannyit ér, tehát a lánc haszna a szabályokból jön. A fogalomgráf és a hibrid '
-         'keresés nem érte meg. ÁTADÁS a 3. előadónak: a modellek összevetése és a következtetések.')
 
 # ======================================================================== 10. eredmények IV – modellek
 s = new_slide('Főbb kutatási eredmények IV.: a generátormodellek', 3)
@@ -451,11 +409,6 @@ box(s, 9.55, 4.7, 3.3, 2.1, [[('A Llama 3.1 8B Instruct magyar továbbelőtanít
                                'Memória: Qwen 4,8 GiB, PULI 5,5 GiB (8 GB-os kártya), Gemma 7,8 GiB (12 GB-os kártya).',
                                {'size': 12, 'color': GRAY})]], fill=TINT, shape=MSO_SHAPE.ROUNDED_RECTANGLE, margin=0.14)
 source(s)
-notes(s, '3. ELŐADÓ (kb. 1,5 perc). Ugyanazon a hat dokumentumon a sorrend minden konfigurációban Gemma, Qwen, '
-         'PULI. Ugyanaz a teljes módszer a PULI-val 0,72, a Gemmával 0,97: a modellválasztás többet számít bármely '
-         'komponensnél. A magyarra továbbtanított PULI a magyar szövegeken is a leggyengébb, mert nem követi az '
-         'utasítást: egy hívásban átlagosan 1,8 kérdést ír a kért tíz helyett. A következtetést erre a '
-         'továbbelőtanított, utólag nem hangolt modellre szűkítjük.')
 
 # ======================================================================== 10b. eredmények V – oktatói értékelés
 s = new_slide('Főbb kutatási eredmények V.: a bíró és az oktatók', 3)
@@ -472,14 +425,6 @@ box(s, 9.55, 6.0, 3.3, 0.8, [[('A bíró rangsorolásra jó, abszolút szintre e
                               {'size': 12})]], fill=TINT, shape=MSO_SHAPE.ROUNDED_RECTANGLE, margin=0.12,
     anchor=MSO_ANCHOR.MIDDLE)
 source(s)
-notes(s, '3. ELŐADÓ (kb. 1 perc). A bírót kilenc oktató vak értékelésével ellenőriztük: hat konfigurációból 60 '
-         'kérdést pontoztak ugyanazzal a rubrikával. A sorrend egyezik: az oktatók szerint is a Gemma a legjobb és a '
-         'PULI a leggyengébb, a hat konfiguráció rangsora ρ = 0,71-gyel egyezik. A helyességen a bíró és az oktatói '
-         'medián egyezése α = 0,68, ez éppen eléri a 0,667-es küszöböt, de a bizonytalansági sáv széles; a többi '
-         'szempontban az egyezés gyenge. Fontos, hogy az oktatók egymás közt is csak közepesen egyeztek (helyességen '
-         'α = 0,47): a bíró egyetlen oktatóval annyira egyezik, mint két oktató egymással. A bíró viszont minden '
-         'szempontban engedékenyebb: a kérdések 70 %-át használná fel, az oktatók 55 %-át, és a PULI-nál közel egy '
-         'ponttal többet ad. Ezért a bíró számait összevetésre használjuk, abszolút minőségként felső becslésnek tekintjük.')
 
 # ======================================================================== 11. hipotézisvizsgálat
 s = new_slide('A hipotézisvizsgálat eredményei', 3)
@@ -514,14 +459,6 @@ for i, r in enumerate(hyp):
         c.fill.solid(); c.fill.fore_color.rgb = NAVY if i == 0 else (TINT if i % 2 == 0 else WHITE)
         c.vertical_anchor = MSO_ANCHOR.MIDDLE
 source(s, 'Forrás: saját szerkesztés')
-notes(s, '3. ELŐADÓ (kb. 1 perc). A H1 igazolást nyert: a vizsgaterv mindkét modellnél jobb vizsgát ad, mint a '
-         'naiv RAG, és ez a szigorított próbán is megáll. A H2 a fő vizsgálatban nem: az ellenőrzés után sem lett '
-         'több forrással igazolt kérdés, és az ellenőrző ítélete csak véletlenszerűen egyezik a bíróéval. A H3 sem: '
-         'a teljes dokumentumot kapó modell nem tömöríti a kérdéseit a dokumentum egy részére. A H4 leíró szinten '
-         'igen: a Qwen a módszerrel eléri a szervermodell teljes dokumentumos promptjának és naiv RAG-jának '
-         'szintjét, de ez a modellen múlik, a PULI-val nem teljesül. A H5 részben: a bíró ugyanúgy rangsorol, mint az '
-         'oktatók, és a helyességen eléri az elvárt egyezést, a többi szempontban viszont magasabb pontot ad, így ott '
-         'az egyezése az elvárt szint alatt marad.')
 
 # ======================================================================== 12. új eredmények
 s = new_slide('A tudományos munka új és újszerű eredményei', 4)
@@ -534,9 +471,6 @@ bullets(s, X0, 1.55, X1 - X0, 5.2, [
             'darabolás együtt tartalom nélküli kérdésekhez vezet; rögzített darabolással 0,72 → 0,97 (Gemma).'),
     ('(4)', 'A lépésekre bontás haszna a modell képességével csökken: gyenge modellnél nélkülözhetetlen, erősnél az '
             'ellenőrizhetőséget adja.')], size=18)
-notes(s, '3. ELŐADÓ (kb. 1 perc). Négy újszerű eredményt emelünk ki: a módszert, a nyílt kiértékelő '
-         'keretrendszert – tudomásunk szerint ez az első rendszerszintű magyar nyelvű kiértékelés a témában –, a naiv '
-         'RAG kudarcának mechanizmusát, és azt, hogy a felbontás haszna a modell képességétől függ.')
 
 # ======================================================================== 13. következtetések
 s = new_slide('Következtetések, kiemelt tanulságok', 4)
@@ -555,45 +489,35 @@ box(s, 9.45, 1.55, 3.4, 4.55, [
     [('42–55 %', {'font': HEAD, 'size': 26, 'color': ORANGE})],
     [('a Wikipédia-kérdések bírói ítéletaránya (az angol kérdéseknél szinte mind)', {'size': 12, 'color': GRAY})]],
     fill=TINT, shape=MSO_SHAPE.ROUNDED_RECTANGLE, margin=0.2)
-notes(s, '3. ELŐADÓ (kb. 1 perc). Három következtetés: a modell és a lekérdezés számít a legtöbbet; az ellenőrzés a '
-         'vizsgát javítja, de a jelzése kérdésenként nem megbízható ítélet; a mérést magát is ellenőrizni kell – '
-         'három csendes hibát csak a nyers kimenetek átnézése tárt fel; és a bíró a konfigurációk összevetésére '
-         'jó, de az oktatóknál engedékenyebb, ezért az abszolút arányai felső becslések.')
 
 # ======================================================================== 14. javaslatok
 s = new_slide('Javaslattétel és jövőbeni irányok', 4)
-for i, (tier, conf, kpi, note, col) in enumerate([
-        ('8 GB-os kártya', 'Qwen2.5-7B + teljes módszer (E2)', 'Q 0,96 · legrosszabb dokumentum 0,89 · ≈ 11× idő',
-         'a szervermodell teljes dokumentumos promptjának szintje, kérdésenkénti forrással', BLUE),
-        ('12 GB-os kártya', 'Gemma 3 12B + vizsgaterv (E1–E2)', 'Q 0,95 · ≈ 5–8,5× idő',
-         'gyors vázlathoz a rögzített darabolású naiv RAG: Q 0,97, ≈ 1× – forrás és terv nélkül', NAVY)]):
-    box(s, X0 + i * 4.85, 1.5, 4.65, 2.2, [
-        [('J' + str(i + 1) + ': ' + tier, {'font': HEAD, 'size': 17, 'color': col})],
-        [(conf, {'font': HEAD, 'size': 14})],
-        [(kpi, {'size': 13})],
-        [(note, {'size': 12, 'color': GRAY})]], fill=TINT, shape=MSO_SHAPE.ROUNDED_RECTANGLE, margin=0.18)
-bullets(s, X0, 4.0, X1 - X0, 2.8, [
-    ('J3:', 'Nem ajánlott: fogalomgráf, hibrid keresés; az LLM-ellenőrző jelzése csak figyelmeztetésként.'),
-    ('Jövő:', 'a bíró kalibrálása nagyobb oktatói mintán; a hiányzó bírói ítéletek újrapontozása; adaptív ellenőrzés; a darabolás hatása '
-              'a tervezett folyamatra; tételelemzés valós hallgatói válaszokon.')], size=17)
-notes(s, '3. ELŐADÓ (kb. 1 perc). A mérésekből ajánlás következik: 8 GB-os kártyán a Qwen2.5-7B a teljes módszerrel, '
-         '12 GB-on a Gemma 3 12B a vizsgatervvel; gyors vázlathoz a rögzített darabolású naiv RAG is elég, de forrás és '
-         'terv nélkül. A fogalomgráf és a hibrid keresés nem éri meg. A további munka legfontosabb lépése a bíró '
-         'kalibrálása nagyobb oktatói mintán, hogy engedékenységét korrigálni lehessen.')
+box(s, X0, 1.4, X1 - X0, 1.6, [
+    [('A tudományos eredmény egy mondatban', {'font': HEAD, 'size': 15, 'color': BLUE})],
+    [('Fogyasztói GPU-n futó kis modellekkel a vizsgakérdések minőségét elsősorban a választott modell és a '
+      'visszakeresés lekérdezése határozza meg; a feladat lépésekre bontása gyenge modellnél nélkülözhetetlen, '
+      'erősnél az ellenőrizhetőséget adja.', {'size': 16})]],
+    fill=TINT, shape=MSO_SHAPE.ROUNDED_RECTANGLE, margin=0.18)
+bullets(s, X0, 3.25, X1 - X0, 3.6, [
+    ('J1:', 'A keresés kérdése tartalmi legyen (például a vizsgaterv fogalmai), ne a feladatleírás; a darabolásnál '
+            'kell minimális darabméret.'),
+    ('J2:', 'Minden kérdés hivatkozzon a forrására, az ellenőrzés gerincét olcsó szabályok adják; a modellalapú '
+            'ellenőrző jelzése csak figyelmeztetés, a döntés az oktatóé.'),
+    ('J3:', 'Nyelvi modell bíróként rangsorolásra használható, abszolút minőségre nem: oktatói mintán kalibrálni kell.'),
+    ('Jövő:', 'a bíró kalibrálása nagyobb oktatói mintán; a hiányzó bírói ítéletek újrapontozása; adaptív ellenőrzés; '
+              'tételelemzés valós hallgatói válaszokon.')], size=16)
 
 # ======================================================================== 15–16. köszönet, bírálói kérdések (sablon)
 s15, s16 = T[14], T[15]
 for sh in s15.shapes:
     if sh.has_text_frame and 'Köszönöm' in sh.text_frame.text:
         set_text(sh.text_frame, 'Köszönjük a megtisztelő figyelmüket!')
-notes(s15, '3. ELŐADÓ. Megköszönjük a figyelmet, és átadjuk a szót a Bizottságnak.')
 for sh in s16.shapes:
     if sh.has_text_frame and 'Vezesse fel' in sh.text_frame.text:
         for para in sh.text_frame.paragraphs:
             for r in para.runs:
                 if 'Vezesse fel' in r.text:
                     r.text = '[A bírálói kérdés] – válasz: [rövid válasz]'
-notes(s16, 'Tartalék dia: ide kerülnek a bírálatokban szereplő kérdések és a rövid válaszok, ha a bírálatok megérkeztek.')
 
 # ---------------------------------------------------------------- order and cleanup
 sld_ids = prs.slides._sldIdLst
@@ -612,6 +536,75 @@ thanks, questions = items[14], items[15]
 sld_ids.remove(thanks); sld_ids.remove(questions)
 for it in new + [thanks, questions]:
     sld_ids.append(it)
+
+# speaker notes: word-for-word script per slide from eloadas_szoveg.md ("## N. dia — Előadó" sections)
+def load_script(path):
+    parts, cur = {}, None
+    for line in open(path, encoding='utf-8'):
+        m = re.match(r'^## (\d+)\. dia — (.+?)\s*$', line)
+        if m:
+            cur = int(m.group(1))
+            parts[cur] = [m.group(2), []]
+        elif cur is not None:
+            parts[cur][1].append(line.strip())
+    return {n: (who, ' '.join(x for x in body if x)) for n, (who, body) in parts.items()}
+
+
+def spoken_words(text):
+    """Word count as spoken: '0,28-ról' is read as 3 words ('nulla egész huszonnyolcról'), '70%-át' as 2."""
+    n = 0
+    for tok in text.split():
+        if re.search(r'\d[,.]\d', tok):
+            n += 3
+        elif '%' in tok:
+            n += 2
+        else:
+            n += 1
+    return n
+
+
+def fmt_time(words):
+    sec = round(words * 60 / 110 / 5) * 5                 # ~110 words per minute, spoken with slide changes
+    return f'{sec} mp' if sec < 60 else f'{sec // 60} perc {sec % 60} mp'.replace(' 0 mp', '')
+
+
+script = load_script(os.path.join(HERE, 'eloadas_szoveg.md'))
+per_speaker = {}
+for n, sl in enumerate(prs.slides, 1):
+    who, text = script[n]
+    if n < len(prs.slides):
+        per_speaker[who] = per_speaker.get(who, 0) + spoken_words(text)
+for n, sl in enumerate(prs.slides, 1):
+    who, text = script[n]
+    if n == len(prs.slides):
+        head = 'TARTALÉK DIA'
+    else:
+        head = f'ELŐADÓ: {who.upper()} · kb. {fmt_time(spoken_words(text))}'
+    body = f'{head}\n\nSZÓRÓL SZÓRA:\n{text}' if n < len(prs.slides) else f'{head}\n\n{text}'
+    if n == 1:
+        split = '; '.join(f'{w}: kb. {fmt_time(c)}' for w, c in per_speaker.items())
+        body += f'\n\nFELOSZTÁS: {split}. Összesen kb. {fmt_time(sum(per_speaker.values()))}.'
+    sl.notes_slide.notes_text_frame.text = body
+
+
+# slide numbers (bottom right, every slide except the title): a real slide-number field, so PowerPoint keeps it right
+for n, sl in enumerate(prs.slides, 1):
+    if n == 1:
+        continue
+    tb = sl.shapes.add_textbox(Inches(12.9), Inches(6.92), Inches(0.4), Inches(0.35))
+    tb.name = 'Diaszám'
+    p = tb.text_frame.paragraphs[0]
+    p.alignment = PP_ALIGN.RIGHT
+    fld = p._p.makeelement(qn('a:fld'), {'id': '{B6F15528-21DE-4FAA-801E-634DDDAF4B2B}', 'type': 'slidenum'})
+    rpr = fld.makeelement(qn('a:rPr'), {'lang': 'hu-HU', 'sz': '1000', 'b': '1'})
+    fill = rpr.makeelement(qn('a:solidFill'), {})
+    fill.append(fill.makeelement(qn('a:srgbClr'), {'val': str(NAVY)}))
+    rpr.append(fill)
+    fld.append(rpr)
+    t = fld.makeelement(qn('a:t'), {})
+    t.text = str(n)
+    fld.append(t)
+    p._p.append(fld)
 
 prs.save(OUT)
 print('written', OUT, 'slides:', len(prs.slides))
